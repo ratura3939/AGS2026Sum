@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="AGS2026Sum.vcxproj" />
+  <Project Path="AGS2026Sum.vcxproj" Id="a1916706-b6da-4470-897c-31dcde1d4e5c" />
 </Solution>
