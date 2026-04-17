@@ -16,54 +16,70 @@ public:
 	static constexpr int ANALOG_TRIGGER_THRESHOLD = 128;	//トリガー閾値
 	static constexpr int KEY_ALL = 256;	//キー種総数
 
-	/// <summary>
-	/// 周辺機器種別
-	/// </summary>
+	//入力コマンド種別
+	enum class INPUT_COMMAND{
+		UP				//上
+		,DOWN			//下
+		,LEFT			//左
+		,RIGHT			//右
+
+		,UP_SUB			//上(サブ)
+		,DOWN_SUB		//下(サブ)
+		,LEFT_SUB		//左(サブ)
+		,RIGHT_SUB		//右(サブ)
+
+		,ATTACK_NORMAL	//通常攻撃
+		,ATTACK_STRONG	//強攻撃
+		,ATTACK_SPECIAL	//特殊攻撃
+
+		,ENTER			//決定
+		,CANCEL			//キャンセル
+		,PAUSE			//ポーズ
+		,MAX
+	};
+
+	// 周辺機器種別
 	enum class PERIPHERAL_TYPE {
 		//キーマウ操作
-		KEYBOARD,
-		MOUSE,
+		KEYBOARD
+		,MOUSE
 		//PAD操作
-		GAMEPAD,
-		X_ANALOG,
-		MAX
+		,GAMEPAD
+		,X_ANALOG
+		,MAX
 	};
 
-	/// <summary>
-	/// アナログ入力種別
-	/// </summary>
+	// アナログ入力種別
 	enum class ANALOG_INPUT_TYPE {
-		LS_UP,		//左スティックの上
-		LS_DOWN,	//左スティックの下
-		LS_RIGHT,	//左スティックの右
-		LS_LEFT,	//左スティックの左
-		LT,			//左トリガー
-		RS_UP,		//右スティックの上
-		RS_DOWN,	//右スティックの下
-		RS_RIGHT,	//右スティックの右
-		RS_LEFT,	//右スティックの左
-		RT,			//右トリガー
-		end
+		LS_UP		//左スティックの上
+		,LS_DOWN	//左スティックの下
+		,LS_RIGHT	//左スティックの右
+		,LS_LEFT	//左スティックの左
+		,LT			//左トリガー
+		,RS_UP		//右スティックの上
+		,RS_DOWN	//右スティックの下
+		,RS_RIGHT	//右スティックの右
+		,RS_LEFT	//右スティックの左
+		,RT			//右トリガー
+		,MAX
 	};
 
-	/// <summary>
-	/// マウス入力種別
-	/// </summary>
+	// マウス入力種別
 	enum class MOUSE_INPUT {
-		L_CLICK,//左クリック
-		R_CLICK,//右クリック
-		M_CLICK,//ホイールクリック
-		UP,		//上移動
-		DOWN,	//下移動
-		LEFT,	//左移動
-		RIGHT,	//右移動
-		MAX
+		L_CLICK		//左クリック
+		,R_CLICK	//右クリック
+		,M_CLICK	//ホイールクリック
+		,UP			//上移動
+		,DOWN		//下移動
+		,LEFT		//左移動
+		,RIGHT		//右移動
+		,MAX
 	};
 
 	//入力履歴種別
 	enum class INPUT_RECORD {
-		CURRENT,
-		LAST
+		CURRENT
+		,LAST
 	};
 
 
@@ -71,13 +87,13 @@ public:
 	// DxLib定数、DX_INPUT_PAD1等に対応
 	enum class JOYPAD_NO
 	{
-		KEY_PAD1,			// キー入力とパッド１入力
-		PAD1,				// パッド１入力
-		PAD2,				// パッド２入力
-		PAD3,				// パッド３入力
-		PAD4,				// パッド４入力
-		INPUT_KEY = 4096,	// キー入力
-		MAX
+		KEY_PAD1			// キー入力とパッド１入力
+		,PAD1				// パッド１入力
+		,PAD2				// パッド２入力
+		,PAD3				// パッド３入力
+		,PAD4				// パッド４入力
+		,INPUT_KEY = 4096	// キー入力
+		,MAX
 	};
 
 	//移動入力情報
