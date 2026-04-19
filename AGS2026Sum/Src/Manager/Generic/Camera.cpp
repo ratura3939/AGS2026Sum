@@ -150,11 +150,11 @@ void Camera::SetBeforeDrawFollow(void)
 	//追従対象の向き
 	Quaternion followRot = followObject_.quaRot;
 
-	auto& ins = InputManager::GetInstance();
-	if (ins.IsTrigerrDown("rock")) {
-		ChangeMode(MODE::RESET);
-		return;
-	}
+	//auto& ins = InputManager::GetInstance();
+	//if (ins.IsTrigerrDown("rock")) {
+	//	ChangeMode(MODE::RESET);
+	//	return;
+	//}
 
 	//追従対象までの距離ベクトルを回転させ相対座標を生成
 	VECTOR relativeCPos = rot_.PosAxis(RELATIVE_F2C_POS_FOLLOW);
@@ -562,23 +562,25 @@ void Camera::Rotation(void)
 {
 	InputManager& ins = InputManager::GetInstance();
 
-	if (ins.IsPressed("subUp"))
+	using COMMAND = InputManager::INPUT_COMMAND;
+
+	if (ins.IsPressed(COMMAND::UP_SUB))
 	{
 		angles_.x -= rotSpeed_;
 		if (angles_.x <= LIMIT_X_DW_RAD)
 			angles_.x = LIMIT_X_DW_RAD;
 	}
-	if (ins.IsPressed("subDown"))
+	if (ins.IsPressed(COMMAND::DOWN_SUB))
 	{
 		angles_.x += rotSpeed_;
 		if (angles_.x >= LIMIT_X_UP_RAD)
 			angles_.x = LIMIT_X_UP_RAD;
 	}
-	if (ins.IsPressed("subLeft"))
+	if (ins.IsPressed(COMMAND::LEFT))
 	{
 		angles_.y -= rotSpeed_;
 	}
-	if (ins.IsPressed("subRight"))
+	if (ins.IsPressed(COMMAND::RIGHT))
 	{
 		angles_.y += rotSpeed_;
 	}

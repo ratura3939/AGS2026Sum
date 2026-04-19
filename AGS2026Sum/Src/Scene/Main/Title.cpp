@@ -257,7 +257,7 @@ void Title::NomalUpdate(void)
 {
 	// シーン遷移
 	InputManager& ins = InputManager::GetInstance();
-	if (ins.IsTrigerrDown("action"))
+	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ENTER))
 	{
 		//コントローラー選択へ
 		isSelectDevice_ = true;
@@ -274,8 +274,10 @@ void Title::SelectDeviceUpdate(void)
 	InputManager& ins = InputManager::GetInstance();
 	UIManager2d& uiM = UIManager2d::GetInstance();
 
+	using COMMAND = InputManager::INPUT_COMMAND;
+
 	//決定
-	if (ins.IsTrigerrDown("action"))
+	if (ins.IsTrigerrDown(COMMAND::ENTER))
 	{
 		//「戻る」なら
 		if (selectExit_) {
@@ -308,21 +310,21 @@ void Title::SelectDeviceUpdate(void)
 	}
 
 	//選択関係
-	if (ins.IsTrigerrDown("right")) {
+	if (ins.IsTrigerrDown(COMMAND::RIGHT)) {
 		//カーソルをパッドに
 		SetSelectDevice(DEVICE::PAD);
 	}
-	else if(ins.IsTrigerrDown("left")) {
+	else if(ins.IsTrigerrDown(COMMAND::LEFT)) {
 		//カーソルをキーに
 		SetSelectDevice(DEVICE::KEY);
 	}
-	else if (ins.IsTrigerrDown("down")) {
+	else if (ins.IsTrigerrDown(COMMAND::DOWN)) {
 		//カーソルを「戻る」に
 		SetSelectDevice(DEVICE::MAX);
 	}
 
 	//上入力は「戻るアイコン」にカーソルがあるときしか判定しない
-	if(ins.IsTrigerrDown("up") && selectExit_) {
+	if(ins.IsTrigerrDown(COMMAND::UP) && selectExit_) {
 		SetSelectDevice(DEVICE::KEY);
 	}
 

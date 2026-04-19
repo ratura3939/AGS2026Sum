@@ -109,14 +109,16 @@ void PauseScene::InputUser(void)
 	SceneManager& scM = SceneManager::GetInstance();
 	InputManager& inpM = InputManager::GetInstance();
 
+	using COMMAND = InputManager::INPUT_COMMAND;
+
 	//ポーズボタンを押されたら
-	if (inpM.IsTrigerrDown("pause")) {
+	if (inpM.IsTrigerrDown(COMMAND::PAUSE)) {
 		//シーン移動(1つ前のシーン＝ゲームシーンに戻る)
 		scM.PopScene();
 	}
 
 	//決定入力
-	if (inpM.IsTrigerrDown("action",false)) {
+	if (inpM.IsTrigerrDown(COMMAND::ENTER,false)) {
 
 		//矢印位置から処理を選択
 		switch (static_cast<MENU_ITEM>(selectIdx_ + MENU_LIST_NONE_DIFFER)) {
@@ -143,7 +145,7 @@ void PauseScene::InputUser(void)
 	}
 
 	//上入力
-	if (inpM.IsTrigerrDown("up",false)) {
+	if (inpM.IsTrigerrDown(COMMAND::UP,false)) {
 		//Idxの減少。範囲外にならないよう調整
 		selectIdx_--;
 		selectIdx_ = (selectIdx_ + drawBtnList_.size()) % drawBtnList_.size();
@@ -152,7 +154,7 @@ void PauseScene::InputUser(void)
 		UIManager2d::GetInstance().SetPos(RIGHT_ARROW, GetDrawPosOfArrow());
 	}
 	//下入力
-	else if (inpM.IsTrigerrDown("down",false)) {
+	else if (inpM.IsTrigerrDown(COMMAND::DOWN,false)) {
 		//Idxの増加。範囲外にならないよう調整
 		selectIdx_++;
 		selectIdx_ = selectIdx_ % drawBtnList_.size();

@@ -1,7 +1,6 @@
 #pragma once
 #include<unordered_map>	//対応表のため
 #include<vector>		//デバイスを追加するため
-#include<string>		//対応キーのため
 #include<map>
 #include<functional>
 #include <Dxlib.h>
@@ -120,14 +119,14 @@ public:
 	/// </summary>
 	/// <param name="_eventCode">登録名</param>
 	/// <returns></returns>
-	bool IsTrigerrDown(const std::string& _eventCode, bool _isDistinguish = true);
+	bool IsTrigerrDown(const INPUT_COMMAND& _eventCode, bool _isDistinguish = true);
 
 	/// <summary>
 	/// キーのアップトリガ
 	/// </summary>
 	/// <param name="_eventCode">登録名</param>
 	/// <returns></returns>
-	bool IsTrigerrUp(const std::string& _eventCode, bool _isDistinguish = true);
+	bool IsTrigerrUp(const INPUT_COMMAND& _eventCode, bool _isDistinguish = true);
 
 	/// <summary>
 	/// 押されているかどうか
@@ -135,7 +134,7 @@ public:
 	/// <param name="_eventCode">登録名</param>
 	/// <param name="_isDistinguish">入力を設定しているほうしか受け付けないか</param>
 	/// <returns></returns>
-	bool IsPressed(const std::string& _eventCode, bool _isDistinguish = true);
+	bool IsPressed(const INPUT_COMMAND& _eventCode, bool _isDistinguish = true);
 
 	/// <summary>
 	/// 移動方向の取得(単純な４方向ではなく細かくほしいとき)
@@ -154,8 +153,9 @@ private:
 	void MouseInputFuncInit(void);
 
 	//コードの現在又は１フレーム前の入力を渡す
-	const bool IsInputRecord(const std::string& _eventCode, const INPUT_RECORD& _record, const bool _isDistinguish);
+	const bool IsInputRecord(const INPUT_COMMAND& _eventCode, const INPUT_RECORD& _record, const bool _isDistinguish);
 
+	//複数の移動方向入力を加味する
 	MoveInput GetPadMoveInput(void);
 	MoveInput GetKeyMoveInput(void);
 
@@ -171,7 +171,7 @@ private:
 	};
 
 	//<登録名、対応キー>(キーボード・PADに対応)
-	using InputTable_t = std::unordered_map<std::string, std::vector<InputCode>>;
+	using InputTable_t = std::unordered_map<INPUT_COMMAND, std::vector<InputCode>>;
 	InputTable_t inputTable_;	//イベントと入力の対応表
 
 	//スティック関係は少し別種なのでこちらで扱う(基本的にRスティックやトリガー用)
@@ -179,12 +179,12 @@ private:
 	AnalogInputTable_t analpgInputTable_;
 
 	//<登録名,押下状態>
-	using InputData_t = std::unordered_map<std::string, bool>;
+	using InputData_t = std::unordered_map<INPUT_COMMAND, bool>;
 	//InputData_t currentInput_;	//イベントに対応するボタンが押されているか
 	//InputData_t lastInput_;		//イベントに対応するボタンが押されているか(１フレーム前)
 
 	//押されたとき何で押されたかを覚えておく
-	using InputPeriTypeData_t = std::unordered_map<std::string, std::vector<PERIPHERAL_TYPE>>;
+	using InputPeriTypeData_t = std::unordered_map<INPUT_COMMAND, std::vector<PERIPHERAL_TYPE>>;
 	InputPeriTypeData_t currentInptuPeri_;
 	InputPeriTypeData_t lastInptuPeri_;
 

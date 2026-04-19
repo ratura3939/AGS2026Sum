@@ -331,7 +331,7 @@ void Game::GameUpdate(void)
 	//}
 
 	//ポーズシーン遷移
-	if (inpM.IsTrigerrDown("pause")) {
+	if (inpM.IsTrigerrDown(InputManager::INPUT_COMMAND::PAUSE)) {
 		//シーン追加(一つ次へ)
 		scM.PushScene(std::make_shared<PauseScene>());
 	}

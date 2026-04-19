@@ -111,34 +111,34 @@ void InputManager::ResetInput(void)
 	// 事前にここで登録しておいてください
 
 	//移動関係<WASD・左スティック>
-	inputTable_["up"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_W },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::LS_UP) } };
-	inputTable_["down"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_S },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::LS_DOWN) } };
-	inputTable_["left"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_A },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::LS_LEFT) } };
-	inputTable_["right"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_D },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::LS_RIGHT) } };
+	inputTable_[INPUT_COMMAND::UP] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_W },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::LS_UP) } };
+	inputTable_[INPUT_COMMAND::DOWN ] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_S },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::LS_DOWN) } };
+	inputTable_[INPUT_COMMAND::LEFT] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_A },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::LS_LEFT) } };
+	inputTable_[INPUT_COMMAND::RIGHT] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_D },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::LS_RIGHT) } };
 	//移動入力(サブ)<Rスティック・方向キー>
-	inputTable_["subUp"] = { { PERIPHERAL_TYPE::MOUSE,static_cast<int>(MOUSE_INPUT::UP)},{PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RS_UP)}};
-	inputTable_["subDown"] = { { PERIPHERAL_TYPE::MOUSE,static_cast<int>(MOUSE_INPUT::DOWN) },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RS_DOWN) } };
-	inputTable_["subLeft"] = { { PERIPHERAL_TYPE::MOUSE,static_cast<int>(MOUSE_INPUT::LEFT) },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RS_LEFT) } };
-	inputTable_["subRight"] = { { PERIPHERAL_TYPE::MOUSE,static_cast<int>(MOUSE_INPUT::RIGHT) },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RS_RIGHT) } };
+	inputTable_[INPUT_COMMAND::UP_SUB] = { { PERIPHERAL_TYPE::MOUSE,static_cast<int>(MOUSE_INPUT::UP)},{PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RS_UP)}};
+	inputTable_[INPUT_COMMAND::DOWN_SUB] = { { PERIPHERAL_TYPE::MOUSE,static_cast<int>(MOUSE_INPUT::DOWN) },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RS_DOWN) } };
+	inputTable_[INPUT_COMMAND::LEFT_SUB] = { { PERIPHERAL_TYPE::MOUSE,static_cast<int>(MOUSE_INPUT::LEFT) },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RS_LEFT) } };
+	inputTable_[INPUT_COMMAND::RIGHT_SUB] = { { PERIPHERAL_TYPE::MOUSE,static_cast<int>(MOUSE_INPUT::RIGHT) },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RS_RIGHT) } };
 
 	//各コマンド<PADは複数個所で兼用あり>
-	inputTable_["action"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_RETURN } ,{ PERIPHERAL_TYPE::MOUSE,static_cast<int>(MOUSE_INPUT::L_CLICK)},{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_A } };//Aボタン(Bボタン：任天堂)
-	inputTable_["dash"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_LSHIFT },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_B } };							//Bボタン(Aボタン：任天堂)
-	inputTable_["ability"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_Q },{ PERIPHERAL_TYPE::GAMEPAD,LB_NUM } };							//Aボタン(Bボタン：任天堂)
-	inputTable_["attack"] = { { PERIPHERAL_TYPE::MOUSE,static_cast<int>(MOUSE_INPUT::L_CLICK) },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_C } };		//Xボタン(Yボタン：任天堂)
-	inputTable_["jump"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_SPACE },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_X } };							//Yボタン(Xボタン：任天堂)
-	inputTable_["crouch"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_LCONTROL },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_START } };					//LS
-	inputTable_["rock"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_R },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::LT) } };	//LT
-	inputTable_["arrow"] = { { PERIPHERAL_TYPE::MOUSE,static_cast<int>(MOUSE_INPUT::R_CLICK) },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RT) } };	//RT
+	inputTable_[INPUT_COMMAND::ENTER] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_RETURN } ,{ PERIPHERAL_TYPE::MOUSE,static_cast<int>(MOUSE_INPUT::L_CLICK)},{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_A } };//Aボタン(Bボタン：任天堂)
+	inputTable_[INPUT_COMMAND::CANCEL] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_LSHIFT },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_B } };							//Bボタン(Aボタン：任天堂)
+	//inputTable_["ability"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_Q },{ PERIPHERAL_TYPE::GAMEPAD,LB_NUM } };							//LB
+	inputTable_[INPUT_COMMAND::ATTACK_NORMAL] = { { PERIPHERAL_TYPE::MOUSE,static_cast<int>(MOUSE_INPUT::L_CLICK) },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_C } };		//Xボタン(Yボタン：任天堂)
+	inputTable_[INPUT_COMMAND::ATTACK_STRONG] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_SPACE },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_X } };							//Yボタン(Xボタン：任天堂)
+	//inputTable_["crouch"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_LCONTROL },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_START } };					//LS
+	//inputTable_["rock"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_R },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::LT) } };	//LT
+	//inputTable_["arrow"] = { { PERIPHERAL_TYPE::MOUSE,static_cast<int>(MOUSE_INPUT::R_CLICK) },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RT) } };	//RT
 
-	inputTable_["push"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_Z },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_X  } };	//LT
-	inputTable_["pull"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_C },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_A  } };	//RT
+	//inputTable_["push"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_Z },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_X  } };	//LT
+	//inputTable_["pull"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_C },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_A  } };	//RT
 
-	inputTable_["skip"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_J },{ PERIPHERAL_TYPE::GAMEPAD,RB_NUM  } };	//RT
+	inputTable_[INPUT_COMMAND::ATTACK_SPECIAL] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_J },{ PERIPHERAL_TYPE::GAMEPAD,RB_NUM  } };	//RB
 
 
 	//ポーズ
-	inputTable_["pause"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_TAB },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_R } };
+	inputTable_[INPUT_COMMAND::PAUSE] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_TAB },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_R } };	//スタート
 }
 
 void InputManager::AnalogInputFuncInit(void)
@@ -200,7 +200,7 @@ void InputManager::MouseInputFuncInit(void)
 	};
 }
 
-const bool InputManager::IsInputRecord(const std::string& _eventCode, const INPUT_RECORD& _record,const bool _isDistinguish)
+const bool InputManager::IsInputRecord(const INPUT_COMMAND& _eventCode, const INPUT_RECORD& _record,const bool _isDistinguish)
 {
 	//シーンマネージャが管理するコントローラ設定で
 	//対応する入力方法のみ受け付ける
@@ -290,16 +290,16 @@ InputManager::MoveInput InputManager::GetKeyMoveInput(void)
 
 	const float movePow = 1.0f;
 
-	if (IsPressed("up")) {
+	if (IsPressed(INPUT_COMMAND::UP)) {
 		result.y += movePow;
 	}
-	if (IsPressed("down")) {
+	if (IsPressed(INPUT_COMMAND::DOWN)) {
 		result.y -= movePow;
 	}
-	if (IsPressed("left")) {
+	if (IsPressed(INPUT_COMMAND::LEFT)) {
 		result.x -= movePow;
 	}
-	if (IsPressed("right")) {
+	if (IsPressed(INPUT_COMMAND::RIGHT)) {
 		result.x += movePow;
 	}
 
@@ -318,7 +318,7 @@ InputManager::MoveInput InputManager::GetKeyMoveInput(void)
 }
 
 
-bool InputManager::IsTrigerrDown(const std::string& _eventCode, bool _isDistinguish)
+bool InputManager::IsTrigerrDown(const INPUT_COMMAND& _eventCode, bool _isDistinguish)
 {
 	//先に要素がない場合の予防線をはる
 // 反応しないだけという状態を作りたいから
@@ -333,7 +333,7 @@ bool InputManager::IsTrigerrDown(const std::string& _eventCode, bool _isDistingu
 	return IsInputRecord(_eventCode, INPUT_RECORD::CURRENT, _isDistinguish) && !IsInputRecord(_eventCode, INPUT_RECORD::LAST, _isDistinguish);
 }
 
-bool InputManager::IsTrigerrUp(const std::string& _eventCode, bool _isDistinguish)
+bool InputManager::IsTrigerrUp(const INPUT_COMMAND& _eventCode, bool _isDistinguish)
 {
 	//先に要素がない場合の予防線をはる
 	// 反応しないだけという状態を作りたいから
@@ -348,7 +348,7 @@ bool InputManager::IsTrigerrUp(const std::string& _eventCode, bool _isDistinguis
 	return !IsInputRecord(_eventCode, INPUT_RECORD::CURRENT, _isDistinguish) && IsInputRecord(_eventCode, INPUT_RECORD::LAST, _isDistinguish);
 }
 
-bool InputManager::IsPressed(const std::string& _eventCode, bool _isDistinguish)
+bool InputManager::IsPressed(const INPUT_COMMAND& _eventCode, bool _isDistinguish)
 {
 	return IsInputRecord(_eventCode, INPUT_RECORD::CURRENT,_isDistinguish);
 }
