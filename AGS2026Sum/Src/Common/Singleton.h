@@ -14,7 +14,7 @@ public:
 	/// 明示的にインスタンスの生成
 	/// </summary>
 	/// <param name="_timing">解放タイミング</param>
-	static void CreateInstance(SingletonRegistry::DESTROY_TIMING _timing)
+	static inline void CreateInstance(SingletonRegistry::DESTROY_TIMING _timing)
 	{
 		if (instance_ != nullptr)return;
 		
@@ -22,7 +22,7 @@ public:
 		instance_ = new T();
 
 		//読み込みと初期化
-		instance_->LoadOutSide();
+		instance_->Load();
 		instance_->Init();
 
 		//レジスタに格納
@@ -30,7 +30,7 @@ public:
 	}
 
 	//インスタンスの取得
-	static T& GetInstance(void)
+	static inline T& GetInstance(void)
 	{
 		if (instance_ == nullptr)
 		{
@@ -41,13 +41,13 @@ public:
 	}
 
 	//読み込み
-	virtual void LoadOutSide(void) {}
+	virtual void Load(void) {}
 
 	//初期化
 	virtual void Init(void) {}
 
 	//インスタンスの破棄
-	virtual void Destroy(void)
+	inline virtual void Destroy(void)
 	{
 		if (instance_ == nullptr)return;
 

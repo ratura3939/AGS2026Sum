@@ -11,8 +11,8 @@
 //ê¸
 //***************************************************
 
-Line::Line(const VECTOR& _pos, const VECTOR& _movedPos, const Quaternion& _rot, const VECTOR& _localPosPoint1, const VECTOR& _localPosPoint2)
-	: Geometry(_pos, _movedPos, _rot),
+Line::Line(const VECTOR& _pos, const VECTOR& _movedPos, const Quaternion& _rot, const float _broudRadius, const VECTOR& _localPosPoint1, const VECTOR& _localPosPoint2)
+	: Geometry(_pos, _movedPos, _rot, _broudRadius),
 	localPosPoint1_(_localPosPoint1),
 	localPosPoint2_(_localPosPoint2)
 {
@@ -21,7 +21,7 @@ Line::Line(const VECTOR& _pos, const VECTOR& _movedPos, const Quaternion& _rot, 
 }
 
 Line::Line(const Line& _copyBase)
-	: Geometry(_copyBase.GetColPos(), _copyBase.GetColMovedPos(), _copyBase.GetColRot())
+	: Geometry(_copyBase.GetColPos(), _copyBase.GetColMovedPos(), _copyBase.GetColRot(), _copyBase.GetBroudRadius())
 {
 	localPosPoint1_ = _copyBase.GetLocalPosPoint1();
 	localPosPoint2_ = _copyBase.GetLocalPosPoint2();

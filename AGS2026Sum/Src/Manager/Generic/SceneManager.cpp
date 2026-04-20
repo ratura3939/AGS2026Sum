@@ -36,7 +36,7 @@ void SceneManager::Init(void)
 	UIManager2d::CreateInstance();
 
 	//判定
-	CollisionManager::CreateInstance();
+	CollisionManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::GAME_END);
 
 	fader_ = new Fader();
 	fader_->Init();
@@ -298,7 +298,6 @@ void SceneManager::DoChangeScene(void)
 	sndM.Release();
 	efcM.Release();
 	uiM.Relese();
-	colM.Reset();
 
 	//リソース解放後,カメラのコライダーをを再度付与
 	camera_->ResetCollider();

@@ -11,8 +11,8 @@
 //ƒJƒvƒZƒ‹
 //***************************************************
 
-Capsule::Capsule(const VECTOR& _pos, const VECTOR& _movedPos, const Quaternion& _rot, const VECTOR _localPosTop, const VECTOR _localPosDown, const float _radius)
-	: Geometry(_pos, _movedPos, _rot),
+Capsule::Capsule(const VECTOR& _pos, const VECTOR& _movedPos, const Quaternion& _rot, const float _broudRadius, const VECTOR _localPosTop, const VECTOR _localPosDown, const float _radius)
+	: Geometry(_pos, _movedPos, _rot, _broudRadius),
 	localPosTop_(_localPosTop),
 	localPosDown_(_localPosDown),
 	radius_(_radius)
@@ -22,7 +22,7 @@ Capsule::Capsule(const VECTOR& _pos, const VECTOR& _movedPos, const Quaternion& 
 }
 
 Capsule::Capsule(const Capsule& _copyBase)
-	: Geometry(_copyBase.GetColPos(), _copyBase.GetColMovedPos(), _copyBase.GetColRot())
+	: Geometry(_copyBase.GetColPos(), _copyBase.GetColMovedPos(), _copyBase.GetColRot(), _copyBase.broudRadius_)
 {
 	radius_ = _copyBase.GetRadius();
 	localPosTop_ = _copyBase.GetLocalPosTop();

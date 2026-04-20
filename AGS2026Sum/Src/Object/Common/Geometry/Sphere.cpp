@@ -11,15 +11,15 @@
 //球
 //***************************************************
 
-Sphere::Sphere(const VECTOR& _pos, const VECTOR& _movedPos, const float _radius)
-	: Geometry(_pos, _movedPos, Quaternion()),
+Sphere::Sphere(const VECTOR& _pos, const VECTOR& _movedPos, const float _radius, const float _broudRadius)
+	: Geometry(_pos, _movedPos, Quaternion(), _broudRadius),
 	radius_(_radius)
 {
 	std::memset(&hitInfo_, 0, sizeof(hitInfo_));
 }
 
 Sphere::Sphere(const Sphere& _copyBase)
-	: Geometry(_copyBase.GetColPos(),_copyBase.GetColMovedPos(), Quaternion())
+	: Geometry(_copyBase.GetColPos(),_copyBase.GetColMovedPos(), Quaternion(), _copyBase.GetBroudRadius())
 {
 	radius_ = _copyBase.GetRadius();
 	std::memset(&hitInfo_, 0, sizeof(hitInfo_));

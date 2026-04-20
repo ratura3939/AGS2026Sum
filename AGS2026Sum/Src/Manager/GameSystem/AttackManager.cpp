@@ -34,18 +34,18 @@ void AttackManager::AddAttackCollider(const std::string& _name, std::weak_ptr<Co
 
 	//FFÝ’è
 	//ƒvƒŒƒCƒ„[–”‚Í“G‚Ì‚Ç‚¿‚ç‚©‚É“–‚½‚ç‚È‚¢‚æ‚¤‚É‚·‚é
-	if (_friendFire) {
-		for (auto& colTags : _col.lock()->GetTags()) {
-			if(colTags==Collider::COL_TAG::PLAYER){
-				_col.lock()->AddNoHitTag(Collider::COL_TAG::PLAYER);
-				break;
-			}
-			else if (colTags == Collider::COL_TAG::ENEMY) {
-				_col.lock()->AddNoHitTag(Collider::COL_TAG::ENEMY);
-				break;
-			}
-		}
-	}
+	//if (_friendFire) {
+	//	for (auto& colTags : _col.lock()->GetTags()) {
+	//		if(colTags==Collider::COL_TAG::PLAYER){
+	//			_col.lock()->AddHitTags(Collider::COL_TAG::PLAYER);
+	//			break;
+	//		}
+	//		else if (colTags == Collider::COL_TAG::ENEMY) {
+	//			_col.lock()->AddHitTags(Collider::COL_TAG::ENEMY);
+	//			break;
+	//		}
+	//	}
+	//}
 }
 
 void AttackManager::Attack(const std::string& _name, const std::string& _sndName)
@@ -66,7 +66,7 @@ void AttackManager::Attack(const std::string& _name, const std::string& _sndName
 	//UŒ‚”­¶
 	attackColliders_[_name].collider.lock()->SetUseThis(true);
 	//UŒ‚€”õ‚Ìƒ^ƒOÝ’è
-	attackColliders_[_name].collider.lock()->AddTag(Collider::COL_TAG::PREATTACK);
+	//attackColliders_[_name].collider.lock()->AddTag(Collider::COL_TAG::PREATTACK);
 	attackColliders_[_name].isUsed = true;
 	attackColliders_[_name].counter = 0.0f;
 	attackColliders_[_name].isAllert = false;
@@ -161,8 +161,8 @@ void AttackManager::UpdatePreAttack(const std::string& _name, AttackInfo& _info)
 		//UŒ‚ŠJŽnˆ—
 		auto atkCol = _info.collider.lock();
 		//€”õó‘Ô¨UŒ‚ó‘Ô‚Ö
-		atkCol->DeleteTag(Collider::COL_TAG::PREATTACK);
-		atkCol->AddTag(Collider::COL_TAG::ATTACK);
+		//atkCol->DeleteTag(Collider::COL_TAG::PREATTACK);
+		//atkCol->AddTag(Collider::COL_TAG::ATTACK);
 		updateAtk_[_name] = &AttackManager::UpdateAttack;
 	}
 }
@@ -173,7 +173,7 @@ void AttackManager::UpdateAttack(const std::string& _name, AttackInfo& _info)
 		//UŒ‚I—¹ˆ—
 		auto atkCol = _info.collider.lock();
 		atkCol->SetUseThis(false);
-		atkCol->DeleteTag(Collider::COL_TAG::ATTACK);
+		//atkCol->DeleteTag(Collider::COL_TAG::ATTACK);
 		_info.counter = 0.0f;
 		_info.isUsed = false;
 	}

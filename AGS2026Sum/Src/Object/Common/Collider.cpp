@@ -2,11 +2,11 @@
 #include"ActorBase.h"
 #include "Collider.h"
 
-Collider::Collider(ActorBase& _master, const std::set<COL_TAG> _tags, std::unique_ptr<Geometry> _geo, const std::set<COL_TAG> _noHitTags)
+Collider::Collider(ActorBase& _master, const COL_TAG _tag, std::unique_ptr<Geometry> _geo, const std::set<COL_TAG> _hitTags)
 	: master_(_master)
 	, geometry_(std::move(_geo))
-	, tags_(_tags)
-	, noHitTags_(_noHitTags)
+	, tag_(_tag)
+	, hitTags_(_hitTags)
 	, isCollision_(true)
 {
 }
@@ -17,52 +17,33 @@ Collider::~Collider(void)
 
 void Collider::OnHit(std::weak_ptr<Collider> _col)
 {
+	//死亡済み
+	if (isDead_)return;
+
+	//この当たり判定が当たった
+	isHit_ = true;
+
+	//親に相手のコライダを渡す
 	master_.HitCollider(_col);
+
+	//当たり判定が終わった
+	isHit_ = false;
 }
 
-void Collider::DeleteNoHitTag(const COL_TAG& _tag)
+void Collider::DeleteHitTags(const COL_TAG& _tag)
 {
 	//タグが存在しなかったら処理しない
-	if (!noHitTags_.contains(_tag))return;
-	noHitTags_.erase(_tag);
+	if (!hitTags_.contains(_tag))return;
+	hitTags_.erase(_tag);
 }
 
-const bool Collider::IsContainsAnyTag(const std::set<COL_TAG>& _tags)
-{
-	for (auto& tag : _tags) {
-		//あったら終了
-		if (tags_.contains(tag)) {
-			return true;
-		}
-	}
-	return false;
-}
-
-const bool Collider::IsContainsAllTag(const std::set<COL_TAG>& _tags)
-{
-	for (auto& tag : _tags) {
-		//一つでもなかったら終了
-		if (!tags_.contains(tag)) {
-			return false;
-		}
-	}
-	return true;
-}
-
-const bool Collider::IsContainsNoHitTag(const std::set<COL_TAG>& _tags)
+const bool Collider::IsContainsHitTags(const std::set<COL_TAG>& _tags)
 {
 	for (auto& tag : _tags) {
 		//ないものがあったら、そこで終了
-		if (!noHitTags_.contains(tag))return false;
+		if (!hitTags_.contains(tag))return false;
 	}
 	return true;
-}
-
-void Collider::DeleteTag(const COL_TAG& _tag)
-{
-	//タグが存在しなかったら処理しない
-	if (!tags_.contains(_tag))return;
-	tags_.erase(_tag);
 }
 
 void Collider::DrawDebugCollider(void)
@@ -73,29 +54,4 @@ void Collider::DrawDebugCollider(void)
 void Collider::SetMasterIsDraw(const bool _isDraw)
 {
 	master_.SetIsDraw(_isDraw);
-}
-
-void Collider::AddExternalVecToMaster(const VECTOR& _vec)
-{
-	master_.AddExternalVec(_vec);
-}
-
-const int Collider::GetMasterModelID(void) const
-{
-	return master_.GetModelID();
-}
-
-const float Collider::GetPower(void)const
-{
-	return master_.GetPower();
-}
-
-const float Collider::GetWeight(void)const
-{
-	return master_.GetWeight();
-}
-
-const std::wstring& Collider::GetMasterName(void)
-{
-	return master_.GetSpeciesName();
 }

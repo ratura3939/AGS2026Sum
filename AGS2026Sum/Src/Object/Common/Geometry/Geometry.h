@@ -48,6 +48,9 @@ public:
 	//親の回転を返す
 	inline const Quaternion& GetColRot(void)const { return quaRot_; }
 
+	//前判定用の半径を返す
+	inline const float GetBroudRadius(void)const { return broudRadius_; }
+
 	//当たった法線方向の取得
 	inline const VECTOR GetHitNormal(void)const { return hitResult_.normal; }
 
@@ -76,6 +79,7 @@ protected:
 	const VECTOR& pos_;			//親の座標
 	const VECTOR& movedPos_;	//親の移動後座標
 	const Quaternion& quaRot_;	//親の回転
+	float broudRadius_;			//親の前判定用半径
 
 	//当たった情報
 	HitResult hitResult_;
@@ -83,5 +87,5 @@ protected:
 	/// @brief コンストラクタ(外部で作る必要のない基底なのでprotected)
 	/// @param _pos 追従する親の座標
 	/// @param _rot 追従する親の回転
-	Geometry(const VECTOR& _pos, const VECTOR& _movedPos, const Quaternion& _rot);
+	Geometry(const VECTOR& _pos, const VECTOR& _movedPos, const Quaternion& _rot, const float _broudRadius);
 };
