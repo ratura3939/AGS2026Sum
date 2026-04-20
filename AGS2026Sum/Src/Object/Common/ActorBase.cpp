@@ -15,12 +15,8 @@ ActorBase::ActorBase(void)
 	, quaRotLocal_(Quaternion::Euler(Utility::VECTOR_ZERO))
 	, speciesName_(L"")
 	, power_(0.0f)
-	, weight_(0.0f)
 	, gravity_(Utility::VECTOR_ZERO)
-	, isActiveGravity_(true)
 	, prevPos_(Utility::VECTOR_ZERO)
-	, externalVec_(Utility::VECTOR_ZERO)
-	, isDraw_(true)
 {
 }
 
@@ -40,12 +36,8 @@ void ActorBase::Update(void)
 	//派生クラスの更新処理
 	DoUpdate();
 	//共通処理
-	pos_ = VAdd(pos_, externalVec_);
 	UpdateGravity();
 	UpdateRotQuat();
-
-	//外部影響のリセット
-	externalVec_ = Utility::VECTOR_ZERO;
 }
 
 const int ActorBase::GetModelID(void) const
@@ -103,19 +95,9 @@ const VECTOR& ActorBase::GetDir(const VECTOR& _vec) const
 	return quaRot_.PosAxis(_vec);
 }
 
-void ActorBase::AddExternalVec(const VECTOR& _vec)
-{
-	externalVec_ = VAdd(externalVec_, _vec);
-}
-
 const float ActorBase::GetPower(void) const
 {
 	return power_;
-}
-
-const float ActorBase::GetWeight(void) const
-{
-	return weight_;
 }
 
 const std::wstring& ActorBase::GetSpeciesName(void) const
@@ -150,9 +132,7 @@ void ActorBase::UpdateRotQuat(void)
 
 void ActorBase::UpdateGravity(void)
 {
-	if (isActiveGravity_) {
-		//重力処理
-		gravity_.y += GRAVITY_POW;
-		pos_ = VAdd(pos_, gravity_);
-	}
+	//重力処理
+	gravity_.y += GRAVITY_POW;
+	pos_ = VAdd(pos_, gravity_);
 }

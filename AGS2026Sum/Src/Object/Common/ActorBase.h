@@ -38,22 +38,10 @@ public:
 
 	//衝突後の処理
 	virtual void HitCollider(std::weak_ptr<Collider> _col) = 0;
-
-	//外部影響の追加
-	void AddExternalVec(const VECTOR& _vec);	
-
 	//攻撃力の取得
 	const float GetPower(void)const;
-
-	//重さの取得
-	const float GetWeight(void)const;
-
 	//個体名取得
 	const std::wstring& GetSpeciesName(void)const;
-
-	//描画設定
-	void SetIsDraw(const bool _isDraw) { isDraw_ = _isDraw; }
-	const bool GetIsDraw(void)const { return isDraw_; }
 
 protected:
 	//派生クラス用
@@ -69,14 +57,13 @@ protected:
 	VECTOR rot_;		//回転情報(XYZ)
 
 	//各情報の行列か
-	MATRIX matScl_;
-	MATRIX matRot_;
-	MATRIX matPos_;
+	MATRIX matScl_;		//大きさ
+	MATRIX matRot_;		//回転
+	MATRIX matPos_;		//位置
 
 	// 回転
 	Quaternion quaRot_;
 	Quaternion quaRotOrigin_;
-
 	// ローカル回転
 	Quaternion quaRotLocal_;
 #pragma endregion
@@ -86,15 +73,7 @@ protected:
 
 	std::shared_ptr<Collider> collider_;	//コライダー
 	float power_;			//攻撃力
-
-	float weight_;		//重さ
-
 	VECTOR gravity_;		//重力ベクトル
-	bool isActiveGravity_;	//重力が有効か
-
-	VECTOR externalVec_;	//外部の影響による移動量
-
-	bool isDraw_;		//描画するか
 
 private:
 	void UpdateRotQuat(void);	//基礎情報の更新
