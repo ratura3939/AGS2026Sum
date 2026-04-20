@@ -57,19 +57,19 @@ void PauseScene::Init(void)
 	VECTOR screenSize = { static_cast<float>(Application::SCREEN_SIZE_X),static_cast<float>(Application::SCREEN_SIZE_Y),0.0f };
 
 	//ゲームに戻る
-	uiM.Add(BACK_GAME_BTN, resM.Load(ResourceManager::SRC::BACK_GAME_BTN).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);
+	uiM.Add(BACK_GAME_BTN, resM.Load(ResourceManager::SRC::BACK_GAME_BTN).handleId_, UI_DIREC::NORMAL, UI_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(BACK_GAME_BTN, { screenSize.x / 2.0f,(screenSize.y / 2.0f) - BTN_SIZE,0.0f }, BTN_DRAW_SIZE);
 
 	//操作方法
-	uiM.Add(CHECK_CONFIG_BTN, resM.Load(ResourceManager::SRC::CHECK_CONFIG_IMG).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);
+	uiM.Add(CHECK_CONFIG_BTN, resM.Load(ResourceManager::SRC::CHECK_CONFIG_IMG).handleId_, UI_DIREC::NORMAL, UI_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(CHECK_CONFIG_BTN, { screenSize.x / 2.0f,(screenSize.y / 2.0f) - BTN_SIZE / 3.0f,0.0f }, BIG_BTN_DRAW_SIZE);
 
 	//操作切り替え
-	uiM.Add(SWITCH_OPE_BTN, resM.Load(ResourceManager::SRC::SWITCH_OPERATOR_IMG).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);
+	uiM.Add(SWITCH_OPE_BTN, resM.Load(ResourceManager::SRC::SWITCH_OPERATOR_IMG).handleId_, UI_DIREC::NORMAL, UI_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(SWITCH_OPE_BTN, { screenSize.x / 2.0f,(screenSize.y / 2.0f) + BTN_SIZE / 3.0f,0.0f }, BIG_BTN_DRAW_SIZE);
 
 	//タイトルに戻る
-	uiM.Add(BACK_TITLE_BTN, resM.Load(ResourceManager::SRC::STOP_GAME_BTN).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);
+	uiM.Add(BACK_TITLE_BTN, resM.Load(ResourceManager::SRC::STOP_GAME_BTN).handleId_, UI_DIREC::NORMAL, UI_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(BACK_TITLE_BTN, { screenSize.x / 2.0f,(screenSize.y / 2.0f) + BTN_SIZE,0.0f }, BTN_DRAW_SIZE);
 
 	//リスト制作

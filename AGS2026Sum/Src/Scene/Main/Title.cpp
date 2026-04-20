@@ -161,13 +161,13 @@ void Title::InitUI(void)
 	uiM.SetUIDirectionPram(UI_EXIT_STR, UI_GROUP::ZOOM, EXIT_EXTEND_ACC, EXIT_EXTEND_MAX, EXIT_EXTEND_MIN);
 
 	//タイトルロゴ
-	uiM.Add(UI_LOGO_STR, rsM.Load(ResourceManager::SRC::TITLE_LOGO).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);
+	uiM.Add(UI_LOGO_STR, rsM.Load(ResourceManager::SRC::TITLE_LOGO).handleId_, UI_DIREC::NORMAL, UI_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(UI_LOGO_STR, VECTOR(screenHX - LOGO_ALL_DIFF, screenHY - LOGO_ALL_DIFF + LOGO__ALL_MARGIN_Y, 0.0f), LOGO_NOMAL_EXTEND);
 	//サムネ用座標
 	//uiM.SetUIInfo(UI_LOGO_STR, VECTOR(screenHX-200.0f, screenHY, 0.0f), LOGO_NOMAL_EXTEND);
 
 	//タイトルロゴ(影絵)
-	uiM.Add(UI_SHADOWLOGO_STR, rsM.Load(ResourceManager::SRC::SHADOW_LOGO).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);
+	uiM.Add(UI_SHADOWLOGO_STR, rsM.Load(ResourceManager::SRC::SHADOW_LOGO).handleId_, UI_DIREC::NORMAL, UI_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(UI_SHADOWLOGO_STR, VECTOR(screenHX + LOGO_SHADOW_MARGIN_X, screenHY - LOGO_ALL_DIFF + LOGO__ALL_MARGIN_Y, 0.0f), LOGO_SHADOW_EXTEND);
 	//サムネ用座標
 	//uiM.SetUIInfo(UI_SHADOWLOGO_STR, VECTOR(screenHX + LOGO_SHADOW_MARGIN_X+300.0f, screenHY, 0.0f), LOGO_SHADOW_EXTEND);
@@ -179,7 +179,7 @@ void Title::InitUI(void)
 
 
 	//クリックして下さい
-	uiM.Add(UI_CLICK_STR, rsM.Load(ResourceManager::SRC::CLICK_STR_IMG).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);
+	uiM.Add(UI_CLICK_STR, rsM.Load(ResourceManager::SRC::CLICK_STR_IMG).handleId_, UI_DIREC::NORMAL, UI_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(UI_CLICK_STR, VECTOR(screenHX, screenHY + DEVICE_SIZE, 0.0f), ENTER_STR_EXTEND);
 }
 

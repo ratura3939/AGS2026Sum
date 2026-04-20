@@ -19,7 +19,7 @@ EffectManager::EffectManager(void) {
 
 }
 
-void EffectManager::Add(const std::string& _name, int _data)
+void EffectManager::Add(const EFFECT_NAME& _name, int _data)
 {
 	//連想配列内にすでに要素が入っているかを検索
 	//入っていたら処理終了
@@ -29,7 +29,7 @@ void EffectManager::Add(const std::string& _name, int _data)
 	effectRes_.emplace(_name, _data);
 }
 
-void EffectManager::Play(const std::string _master,const std::string& _name, const VECTOR& _pos, const Quaternion& _qua, const float& _size, const float& _speed, const std::string& _sndName)
+void EffectManager::Play(const std::string& _master,const EFFECT_NAME& _name, const VECTOR& _pos, const Quaternion& _qua, const float& _size, const float& _speed, const SoundManager::SOUND_NAME& _sndName)
 {
 	//元データがないときは警告
 	if (effectRes_.find(_name) == effectRes_.end())assert("設定していないエフェクトを再生しようとしています。");
@@ -49,12 +49,12 @@ void EffectManager::Play(const std::string _master,const std::string& _name, con
 	SyncEffect(_master, _name, _pos, _qua, _size, _speed, effectPlay_[_master][_name].size() - 1);
 
 	//効果音の再生
-		if (_sndName != "") {
+		if (_sndName != SoundManager::SOUND_NAME::MAX) {
 			SoundManager::GetInstance().Play(_sndName);
 		}
 }
 
-void EffectManager::Stop(const std::string _master,const std::string& _name)
+void EffectManager::Stop(const std::string& _master,const EFFECT_NAME& _name)
 {
 	//配列内に入っていないものを停止しようとしたら警告
 	if (effectPlay_.find(_master) == effectPlay_.end())assert("設定していないエフェクトを停止しようとしています。");
@@ -64,7 +64,7 @@ void EffectManager::Stop(const std::string _master,const std::string& _name)
 	}
 }
 
-void EffectManager::SyncEffect(const std::string _master,const std::string& _name, const VECTOR& _pos, const Quaternion& _qua, const float& _size, const float& _speed,const int _idx)
+void EffectManager::SyncEffect(const std::string& _master,const EFFECT_NAME& _name, const VECTOR& _pos, const Quaternion& _qua, const float& _size, const float& _speed,const int _idx)
 {
 	//その他各種設定
 	//大きさ
@@ -149,7 +149,7 @@ void EffectManager::Destroy(void)
 	delete instance_;
 }
 
-const bool EffectManager::IsEffectPlay(const std::string _master, const std::string& _name)
+const bool EffectManager::IsEffectPlay(const std::string& _master, const EFFECT_NAME& _name)
 {
 	//配列内に入っていないものを停止しようとしたら警告
 	if (effectPlay_.find(_master) == effectPlay_.end()) {

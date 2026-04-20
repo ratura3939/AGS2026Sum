@@ -16,7 +16,7 @@ SoundManager& SoundManager::GetInstance(void)
 }
 
 
-void SoundManager::Add(const TYPE _type, const std::string _name, const int _data, const int _interval)
+void SoundManager::Add(const TYPE& _type, const SOUND_NAME& _name, const int _data, const int _interval)
 {
 	//連想配列内にすでに要素が入っているかを検索
 	//入っていたら処理終了
@@ -37,7 +37,7 @@ void SoundManager::Add(const TYPE _type, const std::string _name, const int _dat
 	intervales_[_name] = _interval;
 }
 
-void SoundManager::Play(const std::string _name)
+void SoundManager::Play(const SOUND_NAME& _name)
 {
 	//元データがないときは警告
 	if (sounds_.find(_name) == sounds_.end())assert("設定していない音声を再生しようとしています。");
@@ -67,7 +67,7 @@ void SoundManager::Play(const std::string _name)
 	
 }
 
-void SoundManager::Stop(const std::string _name)
+void SoundManager::Stop(const SOUND_NAME& _name)
 {
 	//元データがないときは警告
 	if (sounds_.find(_name) == sounds_.end())assert("設定していない音声を停止しようとしています。");
@@ -79,7 +79,7 @@ void SoundManager::Stop(const std::string _name)
 void SoundManager::Update(void)
 {
 	//カウンタ満了保存用
-	std::vector<std::string>delteNames;
+	std::vector<SOUND_NAME>delteNames;
 
 	//カウンタ更新
 	for (auto& counter : counteres_) {
@@ -101,18 +101,18 @@ void SoundManager::Release(void)
 {
 	//配列要素善削除
 	sounds_.clear();
-	activeBgm_ = "";
+	activeBgm_ = SOUND_NAME::MAX;
 }
 
 
-void SoundManager::AdjustVolume(const std::string _name, const int _persent)
+void SoundManager::AdjustVolume(const SOUND_NAME& _name, const int _persent)
 {
 	//元データがないときは警告
 	if (sounds_.find(_name) == sounds_.end())assert("設定していない音声を設定しようとしています。");
 	ChangeVolumeSoundMem(VOLUME_BASIC * _persent, sounds_[_name].data);
 }
 
-void SoundManager::AdjustVolume(const TYPE _playType, const int _persent)
+void SoundManager::AdjustVolume(const TYPE& _playType, const int _persent)
 {
 	for (auto& info : sounds_) {
 		if (info.second.type == _playType) {

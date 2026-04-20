@@ -16,7 +16,7 @@ UIManager2d& UIManager2d::GetInstance(void)
 	return *instance_;
 }
 
-void UIManager2d::Add(const std::string& _name, const int _imgHndl, const UI_DIRECTION_2D _type, const UI_DRAW_DIMENSION _dimension)
+void UIManager2d::Add(const UI_NAME& _name, const int _imgHndl, const UI_DIRECTION_2D _type, const UI_DRAW_DIMENSION _dimension)
 {
 	//要素があるとき
 	if (direcInfoes_.contains(_name)) {
@@ -43,14 +43,14 @@ void UIManager2d::Add(const std::string& _name, const int _imgHndl, const UI_DIR
 	infoes_.emplace(_name, info);
 
 	//通常描画なら演出追加の必要はない
-	if (_type == UI_DIRECTION_2D::NOMAL)return;
+	if (_type == UI_DIRECTION_2D::NORMAL)return;
 
 	//演出処理の追加
 	PushUIDirection(_name, _type);
 	
 }
 
-void UIManager2d::DeleteUI(const std::string& _name)
+void UIManager2d::DeleteUI(const UI_NAME& _name)
 {
 	images_.erase(_name);
 	infoes_.erase(_name);
@@ -59,7 +59,7 @@ void UIManager2d::DeleteUI(const std::string& _name)
 	}
 }
 
-void UIManager2d::DeleteUI(const std::vector<std::string> _names)
+void UIManager2d::DeleteUI(const std::vector<UI_NAME>& _names)
 {
 	for (auto& name : _names) {
 		images_.erase(name);
@@ -70,7 +70,7 @@ void UIManager2d::DeleteUI(const std::vector<std::string> _names)
 	}
 }
 
-void UIManager2d::PushUIDirection(const std::string& _name, UI_DIRECTION_2D _type)
+void UIManager2d::PushUIDirection(const UI_NAME& _name, UI_DIRECTION_2D _type)
 {
 	//演出情報初期化
 	DirectionInfo direcInfo = {};
@@ -99,19 +99,19 @@ void UIManager2d::PushUIDirection(const std::string& _name, UI_DIRECTION_2D _typ
 	}
 }
 
-void UIManager2d::PopUIDirection(const std::string& _name)
+void UIManager2d::PopUIDirection(const UI_NAME& _name)
 {
 	updates_[_name].pop_back();
 	direcInfoes_[_name].pop_back();
 }
 
-void UIManager2d::PopUIDirection(const std::string& _name, UI_DIRECTION_GROUP _group)
+void UIManager2d::PopUIDirection(const UI_NAME& _name, UI_DIRECTION_GROUP _group)
 {
 	bool haveNomal = false;
 	int foundCnt_ = 0;
 	for (auto& direcInfo : direcInfoes_[_name]) {
 		if (GetDirectionGroup(direcInfo.type) == _group)break;
-		if (direcInfo.type == UI_DIRECTION_2D::NOMAL)haveNomal = true;
+		if (direcInfo.type == UI_DIRECTION_2D::NORMAL)haveNomal = true;
 		foundCnt_++;
 	}
 
@@ -120,7 +120,7 @@ void UIManager2d::PopUIDirection(const std::string& _name, UI_DIRECTION_GROUP _g
 	updates_[_name].erase(updates_[_name].begin() + foundCnt_);
 }
 
-void UIManager2d::SetUIInfo(const std::string& _name, const VECTOR _pos, const float _scale, const float _deg, const float _alpha)
+void UIManager2d::SetUIInfo(const UI_NAME& _name, const VECTOR _pos, const float _scale, const float _deg, const float _alpha)
 {
 	infoes_[_name].pos = _pos;
 	infoes_[_name].scl = _scale;
@@ -128,7 +128,7 @@ void UIManager2d::SetUIInfo(const std::string& _name, const VECTOR _pos, const f
 	infoes_[_name].alpha = _alpha;
 }
 
-void UIManager2d::SetUIDirectionPram(const std::string& _name, const UI_DIRECTION_GROUP _group, const float _acc, const float _max, const float _min)
+void UIManager2d::SetUIDirectionPram(const UI_NAME& _name, const UI_DIRECTION_GROUP _group, const float _acc, const float _max, const float _min)
 {
 	for (auto& info:direcInfoes_[_name]) {
 		
@@ -154,11 +154,11 @@ void UIManager2d::SetUIDirectionPram(const std::string& _name, const UI_DIRECTIO
 	
 }
 
-void UIManager2d::SetPos(const std::string& _name, const VECTOR& _pos)
+void UIManager2d::SetPos(const UI_NAME& _name, const VECTOR& _pos)
 {
 	//動きのエフェクトがあるかを検出
 	bool isMoveDirec = false;
-	UI_DIRECTION_2D moveType = UI_DIRECTION_2D::NOMAL;
+	UI_DIRECTION_2D moveType = UI_DIRECTION_2D::NORMAL;
 	for (auto& info : direcInfoes_[_name]) {
 		if (GetDirectionGroup(info.type) == UI_DIRECTION_GROUP::MOVE) {
 			isMoveDirec = true;
@@ -194,23 +194,23 @@ void UIManager2d::SetPos(const std::string& _name, const VECTOR& _pos)
 	
 }
 
-void UIManager2d::SetScale(const std::string& _name, const float& _scl)
+void UIManager2d::SetScale(const UI_NAME& _name, const float& _scl)
 {
 	infoes_[_name].scl = _scl;
 }
 
-void UIManager2d::SetAlpha(const std::string& _name, const float& _alpha)
+void UIManager2d::SetAlpha(const UI_NAME& _name, const float& _alpha)
 {
 	infoes_[_name].alpha = _alpha;
 }
 
-void UIManager2d::SetImage(const std::string& _name, const int _imageHndl)
+void UIManager2d::SetImage(const UI_NAME& _name, const int _imageHndl)
 {
 	//画像の差し替え
 	images_[_name] = _imageHndl;
 }
 
-void UIManager2d::Update(const std::string _name)
+void UIManager2d::Update(const UI_NAME& _name)
 {
 	int cnt = 0;
 	for (auto& update : updates_[_name]) {
@@ -219,7 +219,7 @@ void UIManager2d::Update(const std::string _name)
 	}
 }
 
-void UIManager2d::Update(const std::vector<std::string> _names)
+void UIManager2d::Update(const std::vector<UI_NAME>& _names)
 {
 	for (auto& name : _names) {
 		int cnt = 0;
@@ -230,7 +230,7 @@ void UIManager2d::Update(const std::vector<std::string> _names)
 	}
 }
 
-void UIManager2d::Draw(const std::string _name)
+void UIManager2d::Draw(const UI_NAME& _name)
 {
 	auto info = infoes_[_name];
 	//うっすら黒くする
@@ -245,7 +245,7 @@ void UIManager2d::Draw(const std::string _name)
 
 }
 
-void UIManager2d::Draw(const std::vector<std::string> _names)
+void UIManager2d::Draw(const std::vector<UI_NAME>& _names)
 {
 	for (auto& name : _names) {
 		Draw(name);	//単体描画に渡す。
@@ -266,7 +266,7 @@ void UIManager2d::Destroy(void)
 	delete instance_;
 }
 
-void UIManager2d::ResetUpdate(const std::string _name, const UI_DIRECTION_GROUP _group)
+void UIManager2d::ResetUpdate(const UI_NAME& _name, const UI_DIRECTION_GROUP _group)
 {
 	//更新の数分回す
 	for (auto& direction : direcInfoes_[_name]) {
@@ -278,7 +278,7 @@ void UIManager2d::ResetUpdate(const std::string _name, const UI_DIRECTION_GROUP 
 	}
 }
 
-const bool UIManager2d::IsFinishDirection(const std::string _name, const UI_DIRECTION_GROUP _group)
+const bool UIManager2d::IsFinishDirection(const UI_NAME& _name, const UI_DIRECTION_GROUP _group)
 {
 	//ループじゃないことが前提
 	if (!IsLoopUpdate(_name, _group)) 
@@ -296,7 +296,7 @@ const bool UIManager2d::IsFinishDirection(const std::string _name, const UI_DIRE
 	return false;
 }
 
-const bool UIManager2d::IsLoopUpdate(const std::string _name, const UI_DIRECTION_GROUP _group)
+const bool UIManager2d::IsLoopUpdate(const UI_NAME& _name, const UI_DIRECTION_GROUP _group)
 {
 	//情報分回す
 	for (auto& direction : direcInfoes_[_name]) {
@@ -316,23 +316,23 @@ const bool UIManager2d::IsLoopUpdate(const std::string _name, const UI_DIRECTION
 	return false;
 }
 
-const VECTOR UIManager2d::GetDrawPos(const std::string _name) const
+const VECTOR UIManager2d::GetDrawPos(const UI_NAME& _name) const
 {
 	return infoes_.at(_name).pos;
 }
 
-const float UIManager2d::GetDrawScale(const std::string _name) const
+const float UIManager2d::GetDrawScale(const UI_NAME& _name) const
 {
 	return infoes_.at(_name).scl;
 }
 
-const float UIManager2d::GetDrawAlpha(const std::string _name) const
+const float UIManager2d::GetDrawAlpha(const UI_NAME& _name) const
 {
 	return infoes_.at(_name).alpha;
 }
 
 
-const UIManager2d::UI_DIRECTION_GROUP UIManager2d::GetDirectionGroup(const std::string _name)
+const UIManager2d::UI_DIRECTION_GROUP UIManager2d::GetDirectionGroup(const UI_NAME& _name)
 {
 	return GetDirectionGroup(direcInfoes_[_name][0].type);
 }
@@ -370,7 +370,7 @@ const UIManager2d::UI_DIRECTION_GROUP UIManager2d::GetDirectionGroup(const UI_DI
 	return ret;
 }
 
-void UIManager2d::Move(const std::string& _name, DirectionInfo& _direcInfo)
+void UIManager2d::Move(const UI_NAME& _name, DirectionInfo& _direcInfo)
 {
 	VECTOR afterPos = infoes_[_name].pos;
 	auto direcType = _direcInfo.type;
@@ -435,7 +435,7 @@ void UIManager2d::Move(const std::string& _name, DirectionInfo& _direcInfo)
 	infoes_[_name].pos = afterPos;
 }
 
-void UIManager2d::Zoom(const std::string& _name, DirectionInfo& _direcInfo)
+void UIManager2d::Zoom(const UI_NAME& _name, DirectionInfo& _direcInfo)
 {
 	float afterScl = infoes_[_name].scl;
 	auto direcType = _direcInfo.type;
@@ -470,7 +470,7 @@ void UIManager2d::Zoom(const std::string& _name, DirectionInfo& _direcInfo)
 	infoes_[_name].scl = afterScl;
 }
 
-void UIManager2d::Rotation(const std::string& _name, DirectionInfo& _direcInfo)
+void UIManager2d::Rotation(const UI_NAME& _name, DirectionInfo& _direcInfo)
 {
 	float afterDeg = infoes_[_name].deg;
 	auto direcType = _direcInfo.type;
@@ -493,7 +493,7 @@ void UIManager2d::Rotation(const std::string& _name, DirectionInfo& _direcInfo)
 	infoes_[_name].deg = afterDeg;
 }
 
-void UIManager2d::AlphaAcc(const std::string& _name, DirectionInfo& _direcInfo)
+void UIManager2d::AlphaAcc(const UI_NAME& _name, DirectionInfo& _direcInfo)
 {
 	float afterAlpha = infoes_[_name].alpha;
 	auto direcType = _direcInfo.type;

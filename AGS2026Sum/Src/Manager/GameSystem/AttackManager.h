@@ -7,17 +7,24 @@
 #include<DxLib.h>
 #include"../../Common/Quaternion.h"
 #include"../../Object/Common/Collider.h"
+#include"../Decoration/SoundManager.h"
 
 class Arrow;
 
 class AttackManager
 {
 public:
+	enum class ATTACK_NAME {
+		P_SLASH		//斬攻撃（プレイヤー）
+		, MAX
+	};
+
 	//ジャストガード猶予
 	static constexpr float GRACE_JUST_GUARD = 20.0f;
 
 	struct AttackInfo {
 		std::weak_ptr<Collider> collider; //攻撃判定用コライダー
+		float power;		//攻撃力
 		float totalTime;	//総再生時間
 		float startTime;	//判定開始時間
 		float endTime;		//判定終了時間
@@ -35,23 +42,23 @@ public:
 	/// <param name="_totalTime">総所要時間</param>
 	/// <param name="_start">判定開始(常時判定するならば入れる必要なし)</param>
 	/// <param name="_end">判定終了(常時判定するならば入れる必要なし)</param>
-	void AddAttackCollider(const std::string& _name, std::weak_ptr<Collider> _col, const bool _friendFire,
+	void AddAttackCollider(const ATTACK_NAME& _name, std::weak_ptr<Collider> _col,const float _power, const bool _friendFire,
 		const float _totalTime, const float _start = 0.0f, const float _end = 0.0f);
 
 	/// <summary>
 	/// 攻撃情報削除
 	/// </summary>
 	/// <param name="_name"></param>
-	void DeleteAttackCollider(const std::string& _name);
+	void DeleteAttackCollider(const ATTACK_NAME& _name);
 
-	void DeleteCollider(const std::string& _name);
+	void DeleteCollider(const ATTACK_NAME& _name);
 
 	/// <summary>
 	/// 発生
 	/// </summary>
 	/// <param name="_name">登録名</param>
 	/// <param name="_sndName">再生する効果音</param>
-	void Attack(const std::string& _name, const std::string& _sndName = "");
+	void Attack(const ATTACK_NAME& _name, const SoundManager::SOUND_NAME& _sndName = SoundManager::SOUND_NAME::MAX);
 
 	bool Update(void);
 
@@ -60,26 +67,26 @@ public:
 	/// </summary>
 	/// <param name="_name">登録名</param>
 	/// <returns>時間</returns>
-	const float GetTotalTime(const std::string& _name)const;
+	const float GetTotalTime(const ATTACK_NAME& _name)const;
 
 	//警告を使用
-	void UseAllertCollision(const std::string& _name);
+	void UseAllertCollision(const ATTACK_NAME& _name);
 
 	//警告を行ったか取得
-	const bool IsAllert(const std::string& _name)const;
+	const bool IsAllert(const ATTACK_NAME& _name)const;
 
 	//攻撃の判定が使用されたとき
-	void UseAttackCollision(const std::string& _name);
+	void UseAttackCollision(const ATTACK_NAME& _name);
 
 	void DrawDebug(void);
 
 private:
-	void UpdatePreAttack(const std::string& _name, AttackInfo& _info);
-	void UpdateAttack(const std::string& _name, AttackInfo& _info);
+	void UpdatePreAttack(const ATTACK_NAME& _name, AttackInfo& _info);
+	void UpdateAttack(const ATTACK_NAME& _name, AttackInfo& _info);
 
-	using UpdateAttack_f = void(AttackManager::*)(const std::string& _name, AttackInfo&);
-	std::unordered_map<std::string, UpdateAttack_f> updateAtk_;
+	using UpdateAttack_f = void(AttackManager::*)(const ATTACK_NAME& _name, AttackInfo&);
+	std::unordered_map<ATTACK_NAME, UpdateAttack_f> updateAtk_;
 
-	std::unordered_map<std::string, AttackInfo> attackColliders_; //攻撃判定用コライダー
+	std::unordered_map<ATTACK_NAME, AttackInfo> attackColliders_; //攻撃判定用コライダー
 };
 

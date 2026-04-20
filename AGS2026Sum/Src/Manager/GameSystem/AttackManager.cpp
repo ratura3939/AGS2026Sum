@@ -3,7 +3,7 @@
 
 #include "AttackManager.h"
 
-void AttackManager::AddAttackCollider(const std::string& _name, std::weak_ptr<Collider> _col, const bool _friendFire, const float _totalTime, const float _start, const float _end)
+void AttackManager::AddAttackCollider(const ATTACK_NAME& _name, std::weak_ptr<Collider> _col, const float _power, const bool _friendFire, const float _totalTime, const float _start, const float _end)
 {
 	auto& adress = *this;
 
@@ -17,6 +17,7 @@ void AttackManager::AddAttackCollider(const std::string& _name, std::weak_ptr<Co
 	//UŒ‚—pƒRƒ‰ƒCƒ_[î•ñ‚ÌŠi”[
 	AttackInfo addInfo;
 	addInfo.collider = _col;
+	addInfo.power = _power;
 	addInfo.totalTime = _totalTime;
 	addInfo.startTime = _start;
 	addInfo.endTime = _end;
@@ -48,7 +49,7 @@ void AttackManager::AddAttackCollider(const std::string& _name, std::weak_ptr<Co
 	}
 }
 
-void AttackManager::Attack(const std::string& _name, const std::string& _sndName)
+void AttackManager::Attack(const ATTACK_NAME& _name, const SoundManager::SOUND_NAME& _sndName)
 {
 	//‚»‚à‚»‚àg—p‚µ‚½‚¢UŒ‚‚ª“o˜^‚³‚ê‚Ä‚¢‚È‚¢‚Æ‚«
 	if(!attackColliders_.contains(_name)){
@@ -75,19 +76,19 @@ void AttackManager::Attack(const std::string& _name, const std::string& _sndName
 	updateAtk_[_name] = &AttackManager::UpdatePreAttack;
 
 	//‰½‚©Ä¶‚·‚é•¨‚ª‚ ‚éê‡
-	if (_sndName != "") {
+	if (_sndName != SoundManager::SOUND_NAME::MAX) {
 		//Œø‰Ê‰¹‚ÌÄ¶
 		SoundManager::GetInstance().Play(_sndName);
 	}
 }
 
-void AttackManager::DeleteAttackCollider(const std::string& _name)
+void AttackManager::DeleteAttackCollider(const ATTACK_NAME& _name)
 {
 	attackColliders_.erase(_name);
 	updateAtk_.erase(_name);
 }
 
-void AttackManager::DeleteCollider(const std::string& _name)
+void AttackManager::DeleteCollider(const ATTACK_NAME& _name)
 {
 	attackColliders_.erase(_name);
 }
@@ -108,7 +109,7 @@ bool AttackManager::Update(void)
 	return true;
 }
 
-const float AttackManager::GetTotalTime(const std::string& _name) const
+const float AttackManager::GetTotalTime(const ATTACK_NAME& _name) const
 {
 	//—v‘f‚ª‚È‚¢‚Æ‚«
 	if (!attackColliders_.contains(_name)) {
@@ -117,17 +118,17 @@ const float AttackManager::GetTotalTime(const std::string& _name) const
 	return attackColliders_.at(_name).totalTime;
 }
 
-void AttackManager::UseAllertCollision(const std::string& _name)
+void AttackManager::UseAllertCollision(const ATTACK_NAME& _name)
 {
 	attackColliders_.at(_name).isAllert = true;
 }
 
-const bool AttackManager::IsAllert(const std::string& _name) const
+const bool AttackManager::IsAllert(const ATTACK_NAME& _name) const
 {
 	return attackColliders_.at(_name).isAllert;
 }
 
-void AttackManager::UseAttackCollision(const std::string& _name)
+void AttackManager::UseAttackCollision(const ATTACK_NAME& _name)
 {
 	attackColliders_.at(_name).collider.lock()->SetUseThis(false);
 	attackColliders_.at(_name).isUsed = false;
@@ -155,7 +156,7 @@ void AttackManager::DrawDebug(void)
 	
 }
 
-void AttackManager::UpdatePreAttack(const std::string& _name, AttackInfo& _info)
+void AttackManager::UpdatePreAttack(const ATTACK_NAME& _name, AttackInfo& _info)
 {
 	if (_info.counter >= _info.startTime) {
 		//UŒ‚ŠJnˆ—
@@ -167,7 +168,7 @@ void AttackManager::UpdatePreAttack(const std::string& _name, AttackInfo& _info)
 	}
 }
 
-void AttackManager::UpdateAttack(const std::string& _name, AttackInfo& _info)
+void AttackManager::UpdateAttack(const ATTACK_NAME& _name, AttackInfo& _info)
 {
 	if (_info.counter >= _info.endTime) {
 		//UŒ‚I—¹ˆ—

@@ -1,6 +1,5 @@
 #pragma once
 #include<unordered_map>
-#include<string>
 
 
 //Dxlib内に音声データを3D空間上に再生する処理がある
@@ -11,11 +10,18 @@
 class SoundManager
 {
 public:
+	//登録名
+	enum class SOUND_NAME {
+		TITLE_BGM
+		,MAX
+	};
+
 	//再生の種類分けするときに使う
 	enum class TYPE {
-		NONE,
-		BGM,
-		SE
+		NONE
+		,BGM
+		,SE
+		,MAX
 	};
 
 	struct SOUND_DATA
@@ -40,19 +46,19 @@ public:
 	/// <param name="_name">登録名</param>
 	/// <param name="_data">音のデータ</param>
 	/// <param name="_interval">再生間隔制限</param>
-	void Add(const TYPE _type, const std::string _name, const int _data, const int _interval = 0);
+	void Add(const TYPE& _type, const SOUND_NAME& _name, const int _data, const int _interval = 0);
 
 	/// <summary>
 	/// 音声データ
 	/// </summary>
 	/// <param name="_name">登録名</param>
-	void Play(const std::string _name);
+	void Play(const SOUND_NAME& _name);
 
 	/// <summary>
 	/// 停止処理
 	/// </summary>
 	/// <param name="_name">登録名</param>
-	void Stop(const std::string _name);
+	void Stop(const SOUND_NAME& _name);
 
 	//更新
 	void Update(void);
@@ -65,13 +71,13 @@ public:
 	/// </summary>
 	/// <param name="_name">登録名</param>
 	/// <param name="_persent">調整割合(0%～100%)</param>
-	void AdjustVolume(const std::string _name, const int _persent);
+	void AdjustVolume(const SOUND_NAME& _name, const int _persent);
 	/// <summary>
 	/// 音量調節
 	/// </summary>
 	/// <param name="_playType">調節対象(BGMorSE)</param>
 	/// <param name="_persent">調整割合(0%～100%)</param>
-	void AdjustVolume(const TYPE _playType, const int _persent);
+	void AdjustVolume(const TYPE& _playType, const int _persent);
 
 	/// <summary>
 	/// ピッチの調整(音の高さを設定する場合Addの前にこの処理を書くこと)
@@ -96,12 +102,12 @@ private:
 	static SoundManager* instance_;
 
 	//データ格納用
-	std::unordered_map<std::string, SOUND_DATA> sounds_;
-	std::string activeBgm_;
+	std::unordered_map<SOUND_NAME, SOUND_DATA> sounds_;
+	SOUND_NAME activeBgm_;
 
 	//再生間隔
-	std::unordered_map<std::string,int> intervales_;
-	std::unordered_map<std::string,int> counteres_;
+	std::unordered_map<SOUND_NAME,int> intervales_;
+	std::unordered_map<SOUND_NAME,int> counteres_;
 
 	bool isNoPlaySound_ = false;	//デバッグ用：再生不可フラグ
 
