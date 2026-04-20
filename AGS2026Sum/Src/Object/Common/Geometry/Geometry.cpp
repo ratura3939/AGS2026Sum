@@ -10,10 +10,11 @@ Geometry::~Geometry(void)
 {
 }
 
-Geometry::Geometry(const VECTOR& _pos, const VECTOR& _movedPos, const Quaternion& _rot)
+Geometry::Geometry(const VECTOR& _pos, const VECTOR& _movedPos, const Quaternion& _rot, const float _broudRadius)
 	: pos_(_pos), 
 	movedPos_(_movedPos),
-	quaRot_(_rot)
+	quaRot_(_rot),
+	broudRadius_(_broudRadius)
 {
 	hitResult_ = {};
 }

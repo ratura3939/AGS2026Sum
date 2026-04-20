@@ -11,8 +11,8 @@
 //箱
 //***************************************************
 
-Cube::Cube(const VECTOR& _pos, const VECTOR& _movedPos, const Quaternion& _rot, const VECTOR _min, const VECTOR _max)
-	: Geometry(_pos, _movedPos, _rot)
+Cube::Cube(const VECTOR& _pos, const VECTOR& _movedPos, const Quaternion& _rot, const float _broudRadius, const VECTOR _min, const VECTOR _max)
+	: Geometry(_pos, _movedPos, _rot, _broudRadius)
 {
 	obb_.vMin = _min;
 	obb_.vMax = _max;
@@ -21,8 +21,8 @@ Cube::Cube(const VECTOR& _pos, const VECTOR& _movedPos, const Quaternion& _rot, 
 	UpdateObbAxis();
 }
 
-Cube::Cube(const VECTOR& _pos, const VECTOR& _movedPos, const Quaternion& _rot, const VECTOR _halfSize)
-	: Geometry(_pos, _movedPos, _rot)
+Cube::Cube(const VECTOR& _pos, const VECTOR& _movedPos, const Quaternion& _rot, const float _broudRadius, const VECTOR _halfSize)
+	: Geometry(_pos, _movedPos, _rot, _broudRadius)
 {
 	obb_.vMin = VScale(_halfSize, -1.0f);
 	obb_.vMax = _halfSize;
@@ -32,7 +32,7 @@ Cube::Cube(const VECTOR& _pos, const VECTOR& _movedPos, const Quaternion& _rot, 
 }
 
 Cube::Cube(const Cube& _copyBase)
-	: Geometry(_copyBase.GetColPos(), _copyBase.GetColMovedPos(), _copyBase.GetColRot()),
+	: Geometry(_copyBase.GetColPos(), _copyBase.GetColMovedPos(), _copyBase.GetColRot(),_copyBase.GetBroudRadius()),
 	obb_(_copyBase.GetObb())
 {
 	UpdateObbAxis();

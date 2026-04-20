@@ -13,7 +13,7 @@ public:
 	/// @param _localPosTop 上側の相対座標
 	/// @param _localPosDown 下側の相対座標
 	/// @param _radius 半径
-	Capsule(const VECTOR& _pos, const VECTOR& _movedPos, const Quaternion& _rot, const VECTOR _localPosTop, const VECTOR _localPosDown, const float _radius);
+	Capsule(const VECTOR& _pos, const VECTOR& _movedPos, const Quaternion& _rot, const float _broudRadius, const VECTOR _localPosTop, const VECTOR _localPosDown, const float _radius);
 	
 	/// @brief コピーコンストラクタ
 	/// @param _copyBase コピー元

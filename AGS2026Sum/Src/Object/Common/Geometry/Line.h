@@ -11,7 +11,7 @@ public:
 	/// @param _rot 追従する親の回転
 	/// @param _localPosPoint1 1つ目の点の座標
 	/// @param _localPosPoint2 2つ目の点の座標
-	Line(const VECTOR& _pos, const VECTOR& _movedPos, const Quaternion& _rot, const VECTOR& _localPosPoint1, const VECTOR& _localPosPoint2);
+	Line(const VECTOR& _pos, const VECTOR& _movedPos, const Quaternion& _rot, const float _broudRadius, const VECTOR& _localPosPoint1, const VECTOR& _localPosPoint2);
 
 	/// @brief コピーコンストラクタ
 	/// @param _copyBase コピー元
