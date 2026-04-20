@@ -36,9 +36,6 @@ namespace {
 	const int CAMERA_SHAKE_NUM = 3;				//カメラ演出における振動回数
 	const int CAMERA_SHAKE_COOL_TIME = 40;		//振動のクールタイム
 	
-
-	const std::string MENU_BTN = "menuBtn";
-	const std::string WARNING_STR_IMG = "WarningImg";
 	const float BTN_EX = 0.6f;
 	const int BTN_DIFF_X = 300;
 	const int BTN_DIFF_Y = 100;
@@ -121,14 +118,9 @@ void Game::Init(void)
 
 	auto& uiM = UIManager2d::GetInstance();
 
-	//「WARNING」画像
-	uiM.Add(WARNING_STR_IMG, rsM.Load(ResourceManager::SRC::WARNING_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::FLASHING, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
-	uiM.SetUIInfo(WARNING_STR_IMG, VECTOR{static_cast<float>(Application::SCREEN_SIZE_X)/2.0f,static_cast<float>(Application::SCREEN_SIZE_Y) / 2.0f,0.0f });
-	uiM.SetUIDirectionPram(WARNING_STR_IMG, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, 10.0f, 255.0f, 0.0f);
-
 	//メニューボタン
-	uiM.Add(MENU_BTN, rsM.Load(ResourceManager::SRC::MENU_BTN).handleId_, UIManager2d::UI_DIRECTION_2D::NORMAL, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
-	uiM.SetUIInfo(MENU_BTN, VECTOR{ static_cast<float>(Application::SCREEN_SIZE_X - BTN_DIFF_X),static_cast<float>(Application::SCREEN_SIZE_Y - BTN_DIFF_Y),0.0f }, BTN_EX);
+	//uiM.Add(MENU_BTN, rsM.Load(ResourceManager::SRC::MENU_BTN).handleId_, UIManager2d::UI_DIRECTION_2D::NORMAL, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
+	//uiM.SetUIInfo(MENU_BTN, VECTOR{ static_cast<float>(Application::SCREEN_SIZE_X - BTN_DIFF_X),static_cast<float>(Application::SCREEN_SIZE_Y - BTN_DIFF_Y),0.0f }, BTN_EX);
 }
 
 void Game::InitSound(void)
@@ -136,69 +128,17 @@ void Game::InitSound(void)
 	ResourceManager& rsM = ResourceManager::GetInstance();
 	SoundManager& sndM = SoundManager::GetInstance();
 
+	using SND_TYPE = SoundManager::TYPE;
+	using SND_NAME = SoundManager::SOUND_NAME;
+
 	//BGM
-	sndM.Add(SoundManager::TYPE::BGM, "NomalBgm",
+	sndM.Add(SND_TYPE::BGM, SND_NAME::GAME_NORMAL_BGM,
 		rsM.Load(ResourceManager::SRC::GAME_BGM).handleId_);
-	//バトルBGM
-	sndM.Add(SoundManager::TYPE::BGM, "BattleBgm",
-		rsM.Load(ResourceManager::SRC::BATTLE_BGM).handleId_);
-
-	//バトルBGM
-	sndM.Add(SoundManager::TYPE::BGM, "BossBgm",
-		rsM.Load(ResourceManager::SRC::BOSS_BGM).handleId_);
-
-	//警告音
-	sndM.Add(SoundManager::TYPE::BGM, "WarningBgm",
-		rsM.Load(ResourceManager::SRC::WARNING_BGM).handleId_);
 
 	//初手は普通のBGM
-	sndM.Play("NomalBgm");
+	sndM.Play(SND_NAME::GAME_NORMAL_BGM);
 	nowBgmStr_ = "NomalBgm";
 	switchBgmStr_ = "BattleBgm";
-
-	//SE
-	//歩く
-	sndM.Add(SoundManager::TYPE::SE, "Walk",
-		rsM.Load(ResourceManager::SRC::WALK_SE).handleId_,20);
-	sndM.AdjustVolume("Walk",60);
-
-	//走る
-	sndM.Add(SoundManager::TYPE::SE, "Dush",
-		rsM.Load(ResourceManager::SRC::RUN_SE).handleId_,10);
-	sndM.AdjustVolume("Dush", 60);
-
-	//剣を振る
-	sndM.Add(SoundManager::TYPE::SE, "SwingSword",
-		rsM.Load(ResourceManager::SRC::SWING_SWORD_SE).handleId_);
-	//ロックオン
-	sndM.Add(SoundManager::TYPE::SE, "RockOn",
-		rsM.Load(ResourceManager::SRC::LOCK_ON_SE).handleId_);
-	//プレイヤーを発見
-	sndM.Add(SoundManager::TYPE::SE, "FindPlayer",
-		rsM.Load(ResourceManager::SRC::FIND_PLAYER_SE).handleId_);
-	//ダメージ
-	sndM.Add(SoundManager::TYPE::SE, "Damage",
-		rsM.Load(ResourceManager::SRC::DAMAGE_SE).handleId_);
-
-	//ボス足音
-	sndM.Add(SoundManager::TYPE::SE, "Impact",
-		rsM.Load(ResourceManager::SRC::BOSS_IMPACT_SE).handleId_);
-	sndM.AdjustVolume("Impact", 60);
-
-	//攻撃警告音
-	sndM.Add(SoundManager::TYPE::SE, "Allert",
-		rsM.Load(ResourceManager::SRC::ATK_ALLERT_SE).handleId_);
-
-	//回避音
-	sndM.Add(SoundManager::TYPE::SE, "Dodge",
-		rsM.Load(ResourceManager::SRC::DODGE_SE).handleId_);
-	sndM.AdjustVolume("Dodge", 45);
-
-	//ジャスト回避音
-	sndM.Add(SoundManager::TYPE::SE, "JustDodge",
-		rsM.Load(ResourceManager::SRC::JUST_DODGE_SE).handleId_);
-	sndM.AdjustVolume("JustDodge", 80);
-
 }
 
 void Game::InitEffect(void)
@@ -207,11 +147,7 @@ void Game::InitEffect(void)
 	EffectManager& efcM = EffectManager::GetInstance();
 
 	//剣
-	efcM.Add("Sword", rsM.Load(ResourceManager::SRC::SWORD_EFC).handleId_);
-	//ダメージ
-	efcM.Add("Damage", rsM.Load(ResourceManager::SRC::DAMAGE_EFC).handleId_);
-	//攻撃チャージ
-	efcM.Add("Charge", rsM.Load(ResourceManager::SRC::CHARGE_ATK_EFC).handleId_);
+	//efcM.Add(EffectManager::EFFECT_NAME, rsM.Load(ResourceManager::SRC::SWORD_EFC).handleId_);
 }
 
 void Game::InitShader(void)
@@ -379,8 +315,8 @@ void Game::GameUpdate(void)
 	if (switchBgm_) {
 		//音量調整に加算
 		nextBgmVol_ += BGM_VOL_ACC;
-		sndM.AdjustVolume(switchBgmStr_, nextBgmVol_);			//次のBGMは音量をあげる
-		sndM.AdjustVolume(nowBgmStr_, (BGM_VOL_MAX - nextBgmVol_));	//現在のBGMは音量を下げる
+		//sndM.AdjustVolume(switchBgmStr_(SOUND_NAME), nextBgmVol_);			//次のBGMは音量をあげる
+		//sndM.AdjustVolume(nowBgmStr_(SOUND_NAME), (BGM_VOL_MAX - nextBgmVol_));	//現在のBGMは音量を下げる
 
 		//もしボリュームが最大値以上なら
 		if (nextBgmVol_ >= BGM_VOL_MAX) {
@@ -519,7 +455,7 @@ bool Game::DirectionShakeScreen(void)
 
 void Game::DoShake(void)
 {
-	SoundManager::GetInstance().Play("Impact");	//効果音再生
+	//oundManager::GetInstance().Play("Impact");	//効果音再生
 	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::SHAKE);	//揺らす
 }
 
@@ -560,11 +496,6 @@ void Game::Draw(void)
 {
 	enemy_->Draw();
 	player_->Draw();
-
-	//メニューボタンの表示
-	UIManager2d::GetInstance().Draw(MENU_BTN);
-
-	//DrawDebug();
 
 	//ポストエフェクトをかけるとき
 	if (isDrawPostEffect_) {
@@ -633,8 +564,7 @@ void Game::Release(void)
 	player_->Release();
 	enemy_->Release();
 	SoundManager& sndM = SoundManager::GetInstance();
-	sndM.Stop("NomalBgm");	//今まで流していたものを停止
-	sndM.Stop("BattleBgm");	//今まで流していたものを停止
+	sndM.Stop(SoundManager::SOUND_NAME::GAME_NORMAL_BGM);	//今まで流していたものを停止\
 	CollisionManager::GetInstance().DeleteAllCollider();
 }
 
@@ -652,9 +582,9 @@ void Game::StartBossFaze(void)
 	SoundManager& sndM = SoundManager::GetInstance();
 	ChangeActionDirec(ACTION_DIRECTION::SCAN_LINE);
 
-	sndM.Stop("NomalBgm");	//今まで流していたものを停止
-	sndM.Stop("BattleBgm");	//今まで流していたものを停止
-	sndM.Play("WarningBgm");//警告音流す
+	//sndM.Stop("NomalBgm");	//今まで流していたものを停止
+	//sndM.Stop("BattleBgm");	//今まで流していたものを停止
+	//sndM.Play("WarningBgm");//警告音流す
 
 	//演出初期設定
 	direcState_ = BOSS_DIRECTION::POST_EFFECT;
@@ -696,9 +626,9 @@ void Game::FinishSwitchBgm(void)
 	SoundManager& sndM = SoundManager::GetInstance();
 	//切り換え終了
 	switchBgm_ = false;
-	sndM.AdjustVolume(switchBgmStr_, nextBgmVol_);
-	//今まで流していたものを停止
-	sndM.Stop(nowBgmStr_);	
+	//sndM.AdjustVolume(switchBgmStr_, nextBgmVol_);
+	////今まで流していたものを停止
+	//sndM.Stop(nowBgmStr_);	
 	//現在のBGM名と切り替え後のBGM名の切り換え
 	auto ret = nowBgmStr_;
 	nowBgmStr_ = switchBgmStr_;

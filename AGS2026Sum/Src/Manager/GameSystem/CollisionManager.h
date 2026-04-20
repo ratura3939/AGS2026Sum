@@ -26,8 +26,8 @@ public:
 
 	//攻撃マネージャとの連携
 	void SetAttackManager(const std::weak_ptr<AttackManager>& _atkMng) { atkMng_ = _atkMng; }
-	void UseAllert(const std::string& _atkName);
-	void UseAttack(const std::string& _atkName);
+	void UseAllert(const AttackManager::ATTACK_NAME& _atkName);
+	void UseAttack(const AttackManager::ATTACK_NAME& _atkName);
 
 	void Reset(void);
 

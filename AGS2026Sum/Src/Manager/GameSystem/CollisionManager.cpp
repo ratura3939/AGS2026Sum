@@ -108,12 +108,12 @@ void CollisionManager::UpdateColliders(void)
 	DeleteCollider();
 }
 
-void CollisionManager::UseAllert(const std::string& _atkName)
+void CollisionManager::UseAllert(const AttackManager::ATTACK_NAME& _atkName)
 {
 	atkMng_.lock()->UseAllertCollision(_atkName);
 }
 
-void CollisionManager::UseAttack(const std::string& _atkName)
+void CollisionManager::UseAttack(const AttackManager::ATTACK_NAME& _atkName)
 {
 	atkMng_.lock()->UseAttackCollision(_atkName);
 }

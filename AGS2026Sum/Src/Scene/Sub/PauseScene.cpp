@@ -11,14 +11,6 @@
 
 //ローカル定数
 namespace {
-#pragma region UI登録名
-	std::string BACK_TITLE_BTN = "BackTitle_PauseScene";
-	std::string BACK_GAME_BTN = "BackGame_PauseScene";
-	std::string CHECK_CONFIG_BTN = "Config_PauseScene";
-	std::string SWITCH_OPE_BTN = "SwitchCntl_PauseScene";
-	std::string RIGHT_ARROW = "Arrow_PauseScene";
-#pragma endregion
-
 #pragma region 画像調整用
 	const float BTN_SIZE = 256.0f;			//元画像大きさ
 	const float BTN_DRAW_SIZE = 0.6f;		//ボタン(ゲームに戻る・タイトルに戻る)を描画するときの大きさ倍率
@@ -55,30 +47,6 @@ void PauseScene::Init(void)
 	using UI_DIMENSION = UIManager2d::UI_DRAW_DIMENSION;
 
 	VECTOR screenSize = { static_cast<float>(Application::SCREEN_SIZE_X),static_cast<float>(Application::SCREEN_SIZE_Y),0.0f };
-
-	//ゲームに戻る
-	uiM.Add(BACK_GAME_BTN, resM.Load(ResourceManager::SRC::BACK_GAME_BTN).handleId_, UI_DIREC::NORMAL, UI_DIMENSION::DIMENSION_2);
-	uiM.SetUIInfo(BACK_GAME_BTN, { screenSize.x / 2.0f,(screenSize.y / 2.0f) - BTN_SIZE,0.0f }, BTN_DRAW_SIZE);
-
-	//操作方法
-	uiM.Add(CHECK_CONFIG_BTN, resM.Load(ResourceManager::SRC::CHECK_CONFIG_IMG).handleId_, UI_DIREC::NORMAL, UI_DIMENSION::DIMENSION_2);
-	uiM.SetUIInfo(CHECK_CONFIG_BTN, { screenSize.x / 2.0f,(screenSize.y / 2.0f) - BTN_SIZE / 3.0f,0.0f }, BIG_BTN_DRAW_SIZE);
-
-	//操作切り替え
-	uiM.Add(SWITCH_OPE_BTN, resM.Load(ResourceManager::SRC::SWITCH_OPERATOR_IMG).handleId_, UI_DIREC::NORMAL, UI_DIMENSION::DIMENSION_2);
-	uiM.SetUIInfo(SWITCH_OPE_BTN, { screenSize.x / 2.0f,(screenSize.y / 2.0f) + BTN_SIZE / 3.0f,0.0f }, BIG_BTN_DRAW_SIZE);
-
-	//タイトルに戻る
-	uiM.Add(BACK_TITLE_BTN, resM.Load(ResourceManager::SRC::STOP_GAME_BTN).handleId_, UI_DIREC::NORMAL, UI_DIMENSION::DIMENSION_2);
-	uiM.SetUIInfo(BACK_TITLE_BTN, { screenSize.x / 2.0f,(screenSize.y / 2.0f) + BTN_SIZE,0.0f }, BTN_DRAW_SIZE);
-
-	//リスト制作
-	drawBtnList_ = { BACK_GAME_BTN, CHECK_CONFIG_BTN, SWITCH_OPE_BTN, BACK_TITLE_BTN };
-
-	//矢印
-	uiM.Add(RIGHT_ARROW, resM.Load(ResourceManager::SRC::ARROW_DOWN_IMG).handleId_, UI_DIREC::LEFT_RIGHT, UI_DIMENSION::DIMENSION_2);
-	uiM.SetUIInfo(RIGHT_ARROW, GetDrawPosOfArrow(), BTN_DRAW_SIZE, ARROW_LOCAL_ROT);
-	uiM.SetUIDirectionPram(RIGHT_ARROW, UI_GROUP::MOVE, ARROW_ACC, ARROW_MOVE_MAX, ARROW_MOVE_MIN);
 	
 	//演出初期化
 	InitSound();
@@ -101,7 +69,7 @@ void PauseScene::Update(void)
 	InputUser();
 
 	//UI更新
-	UIManager2d::GetInstance().Update(RIGHT_ARROW);
+	//UIManager2d::GetInstance().Update(RIGHT_ARROW);
 }
 
 void PauseScene::InputUser(void)
@@ -151,7 +119,7 @@ void PauseScene::InputUser(void)
 		selectIdx_ = (selectIdx_ + drawBtnList_.size()) % drawBtnList_.size();
 
 		//矢印の描画位置設定
-		UIManager2d::GetInstance().SetPos(RIGHT_ARROW, GetDrawPosOfArrow());
+		//UIManager2d::GetInstance().SetPos(RIGHT_ARROW, GetDrawPosOfArrow());
 	}
 	//下入力
 	else if (inpM.IsTrigerrDown(COMMAND::DOWN,false)) {
@@ -160,7 +128,7 @@ void PauseScene::InputUser(void)
 		selectIdx_ = selectIdx_ % drawBtnList_.size();
 
 		//矢印の描画位置設定
-		UIManager2d::GetInstance().SetPos(RIGHT_ARROW, GetDrawPosOfArrow());
+		//UIManager2d::GetInstance().SetPos(RIGHT_ARROW, GetDrawPosOfArrow());
 	}
 }
 
@@ -172,12 +140,6 @@ void PauseScene::Draw(void)
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 / 2);
 	DrawBox(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
-	//ボタンの描画
-	uiM.Draw(drawBtnList_);
-
-	//→矢印の描画
-	uiM.Draw(RIGHT_ARROW);
 }
 
 void PauseScene::Release(void)
@@ -195,9 +157,11 @@ void PauseScene::Reset(void)
 
 const VECTOR PauseScene::GetDrawPosOfArrow(void) const
 {
-	//選択されているボタンの位置
-	VECTOR arrowPos = UIManager2d::GetInstance().GetDrawPos(drawBtnList_[selectIdx_]);
-	//描画位置はボタンの左側(差分を足す)
-	arrowPos.x += ARRW_DIFF_X;
-	return arrowPos;
+	////選択されているボタンの位置
+	//VECTOR arrowPos = UIManager2d::GetInstance().GetDrawPos(drawBtnList_[selectIdx_]);
+	////描画位置はボタンの左側(差分を足す)
+	//arrowPos.x += ARRW_DIFF_X;
+	//return arrowPos;
+
+	return Utility::VECTOR_ONE;
 }

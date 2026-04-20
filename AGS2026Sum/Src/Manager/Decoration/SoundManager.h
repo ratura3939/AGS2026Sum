@@ -13,6 +13,9 @@ public:
 	//“o˜^–¼
 	enum class SOUND_NAME {
 		TITLE_BGM
+		,GAME_NORMAL_BGM
+		,GAME_BATTLE_BGM
+		,GAME_BOSS_BGM
 		,MAX
 	};
 
