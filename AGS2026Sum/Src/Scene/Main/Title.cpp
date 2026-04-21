@@ -92,8 +92,8 @@ void Title::Init(void)
 	SceneManager::GetInstance().SetController(SceneManager::CNTL::NONE);
 
 	// É^ÉCÉgÉãÉçÉS
-	deviceImgs_[static_cast<int>(DEVICE::KEY)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::KEYBOARD_IMG).handleId_;
-	deviceImgs_[static_cast<int>(DEVICE::PAD)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::PAD_IMG).handleId_;
+	//deviceImgs_[static_cast<int>(DEVICE::KEY)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::KEYBOARD_IMG).handleId_;
+	//deviceImgs_[static_cast<int>(DEVICE::PAD)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::PAD_IMG).handleId_;
 
 	//UIèâä˙âª
 	InitUI();
@@ -139,10 +139,10 @@ void Title::InitSound(void)
 	SoundManager& sndM = SoundManager::GetInstance();
 
 	//BGM
-	sndM.Add(SoundManager::TYPE::BGM, SoundManager::SOUND_NAME::TITLE_BGM,
-		rsM.Load(ResourceManager::SRC::TITLE_BGM).handleId_);
-	//BGMçƒê∂
-	sndM.Play(SoundManager::SOUND_NAME::TITLE_BGM);
+	//sndM.Add(SoundManager::TYPE::BGM, SoundManager::SOUND_NAME::TITLE_BGM,
+	//	rsM.Load(ResourceManager::SRC::TITLE_BGM).handleId_);
+	////BGMçƒê∂
+	//sndM.Play(SoundManager::SOUND_NAME::TITLE_BGM);
 }
 
 void Title::InitEffect(void)

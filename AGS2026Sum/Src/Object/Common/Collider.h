@@ -15,6 +15,7 @@ public:
 	enum class COL_TAG
 	{
 		OBJECT
+		,ENEMY
 		,MAX
 	};
 

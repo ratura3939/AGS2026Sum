@@ -13,6 +13,7 @@ public:
 	ActorBase(void);
 	virtual ~ActorBase(void);
 
+	virtual void Load(void) = 0;
 	void Init(void);
 	void Update(void);
 	virtual void Draw(void) = 0;
@@ -52,6 +53,7 @@ protected:
 	int modelId_;		//モデルID
 
 	VECTOR pos_;		//座標
+	VECTOR movedPos_;	//移動後座標
 	VECTOR prevPos_;	//前フレームの座標
 	VECTOR scl_;		//モデル大きさ
 	VECTOR rot_;		//回転情報(XYZ)
