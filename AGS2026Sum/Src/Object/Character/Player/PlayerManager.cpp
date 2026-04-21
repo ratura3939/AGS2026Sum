@@ -1,0 +1,61 @@
+#include"../../pch.h"
+#include"../../../Manager/Generic/InputManager.h"
+#include"../../../Manager/Generic/SceneManager.h"
+#include"../../../Manager/Generic/Camera.h"
+#include"../../../Manager/Decoration/SoundManager.h"
+#include"../../../Manager/GameSystem/AttackManager.h"
+#include"../../../Scene/Main/Game.h"
+#include"../../../Utility/Utility.h"
+#include"PlayerChara.h"
+#include "PlayerManager.h"
+
+PlayerManager::PlayerManager(Game& _gameScene)
+	:scene_(_gameScene)
+	,character_(std::make_shared<PlayerChara>())
+{
+}
+
+PlayerManager::~PlayerManager(void)
+{
+}
+
+void PlayerManager::Init(void)
+{
+	character_->Init();		//キャラクターの初期化
+	//攻撃の登録
+}
+
+void PlayerManager::Update(AttackManager& _atk)
+{
+	character_->Update();	//キャラクターの更新
+}
+
+void PlayerManager::Draw(void)
+{
+	character_->Draw();		//キャラクターの描画
+}
+
+void PlayerManager::Release(void)
+{
+	character_->Release();	//キャラクターの解放
+}
+
+const VECTOR& PlayerManager::GetPos(void) const
+{
+	return character_->GetPos();
+}
+
+void PlayerManager::UserInput(void)
+{
+	InputManager& ins = InputManager::GetInstance();
+
+#pragma region 移動
+	auto moveVec = ins.GetMoveInput();	//LS・WASDの移動入力を取得
+
+	//入力がある場合
+	if (moveVec.x != 0.0f || moveVec.y != 0.0f) {
+		character_->InputMoveVec(VECTOR(moveVec.x, moveVec.y, 0.0f));	//移動方向をキャラクターに渡す
+	}
+#pragma endregion
+
+}

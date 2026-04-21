@@ -48,7 +48,7 @@
     <ClCompile Include="Src\Manager\GameSystem\EnemyManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Manager\GameSystem\PlayerManager.cpp">
+    <ClCompile Include="Src\Object\Character\Player\PlayerManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Manager\Generic\Camera.cpp">
@@ -173,7 +173,7 @@
     <ClInclude Include="Src\Manager\GameSystem\EnemyManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Manager\GameSystem\PlayerManager.h">
+    <ClInclude Include="Src\Object\Character\Player\PlayerManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Manager\Generic\Camera.h">

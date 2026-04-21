@@ -155,7 +155,7 @@
     <ClCompile Include="Src\Manager\GameSystem\AttackManager.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\CollisionManager.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\EnemyManager.cpp" />
-    <ClCompile Include="Src\Manager\GameSystem\PlayerManager.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerManager.cpp" />
     <ClCompile Include="Src\Manager\Generic\Camera.cpp" />
     <ClCompile Include="Src\Manager\Generic\CameraCollider.cpp" />
     <ClCompile Include="Src\Manager\Generic\InputManager.cpp" />
@@ -203,7 +203,7 @@
     <ClInclude Include="Src\Manager\GameSystem\AttackManager.h" />
     <ClInclude Include="Src\Manager\GameSystem\CollisionManager.h" />
     <ClInclude Include="Src\Manager\GameSystem\EnemyManager.h" />
-    <ClInclude Include="Src\Manager\GameSystem\PlayerManager.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerManager.h" />
     <ClInclude Include="Src\Manager\Generic\Camera.h" />
     <ClInclude Include="Src\Manager\Generic\CameraCollider.h" />
     <ClInclude Include="Src\Manager\Generic\InputManager.h" />
