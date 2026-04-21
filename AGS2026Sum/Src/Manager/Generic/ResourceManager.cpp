@@ -29,9 +29,7 @@ void ResourceManager::Init(SceneManager::SCENE_ID _scene)
 		break;
 	case SceneManager::SCENE_ID::GAME:
 		InitGame();
-		InitPouse();
-		InitKeyConfig();
-		InitSwitchCntl();
+		InitPause();
 		break;
 	case SceneManager::SCENE_ID::GAMEOVER:
 		InitGameOver();
@@ -57,6 +55,18 @@ void ResourceManager::InitTitle(void)
 void ResourceManager::InitGame(void)
 {
 	Resource res;
+
+	//プレイヤーモデル
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + L"Player.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_MDL, res);
+
+	//敵モデル
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + L"Enemy.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_MDL, res);
+
+	//ボスモデル
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + L"Boss.mv1");
+	resourcesMap_.emplace(SRC::BOSS_MDL, res);
 }
 
 void ResourceManager::InitClear(void)
@@ -69,27 +79,7 @@ void ResourceManager::InitGameOver(void)
 	Resource res;
 }
 
-void ResourceManager::InitPouse(void)
-{
-	Resource res;
-}
-
-void ResourceManager::InitKeyConfig(void)
-{
-	Resource res;
-}
-
-void ResourceManager::InitSwitchCntl(void)
-{
-	Resource res;
-}
-
-void ResourceManager::ResorceDeviceIcon(void)
-{
-	Resource res;
-}
-
-void ResourceManager::ResorceStage(void)
+void ResourceManager::InitPause(void)
 {
 	Resource res;
 }
