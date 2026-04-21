@@ -9,12 +9,12 @@ public:
 	static constexpr float PER_ROT = 0.1f;			//フレームごとの回転(球面補間における時間の増加量を表す)
 	static constexpr float THRESHOLD_ROT = 0.1f;	//回転のしきい値を表す
 
-	virtual void Draw(void)override = 0;		//描画
-	virtual void Release(void)override = 0;		//解放
+	virtual void Draw(void)override = 0;			//描画
+	virtual void Release(void)override = 0;			//解放
 
 	virtual void HitCollider(std::weak_ptr<Collider> _col)override = 0;	//衝突後の処理
 
-	void Damage(const float _damage);	//ダメージ処理
+	void Damage(const float _damage);						//ダメージ処理
 	const bool IsAlive(void)const { return hp_ > 0.0f; }	//生存判定
 
 protected:
@@ -24,10 +24,8 @@ protected:
 	virtual void Move(void) = 0;				//移動処理
 	virtual void Attack(void) = 0;				//攻撃処理
 
-	//回転目標角度
-	void SetGoalRot(const float _rad);
-	//回転
-	void Rotation(void);
+	void SetGoalRot(const float _rad);			//回転目標角度
+	void Rotation(void);						//回転
 
 private:
 	void Death(void);			//死亡処理
@@ -38,6 +36,5 @@ private:
 
 	Quaternion goalQua_;		//目標の回転量
 	float stepRotation_;		//回転のカウンター
-	
 };
 
