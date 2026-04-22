@@ -11,9 +11,6 @@ public:
 	//デストラクタ
 	~EnemyBase(void);
 
-	//読み込み
-	void Load(void)override;
-
 	//描画
 	void Draw(void)override;
 
@@ -31,6 +28,9 @@ private:
 
 	//自分の番号
 	const int myNum_;
+
+	//読み込み
+	void DoLoad(void)override;
 
 	//初期化
 	void DoInit(void)override;

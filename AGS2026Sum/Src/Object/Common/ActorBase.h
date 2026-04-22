@@ -7,13 +7,17 @@
 class ActorBase
 {
 public:
+
+	//初期化用
+	static constexpr float INIT_MODEL_ROT = 180.0f;	//Unity形式のモデルの形を合わせる用
+
 	//重力定数
 	static constexpr float GRAVITY_POW = -0.98f;
 
 	ActorBase(void);
 	virtual ~ActorBase(void);
 
-	virtual void Load(void) = 0;
+	void Load(void);
 	void Init(void);
 	void Update(void);
 	virtual void Draw(void) = 0;
@@ -46,6 +50,7 @@ public:
 
 protected:
 	//派生クラス用
+	virtual void DoLoad(void) = 0;		//読み込み
 	virtual void DoInit(void) = 0;		//初期化
 	virtual void DoUpdate(void) = 0;	//更新
 

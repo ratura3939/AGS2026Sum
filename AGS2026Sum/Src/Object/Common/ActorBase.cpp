@@ -27,6 +27,12 @@ ActorBase::~ActorBase(void)
 	colliders_.clear();
 }
 
+void ActorBase::Load(void)
+{
+	DoLoad();
+	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT), 0.0f);
+}
+
 void ActorBase::Init(void)
 {
 	DoInit();

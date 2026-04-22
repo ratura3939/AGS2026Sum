@@ -14,11 +14,6 @@ EnemyBase::~EnemyBase(void)
 {
 }
 
-void EnemyBase::Load(void)
-{
-	//TODO:モデル差し込み
-}
-
 void EnemyBase::Draw(void)
 {
 }
@@ -29,6 +24,11 @@ void EnemyBase::Release(void)
 
 void EnemyBase::HitCollider(std::weak_ptr<Collider> _col)
 {
+}
+
+void EnemyBase::DoLoad(void)
+{
+	//TODO:モデル差し込み
 }
 
 void EnemyBase::DoInit(void)

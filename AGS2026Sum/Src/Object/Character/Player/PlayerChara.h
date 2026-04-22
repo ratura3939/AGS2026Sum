@@ -14,6 +14,7 @@ class PlayerChara :
         void InputMoveVec(const VECTOR& _inputVec); //移動入力の受付
 
     private:
+        void DoLoad(void)override;			//読み込み
         void DoInit(void)override;			//初期化
         void DoUpdate(void)override;		//更新
 
