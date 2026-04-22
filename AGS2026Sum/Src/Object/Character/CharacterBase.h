@@ -20,6 +20,7 @@ public:
 
 protected:
 	virtual void DoInit(void)override = 0;		//初期化
+	virtual void DoLoad(void)override = 0;		//読み込み
 	virtual void DoUpdate(void)override = 0;	//更新
 
 	virtual void Move(void) = 0;				//移動処理

@@ -18,7 +18,7 @@ PlayerChara::~PlayerChara(void)
 
 void PlayerChara::DoLoad(void)
 {
-	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_MDL);	//モデル取得
+	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::PLAYER_MDL);	//モデル取得
 }
 
 void PlayerChara::DoInit(void)
@@ -49,8 +49,10 @@ void PlayerChara::Attack(void)
 
 void PlayerChara::Draw(void)
 {
-	DrawFormatString(10, 30, 0xffffff, L"PlayerPos: %f, %f, %f,InputDir: %f, %f, %f", pos_.x, pos_.y, pos_.z, inputDir_.x, inputDir_.y, inputDir_.z);
+	const VECTOR& cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
+	DrawFormatString(10, 30, 0xffffff, L"PlayerPos: %f, %f, %f,\nInputDir: %f, %f, %f\nCameraPos: %f, %f, %f", pos_.x, pos_.y, pos_.z, inputDir_.x, inputDir_.y, inputDir_.z, cameraPos.x, cameraPos.y, cameraPos.z);
 	MV1DrawModel(modelId_);
+	DrawSphere3D(pos_, 8, 8, 0xff0000, 0xff0000, false);
 }
 
 void PlayerChara::Release(void)
