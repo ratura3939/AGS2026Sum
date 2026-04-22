@@ -29,6 +29,7 @@ public:
     
 private:
     void DoInit(void)override;
+	void DoLoad(void)override;
     void DoUpdate(void)override;
 
     //êe
