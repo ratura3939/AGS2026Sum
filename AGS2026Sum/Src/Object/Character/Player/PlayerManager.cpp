@@ -5,7 +5,6 @@
 #include"../../../Manager/Decoration/SoundManager.h"
 #include"../../../Manager/GameSystem/AttackManager.h"
 #include"../../../Scene/Main/Game.h"
-#include"../../../Utility/Utility.h"
 #include"PlayerChara.h"
 #include "PlayerManager.h"
 
