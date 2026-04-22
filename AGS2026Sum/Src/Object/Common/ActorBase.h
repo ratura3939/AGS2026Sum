@@ -13,6 +13,7 @@ public:
 	ActorBase(void);
 	virtual ~ActorBase(void);
 
+	virtual void Load(void) = 0;
 	void Init(void);
 	void Update(void);
 	virtual void Draw(void) = 0;
@@ -48,10 +49,16 @@ protected:
 	virtual void DoInit(void) = 0;		//初期化
 	virtual void DoUpdate(void) = 0;	//更新
 
+	void MakeCollider(std::unique_ptr<Geometry> _geo, const Collider::COL_TAG _tag, const std::set<Collider::COL_TAG> _hitTags = {});	//コライダの生成
+
+	void DeleteAllColliders(void);									//コライダの全削除
+	void DeleteColliderAtTag(const Collider::COL_TAG& _tag);		//タグによるコライダの削除
+
 #pragma region モデル基礎
 	int modelId_;		//モデルID
 
 	VECTOR pos_;		//座標
+	VECTOR movedPos_;	//移動後座標
 	VECTOR prevPos_;	//前フレームの座標
 	VECTOR scl_;		//モデル大きさ
 	VECTOR rot_;		//回転情報(XYZ)
@@ -71,12 +78,13 @@ protected:
 	//個体名
 	std::wstring speciesName_;
 
-	std::shared_ptr<Collider> collider_;	//コライダー
+	std::vector<std::shared_ptr<Collider>> colliders_;	//コライダー
 	float power_;			//攻撃力
 	VECTOR gravity_;		//重力ベクトル
 
 private:
 	void UpdateRotQuat(void);	//基礎情報の更新
 	void UpdateGravity(void);	//重力処理
+	void SweepColliders(void);	//必要なくなったコライダの削除
 };
 

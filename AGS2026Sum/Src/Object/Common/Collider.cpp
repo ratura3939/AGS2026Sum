@@ -48,7 +48,7 @@ const bool Collider::IsContainsHitTags(const std::set<COL_TAG>& _tags)
 
 void Collider::DrawDebugCollider(void)
 {
-	//geometry_->DebugDraw();
+	geometry_->Draw();
 }
 
 void Collider::SetMasterIsDraw(const bool _isDraw)

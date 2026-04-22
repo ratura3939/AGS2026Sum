@@ -1,5 +1,6 @@
 #include"../../pch.h"
 #include"../../Utility/Utility.h"
+#include"../../Manager/GameSystem/CollisionManager.h"
 #include "ActorBase.h"
 
 ActorBase::ActorBase(void)
@@ -22,6 +23,8 @@ ActorBase::ActorBase(void)
 
 ActorBase::~ActorBase(void)
 {
+	//持ち主自体が消えるのでそのまま消去
+	colliders_.clear();
 }
 
 void ActorBase::Init(void)
@@ -38,6 +41,7 @@ void ActorBase::Update(void)
 	//共通処理
 	//UpdateGravity();
 	UpdateRotQuat();
+	SweepColliders();
 }
 
 const int ActorBase::GetModelID(void) const
@@ -105,6 +109,35 @@ const std::wstring& ActorBase::GetSpeciesName(void) const
 	return speciesName_;
 }
 
+void ActorBase::MakeCollider(std::unique_ptr<Geometry> _geo, const Collider::COL_TAG _tag, const std::set<Collider::COL_TAG> _hitTags)
+{
+	//コライダの生成
+	std::shared_ptr<Collider> col = std::make_shared<Collider>(*this, _tag, std::move(_geo), _hitTags);
+
+	//生成したコライダを保存
+	colliders_.push_back(col);
+
+	//コライダマネージャに登録
+	CollisionManager::GetInstance().AddCollider(col);
+}
+
+void ActorBase::DeleteAllColliders(void)
+{
+	//コライダの全削除
+	for(auto& col : colliders_) {
+		col->Kill();
+	}
+}
+
+void ActorBase::DeleteColliderAtTag(const Collider::COL_TAG& _tag)
+{
+	for (auto& col : colliders_) {
+		if (col->IsContainsTag(_tag)) {
+			col->Kill();
+		}
+	}
+}
+
 void ActorBase::UpdateRotQuat(void)
 {
 	// 大きさ
@@ -135,4 +168,10 @@ void ActorBase::UpdateGravity(void)
 	//重力処理
 	gravity_.y += GRAVITY_POW;
 	pos_ = VAdd(pos_, gravity_);
+}
+
+void ActorBase::SweepColliders(void)
+{
+	//死亡したコライダの削除
+	std::erase_if(colliders_, [](const std::shared_ptr<Collider>& col) {return col->IsDead();});
 }

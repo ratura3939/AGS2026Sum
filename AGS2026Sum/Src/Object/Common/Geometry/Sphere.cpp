@@ -11,7 +11,7 @@
 //球
 //***************************************************
 
-Sphere::Sphere(const VECTOR& _pos, const VECTOR& _movedPos, const float _radius, const float _broudRadius)
+Sphere::Sphere(const VECTOR& _pos, const VECTOR& _movedPos, const float _broudRadius, const float _radius)
 	: Geometry(_pos, _movedPos, Quaternion(), _broudRadius),
 	radius_(_radius)
 {

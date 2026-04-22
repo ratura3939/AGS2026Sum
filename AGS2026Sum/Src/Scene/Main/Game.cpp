@@ -1,5 +1,5 @@
 #include"../../pch.h"
-#include"../../Manager/GameSystem/EnemyManager.h"
+#include"../../Object/Character/Enemy/EnemyManager.h"
 #include"../../Manager/GameSystem/AttackManager.h"
 #include"../../Manager/GameSystem/CollisionManager.h"
 #include"../../Manager/Generic/Camera.h"
@@ -95,13 +95,13 @@ void Game::Init(void)
 	CollisionManager::GetInstance().SetAttackManager(atkMng_);
 
 	//敵
-	enemy_ = std::make_unique<EnemyManager>(*this, *atkMng_);
+	VECTOR pPos = { 0.0f,0.0f,0.0f };
+	enemy_ = std::make_unique<EnemyManager>(pPos);
+	enemy_->Init();
 	
 	//プレイヤー
 	player_ = std::make_unique<PlayerManager>(*this);
 	player_->Init();
-
-	//enemy_->Init(player_->GetPos());	//しぶしぶこの位置
 
 	//カメラの初期設定
 	Camera& camera = SceneManager::GetInstance().GetCamera();
@@ -283,7 +283,7 @@ void Game::GameUpdate(void)
 
 	//敵
 	if (isEnemyUpdate_) {
-		//enemy_->Update(player_->GetPos(), *atkMng_);
+		enemy_->Update();
 	}
 
 	//攻撃
@@ -459,7 +459,7 @@ void Game::DoShake(void)
 bool Game::DirectionCameraMove(void)
 {
 	//アニメーションのみ更新
-	enemy_->UpdateAnim();
+	//enemy_->UpdateAnim();
 
 	//カメラ演出用
 	auto& camera = SceneManager::GetInstance().GetCamera();

@@ -56,13 +56,13 @@ void Camera::Init(void)
 {
 	//カメラの初期設定
 	SetDefault();
-	collider_ = std::make_unique<CameraCollider>(*this);
-	collider_->Init();
+	//collider_ = std::make_unique<CameraCollider>(*this);
+	//collider_->Init();
 }
 
 void Camera::Update(void)
 {
-	collider_->Update();
+	//collider_->Update();
 }
 
 void Camera::SetBeforeDraw(void)
@@ -112,7 +112,7 @@ void Camera::SetBeforeDraw(void)
 
 	// FOLLOW・LOCKON・NONE時にレイキャストによるカメラ位置補正を適用
 	if (mode_ == MODE::FOLLOW || mode_ == MODE::LOCKON || mode_ == MODE::NONE) {
-		collider_->UpdateRayCast();
+		//collider_->UpdateRayCast();
 		pos_ = Utility::Lerp(pos_, adjustedPos_, WALL_LERP_SPEED);
 	}
 
