@@ -18,7 +18,7 @@ PlayerChara::~PlayerChara(void)
 
 void PlayerChara::DoLoad(void)
 {
-	modelId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_MDL).handleId_;	//モデル取得
+	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_MDL);	//モデル取得
 }
 
 void PlayerChara::DoInit(void)
