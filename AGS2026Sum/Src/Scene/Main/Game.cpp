@@ -94,14 +94,13 @@ void Game::Init(void)
 	atkMng_ = std::make_shared<AttackManager>();
 	CollisionManager::GetInstance().SetAttackManager(atkMng_);
 
-	//敵
-	VECTOR pPos = { 0.0f,0.0f,0.0f };
-	enemy_ = std::make_unique<EnemyManager>(pPos);
-	enemy_->Init();
-	
 	//プレイヤー
 	player_ = std::make_unique<PlayerManager>(*this);
 	player_->Init();
+
+	//敵
+	enemy_ = std::make_unique<EnemyManager>(player_->GetPos());
+	enemy_->Init();
 
 	//カメラの初期設定
 	Camera& camera = SceneManager::GetInstance().GetCamera();
@@ -335,6 +334,8 @@ void Game::GameUpdate(void)
 	//	abilityFollow.y += CAMERA_FOLLOW_DIFF_Y_ABILITY;
 	//	camera.SetFollow(abilityFollow, player_->GetQua());		//追従対象の更新
 	//}
+
+	camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象の更新
 	
 #pragma endregion
 }

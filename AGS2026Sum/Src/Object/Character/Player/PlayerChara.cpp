@@ -5,7 +5,7 @@
 #include "PlayerChara.h"
 
 namespace {
-	const float MOVE_SPEED = 0.1f;	//移動速度
+	const float MOVE_SPEED = 10.1f;	//移動速度
 }
 
 PlayerChara::PlayerChara(void)

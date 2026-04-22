@@ -24,7 +24,7 @@ private:
 
 	//当たり判定
 	static constexpr float RADIUS = 30.0f;
-	static constexpr float BROUD_RADIUS = RADIUS + 20.0f;
+	static constexpr float BROUD_RADIUS = RADIUS + 15.0f;
 
 	//自分の番号
 	const int myNum_;

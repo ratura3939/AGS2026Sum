@@ -26,7 +26,7 @@ void CollisionManager::AddCollider(std::weak_ptr<Collider> _col)
 void CollisionManager::DeleteCollider(void)
 {
 	//終了したコライダを削除する
-	std::erase_if(colliders_, [](const std::weak_ptr<Collider> _col) {return !_col.expired(); });
+	std::erase_if(colliders_, [](const std::weak_ptr<Collider> _col) {return _col.expired(); });
 }
 
 void CollisionManager::DeleteAllCollider(void)
