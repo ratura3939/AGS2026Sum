@@ -27,6 +27,7 @@ void PlayerManager::Init(void)
 
 void PlayerManager::Update(AttackManager& _atk)
 {
+	UserInput();			//入力受付
 	character_->Update();	//キャラクターの更新
 }
 
@@ -43,6 +44,11 @@ void PlayerManager::Release(void)
 const VECTOR& PlayerManager::GetPos(void) const
 {
 	return character_->GetPos();
+}
+
+const Quaternion& PlayerManager::GetQua(void)
+{
+	return character_->GetQua();
 }
 
 void PlayerManager::UserInput(void)

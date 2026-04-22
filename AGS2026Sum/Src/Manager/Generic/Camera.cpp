@@ -576,11 +576,11 @@ void Camera::Rotation(void)
 		if (angles_.x >= LIMIT_X_UP_RAD)
 			angles_.x = LIMIT_X_UP_RAD;
 	}
-	if (ins.IsPressed(COMMAND::LEFT))
+	if (ins.IsPressed(COMMAND::LEFT_SUB))
 	{
 		angles_.y -= rotSpeed_;
 	}
-	if (ins.IsPressed(COMMAND::RIGHT))
+	if (ins.IsPressed(COMMAND::RIGHT_SUB))
 	{
 		angles_.y += rotSpeed_;
 	}

@@ -21,7 +21,7 @@ public:
 
 	//位置・回転取得
 	const VECTOR& GetPos(void)const;		//座標
-	//const Quaternion& GetQua(void);		//回転
+	const Quaternion& GetQua(void);			//回転
 	//const VECTOR& GetFocusPoint(void);	//注視点
 
 	//const bool IsAlive(void)const;

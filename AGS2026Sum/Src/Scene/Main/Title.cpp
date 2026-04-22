@@ -92,8 +92,8 @@ void Title::Init(void)
 	SceneManager::GetInstance().SetController(SceneManager::CNTL::NONE);
 
 	// タイトルロゴ
-	deviceImgs_[static_cast<int>(DEVICE::KEY)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::KEYBOARD_IMG).handleId_;
-	deviceImgs_[static_cast<int>(DEVICE::PAD)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::PAD_IMG).handleId_;
+	//deviceImgs_[static_cast<int>(DEVICE::KEY)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::KEYBOARD_IMG).handleId_;
+	//deviceImgs_[static_cast<int>(DEVICE::PAD)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::PAD_IMG).handleId_;
 
 	//UI初期化
 	InitUI();
@@ -138,11 +138,11 @@ void Title::InitSound(void)
 	ResourceManager& rsM = ResourceManager::GetInstance();
 	SoundManager& sndM = SoundManager::GetInstance();
 
-	//BGM
-	sndM.Add(SoundManager::TYPE::BGM, SoundManager::SOUND_NAME::TITLE_BGM,
-		rsM.Load(ResourceManager::SRC::TITLE_BGM).handleId_);
-	//BGM再生
-	sndM.Play(SoundManager::SOUND_NAME::TITLE_BGM);
+	////BGM
+	//sndM.Add(SoundManager::TYPE::BGM, SoundManager::SOUND_NAME::TITLE_BGM,
+	//	rsM.Load(ResourceManager::SRC::TITLE_BGM).handleId_);
+	////BGM再生
+	//sndM.Play(SoundManager::SOUND_NAME::TITLE_BGM);
 }
 
 void Title::InitEffect(void)
@@ -162,6 +162,8 @@ void Title::Draw(void)
 
 	//背景描画
 	//render_->Draw();
+
+	DrawString(10, 10, L"TitleScene", 0xffffff);
 
 	//コントローラ選択中
 	if (isSelectDevice_) {
@@ -196,7 +198,8 @@ void Title::NomalUpdate(void)
 	{
 		//コントローラー選択へ
 		isSelectDevice_ = true;
-		update_ = &Title::SelectDeviceUpdate;
+		//update_ = &Title::SelectDeviceUpdate;
+		SceneManager::GetInstance().ChangeScene(std::make_shared<Game>());
 	}
 	//動きのあるUIの更新
 	//UIManager2d::GetInstance().Update(UI_START_STR);

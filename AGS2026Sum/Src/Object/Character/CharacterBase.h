@@ -4,9 +4,10 @@ class CharacterBase :
     public ActorBase
 {
 public:
-
+	//初期化用
+	static constexpr float INIT_MODEL_ROT = 180.0f;	//Unity形式のモデルの形を合わせる用
 	//回転作業
-	static constexpr float PER_ROT = 0.1f;			//フレームごとの回転(球面補間における時間の増加量を表す)
+	static constexpr float PER_ROT = 0.2f;			//フレームごとの回転(球面補間における時間の増加量を表す)
 	static constexpr float THRESHOLD_ROT = 0.1f;	//回転のしきい値を表す
 
 	virtual void Draw(void)override = 0;			//描画
@@ -16,6 +17,8 @@ public:
 
 	void Damage(const float _damage);						//ダメージ処理
 	const bool IsAlive(void)const { return hp_ > 0.0f; }	//生存判定
+
+	const Quaternion& GetQua(void) const { return characterRotY_; }	//回転量の取得
 
 protected:
 	virtual void DoInit(void)override = 0;		//初期化

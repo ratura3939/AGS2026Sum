@@ -22,5 +22,6 @@ class PlayerChara :
 
         VECTOR inputDir_;       //移動入力方向
         float afterMoveRad_;    //最終的なキャラクター角度
+		float moveSpeed_;       //移動速度
 };
 

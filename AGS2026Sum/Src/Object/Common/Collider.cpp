@@ -53,5 +53,5 @@ void Collider::DrawDebugCollider(void)
 
 void Collider::SetMasterIsDraw(const bool _isDraw)
 {
-	master_.SetIsDraw(_isDraw);
+	//master_.SetIsDraw(_isDraw);
 }

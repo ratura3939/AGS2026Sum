@@ -36,7 +36,7 @@ void ActorBase::Update(void)
 	//派生クラスの更新処理
 	DoUpdate();
 	//共通処理
-	UpdateGravity();
+	//UpdateGravity();
 	UpdateRotQuat();
 }
 

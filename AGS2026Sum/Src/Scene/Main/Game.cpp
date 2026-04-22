@@ -1,5 +1,4 @@
 #include"../../pch.h"
-#include"../../Manager/GameSystem/PlayerManager.h"
 #include"../../Manager/GameSystem/EnemyManager.h"
 #include"../../Manager/GameSystem/AttackManager.h"
 #include"../../Manager/GameSystem/CollisionManager.h"
@@ -10,11 +9,13 @@
 #include"../../Manager/Decoration/SoundManager.h"
 #include"../../Manager/Decoration/EffectManager.h"
 #include"../../Manager/Decoration/UIManager2d.h"
+#include"../../Object/Character/Player/PlayerManager.h"
 #include "../../Scene/Sub/PauseScene.h"
 #include"../../Utility/Utility.h"
 #include"../../Renderer/PixelMaterial.h"
 #include"../../Renderer/PixelRenderer.h"
 #include"../../Application.h"
+#include "Title.h"
 #include "Game.h"
 
 //ローカル定数
@@ -97,7 +98,7 @@ void Game::Init(void)
 	enemy_ = std::make_unique<EnemyManager>(*this, *atkMng_);
 	
 	//プレイヤー
-	player_ = std::make_unique<PlayerManager>(*this, *enemy_, *atkMng_);
+	player_ = std::make_unique<PlayerManager>(*this);
 	player_->Init();
 
 	//enemy_->Init(player_->GetPos());	//しぶしぶこの位置
@@ -105,9 +106,10 @@ void Game::Init(void)
 	//カメラの初期設定
 	Camera& camera = SceneManager::GetInstance().GetCamera();
 	camera.ChangeMode(Camera::MODE::FOLLOW);					//モード選択
-	//camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象
+	camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象
 	//camera.SetGoalFocusPos(player_->GetFocusPoint());				//注視点
-	camera.SetLockOnDistanceMin(LOCK_DISTANCE_MIN_NOMAL);			//ロックオン最低距離
+	camera.SetGoalFocusPos(player_->GetPos());					//注視点
+	camera.SetLockOnDistanceMin(LOCK_DISTANCE_MIN_NOMAL);		//ロックオン最低距離
 
 	//音関係初期設定
 	InitSound();
@@ -132,13 +134,13 @@ void Game::InitSound(void)
 	using SND_NAME = SoundManager::SOUND_NAME;
 
 	//BGM
-	sndM.Add(SND_TYPE::BGM, SND_NAME::GAME_NORMAL_BGM,
-		rsM.Load(ResourceManager::SRC::GAME_BGM).handleId_);
+	/*sndM.Add(SND_TYPE::BGM, SND_NAME::GAME_NORMAL_BGM,
+		rsM.Load(ResourceManager::SRC::GAME_BGM).handleId_);*/
 
 	//初手は普通のBGM
-	sndM.Play(SND_NAME::GAME_NORMAL_BGM);
+	/*sndM.Play(SND_NAME::GAME_NORMAL_BGM);
 	nowBgmStr_ = "NomalBgm";
-	switchBgmStr_ = "BattleBgm";
+	switchBgmStr_ = "BattleBgm";*/
 }
 
 void Game::InitEffect(void)
@@ -225,17 +227,6 @@ void Game::Update(void)
 	Camera& camera = scM.GetCamera();
 	InputManager& inpM = InputManager::GetInstance();
 
-	//デバッグ用
-	bool nowInputP = CheckHitKey(KEY_INPUT_P);
-	if (!prevInputP_ && nowInputP) {
-		if (isEnemyUpdate_)
-			isEnemyUpdate_ = false;
-		else
-			isEnemyUpdate_ = true;
-	}
-	prevInputP_ = nowInputP;
-
-
 #pragma region シーン遷移(ルール)
 	//プレイヤーが死んでいたら
 	//if (!player_->IsAlive()) {
@@ -245,6 +236,12 @@ void Game::Update(void)
 	//	//シーン遷移
 	//	//scM.ChangeScene(std::make_shared<GameOver>());
 	//}
+
+	// シーン遷移
+	if (inpM.IsTrigerrDown(InputManager::INPUT_COMMAND::ENTER))
+	{
+		SceneManager::GetInstance().ChangeScene(std::make_shared<Title>());
+	}
 #pragma endregion
 
 	//更新
@@ -494,6 +491,8 @@ bool Game::DirectionCameraMove(void)
 
 void Game::Draw(void)
 {
+	DrawString(10, 10, L"GameScene", 0xffffff);
+
 	enemy_->Draw();
 	player_->Draw();
 
