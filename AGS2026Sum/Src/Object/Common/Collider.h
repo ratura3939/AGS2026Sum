@@ -55,7 +55,7 @@ public:
 	//デバッグ
 	void DrawDebugCollider(void);
 
-	//判定の削除
+	//判定の削除(必ずこれで削除すること)
 	void Kill(void) { isDead_ = true; }
 
 	//削除するか

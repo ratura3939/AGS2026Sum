@@ -39,9 +39,7 @@ void EnemyBase::DoInit(void)
 
 	//コライダの生成
 	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, BROUD_RADIUS, RADIUS);
-	std::shared_ptr<Collider> col = std::make_shared<Collider>(*this, Collider::COL_TAG::ENEMY, std::move(geo));
-	CollisionManager::GetInstance().AddCollider(col);
-	collider_ = col;
+	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY);
 }
 
 void EnemyBase::DoUpdate(void)
@@ -54,7 +52,9 @@ void EnemyBase::DrawDebug(void)
 {
 #ifdef _DEBUG
 
-	collider_->DrawDebugCollider();
+	for (auto& col : colliders_) {
+		col->DrawDebugCollider();
+	}
 
 #endif // DEBUG
 }
