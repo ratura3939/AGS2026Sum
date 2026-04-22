@@ -92,7 +92,7 @@ void InputManager::Update(void)
 
 	//マウス位置初期化
 	mousePos_ = centerMousePos_;
-	//SetMousePoint(mousePos_.x, mousePos_.y);
+	SetMousePoint(mousePos_.x, mousePos_.y);
 }
 
 void InputManager::Destroy(void)
