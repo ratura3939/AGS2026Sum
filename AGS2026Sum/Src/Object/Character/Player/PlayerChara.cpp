@@ -19,7 +19,7 @@ PlayerChara::~PlayerChara(void)
 void PlayerChara::DoInit(void)
 {
 	pos_ = Utility::VECTOR_ZERO;
-	modelId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_MDL).handleId_;	//モデル取得
+	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::PLAYER_MDL);	//モデル取得
 	moveSpeed_ = MOVE_SPEED;
 	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT), 0.0f);
 	inputDir_ = Utility::VECTOR_ZERO;
