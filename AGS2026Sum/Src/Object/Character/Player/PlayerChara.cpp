@@ -46,7 +46,8 @@ void PlayerChara::Attack(void)
 
 void PlayerChara::Draw(void)
 {
-	DrawFormatString(10, 30, 0xffffff, L"PlayerPos: %f, %f, %f,InputDir: %f, %f, %f", pos_.x, pos_.y, pos_.z, inputDir_.x, inputDir_.y, inputDir_.z);
+	const VECTOR& cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
+	DrawFormatString(10, 30, 0xffffff, L"PlayerPos: %f, %f, %f,\nInputDir: %f, %f, %f\nCameraPos: %f, %f, %f", pos_.x, pos_.y, pos_.z, inputDir_.x, inputDir_.y, inputDir_.z, cameraPos.x, cameraPos.y, cameraPos.z);
 	MV1DrawModel(modelId_);
 }
 
