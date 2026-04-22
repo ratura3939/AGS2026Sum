@@ -24,7 +24,7 @@ Camera::Camera(void)
 	goalFocusPos_ = Utility::VECTOR_ZERO;
 	lockPos_ = Utility::VECTOR_ZERO;
 	rot_ = Quaternion::Identity();
-	rotSpeed_ = MAX_ROT_SPEED;
+	rotSpeed_ = {MAX_ROT_SPEED_X, MAX_ROT_SPEED_Y, 0.0f};
 
 	stepReset_ = 0.0f;
 	isReset_ = true;
@@ -396,12 +396,12 @@ const VECTOR& Camera::GetAngle(void) const
 	return angles_;
 }
 
-const float Camera::GetRotSpeed(void) const
+const VECTOR& Camera::GetRotSpeed(void) const
 {
 	return rotSpeed_;
 }
 
-void Camera::SetRotSpeed(const float _speed)
+void Camera::SetRotSpeed(const VECTOR& _speed)
 {
 	rotSpeed_ = _speed;
 }
@@ -566,23 +566,23 @@ void Camera::Rotation(void)
 
 	if (ins.IsPressed(COMMAND::UP_SUB))
 	{
-		angles_.x -= rotSpeed_;
+		angles_.x -= rotSpeed_.x;
 		if (angles_.x <= LIMIT_X_DW_RAD)
 			angles_.x = LIMIT_X_DW_RAD;
 	}
 	if (ins.IsPressed(COMMAND::DOWN_SUB))
 	{
-		angles_.x += rotSpeed_;
+		angles_.x += rotSpeed_.x;
 		if (angles_.x >= LIMIT_X_UP_RAD)
 			angles_.x = LIMIT_X_UP_RAD;
 	}
 	if (ins.IsPressed(COMMAND::LEFT_SUB))
 	{
-		angles_.y -= rotSpeed_;
+		angles_.y -= rotSpeed_.y;
 	}
 	if (ins.IsPressed(COMMAND::RIGHT_SUB))
 	{
-		angles_.y += rotSpeed_;
+		angles_.y += rotSpeed_.y;
 	}
 
 	//カメラ座標を中心として、注視点を回転させる

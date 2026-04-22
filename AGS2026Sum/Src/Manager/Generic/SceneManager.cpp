@@ -78,11 +78,10 @@ void SceneManager::Init3D(void)
 	SetUseBackCulling(true);
 
 	// ライトの設定
-	SetUseLighting(true);
+	SetUseLighting(false);
 
 	// 正面から斜め下に向かったライト
 	ChangeLightTypeDir(LIGHT_DIR);
-
 }
 
 void SceneManager::Update(void)

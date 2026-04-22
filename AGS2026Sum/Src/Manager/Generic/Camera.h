@@ -25,7 +25,7 @@ public:
 	static constexpr VECTOR RELATIVE_C2T_POS = { 0.0f, -400.0f, 500.0f };			//カメラ位置から注視点までの相対座標
 
 	
-	static constexpr VECTOR RELATIVE_F2C_POS_FOLLOW = { 0.0f, 700.0f, -600.0f };	//追従対象からカメラ位置までの相対座標(完全追従)
+	static constexpr VECTOR RELATIVE_F2C_POS_FOLLOW = { 0.0f, 300.0f, -200.0f };	//追従対象からカメラ位置までの相対座標(完全追従)
 
 	//static constexpr VECTOR RELATIVE_F2C_POS_SPRING = { 0.0f, 40.0f, 150.0f };	//追従対象からカメラ位置までの相対座標(ばね付き)
 
@@ -38,8 +38,9 @@ public:
 	
 	//カメラ移動関連の定数---------------------------------------------------------------------
 	
-	static constexpr float MAX_MOVE_SPEED = 5.0f;	//移動速度の最大値
-	static constexpr float MAX_ROT_SPEED = 0.025f;	//移動速度の最大値
+	static constexpr float MAX_MOVE_SPEED = 5.0f;		//移動速度の最大値
+	static constexpr float MAX_ROT_SPEED_X = 0.025f;	//X軸回転速度の最大値
+	static constexpr float MAX_ROT_SPEED_Y = 0.06f;	//Y軸回転速度の最大値
 
 	//カメラ揺らし関連の定数--------------------------------------------------------------------
 
@@ -130,8 +131,8 @@ public:
 	const Quaternion& GetRot(void)const;
 	const VECTOR& GetAngle(void)const;
 	//回転スピード
-	const float GetRotSpeed(void)const;
-	void SetRotSpeed(const float _speed);
+	const VECTOR& GetRotSpeed(void)const;
+	void SetRotSpeed(const VECTOR& _speed);
 
 	//カメラモードの変更
 	void ChangeMode(MODE mode);
@@ -205,7 +206,7 @@ private:
 	
 
 	//回転スピード
-	float rotSpeed_;
+	VECTOR rotSpeed_;
 
 	// カメラ角度(rad)
 	VECTOR angles_;
