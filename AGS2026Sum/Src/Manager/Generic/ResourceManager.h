@@ -16,6 +16,9 @@ public:
 		PLAYER_MDL	//プレイヤー
 		,ENEMY_MDL	//敵
 		,BOSS_MDL	//ボス
+
+		//アニメーション
+		,PLAYER_IDLE_ANIM	//プレイヤー待機
 		,MAX
 	};
 

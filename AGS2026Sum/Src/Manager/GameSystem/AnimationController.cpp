@@ -114,7 +114,7 @@ void AnimationController::Play(const std::string& _name, const float _speed, con
 		updateAnim_ = &AnimationController::UpdateReturnAnim;
 		break;
 	default:
-		assert("アニメーション登録のところでエラーが起きています");
+		assert("アニメーション登録でエラーが起きています");
 		break;
 	}
 
