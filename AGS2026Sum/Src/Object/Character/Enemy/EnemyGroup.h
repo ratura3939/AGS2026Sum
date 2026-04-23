@@ -31,13 +31,21 @@ public:
 
 private:
 
-	//生成人数
-	int createNum_;
+	//敵がグループから離れられる距離
+	static constexpr float LEAVE_GROUP_DIST = 200.0f;
 
-	//敵
-	std::vector<std::unique_ptr<EnemyBase>> enemys_;
+	//全体関係
+	VECTOR pos_;										//グループ座標
+
+	//敵情報
+	int initNum_;										//初期人数
+	int aliveNum_;										//生存人数
+	std::vector<std::unique_ptr<EnemyBase>> enemys_;	//敵の情報
 
 	//敵の生成
 	void CreateEnemy(void);
+
+	//死亡した敵の削除
+	void DeleteEnemy(void);
 };
 

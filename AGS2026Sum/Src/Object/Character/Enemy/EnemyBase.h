@@ -6,7 +6,7 @@ class EnemyBase : public CharacterBase
 public:
 
 	//コンストラクタ
-	EnemyBase(const int _num);
+	EnemyBase(const VECTOR& _groupPos, const int _num);
 
 	//デストラクタ
 	~EnemyBase(void);
@@ -26,8 +26,17 @@ private:
 	static constexpr float RADIUS = 30.0f;
 	static constexpr float BROUD_RADIUS = RADIUS + 15.0f;
 
+	//敵の行動間隔
+	static constexpr float ACTION_INTERVAL = 2.0f;
+
+	//グループ座標
+	const VECTOR& groupPos_;
+
 	//自分の番号
 	const int myNum_;
+
+	//行動間隔タイマー
+	float actionTimer_;
 
 	//読み込み
 	void DoLoad(void)override;
@@ -41,10 +50,12 @@ private:
 	//描画(デバッグ)
 	void DrawDebug(void);
 
+	//方向転換
+	void ChangeDir(void);
+
 	//移動処理
 	void Move(void)override;
 
 	//攻撃処理
 	void Attack(void)override;
 };
-

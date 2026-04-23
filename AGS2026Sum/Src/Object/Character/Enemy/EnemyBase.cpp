@@ -1,12 +1,12 @@
 #include "../../../pch.h"
 #include "../../../Manager/GameSystem/CollisionManager.h"
 #include "../../../Manager/Generic/ResourceManager.h"
-#include "../../Common/Collider.h"
-#include "../../Common/Geometry/Sphere.h"
+#include "../../../Manager/Generic/SceneManager.h"
 #include "EnemyBase.h"
 
-EnemyBase::EnemyBase(const int _num)
-	: myNum_(_num)
+EnemyBase::EnemyBase(const VECTOR& _groupPos,const int _num)
+	: groupPos_(_groupPos)
+	,myNum_(_num)
 {
 }
 
@@ -44,12 +44,22 @@ void EnemyBase::DoInit(void)
 	pos_.x += 80.0f * myNum_;
 
 	//コライダの生成
-	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, BROUD_RADIUS, RADIUS);
-	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY);
+	//std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, BROUD_RADIUS, RADIUS);
+	//MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY);
 }
 
 void EnemyBase::DoUpdate(void)
 {
+	//行動の更新
+	if(actionTimer_ >= ACTION_INTERVAL)
+	{
+		//タイマーリセット
+		actionTimer_ = 0.0f;
+	}
+
+	//タイマー更新
+	actionTimer_ += SceneManager::GetInstance().GetDeltaTime();
+
 	//移動処理
 	Move();
 }
@@ -58,11 +68,15 @@ void EnemyBase::DrawDebug(void)
 {
 #ifdef _DEBUG
 
-	for (auto& col : colliders_) {
-		col->DrawDebugCollider();
-	}
+	//for (auto& col : colliders_) {
+	//	col->DrawDebugCollider();
+	//}
 
 #endif // DEBUG
+}
+
+void EnemyBase::ChangeDir(void)
+{
 }
 
 void EnemyBase::Move(void)
