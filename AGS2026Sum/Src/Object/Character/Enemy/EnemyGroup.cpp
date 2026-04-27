@@ -7,7 +7,6 @@
 EnemyGroup::EnemyGroup(const int _num)
 	: pos_(Utility::VECTOR_INIT)
 	,initNum_(_num)
-	, aliveNum_(0)
 {
 }
 
@@ -26,6 +25,9 @@ void EnemyGroup::Init(void)
 
 void EnemyGroup::Update(void)
 {
+	//ゴール地点に向かう
+	MoveToGoal();
+
 	for(auto& enemy : enemys_)
 	{
 		enemy->Update();
@@ -59,7 +61,14 @@ void EnemyGroup::CreateEnemy(void)
 	//生成
 	for (int i = 0; i < initNum_;i++)
 	{
-		enemy = std::make_unique<EnemyBase>(pos_, i);
+		//ランダムな初期座標を生成
+		VECTOR randPos;
+		randPos.x = pos_.x + Utility::GetRandomValue(-LEAVE_GROUP_DIST, LEAVE_GROUP_DIST);
+		randPos.y = 0.0f;
+		randPos.z = pos_.z + Utility::GetRandomValue(-LEAVE_GROUP_DIST, LEAVE_GROUP_DIST);
+
+		//敵の生成
+		enemy = std::make_unique<EnemyBase>(randPos, movePow_);
 
 		//読み込みと初期化
 		enemy->Load();
@@ -67,36 +76,23 @@ void EnemyGroup::CreateEnemy(void)
 
 		//格納
 		enemys_.push_back(std::move(enemy));
-
-		//生存数のカウント
-		aliveNum_++;
-	}
-
-	
+	}	
 }
 
 void EnemyGroup::DeleteEnemy(void)
 {
 	//そもそも敵がいないなら何もしない
-	if (aliveNum_ == 0) return;
+	if (enemys_.empty()) return;
 
 	//死亡した敵の削除
-	std::erase_if(enemys_, [this](const std::unique_ptr<EnemyBase>& enemy)
-		{
-			if (!enemy->IsAlive())
-			{
-				//死亡済み
+	std::erase_if(enemys_, [this](std::unique_ptr<EnemyBase>& _enemy) {return !_enemy->IsAlive(); });
+}
 
-				//解放
-				enemy->Release();
+void EnemyGroup::MoveToGoal(void)
+{
+	//移動量の設定
+	movePow_ = Utility::GetMoveVec(pos_, groupGoalPos_, SPEED);
 
-				//生存数を減らす
-				aliveNum_--;
-
-				return true;
-			}
-
-			//生存中
-			return false;
-		});
+	//グループ座標の更新
+	pos_ = VAdd(pos_, movePow_);
 }

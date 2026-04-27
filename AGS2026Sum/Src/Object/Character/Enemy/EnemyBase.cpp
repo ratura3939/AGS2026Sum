@@ -2,11 +2,12 @@
 #include "../../../Manager/GameSystem/CollisionManager.h"
 #include "../../../Manager/Generic/ResourceManager.h"
 #include "../../../Manager/Generic/SceneManager.h"
+#include "EnemyGroup.h"
 #include "EnemyBase.h"
 
-EnemyBase::EnemyBase(const VECTOR& _groupPos,const int _num)
-	: groupPos_(_groupPos)
-	,myNum_(_num)
+EnemyBase::EnemyBase(const VECTOR& _initPos, const VECTOR& _movePow)
+	: initPos_(_initPos)
+	, movePow_(_movePow)
 {
 }
 
@@ -39,26 +40,19 @@ void EnemyBase::DoLoad(void)
 
 void EnemyBase::DoInit(void)
 {
-	//座標
-	pos_ = Utility::VECTOR_ZERO;
-	pos_.x += 80.0f * myNum_;
+	//体力
+	hp_ = 100.0f;		
+	quaRotLocal_ = Quaternion::Euler(0.0f, 0.0f, 0.0f);
 
-	//コライダの生成
-	//std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, BROUD_RADIUS, RADIUS);
-	//MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY);
+	//座標
+	pos_ = initPos_;
+	movedPos_ = initPos_;
 }
 
 void EnemyBase::DoUpdate(void)
 {
-	//行動の更新
-	if(actionTimer_ >= ACTION_INTERVAL)
-	{
-		//タイマーリセット
-		actionTimer_ = 0.0f;
-	}
-
-	//タイマー更新
-	actionTimer_ += SceneManager::GetInstance().GetDeltaTime();
+	//移動後座標に更新
+	pos_ = movedPos_;
 
 	//移動処理
 	Move();
@@ -75,12 +69,11 @@ void EnemyBase::DrawDebug(void)
 #endif // DEBUG
 }
 
-void EnemyBase::ChangeDir(void)
-{
-}
-
 void EnemyBase::Move(void)
 {
+	VECTOR movedPos = VAdd(movedPos_, movePow_);
+	quaRot_ = quaRot_.LookRotation(Utility::GetMoveVec(movedPos, movedPos_));
+	movedPos_ = movedPos;
 }
 
 void EnemyBase::Attack(void)

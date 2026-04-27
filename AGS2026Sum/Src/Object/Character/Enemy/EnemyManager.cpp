@@ -24,6 +24,9 @@ void EnemyManager::Init(void)
 
 void EnemyManager::Update(void)
 {
+	//プレイヤーを狙う
+	LookPlayer();
+
 	//更新
 	for (auto& group : enemyGroup_)
 	{
@@ -59,4 +62,16 @@ void EnemyManager::CreateEnemyGroup(void)
 
 	//格納
 	enemyGroup_.push_back(std::move(group));
+}
+
+void EnemyManager::LookPlayer(void)
+{
+	for (auto& group : enemyGroup_)
+	{
+		//プレイヤーから一定距離以上離れているグループは無視する
+		if (Utility::Distance(group->GetPos(), playerPos_) > PLAYER_AIM_RADIUS)continue;
+
+		//グループの目標座標をプレイヤー座標に設定
+		group->SetGoalPos(playerPos_);
+	}
 }

@@ -38,6 +38,9 @@ public:
 
 private:
 
+	//プレイヤーを狙うときの半径
+	static constexpr float PLAYER_AIM_RADIUS = 2000.0f;
+
 	//敵の生成数
 	static constexpr int CREATE_NUM = 7;
 
@@ -46,5 +49,8 @@ private:
 
 	//プレイヤー座標
 	const VECTOR& playerPos_;		
+
+	//グループをプレイヤーに向かわせる
+	void LookPlayer(void);
 };
 

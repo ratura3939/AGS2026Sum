@@ -8,6 +8,9 @@ class EnemyGroup
 {
 public:
 
+	//敵がグループから離れられる距離
+	static constexpr float LEAVE_GROUP_DIST = 200.0f;
+
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
@@ -29,17 +32,26 @@ public:
 	//解放
 	void Release(void);
 
+	//グループ座標の取得
+	const VECTOR& GetPos(void)const { return pos_; }
+
+	//グループの目標座標の取得
+	void SetGoalPos(const VECTOR& _goalPos){groupGoalPos_ = _goalPos;}
+
 private:
 
-	//敵がグループから離れられる距離
-	static constexpr float LEAVE_GROUP_DIST = 200.0f;
+	//当たり判定
+	static constexpr float RADIUS = 30.0f;
+	static constexpr float BROUD_RADIUS = RADIUS + 15.0f;
+	static constexpr float SPEED = 5.0f;
 
 	//全体関係
-	VECTOR pos_;										//グループ座標
+	VECTOR pos_;				//グループ座標
+	VECTOR groupGoalPos_;		//グループの目標座標
+	VECTOR movePow_;			//グループの移動量
 
 	//敵情報
 	int initNum_;										//初期人数
-	int aliveNum_;										//生存人数
 	std::vector<std::unique_ptr<EnemyBase>> enemys_;	//敵の情報
 
 	//敵の生成
@@ -47,5 +59,11 @@ private:
 
 	//死亡した敵の削除
 	void DeleteEnemy(void);
+
+	//ゴール地点に向かう移動量を設定
+	void MoveToGoal(void);
+
+	//グループから離れすぎた敵をグループに戻す
+	void ReturnEnemyToGroup(void);
 };
 

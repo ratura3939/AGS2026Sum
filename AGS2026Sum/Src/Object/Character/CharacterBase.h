@@ -29,10 +29,10 @@ protected:
 	void SetGoalRot(const float _rad);			//回転目標角度
 	void Rotation(void);						//回転
 
+	float hp_;					//体力
+
 private:
 	void Death(void);			//死亡処理
-
-	float hp_;					//体力
 
 	Quaternion characterRotY_;	//Y軸回転用
 
