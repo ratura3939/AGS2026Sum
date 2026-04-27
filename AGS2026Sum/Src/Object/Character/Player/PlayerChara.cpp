@@ -23,6 +23,8 @@ void PlayerChara::DoInit(void)
 	moveSpeed_ = MOVE_SPEED;
 	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT), 0.0f);
 	inputDir_ = Utility::VECTOR_ZERO;
+
+	InitAnim();	//アニメーションの初期化
 }
 
 void PlayerChara::DoUpdate(void)
@@ -30,6 +32,18 @@ void PlayerChara::DoUpdate(void)
 	Move();
 	Rotation();
 	inputDir_ = Utility::VECTOR_ZERO;
+
+	animController_->Update();
+}
+
+void PlayerChara::InitAnim(void)
+{
+	animController_ = std::make_unique<AnimationController>(modelId_);
+	animController_->Add("Idle", ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_IDLE_ANIM).handleId_, AnimationController::PLAY_TYPE::LOOP, AnimationController::ANIM_SOURCE::EXTERNAL, false);
+	animController_->Add("Run", ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_RUN_ANIM).handleId_, AnimationController::PLAY_TYPE::LOOP, AnimationController::ANIM_SOURCE::EXTERNAL, false);	
+
+	animController_->SetDefaultAnim("Idle");	//デフォルトを待機にする
+	animController_->Play("Run");				//待機アニメ再生
 }
 
 void PlayerChara::Move(void)

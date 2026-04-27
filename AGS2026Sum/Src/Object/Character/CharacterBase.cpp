@@ -3,6 +3,19 @@
 #include"../../Utility/Utility.h"
 #include "CharacterBase.h"
 
+CharacterBase::CharacterBase(void)
+	:ActorBase()
+	,characterRotY_(Quaternion::Identity())
+	,goalQua_(Quaternion::Identity())
+	,stepRotation_(0.0f)
+	,hp_(-1.0f)
+	,animController_(nullptr)
+{
+}
+
+CharacterBase::~CharacterBase(void)
+{
+}
 
 void CharacterBase::SetGoalRot(const float _rad)
 {

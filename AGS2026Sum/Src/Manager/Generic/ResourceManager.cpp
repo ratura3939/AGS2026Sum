@@ -91,9 +91,12 @@ void ResourceManager::ResourcePlayer(void)
 
 	//固有アニメーション
 	//***************************************************************************************
-	//歩く
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/Idle.mv1");
-	resourcesMap_.emplace(SRC::PLAYER_MDL, res);
+	//待機
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/PlayerIdleAnimation.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_IDLE_ANIM, res);
+	//ダッシュ
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/Run.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_RUN_ANIM, res);
 }
 
 void ResourceManager::Release(void)

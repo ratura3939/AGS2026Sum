@@ -19,6 +19,7 @@ public:
 
 		//アニメーション
 		,PLAYER_IDLE_ANIM	//プレイヤー待機
+		,PLAYER_RUN_ANIM	//プレイヤー走る
 		,MAX
 	};
 

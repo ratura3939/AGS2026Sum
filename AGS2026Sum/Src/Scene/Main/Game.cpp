@@ -263,11 +263,11 @@ void Game::GameUpdate(void)
 	//	//scM.ChangeScene(std::make_shared<GameClear>());
 	//}
 
-	//ポーズシーン遷移
-	if (inpM.IsTrigerrDown(InputManager::INPUT_COMMAND::PAUSE)) {
-		//シーン追加(一つ次へ)
-		scM.PushScene(std::make_shared<PauseScene>());
-	}
+	////ポーズシーン遷移
+	//if (inpM.IsTrigerrDown(InputManager::INPUT_COMMAND::PAUSE)) {
+	//	//シーン追加(一つ次へ)
+	//	scM.PushScene(std::make_shared<PauseScene>());
+	//}
 
 #pragma region 基礎アプデ
 	//プレイヤー

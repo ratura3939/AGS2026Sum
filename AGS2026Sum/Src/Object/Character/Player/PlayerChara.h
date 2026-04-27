@@ -16,6 +16,7 @@ class PlayerChara :
     private:
         void DoInit(void)override;			//初期化
         void DoUpdate(void)override;		//更新
+		void InitAnim(void)override;		//アニメーションの初期化
 
 		void Move(void)override;			//移動処理
 		void Attack(void)override;			//攻撃処理

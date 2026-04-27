@@ -5,9 +5,12 @@
 AnimationController::AnimationController(int& _model):modelId_(_model)
 {
 	activeAnim_.type=PLAY_TYPE::MAX;
-	activeAnim_.idx = -1;
+	activeAnim_.source = ANIM_SOURCE::MAX;
+	activeAnim_.data = -1;
 	activeAnim_.total = -1.0f;
 
+	isSetDefaultAnim_ = false;
+	defaultAnim_ = "";
 
 	attachAnim_ = -1;
 	speedAnim = -1.0f;
@@ -26,35 +29,43 @@ AnimationController::~AnimationController(void)
 {
 }
 
-void AnimationController::Add(const std::string& _name, const int _attach, const PLAY_TYPE _type, const bool _isLock)
+void AnimationController::Add(const std::string& _name, const int _animData, const PLAY_TYPE& _type, const ANIM_SOURCE& _source, const bool _isLock)
 {
 	//すでに要素がある時
 	if (animDatas_.contains(_name)) {
-		//エラー防止
 		assert("すでに登録しているものを再登録しようとしています。");
-		return;
+		return;	//再登録防止
 	}
+
 
 	//初期化(アタッチ番号だけ入れる)
 	AnimationInfo anim = {};
 	anim.type = _type;
-	anim.idx = _attach;
+	anim.source = _source;
+	anim.data = _animData;
 	anim.mustPlayOnce = _isLock;
+
 	if (_type == PLAY_TYPE::LOOP) {
-		anim.mustPlayOnce = false;
+		anim.mustPlayOnce = false;	//ループは再生保障の対象外
 	}
 
-	//総再生時間を取得するためには一回アタッチする必要がある
-	attachAnim_ = MV1AttachAnim(modelId_, anim.idx);
-	//時間取得
-	anim.total = MV1GetAttachAnimTotalTime(modelId_, attachAnim_);
-	//必要ないのでデタッチ
-	MV1DetachAnim(modelId_, attachAnim_);
+	int attach = -1;
 
-	//アニメーション情報追加
-	animDatas_.emplace(_name, anim);
+	//アタッチ（EMBEDDED：第２引数、EXTERNAL：第３引数にdataを渡す）
+	if (anim.source == ANIM_SOURCE::EMBEDDED) {
+		attach = MV1AttachAnim(modelId_, anim.data);
+	}
+	else if (anim.source == ANIM_SOURCE::EXTERNAL) {
+		attach = MV1AttachAnim(modelId_, 0, anim.data, true);
+	}
+	else {
+		assert("アニメーション登録でエラーが起きています");
+	}
 
-	attachAnim_ = -1;
+	anim.total = MV1GetAttachAnimTotalTime(modelId_, attach);	//時間取得
+
+	MV1DetachAnim(modelId_, attach);	//必要ないのでデタッチ
+	animDatas_.emplace(_name, anim);	//アニメーション情報追加
 }
 
 void AnimationController::Play(const std::string& _name, const float _speed, const std::vector<std::string> _next)
@@ -71,17 +82,15 @@ void AnimationController::Play(const std::string& _name, const float _speed, con
 
 	//もしかしたらこのifの中身が追加条件はいるかも
 	//現在アタッチしているものと同じものなら処理は行わない
-	if (activeAnim_.idx == animDatas_[_name].idx)return;
+	if (activeAnim_.data == animDatas_[_name].data)return;
 
 	//初期値以外のとき
 	if (attachAnim_ != -1) {
-		//現在のものをデタッチ
-		MV1DetachAnim(modelId_, attachAnim_);
+		MV1DetachAnim(modelId_, attachAnim_);	//現在のものをデタッチ
 	}
 	
-	//次に再生されるアニメーションが設定されているとき
+	//次に再生されるアニメーションが設定されているとき(LOOPは末尾のみ許可)
 	if (!_next.empty()) {
-		//ミス確認用(最後にLOOPはOK)
 		for (auto& string : _next) {
 			if (animDatas_[string].type == PLAY_TYPE::LOOP && string != _next.back()) {
 				assert("順次再生の個所を見直してください。");
@@ -92,11 +101,20 @@ void AnimationController::Play(const std::string& _name, const float _speed, con
 
 	//新規を代入
 	activeAnim_.type = animDatas_[_name].type;
-	activeAnim_.idx = animDatas_[_name].idx;
+	activeAnim_.source = animDatas_[_name].source;
+	activeAnim_.data = animDatas_[_name].data;
 	activeAnim_.total = animDatas_[_name].total;
-	//アタッチ
-	attachAnim_ = MV1AttachAnim(modelId_, activeAnim_.idx);
-	;
+	
+	//アタッチ（EMBEDDED：第２引数、EXTERNAL：第３引数にdataを渡す）
+	if (animDatas_[_name].source == ANIM_SOURCE::EMBEDDED) {
+		attachAnim_ = MV1AttachAnim(modelId_, activeAnim_.data);
+	}
+	else if (animDatas_[_name].source == ANIM_SOURCE::EXTERNAL) {
+		attachAnim_ = MV1AttachAnim(modelId_, 0, activeAnim_.data, true);
+	}
+	else {
+		assert("アニメーション登録でエラーが起きています");
+	}
 
 	//終了時処理の設定
 	switch (activeAnim_.type)
@@ -118,18 +136,18 @@ void AnimationController::Play(const std::string& _name, const float _speed, con
 		break;
 	}
 
-	//スピード設定
 	speedAnim = _speed;
-	//カウンターの初期化
 	counter_ = 0.0f;
+
+	//逆再生時の初期化
 	if (activeAnim_.type == PLAY_TYPE::RETURN) {
 		counter_ = activeAnim_.total;
 	}
 
-	//保障
+	//再生保障
 	isAnimLock_= animDatas_[_name].mustPlayOnce;
 
-	// 再生するアニメーション時間の設定
+	//再生するアニメーション時間の設定
 	MV1SetAttachAnimTime(modelId_, attachAnim_, counter_);
 }
 
@@ -171,30 +189,39 @@ void AnimationController::Update(void)
 
 void AnimationController::ChangeSpeedRate(const float _percent)
 {
- 	speedRate_ = _percent / 100.0f;
+ 	speedRate_ = _percent / DEFAULT_SPEED_RATE;
+}
+
+void AnimationController::SetDefaultAnim(const std::string& _name)
+{
+	//要素がないとき
+	if (!animDatas_.contains(_name)) {
+		return;	//エラー防止
+	}
+	if (animDatas_[_name].type != PLAY_TYPE::LOOP) {
+		return;	//ループ以外は設定できない
+	}
+	isSetDefaultAnim_ = true;
+	defaultAnim_ = _name;
 }
 
 void AnimationController::UpdateNomalAnim(void)
 {
-	// アニメーション再生
-	counter_ += speedAnim * speedRate_;
+	counter_ += speedAnim * speedRate_;	//カウンタ加算
 	//再生上限にいった場合
 	if (counter_ > activeAnim_.total)
 	{
-		//アニメーション終了時処理
-		(this->*finishAnim_)();
+		(this->*finishAnim_)();	//アニメーション終了時処理
 	}
 }
 
 void AnimationController::UpdateReturnAnim(void)
 {
-	// アニメーション再生
-	counter_ -= speedAnim * speedRate_;
+	counter_ -= speedAnim * speedRate_;		//カウンタ減算（逆再生のため）
 	//再生上限にいった場合
 	if (counter_ <= 0.0f)
 	{
-		//アニメーション終了時処理
-		(this->*finishAnim_)();
+		(this->*finishAnim_)();		//アニメーション終了時処理
 	}
 }
 
@@ -211,8 +238,12 @@ void AnimationController::FinishAnimNomal(void)
 		nextAnim_.erase(nextAnim_.begin());
 		return;
 	}
-	//待機に戻る
-	Play("idle", 1.0f);
+
+	if(isSetDefaultAnim_) {
+		//デフォルトアニメーションが設定されているときはそれを再生
+		Play(defaultAnim_, DEFAULT_SPEED);
+		return;
+	}
 }
 
 void AnimationController::FinishAnimLoop(void)

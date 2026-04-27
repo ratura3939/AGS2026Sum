@@ -3,13 +3,18 @@
 #include<vector>
 #include<unordered_map>
 
-//このWilidiaでは"idle"という名前のアニメーションを必ず入れること！
-//NOMALのアニメーションは終了時idleを再生するようにするため
-
-
 class AnimationController
 {
 public:
+	static constexpr float DEFAULT_SPEED = 1.0f;
+	static constexpr float DEFAULT_SPEED_RATE = 100.0f;
+
+	enum class ANIM_SOURCE {
+		EMBEDDED
+		,EXTERNAL
+		,MAX
+	};
+
 	/// <summary>
 	/// 再生種類
 	/// </summary>
@@ -22,9 +27,10 @@ public:
 
 	//アニメーション関連情報
 	struct AnimationInfo {
-		PLAY_TYPE type;	//再生タイプ
-		int idx;		//アニメーション番号
-		float total;	//総再生時間
+		PLAY_TYPE type;		//再生タイプ
+		ANIM_SOURCE source; //アニメーションの情報源
+		int data;			//EMBEDDEDならアニメーション番号、EXTERNALならリソースID
+		float total;		//総再生時間
 		bool mustPlayOnce;	//再生保障
 	};
 
@@ -36,17 +42,18 @@ public:
 	/// アニメーション追加関数
 	/// </summary>
 	/// <param name="_name">登録名</param>
-	/// <param name="_attach">アニメーション番号</param>
+	/// <param name="_animData">アニメーション番号</param>
 	/// <param name="_type">再生タイプ</param>
+	/// <param name="_source">アニメーションの情報源</param>
 	/// <param name="_isLock">一回の再生を保障するかどうか</param>
-	void Add(const std::string& _name, const int _attach, const PLAY_TYPE _type, const bool _isLock = false);
+	void Add(const std::string& _name, const int _animData, const PLAY_TYPE& _type, const ANIM_SOURCE& _source, const bool _isLock = false);
 	/// <summary>
 	/// 再生開始処理
 	/// </summary>
 	/// <param name="_name">登録名</param>
 	/// <param name="_speed">再生速度</param>
 	/// <param name="_next">連続して再生する物たち<最後以外にLOOPのものを入れないこと！！></param>
-	void Play(const std::string& _name, const float _speed, const std::vector<std::string> _next = {});
+	void Play(const std::string& _name, const float _speed = DEFAULT_SPEED, const std::vector<std::string> _next = {});
 	/// <summary>
 	/// 連続して再生するアニメーションを途中で追加する
 	/// </summary>
@@ -66,6 +73,7 @@ public:
 	void ChangeSpeedRate(const float _percent);
 
 	void UnAnimLock(void) { isAnimLock_ = false; }
+	void SetDefaultAnim(const std::string& _name);
 
 private:
 	//アニメーション更新処理
@@ -79,13 +87,17 @@ private:
 
 	int& modelId_;	//モデルID
 	std::unordered_map<std::string, AnimationInfo>animDatas_;	//アニメーションデータ総まとめ
-	AnimationInfo activeAnim_;	//再生中のアニメーション情報
-	int attachAnim_;//実際の再生しているもの
-	float speedAnim;//再生速度
-	float counter_;	//更新カウンター
+	AnimationInfo activeAnim_;				//再生中のアニメーション情報
+
+	int attachAnim_;	//実際の再生しているもの
+	float speedAnim;	//再生速度
+	float counter_;		//更新カウンター
 	float speedRate_;	//速度割合
 
-	bool isAnimLock_; //アニメーションロック中かどうか
+	bool isAnimLock_;	//アニメーションロック中かどうか
+
+	bool isSetDefaultAnim_;		//デフォルトアニメーションが設定されているかどうか
+	std::string defaultAnim_;	//デフォルトアニメーションの名前
 
 	std::vector<std::string> nextAnim_;	//次に再生するアニメーション(LOOP以外に適用)<最終以外にLOOＰを入れないこと>
 
