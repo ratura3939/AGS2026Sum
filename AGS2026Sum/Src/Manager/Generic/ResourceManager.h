@@ -30,17 +30,6 @@ public:
 
 	// 初期化
 	void Init(SceneManager::SCENE_ID _scene= SceneManager::SCENE_ID::NONE);
-
-	
-private:
-	//シーンごとにデータを読み込むことにする
-	void InitTitle(void);
-	void InitGame(void);
-	void InitClear(void);
-	void InitGameOver(void);
-	void InitPause(void);
-
-public:
 	// 解放(シーン切替時に一旦解放)
 	void Release(void);
 
@@ -54,15 +43,14 @@ public:
 	int LoadModelDuplicate(SRC src);
 
 private:
+	//シーンごとにデータを読み込むことにする
+	void InitTitle(void);
+	void InitGame(void);
+	void InitClear(void);
+	void InitGameOver(void);
+	void InitPause(void);
 
-	// 静的インスタンス
-	static ResourceManager* instance_;
-
-	// リソース管理の対象
-	std::map<SRC, Resource> resourcesMap_;
-
-	// 読み込み済みリソース
-	std::map<SRC, Resource*> loadedMap_;
+	void ResourcePlayer(void);	//プレイヤー関連リソース
 
 	// デフォルトコンストラクタをprivateにして、
 	// 外部から生成できない様にする
@@ -74,5 +62,13 @@ private:
 	// 内部ロード
 	Resource* _Load(SRC src);
 
+	// 静的インスタンス
+	static ResourceManager* instance_;
+
+	// リソース管理の対象
+	std::map<SRC, Resource> resourcesMap_;
+
+	// 読み込み済みリソース
+	std::map<SRC, Resource*> loadedMap_;
 };
 

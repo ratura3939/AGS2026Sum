@@ -10,6 +10,7 @@ Application* Application::instance_ = nullptr;
 const std::wstring Application::PATH_IMAGE = L"Data/Image/";
 const std::wstring Application::PATH_UI = L"Data/Image/UI/";
 const std::wstring Application::PATH_MODEL = L"Data/Model/";
+const std::wstring Application::PATH_ANIMATION = L"Data/Animation/";
 const std::wstring Application::PATH_CHARACTER = L"Data/Model/Character/";
 const std::wstring Application::PATH_STAGE = L"Data/Model/Stage/";
 const std::wstring Application::PATH_EFFECT = L"Data/Effect/";

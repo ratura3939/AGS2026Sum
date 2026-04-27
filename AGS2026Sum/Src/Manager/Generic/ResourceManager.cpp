@@ -56,9 +56,7 @@ void ResourceManager::InitGame(void)
 {
 	Resource res;
 
-	//プレイヤーモデル
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + L"Player.mv1");
-	resourcesMap_.emplace(SRC::PLAYER_MDL, res);
+	ResourcePlayer();	//プレイヤー関連
 
 	//敵モデル
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + L"Enemy.mv1");
@@ -82,6 +80,20 @@ void ResourceManager::InitGameOver(void)
 void ResourceManager::InitPause(void)
 {
 	Resource res;
+}
+
+void ResourceManager::ResourcePlayer(void)
+{
+	Resource res;
+	//モデル
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + L"Player.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_MDL, res);
+
+	//固有アニメーション
+	//***************************************************************************************
+	//歩く
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/Idle.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_MDL, res);
 }
 
 void ResourceManager::Release(void)
