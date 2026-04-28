@@ -43,7 +43,7 @@ void PlayerChara::InitAnim(void)
 	animController_->Add("Run", ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_RUN_ANIM).handleId_, AnimationController::PLAY_TYPE::LOOP, AnimationController::ANIM_SOURCE::EXTERNAL, false);	
 
 	animController_->SetDefaultAnim("Idle");	//デフォルトを待機にする
-	animController_->Play("Run");				//待機アニメ再生
+	animController_->Play("Idle");				//待機アニメ再生
 }
 
 void PlayerChara::Move(void)
