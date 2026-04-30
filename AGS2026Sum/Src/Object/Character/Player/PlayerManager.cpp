@@ -8,6 +8,15 @@
 #include"PlayerChara.h"
 #include "PlayerManager.h"
 
+const std::wstring PlayerManager::ANIM_IDLE = L"Idle";
+const std::wstring PlayerManager::ANIM_RUN = L"Run";
+const std::wstring PlayerManager::ANIM_FIRST_PUNCH = L"FirstPunch";
+const std::wstring PlayerManager::ANIM_SECOND_PUNCH = L"SecondPunch";
+const std::wstring PlayerManager::ANIM_THIRD_PUNCH = L"ThirdPunch";
+const std::wstring PlayerManager::ANIM_MIDDLE_KICK = L"MiddleKick";
+const std::wstring PlayerManager::ANIM_HIGH_KICK = L"HighKick";
+const std::wstring PlayerManager::ANIM_FINSH_KICK = L"FinishKick";
+
 PlayerManager::PlayerManager(Game& _gameScene)
 	:scene_(_gameScene)
 	,character_(std::make_shared<PlayerChara>())

@@ -2,15 +2,21 @@
 #include"../../Application.h"
 #include "AnimationController.h"
 
+namespace {
+	const float BLEND_RATE_MAX = 1.0f;
+	const float BLEND_RATE_MIN = 0.0f;
+}
+
 AnimationController::AnimationController(int& _model):modelId_(_model)
 {
 	activeAnim_.type=PLAY_TYPE::MAX;
 	activeAnim_.source = ANIM_SOURCE::MAX;
 	activeAnim_.data = -1;
 	activeAnim_.total = -1.0f;
+	animBlendRate_ = 0.0f;
 
 	isSetDefaultAnim_ = false;
-	defaultAnim_ = "";
+	defaultAnim_ = L"";
 
 	attachAnim_ = -1;
 	speedAnim = -1.0f;
@@ -29,7 +35,7 @@ AnimationController::~AnimationController(void)
 {
 }
 
-void AnimationController::Add(const std::string& _name, const int _animData, const PLAY_TYPE& _type, const ANIM_SOURCE& _source, const bool _isLock)
+void AnimationController::Add(const std::wstring& _name, const int _animData, const PLAY_TYPE& _type, const ANIM_SOURCE& _source, const bool _isLock)
 {
 	//すでに要素がある時
 	if (animDatas_.contains(_name)) {
@@ -68,7 +74,7 @@ void AnimationController::Add(const std::string& _name, const int _animData, con
 	animDatas_.emplace(_name, anim);	//アニメーション情報追加
 }
 
-void AnimationController::Play(const std::string& _name, const float _speed, const std::vector<std::string> _next)
+void AnimationController::Play(const std::wstring& _name, const float _speed, const std::vector<std::wstring> _next)
 {
 	//アニメーションロック中は再生しない
 	if (isAnimLock_)return;
@@ -91,8 +97,8 @@ void AnimationController::Play(const std::string& _name, const float _speed, con
 	
 	//次に再生されるアニメーションが設定されているとき(LOOPは末尾のみ許可)
 	if (!_next.empty()) {
-		for (auto& string : _next) {
-			if (animDatas_[string].type == PLAY_TYPE::LOOP && string != _next.back()) {
+		for (auto& wstring : _next) {
+			if (animDatas_[wstring].type == PLAY_TYPE::LOOP && wstring != _next.back()) {
 				assert("順次再生の個所を見直してください。");
 			}
 		}
@@ -151,7 +157,7 @@ void AnimationController::Play(const std::string& _name, const float _speed, con
 	MV1SetAttachAnimTime(modelId_, attachAnim_, counter_);
 }
 
-void AnimationController::AddNextAnim(const std::string& _name)
+void AnimationController::AddNextAnim(const std::wstring& _name)
 {
 	//要素がないとき
 	if (!animDatas_.contains(_name)) {
@@ -162,7 +168,7 @@ void AnimationController::AddNextAnim(const std::string& _name)
 	nextAnim_.push_back(_name);
 }
 
-void AnimationController::AddNextAnim(const std::vector<std::string> _names)
+void AnimationController::AddNextAnim(const std::vector<std::wstring> _names)
 {
 	for (auto& add : _names) {
 		//要素がないとき
@@ -192,7 +198,7 @@ void AnimationController::ChangeSpeedRate(const float _percent)
  	speedRate_ = _percent / DEFAULT_SPEED_RATE;
 }
 
-void AnimationController::SetDefaultAnim(const std::string& _name)
+void AnimationController::SetDefaultAnim(const std::wstring& _name)
 {
 	//要素がないとき
 	if (!animDatas_.contains(_name)) {

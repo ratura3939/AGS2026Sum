@@ -46,24 +46,24 @@ public:
 	/// <param name="_type">再生タイプ</param>
 	/// <param name="_source">アニメーションの情報源</param>
 	/// <param name="_isLock">一回の再生を保障するかどうか</param>
-	void Add(const std::string& _name, const int _animData, const PLAY_TYPE& _type, const ANIM_SOURCE& _source, const bool _isLock = false);
+	void Add(const std::wstring& _name, const int _animData, const PLAY_TYPE& _type, const ANIM_SOURCE& _source, const bool _isLock = false);
 	/// <summary>
 	/// 再生開始処理
 	/// </summary>
 	/// <param name="_name">登録名</param>
 	/// <param name="_speed">再生速度</param>
 	/// <param name="_next">連続して再生する物たち<最後以外にLOOPのものを入れないこと！！></param>
-	void Play(const std::string& _name, const float _speed = DEFAULT_SPEED, const std::vector<std::string> _next = {});
+	void Play(const std::wstring& _name, const float _speed = DEFAULT_SPEED, const std::vector<std::wstring> _next = {});
 	/// <summary>
 	/// 連続して再生するアニメーションを途中で追加する
 	/// </summary>
 	/// <param name="_name">追加するアニメーション名</param>
-	void AddNextAnim(const std::string& _name);
+	void AddNextAnim(const std::wstring& _name);
 	/// <summary>
 	/// 連続して再生するアニメーションを途中で追加する
 	/// </summary>
 	/// <param name="_name">追加するアニメーション名(複数)</param>
-	void AddNextAnim(const std::vector<std::string> _names);
+	void AddNextAnim(const std::vector<std::wstring> _names);
 	void Update(void);
 
 	/// <summary>
@@ -73,7 +73,7 @@ public:
 	void ChangeSpeedRate(const float _percent);
 
 	void UnAnimLock(void) { isAnimLock_ = false; }
-	void SetDefaultAnim(const std::string& _name);
+	void SetDefaultAnim(const std::wstring& _name);
 
 private:
 	//アニメーション更新処理
@@ -86,7 +86,7 @@ private:
 	void FinishAnimReturn(void);
 
 	int& modelId_;	//モデルID
-	std::unordered_map<std::string, AnimationInfo>animDatas_;	//アニメーションデータ総まとめ
+	std::unordered_map<std::wstring, AnimationInfo>animDatas_;	//アニメーションデータ総まとめ
 	AnimationInfo activeAnim_;				//再生中のアニメーション情報
 
 	int attachAnim_;	//実際の再生しているもの
@@ -94,12 +94,13 @@ private:
 	float counter_;		//更新カウンター
 	float speedRate_;	//速度割合
 
-	bool isAnimLock_;	//アニメーションロック中かどうか
+	bool isAnimLock_;		//アニメーションロック中かどうか
+	float animBlendRate_;	//アニメーションブレンド率	
 
 	bool isSetDefaultAnim_;		//デフォルトアニメーションが設定されているかどうか
-	std::string defaultAnim_;	//デフォルトアニメーションの名前
+	std::wstring defaultAnim_;	//デフォルトアニメーションの名前
 
-	std::vector<std::string> nextAnim_;	//次に再生するアニメーション(LOOP以外に適用)<最終以外にLOOＰを入れないこと>
+	std::vector<std::wstring> nextAnim_;	//次に再生するアニメーション(LOOP以外に適用)<最終以外にLOOＰを入れないこと>
 
 	using FinishAnimation = void(AnimationController::*)(void);
 	using UpdateAnimation = void(AnimationController::*)(void);

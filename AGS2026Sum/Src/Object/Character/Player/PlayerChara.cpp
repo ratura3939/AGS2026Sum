@@ -1,7 +1,8 @@
 #include "../../../pch.h"
 #include"../../../Manager/Generic/SceneManager.h"
 #include"../../../Manager/Generic/Camera.h"
-#include"../../../Manager/Generic/ResourceManager.h"		
+#include"../../../Manager/Generic/ResourceManager.h"	
+#include"PlayerManager.h"
 #include "PlayerChara.h"
 
 namespace {
@@ -38,12 +39,25 @@ void PlayerChara::DoUpdate(void)
 
 void PlayerChara::InitAnim(void)
 {
-	animController_ = std::make_unique<AnimationController>(modelId_);
-	animController_->Add("Idle", ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_IDLE_ANIM).handleId_, AnimationController::PLAY_TYPE::LOOP, AnimationController::ANIM_SOURCE::EXTERNAL, false);
-	animController_->Add("Run", ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_RUN_ANIM).handleId_, AnimationController::PLAY_TYPE::LOOP, AnimationController::ANIM_SOURCE::EXTERNAL, false);	
+	ResourceManager& resM = ResourceManager::GetInstance();
+	using SRC = ResourceManager::SRC;
+	using ANIM_PLAY_TYPE = AnimationController::PLAY_TYPE;
+	using ANIM_SOURCE = AnimationController::ANIM_SOURCE;
 
-	animController_->SetDefaultAnim("Idle");	//デフォルトを待機にする
-	animController_->Play("Idle");				//待機アニメ再生
+	animController_ = std::make_unique<AnimationController>(modelId_);
+
+	//アニメーションの登録
+	animController_->Add(PlayerManager::ANIM_IDLE, resM.Load(SRC::PLAYER_IDLE_ANIM).handleId_, ANIM_PLAY_TYPE::LOOP, ANIM_SOURCE::EXTERNAL);
+	animController_->Add(PlayerManager::ANIM_RUN, resM.Load(SRC::PLAYER_RUN_ANIM).handleId_, ANIM_PLAY_TYPE::LOOP, ANIM_SOURCE::EXTERNAL);
+	animController_->Add(PlayerManager::ANIM_FIRST_PUNCH, resM.Load(SRC::PLAYER_FIRST_PUNCH_ANIM).handleId_, ANIM_PLAY_TYPE::NOMAL, ANIM_SOURCE::EXTERNAL, true);
+	animController_->Add(PlayerManager::ANIM_SECOND_PUNCH, resM.Load(SRC::PLAYER_SECOND_PUNCH_ANIM).handleId_, ANIM_PLAY_TYPE::NOMAL, ANIM_SOURCE::EXTERNAL, true);
+	animController_->Add(PlayerManager::ANIM_THIRD_PUNCH, resM.Load(SRC::PLAYER_THIRD_PUNCH_ANIM).handleId_, ANIM_PLAY_TYPE::NOMAL, ANIM_SOURCE::EXTERNAL, true);
+	animController_->Add(PlayerManager::ANIM_MIDDLE_KICK, resM.Load(SRC::PLAYER_MIDDLE_KICK_ANIM).handleId_, ANIM_PLAY_TYPE::NOMAL, ANIM_SOURCE::EXTERNAL, true);
+	animController_->Add(PlayerManager::ANIM_HIGH_KICK, resM.Load(SRC::PLAYER_HIGH_KICK_ANIM).handleId_, ANIM_PLAY_TYPE::NOMAL, ANIM_SOURCE::EXTERNAL, true);
+	animController_->Add(PlayerManager::ANIM_FINSH_KICK, resM.Load(SRC::PLAYER_FINISH_KICK_ANIM).handleId_, ANIM_PLAY_TYPE::NOMAL, ANIM_SOURCE::EXTERNAL, true);
+
+	animController_->SetDefaultAnim(PlayerManager::ANIM_IDLE);	//デフォルトを待機にする
+	animController_->Play(PlayerManager::ANIM_IDLE);			//待機アニメ再生
 }
 
 void PlayerChara::Move(void)

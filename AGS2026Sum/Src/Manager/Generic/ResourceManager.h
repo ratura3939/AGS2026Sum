@@ -18,8 +18,15 @@ public:
 		,BOSS_MDL	//ボス
 
 		//アニメーション
-		,PLAYER_IDLE_ANIM	//プレイヤー待機
-		,PLAYER_RUN_ANIM	//プレイヤー走る
+		//プレイヤー
+		,PLAYER_IDLE_ANIM			//待機
+		,PLAYER_RUN_ANIM			//走る
+		,PLAYER_FIRST_PUNCH_ANIM	//パンチ１
+		,PLAYER_SECOND_PUNCH_ANIM	//パンチ２
+		,PLAYER_THIRD_PUNCH_ANIM	//パンチ３
+		,PLAYER_MIDDLE_KICK_ANIM	//キック１
+		,PLAYER_HIGH_KICK_ANIM		//キック２
+		,PLAYER_FINISH_KICK_ANIM	//キック３
 		,MAX
 	};
 
