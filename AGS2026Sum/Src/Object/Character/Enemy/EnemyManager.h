@@ -38,8 +38,11 @@ public:
 
 private:
 
-	//プレイヤーを狙うときの半径
-	static constexpr float PLAYER_AIM_RADIUS = 2000.0f;
+	//プレイヤーを狙うときの距離半径
+	static constexpr float PLAYER_AIM_RADIUS = 1000.0f;
+
+	//プレイヤーを攻撃態勢に入る距離半径
+	static constexpr float PLAYER_ATTACK_RADIUS = 500.0f;
 
 	//敵の生成数
 	static constexpr int CREATE_NUM = 7;
@@ -48,9 +51,15 @@ private:
 	std::vector<std::unique_ptr<EnemyGroup>> enemyGroup_;	
 
 	//プレイヤー座標
-	const VECTOR& playerPos_;		
+	const VECTOR& playerPos_;
+
+	//グループの削除処理
+	void DeleteEnemyGroup(void);
 
 	//グループをプレイヤーに向かわせる
 	void LookPlayer(void);
+
+	//グループに攻撃態勢を取らせる
+	void AttackReady(void);
 };
 
