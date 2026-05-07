@@ -39,7 +39,7 @@ public:
 private:
 
 	//“G‚Ì¶¬”
-	static constexpr int CREATE_NUM = 6;
+	static constexpr int CREATE_NUM = 100;
 
 	//“GƒOƒ‹[ƒv
 	std::vector<std::unique_ptr<EnemyGroup>> enemyGroup_;	

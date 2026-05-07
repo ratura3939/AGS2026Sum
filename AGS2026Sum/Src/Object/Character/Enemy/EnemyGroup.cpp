@@ -19,14 +19,26 @@ void EnemyGroup::Init(void)
 
 void EnemyGroup::Update(void)
 {
+	for(auto& enemy : enemys_)
+	{
+		enemy->Update();
+	}
 }
 
 void EnemyGroup::Draw(void)
 {
+	for(auto& enemy : enemys_)
+	{
+		enemy->Draw();
+	}
 }
 
 void EnemyGroup::Release(void)
 {
+	for (auto& enemy : enemys_)
+	{
+		enemy->Release();
+	}
 }
 
 void EnemyGroup::CreateEnemy(void)

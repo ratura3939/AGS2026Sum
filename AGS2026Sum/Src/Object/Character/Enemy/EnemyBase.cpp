@@ -1,6 +1,6 @@
 #include "../../../pch.h"
-#include "../../../Utility/Utility.h"
 #include "../../../Manager/GameSystem/CollisionManager.h"
+#include "../../../Manager/Generic/ResourceManager.h"
 #include "../../Common/Collider.h"
 #include "../../Common/Geometry/Sphere.h"
 #include "EnemyBase.h"
@@ -16,6 +16,11 @@ EnemyBase::~EnemyBase(void)
 
 void EnemyBase::Draw(void)
 {
+	//デバッグ描画
+	DrawDebug();
+
+	//モデル描画
+	MV1DrawModel(modelId_);
 }
 
 void EnemyBase::Release(void)
@@ -28,7 +33,8 @@ void EnemyBase::HitCollider(std::weak_ptr<Collider> _col)
 
 void EnemyBase::DoLoad(void)
 {
-	//TODO:モデル差し込み
+	//モデル差し込み
+	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_MDL);
 }
 
 void EnemyBase::DoInit(void)

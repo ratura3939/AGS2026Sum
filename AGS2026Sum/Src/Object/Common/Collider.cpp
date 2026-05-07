@@ -8,6 +8,8 @@ Collider::Collider(ActorBase& _master, const COL_TAG _tag, std::unique_ptr<Geome
 	, tag_(_tag)
 	, hitTags_(_hitTags)
 	, isCollision_(true)
+	, isHit_(false)
+	, isDead_(false)
 {
 }
 
