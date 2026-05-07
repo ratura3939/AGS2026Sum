@@ -111,6 +111,10 @@ void EnemyBase::EnterAttackReady(void)
 
 void EnemyBase::EnterAttack(void)
 {
+	//攻撃目標座標の設定
+	attackPos_ = quaRot_.PosAxis(VAdd(pos_, ATTACK_LOCAL_POS));
+
+	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, ATTACK_BROUD_RADIUS, ATTACK_RADIUS);
 }
 
 void EnemyBase::UpdateStay(void)

@@ -48,10 +48,13 @@ private:
 	static constexpr float BROUD_RADIUS = RADIUS + 15.0f;
 
 	//攻撃距離
-	static constexpr float ATTACK_DISTANCE = RADIUS + 15.0f;
+	static constexpr float ATTACK_RADIUS = RADIUS + 15.0f;
+	static constexpr float ATTACK_BROUD_RADIUS = ATTACK_RADIUS + 15.0f;
+	static constexpr VECTOR ATTACK_LOCAL_POS = { 0.0f, 0.0f, 30.0f };
 
-	//初期座標
-	const VECTOR initPos_;
+	//座標
+	const VECTOR initPos_;	//初期座標
+	VECTOR attackPos_;		//攻撃目標座標
 
 	//グループの移動量
 	const VECTOR& groupMovePow_;
