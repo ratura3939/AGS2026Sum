@@ -1,7 +1,8 @@
 #include "../../../pch.h"
 #include"../../../Manager/Generic/SceneManager.h"
 #include"../../../Manager/Generic/Camera.h"
-#include"../../../Manager/Generic/ResourceManager.h"		
+#include"../../../Manager/Generic/ResourceManager.h"	
+#include"PlayerManager.h"
 #include "PlayerChara.h"
 
 namespace {
@@ -9,6 +10,11 @@ namespace {
 }
 
 PlayerChara::PlayerChara(void)
+	:inputDir_(Utility::VECTOR_ZERO)
+	,isMove_(false)
+	,isAttack_(false)
+	,moveSpeed_(MOVE_SPEED)
+	,afterMoveRad_(0.0f)
 {
 }
 
@@ -26,13 +32,49 @@ void PlayerChara::DoInit(void)
 	pos_ = Utility::VECTOR_ZERO;
 	moveSpeed_ = MOVE_SPEED;
 	inputDir_ = Utility::VECTOR_ZERO;
+
+	InitAnim();	//アニメーションの初期化
 }
 
 void PlayerChara::DoUpdate(void)
 {
-	Move();
+	//アニメーション設定
+	useAnim_ = PlayerManager::ANIM_IDLE;	//初期値は待機
+	if (isMove_) {
+		useAnim_ = PlayerManager::ANIM_RUN;	//走りアニメ
+	}
+
+	//攻撃中ではないとき
+	if (!isAttack_) {
+		Move();	//移動処理
+		animController_->Play(useAnim_);	//アニメーションの新規再生
+	}
 	Rotation();
 	inputDir_ = Utility::VECTOR_ZERO;
+	animController_->Update();
+}
+
+void PlayerChara::InitAnim(void)
+{
+	ResourceManager& resM = ResourceManager::GetInstance();
+	using SRC = ResourceManager::SRC;
+	using ANIM_PLAY_TYPE = AnimationController::PLAY_TYPE;
+	using ANIM_SOURCE = AnimationController::ANIM_SOURCE;
+
+	animController_ = std::make_unique<AnimationController>(modelId_);
+
+	//アニメーションの登録
+	animController_->Add(PlayerManager::ANIM_IDLE, resM.Load(SRC::PLAYER_IDLE_ANIM).handleId_, ANIM_PLAY_TYPE::LOOP, ANIM_SOURCE::EXTERNAL);
+	animController_->Add(PlayerManager::ANIM_RUN, resM.Load(SRC::PLAYER_RUN_ANIM).handleId_, ANIM_PLAY_TYPE::LOOP, ANIM_SOURCE::EXTERNAL);
+	animController_->Add(PlayerManager::ANIM_FIRST_PUNCH, resM.Load(SRC::PLAYER_FIRST_PUNCH_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL, true);
+	animController_->Add(PlayerManager::ANIM_SECOND_PUNCH, resM.Load(SRC::PLAYER_SECOND_PUNCH_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL, true);
+	animController_->Add(PlayerManager::ANIM_THIRD_PUNCH, resM.Load(SRC::PLAYER_THIRD_PUNCH_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL, true);
+	animController_->Add(PlayerManager::ANIM_MIDDLE_KICK, resM.Load(SRC::PLAYER_MIDDLE_KICK_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL, true);
+	animController_->Add(PlayerManager::ANIM_HIGH_KICK, resM.Load(SRC::PLAYER_HIGH_KICK_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL, true);
+	animController_->Add(PlayerManager::ANIM_FINSH_KICK, resM.Load(SRC::PLAYER_FINISH_KICK_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL, true);
+
+	animController_->SetDefaultAnim(PlayerManager::ANIM_IDLE);	//デフォルトを待機にする
+	animController_->Play(PlayerManager::ANIM_IDLE);			//待機アニメ再生
 }
 
 void PlayerChara::Move(void)
@@ -41,10 +83,12 @@ void PlayerChara::Move(void)
 	moveVec.y = 0.0f;	//Y軸方向の移動はなし
 
 	pos_ = VAdd(pos_, VScale(moveVec, moveSpeed_));	//移動
+	isMove_ = false;
 }
 
 void PlayerChara::Attack(void)
 {
+	isAttack_ = true;
 }
 
 void PlayerChara::Draw(void)
@@ -72,6 +116,7 @@ void PlayerChara::InputMoveVec(const VECTOR& _inputVec)
 		return;		//処理の必要なし
 	}
 
+	isMove_ = true;	//移動している
 	auto& camera = SceneManager::GetInstance().GetCamera();
 	
 	VECTOR camForward = camera.GetRot().GetForward();	//カメラ前方向（Y軸方向を無視）

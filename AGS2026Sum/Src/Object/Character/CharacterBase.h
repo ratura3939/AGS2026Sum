@@ -1,5 +1,8 @@
 #pragma once
+#include <memory>
 #include "../Common/ActorBase.h"
+#include"../../Manager/GameSystem/AnimationController.h"
+
 class CharacterBase :
     public ActorBase
 {
@@ -7,6 +10,9 @@ public:
 	//回転作業
 	static constexpr float PER_ROT = 0.2f;			//フレームごとの回転(球面補間における時間の増加量を表す)
 	static constexpr float THRESHOLD_ROT = 0.1f;	//回転のしきい値を表す
+
+	CharacterBase(void);
+	virtual ~CharacterBase(void)override;
 
 	virtual void Draw(void)override = 0;			//描画
 	virtual void Release(void)override = 0;			//解放
@@ -23,20 +29,23 @@ protected:
 	virtual void DoLoad(void)override = 0;		//読み込み
 	virtual void DoUpdate(void)override = 0;	//更新
 
+	virtual void InitAnim(void) = 0;			//アニメーションの初期化
+
 	virtual void Move(void) = 0;				//移動処理
 	virtual void Attack(void) = 0;				//攻撃処理
 
 	void SetGoalRot(const float _rad);			//回転目標角度
 	void Rotation(void);						//回転
 
+	std::unique_ptr<AnimationController> animController_;	//アニメーションコントローラー
+
 private:
 	void Death(void);			//死亡処理
-
-	float hp_;					//体力
 
 	Quaternion characterRotY_;	//Y軸回転用
 
 	Quaternion goalQua_;		//目標の回転量
 	float stepRotation_;		//回転のカウンター
+	float hp_;					//体力
 };
 

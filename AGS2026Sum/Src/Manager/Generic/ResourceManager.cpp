@@ -56,9 +56,7 @@ void ResourceManager::InitGame(void)
 {
 	Resource res;
 
-	//プレイヤーモデル
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + L"Player.mv1");
-	resourcesMap_.emplace(SRC::PLAYER_MDL, res);
+	ResourcePlayer();	//プレイヤー関連
 
 	//敵モデル
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + L"Enemy.mv1");
@@ -82,6 +80,41 @@ void ResourceManager::InitGameOver(void)
 void ResourceManager::InitPause(void)
 {
 	Resource res;
+}
+
+void ResourceManager::ResourcePlayer(void)
+{
+	Resource res;
+	//モデル
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + L"Player.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_MDL, res);
+
+	//固有アニメーション
+	//***************************************************************************************
+	//待機
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/Idle.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_IDLE_ANIM, res);
+	//ダッシュ
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/Run.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_RUN_ANIM, res);
+	//パンチ１
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/FirstPunch.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_FIRST_PUNCH_ANIM, res);
+	//パンチ２
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/SecondPunch.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_SECOND_PUNCH_ANIM, res);
+	//パンチ３
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/ThirdPunch.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_THIRD_PUNCH_ANIM, res);
+	//キック１
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/MiddleKick.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_MIDDLE_KICK_ANIM, res);
+	//キック２
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/HighKick.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_HIGH_KICK_ANIM, res);
+	//キック３
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/HurricanKick.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_FINISH_KICK_ANIM, res);
 }
 
 void ResourceManager::Release(void)

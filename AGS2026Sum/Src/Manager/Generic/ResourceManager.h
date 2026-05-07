@@ -16,6 +16,17 @@ public:
 		PLAYER_MDL	//プレイヤー
 		,ENEMY_MDL	//敵
 		,BOSS_MDL	//ボス
+
+		//アニメーション
+		//プレイヤー
+		,PLAYER_IDLE_ANIM			//待機
+		,PLAYER_RUN_ANIM			//走る
+		,PLAYER_FIRST_PUNCH_ANIM	//パンチ１
+		,PLAYER_SECOND_PUNCH_ANIM	//パンチ２
+		,PLAYER_THIRD_PUNCH_ANIM	//パンチ３
+		,PLAYER_MIDDLE_KICK_ANIM	//キック１
+		,PLAYER_HIGH_KICK_ANIM		//キック２
+		,PLAYER_FINISH_KICK_ANIM	//キック３
 		,MAX
 	};
 
@@ -27,17 +38,6 @@ public:
 
 	// 初期化
 	void Init(SceneManager::SCENE_ID _scene= SceneManager::SCENE_ID::NONE);
-
-	
-private:
-	//シーンごとにデータを読み込むことにする
-	void InitTitle(void);
-	void InitGame(void);
-	void InitClear(void);
-	void InitGameOver(void);
-	void InitPause(void);
-
-public:
 	// 解放(シーン切替時に一旦解放)
 	void Release(void);
 
@@ -51,15 +51,14 @@ public:
 	int LoadModelDuplicate(SRC src);
 
 private:
+	//シーンごとにデータを読み込むことにする
+	void InitTitle(void);
+	void InitGame(void);
+	void InitClear(void);
+	void InitGameOver(void);
+	void InitPause(void);
 
-	// 静的インスタンス
-	static ResourceManager* instance_;
-
-	// リソース管理の対象
-	std::map<SRC, Resource> resourcesMap_;
-
-	// 読み込み済みリソース
-	std::map<SRC, Resource*> loadedMap_;
+	void ResourcePlayer(void);	//プレイヤー関連リソース
 
 	// デフォルトコンストラクタをprivateにして、
 	// 外部から生成できない様にする
@@ -71,5 +70,13 @@ private:
 	// 内部ロード
 	Resource* _Load(SRC src);
 
+	// 静的インスタンス
+	static ResourceManager* instance_;
+
+	// リソース管理の対象
+	std::map<SRC, Resource> resourcesMap_;
+
+	// 読み込み済みリソース
+	std::map<SRC, Resource*> loadedMap_;
 };
 

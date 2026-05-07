@@ -20,6 +20,7 @@ public:
 	static const std::wstring PATH_IMAGE;
 	static const std::wstring PATH_UI;
 	static const std::wstring PATH_MODEL;
+	static const std::wstring PATH_ANIMATION;
 	static const std::wstring PATH_CHARACTER;
 	static const std::wstring PATH_STAGE;
 	static const std::wstring PATH_EFFECT;
