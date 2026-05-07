@@ -26,7 +26,7 @@ public:
 	~PlayerManager(void);
 
 	void Init(void);
-	void Update(AttackManager& _atk);
+	void Update(void);
 	void Draw(void);
 	void Release(void);
 

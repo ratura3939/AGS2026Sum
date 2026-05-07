@@ -33,7 +33,7 @@ void PlayerManager::Init(void)
 	//攻撃の登録
 }
 
-void PlayerManager::Update(AttackManager& _atk)
+void PlayerManager::Update(void)
 {
 	UserInput();			//入力受付
 	character_->Update();	//キャラクターの更新
