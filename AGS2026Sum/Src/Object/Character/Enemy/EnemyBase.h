@@ -72,6 +72,9 @@ private:
 	//更新
 	void DoUpdate(void)override;
 
+	//アニメーションの初期化
+	void InitAnim(void)override;
+
 	//描画(デバッグ)
 	void DrawDebug(void);
 

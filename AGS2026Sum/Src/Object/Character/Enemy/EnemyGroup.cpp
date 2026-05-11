@@ -96,9 +96,9 @@ void EnemyGroup::CreateEnemy(void)
 	{
 		//ランダムな初期座標を生成
 		VECTOR randPos;
-		randPos.x = pos_.x + Utility::GetRandomValue(-LEAVE_GROUP_DIST, LEAVE_GROUP_DIST);
+		randPos.x = pos_.x + static_cast<float>(Utility::GetRandomValue(-LEAVE_GROUP_DIST, LEAVE_GROUP_DIST));
 		randPos.y = 0.0f;
-		randPos.z = pos_.z + Utility::GetRandomValue(-LEAVE_GROUP_DIST, LEAVE_GROUP_DIST);
+		randPos.z = pos_.z + static_cast<float>(Utility::GetRandomValue(-LEAVE_GROUP_DIST, LEAVE_GROUP_DIST));
 
 		//敵の生成
 		enemy = std::make_unique<EnemyBase>(randPos, movePow_);

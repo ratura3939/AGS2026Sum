@@ -86,6 +86,17 @@ void EnemyBase::DoUpdate(void)
 	stateFunc_[state_].update();
 }
 
+void EnemyBase::InitAnim(void)
+{
+	//インスタンス取得
+	auto& res = ResourceManager::GetInstance();
+
+	//アニメーションの初期化
+	animController_ = std::make_unique<AnimationController>(modelId_);
+	//int animData = res.Load(ResourceManager::SRC::PLAYER_IDLE_ANIM).handleId_;
+	//animController_->Add(L"Idle", animData, AnimationController::PLAY_TYPE::LOOP, AnimationController::ANIM_SOURCE::EXTERNAL);
+}
+
 void EnemyBase::DrawDebug(void)
 {
 #ifdef _DEBUG
