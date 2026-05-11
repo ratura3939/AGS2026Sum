@@ -83,6 +83,9 @@ void EnemyManager::DistanceAction(void)
 
 	for (auto& group : enemyGroup_)
 	{
+		//グループが空なら処理しない
+		if (group->IsEmpty())continue;
+
 		//プレイヤーからの距離を取得
 		float dist = Utility::Distance(group->GetPos(), playerPos_);
 
@@ -95,7 +98,7 @@ void EnemyManager::DistanceAction(void)
 			//グループの目標座標をプレイヤー座標に設定
 			group->SetGoalPos(playerPos_);
 		}
-		else if (dist < PLAYER_AIM_RADIUS)
+		if (dist < PLAYER_AIM_RADIUS)
 		{
 			//グループを移動状態にする
 			group->ChangeState(EnemyGroup::GROUP_STATE::MOVE);

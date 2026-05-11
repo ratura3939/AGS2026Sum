@@ -156,9 +156,13 @@ void EnemyBase::EnterAttackReady(void)
 void EnemyBase::EnterAttack(void)
 {
 	//攻撃目標座標の設定
-	//attackPos_ = quaRot_.PosAxis(VAdd(pos_, ATTACK_LOCAL_POS));
+	attackPos_ = VAdd(pos_, quaRot_.PosAxis(ATTACK_LOCAL_POS));
 
-	//std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, ATTACK_BROUD_RADIUS, ATTACK_RADIUS);
+	//攻撃コライダ
+	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, ATTACK_BROUD_RADIUS, ATTACK_RADIUS);
+
+	//攻撃アニメーションの再生
+	animController_->Play(L"Attack");
 }
 
 void EnemyBase::EnterReturn(void)
@@ -177,9 +181,6 @@ void EnemyBase::UpdateMove(void)
 
 void EnemyBase::UpdateAttackReady(void)
 {
-	//攻撃開始
-	ChangeState(ENEMY_STATE::ATTACK);
-
 	//移動処理
 	Move();
 }
