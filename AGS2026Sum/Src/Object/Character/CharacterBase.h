@@ -39,6 +39,8 @@ protected:
 
 	std::unique_ptr<AnimationController> animController_;	//アニメーションコントローラー
 
+	float hp_;					//体力
+
 private:
 	void Death(void);			//死亡処理
 
@@ -46,6 +48,5 @@ private:
 
 	Quaternion goalQua_;		//目標の回転量
 	float stepRotation_;		//回転のカウンター
-	float hp_;					//体力
 };
 

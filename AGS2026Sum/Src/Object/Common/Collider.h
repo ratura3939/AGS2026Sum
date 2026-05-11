@@ -14,9 +14,11 @@ public:
 	//タグ
 	enum class COL_TAG
 	{
-		OBJECT
-		,ENEMY
-		,MAX
+		PLAYER			//プレイヤー
+		, PLAYER_ATTACK	//プレイヤーの攻撃
+		, ENEMY			//敵
+		, ENEMY_ATTACK	//敵の攻撃
+		, MAX
 	};
 
 	Collider(ActorBase& _master, const COL_TAG _tags, std::unique_ptr<Geometry> _geo, const std::set<COL_TAG> _hitTags = {});

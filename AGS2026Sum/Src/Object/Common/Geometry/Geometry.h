@@ -51,6 +51,9 @@ public:
 	//前判定用の半径を返す
 	inline const float GetBroudRadius(void)const { return broudRadius_; }
 
+	//前判定用の半径を設定する
+	inline void SetBroudRadius(const float _broudRadius) { broudRadius_ = _broudRadius; }
+
 	//当たった法線方向の取得
 	inline const VECTOR GetHitNormal(void)const { return hitResult_.normal; }
 

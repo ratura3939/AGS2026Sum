@@ -633,4 +633,30 @@ VECTOR Utility::EpsilonCustomThreshold(const VECTOR& normal, const float _thresh
     return ret;
 }
 
+const VECTOR Utility::GetMoveVec(const VECTOR _start, const VECTOR _goal, const float _speed)
+{
+    //標的への方向ベクトルを取得
+    VECTOR targetVec = VSub(_goal, _start);
+
+    //正規化
+    targetVec = VNorm(targetVec);
+
+    //移動量を求める
+    VECTOR ret = VScale(targetVec, _speed);
+
+    return ret;
+}
+
+int Utility::GetRandomValue(int _min, int _max)
+{
+    //ランダムエンジン
+    static std::mt19937 mt(std::random_device{}());
+
+    // min ～ max の範囲で一様分布
+    std::uniform_int_distribution<int> dist(_min, _max);
+
+    //ランダムの値
+    return dist(mt);
+}
+
 

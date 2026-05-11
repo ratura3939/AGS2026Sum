@@ -16,6 +16,7 @@
 #include<iostream>
 #include<fstream>
 #include<sstream>
+#include <random>
 #include <tuple>
 #include"nlohmann/json.hpp"
 #include"../Utility/Utility.h"

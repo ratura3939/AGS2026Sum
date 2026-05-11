@@ -24,6 +24,15 @@ void EnemyManager::Init(void)
 
 void EnemyManager::Update(void)
 {
+	//グループの削除処理
+	DeleteEnemyGroup();
+
+	//プレイヤーを狙う
+	LookPlayer();
+
+	//攻撃態勢に入る
+	AttackReady();
+
 	//更新
 	for (auto& group : enemyGroup_)
 	{
@@ -59,4 +68,51 @@ void EnemyManager::CreateEnemyGroup(void)
 
 	//格納
 	enemyGroup_.push_back(std::move(group));
+}
+
+void EnemyManager::DeleteEnemyGroup(void)
+{
+	//グループが空なら処理しない
+	if (enemyGroup_.empty())return;
+
+	//グループの削除処理
+	std::erase_if(enemyGroup_, [](const std::unique_ptr<EnemyGroup>& _group) {return _group->IsEmpty();});
+}
+
+void EnemyManager::LookPlayer(void)
+{
+	//グループが空なら処理しない
+	if (enemyGroup_.empty())return;
+
+	for (auto& group : enemyGroup_)
+	{
+		//プレイヤーから一定距離以上離れているグループは無視する
+		if (Utility::Distance(group->GetPos(), playerPos_) > PLAYER_AIM_RADIUS)
+		{
+			//グループを待機状態にする
+ 			group->ChangeState(EnemyGroup::GROUP_STATE::STAY);
+			continue;
+		}
+
+		//移動状態にする
+		group->ChangeState(EnemyGroup::GROUP_STATE::MOVE);
+
+		//グループの目標座標をプレイヤー座標に設定
+		group->SetGoalPos(playerPos_);
+	}
+}
+
+void EnemyManager::AttackReady(void)
+{
+	//グループが空なら処理しない
+	if (enemyGroup_.empty())return;
+
+	for (auto& group : enemyGroup_)
+	{
+		//プレイヤーから一定距離以上離れているグループは無視する
+		if (Utility::Distance(group->GetPos(), playerPos_) > PLAYER_ATTACK_RADIUS)continue;
+
+		//グループを攻撃態勢にする
+		group->ChangeState(EnemyGroup::GROUP_STATE::ATTACK_READY);
+	}
 }
