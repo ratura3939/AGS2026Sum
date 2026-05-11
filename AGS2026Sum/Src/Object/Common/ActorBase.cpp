@@ -27,7 +27,11 @@ ActorBase::~ActorBase(void)
 void ActorBase::Init(void)
 {
 	DoInit();
-	UpdateRotQuat();
+
+	//モデルがある時のみ行う
+	if (modelId_ != -1) {
+		UpdateRotQuat();	//モデルの初期位置を反映
+	}
 }
 
 void ActorBase::Update(void)
@@ -37,7 +41,9 @@ void ActorBase::Update(void)
 	DoUpdate();
 	//共通処理
 	//UpdateGravity();
-	UpdateRotQuat();
+	if (modelId_ != -1) {
+		UpdateRotQuat();
+	}
 }
 
 const int ActorBase::GetModelID(void) const

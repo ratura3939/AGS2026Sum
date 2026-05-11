@@ -26,6 +26,6 @@ class PlayerChara :
 		float moveSpeed_;       //移動速度
 		bool isMove_;           //移動しているか
 		bool isAttack_;         //攻撃しているか  
-		std::wstring useAnim_;     //現在のアニメーション
+		std::wstring useAnim_;  //現在のアニメーション
 };
 

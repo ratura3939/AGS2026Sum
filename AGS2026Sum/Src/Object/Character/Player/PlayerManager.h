@@ -37,8 +37,6 @@ public:
 
 	//const bool IsAlive(void)const;
 
-	//void DrawDebug(void);
-
 private:
 	void UserInput(void);				//“ü—ÍŽó•t
 
