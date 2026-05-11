@@ -15,7 +15,8 @@ public:
     struct AttackData {
 		int scale;      //大きさ
 		int power;      //攻撃力
-		int localPos;   //ローカル座標
+		int time;       //時間
+		VECTOR localPos;   //ローカル座標
 	};
 
     static const int ATTACK_LEVEL_MAX = 3;
@@ -34,9 +35,14 @@ private:
 	void DoInit(void)override;
 	void DoUpdate(void)override;
 
-	const VECTOR& playerPos_;	//プレイヤーの座標参照
+	void LoadAttackData(void);	//攻撃データの読み込み
 
+	void ApplyAttackColliderSettings(void);	//コライダの設定
+
+	const VECTOR& playerPos_;	//プレイヤーの座標参照
 	AttackData data_[static_cast<int>(ATTACK_TYPE::MAX)][ATTACK_LEVEL_MAX];	//攻撃データ
-	int level_; //攻撃レベル
+	AttackData currentData_;	//現在の攻撃データ
+	int level_;		//攻撃レベル
+	int counter_;	//攻撃の時間管理
 };
 
