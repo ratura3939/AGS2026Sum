@@ -115,6 +115,10 @@ void CameraCollider::DoInit(void)
     //SetCollider();
 }
 
+void CameraCollider::DoLoad(void)
+{
+}
+
 void CameraCollider::DoUpdate(void)
 {
     //衝突結果と１フレーム前の衝突結果を比較し、非表示→表示になるコライダーを調べる

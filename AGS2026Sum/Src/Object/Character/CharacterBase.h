@@ -7,8 +7,6 @@ class CharacterBase :
     public ActorBase
 {
 public:
-	//初期化用
-	static constexpr float INIT_MODEL_ROT = 180.0f;	//Unity形式のモデルの形を合わせる用
 	//回転作業
 	static constexpr float PER_ROT = 0.2f;			//フレームごとの回転(球面補間における時間の増加量を表す)
 	static constexpr float THRESHOLD_ROT = 0.1f;	//回転のしきい値を表す
@@ -28,6 +26,7 @@ public:
 
 protected:
 	virtual void DoInit(void)override = 0;		//初期化
+	virtual void DoLoad(void)override = 0;		//読み込み
 	virtual void DoUpdate(void)override = 0;	//更新
 
 	virtual void InitAnim(void) = 0;			//アニメーションの初期化
@@ -40,6 +39,8 @@ protected:
 
 	std::unique_ptr<AnimationController> animController_;	//アニメーションコントローラー
 
+	float hp_;					//体力
+
 private:
 	void Death(void);			//死亡処理
 
@@ -47,6 +48,5 @@ private:
 
 	Quaternion goalQua_;		//目標の回転量
 	float stepRotation_;		//回転のカウンター
-	float hp_;					//体力
 };
 

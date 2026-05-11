@@ -1,5 +1,5 @@
 #include"../../pch.h"
-#include"../../Manager/GameSystem/EnemyManager.h"
+#include"../../Object/Character/Enemy/EnemyManager.h"
 #include"../../Manager/GameSystem/AttackManager.h"
 #include"../../Manager/GameSystem/CollisionManager.h"
 #include"../../Manager/Generic/Camera.h"
@@ -94,14 +94,13 @@ void Game::Init(void)
 	atkMng_ = std::make_shared<AttackManager>();
 	CollisionManager::GetInstance().SetAttackManager(atkMng_);
 
-	//敵
-	enemy_ = std::make_unique<EnemyManager>(*this, *atkMng_);
-	
 	//プレイヤー
 	player_ = std::make_unique<PlayerManager>(*this);
 	player_->Init();
 
-	//enemy_->Init(player_->GetPos());	//しぶしぶこの位置
+	//敵
+	enemy_ = std::make_unique<EnemyManager>(player_->GetPos());
+	enemy_->Init();
 
 	//カメラの初期設定
 	Camera& camera = SceneManager::GetInstance().GetCamera();
@@ -263,7 +262,7 @@ void Game::GameUpdate(void)
 	//	//scM.ChangeScene(std::make_shared<GameClear>());
 	//}
 
-	////ポーズシーン遷移
+	//ポーズシーン遷移
 	//if (inpM.IsTrigerrDown(InputManager::INPUT_COMMAND::PAUSE)) {
 	//	//シーン追加(一つ次へ)
 	//	scM.PushScene(std::make_shared<PauseScene>());
@@ -283,7 +282,7 @@ void Game::GameUpdate(void)
 
 	//敵
 	if (isEnemyUpdate_) {
-		//enemy_->Update(player_->GetPos(), *atkMng_);
+		enemy_->Update();
 	}
 
 	//攻撃
@@ -335,6 +334,8 @@ void Game::GameUpdate(void)
 	//	abilityFollow.y += CAMERA_FOLLOW_DIFF_Y_ABILITY;
 	//	camera.SetFollow(abilityFollow, player_->GetQua());		//追従対象の更新
 	//}
+
+	camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象の更新
 	
 #pragma endregion
 }
@@ -459,7 +460,7 @@ void Game::DoShake(void)
 bool Game::DirectionCameraMove(void)
 {
 	//アニメーションのみ更新
-	enemy_->UpdateAnim();
+	//enemy_->UpdateAnim();
 
 	//カメラ演出用
 	auto& camera = SceneManager::GetInstance().GetCamera();

@@ -6,7 +6,7 @@
 #include "PlayerChara.h"
 
 namespace {
-	const float MOVE_SPEED = 0.1f;	//移動速度
+	const float MOVE_SPEED = 10.1f;	//移動速度
 }
 
 PlayerChara::PlayerChara(void)
@@ -22,12 +22,15 @@ PlayerChara::~PlayerChara(void)
 {
 }
 
+void PlayerChara::DoLoad(void)
+{
+	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::PLAYER_MDL);	//モデル取得
+}
+
 void PlayerChara::DoInit(void)
 {
 	pos_ = Utility::VECTOR_ZERO;
-	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::PLAYER_MDL);	//モデル取得
 	moveSpeed_ = MOVE_SPEED;
-	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT), 0.0f);
 	inputDir_ = Utility::VECTOR_ZERO;
 
 	InitAnim();	//アニメーションの初期化
@@ -93,6 +96,7 @@ void PlayerChara::Draw(void)
 	const VECTOR& cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
 	DrawFormatString(10, 30, 0xffffff, L"PlayerPos: %f, %f, %f,\nInputDir: %f, %f, %f\nCameraPos: %f, %f, %f", pos_.x, pos_.y, pos_.z, inputDir_.x, inputDir_.y, inputDir_.z, cameraPos.x, cameraPos.y, cameraPos.z);
 	MV1DrawModel(modelId_);
+	DrawSphere3D(pos_, 8, 8, 0xff0000, 0xff0000, false);
 }
 
 void PlayerChara::Release(void)

@@ -139,5 +139,15 @@ public:
 	static VECTOR EpsilonToZero(const VECTOR& v);
 	static VECTOR EpsilonNormal(const VECTOR& normal);
 	static VECTOR EpsilonCustomThreshold(const VECTOR& normal,const float _threshold);
+
+	/// @brief とある点からとある点までの移動ベクトルを返す
+	/// @param _start 狙う側
+	/// @param _goal 向かう先
+	/// @param _speed 設定速度(未設定だと、方向ベクトルのみを返す)
+	/// @return 向かう先までの移動ベクトル
+	static const VECTOR GetMoveVec(const VECTOR _start, const VECTOR _goal, const float _speed = 1.0f);
+
+	//ランダムの値を取得
+	static int GetRandomValue(int _min, int _max);
 };
 

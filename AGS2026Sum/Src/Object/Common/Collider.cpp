@@ -8,6 +8,8 @@ Collider::Collider(ActorBase& _master, const COL_TAG _tag, std::unique_ptr<Geome
 	, tag_(_tag)
 	, hitTags_(_hitTags)
 	, isCollision_(true)
+	, isHit_(false)
+	, isDead_(false)
 {
 }
 
@@ -48,7 +50,7 @@ const bool Collider::IsContainsHitTags(const std::set<COL_TAG>& _tags)
 
 void Collider::DrawDebugCollider(void)
 {
-	//geometry_->DebugDraw();
+	geometry_->Draw();
 }
 
 void Collider::SetMasterIsDraw(const bool _isDraw)

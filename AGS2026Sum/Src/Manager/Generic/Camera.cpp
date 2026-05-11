@@ -62,7 +62,7 @@ void Camera::Init(void)
 
 void Camera::Update(void)
 {
-	collider_->Update();
+	//collider_->Update();
 }
 
 void Camera::SetBeforeDraw(void)

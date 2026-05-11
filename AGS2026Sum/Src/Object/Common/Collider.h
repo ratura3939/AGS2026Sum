@@ -14,8 +14,11 @@ public:
 	//タグ
 	enum class COL_TAG
 	{
-		OBJECT
-		,MAX
+		PLAYER			//プレイヤー
+		, PLAYER_ATTACK	//プレイヤーの攻撃
+		, ENEMY			//敵
+		, ENEMY_ATTACK	//敵の攻撃
+		, MAX
 	};
 
 	Collider(ActorBase& _master, const COL_TAG _tags, std::unique_ptr<Geometry> _geo, const std::set<COL_TAG> _hitTags = {});
@@ -54,7 +57,7 @@ public:
 	//デバッグ
 	void DrawDebugCollider(void);
 
-	//判定の削除
+	//判定の削除(必ずこれで削除すること)
 	void Kill(void) { isDead_ = true; }
 
 	//削除するか

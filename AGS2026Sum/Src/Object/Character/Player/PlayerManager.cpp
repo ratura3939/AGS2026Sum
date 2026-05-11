@@ -21,6 +21,7 @@ PlayerManager::PlayerManager(Game& _gameScene)
 	:scene_(_gameScene)
 	,character_(std::make_shared<PlayerChara>())
 {
+	character_->Load();		//キャラクターの読み込み
 }
 
 PlayerManager::~PlayerManager(void)

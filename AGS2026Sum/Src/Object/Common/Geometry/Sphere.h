@@ -9,7 +9,7 @@ public:
 	/// @brief コンストラクタ
 	/// @param _pos 追従する親の座標
 	/// @param _radius 半径
-	Sphere(const VECTOR& _pos, const VECTOR& _movedPos, const  float _radius, const float _broudRadius);
+	Sphere(const VECTOR& _pos, const VECTOR& _movedPos, const float _broudRadius, const  float _radius);
 
 	/// @brief コピーコンストラクタ
 	/// @param _copyBase コピー元
