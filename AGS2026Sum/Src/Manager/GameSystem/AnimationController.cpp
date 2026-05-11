@@ -91,6 +91,7 @@ void AnimationController::Play(const std::wstring& _name, const float _speed, co
 		if (blendAnim_.data != -1) {
 			//ブレンド中のアニメーションを現在のアニメーションにする
 			MV1DetachAnim(modelId_, currentAnimAttachInfo_.attachNum);	//現在のものをデタッチ
+			currentAnimAttachInfo_ = blendAnimAttachInfo_;	//ブレンドしているものを現在のものに
 			currentAnim_ = blendAnim_;				//ブレンド中のものを現在のものに
 		}
 
