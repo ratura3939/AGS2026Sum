@@ -7,10 +7,10 @@
 #include "EnemyGroup.h"
 #include "EnemyBase.h"
 
-EnemyBase::EnemyBase(const VECTOR& _initPos, const VECTOR& _movePow)
+EnemyBase::EnemyBase(const VECTOR& _initPos)
 	: initPos_(_initPos)
-	, groupMovePow_(_movePow)
 	, state_(ENEMY_STATE::NONE)
+	, movePow_(Utility::VECTOR_ZERO)
 {
 	//状態ごとの処理の設定
 	stateFunc_[ENEMY_STATE::NONE] = {};
@@ -60,6 +60,9 @@ void EnemyBase::DoLoad(void)
 {
 	//モデル差し込み
 	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_MDL);
+
+	//アニメーションの初期化
+	InitAnim();
 }
 
 void EnemyBase::DoInit(void)
@@ -82,6 +85,9 @@ void EnemyBase::DoUpdate(void)
 	//移動後座標に更新
 	pos_ = movedPos_;
 
+	//アニメーション更新
+	animController_->Update();
+
 	//状態ごとの更新
 	stateFunc_[state_].update();
 }
@@ -93,8 +99,29 @@ void EnemyBase::InitAnim(void)
 
 	//アニメーションの初期化
 	animController_ = std::make_unique<AnimationController>(modelId_);
-	//int animData = res.Load(ResourceManager::SRC::PLAYER_IDLE_ANIM).handleId_;
-	//animController_->Add(L"Idle", animData, AnimationController::PLAY_TYPE::LOOP, AnimationController::ANIM_SOURCE::EXTERNAL);
+
+	//待機アニメーション
+	int animData = res.LoadModelDuplicate(ResourceManager::SRC::ENEMY_IDLE_ANIM);
+	animController_->Add(L"Idle", animData, AnimationController::PLAY_TYPE::LOOP, AnimationController::ANIM_SOURCE::EXTERNAL);
+
+	//歩きアニメーション
+	animData = res.LoadModelDuplicate(ResourceManager::SRC::ENEMY_WALK_ANIM);
+	animController_->Add(L"Walk", animData, AnimationController::PLAY_TYPE::LOOP, AnimationController::ANIM_SOURCE::EXTERNAL);
+
+	//走りアニメーション
+	animData = res.LoadModelDuplicate(ResourceManager::SRC::ENEMY_RUN_ANIM);
+	animController_->Add(L"Run", animData, AnimationController::PLAY_TYPE::LOOP, AnimationController::ANIM_SOURCE::EXTERNAL);
+
+	//攻撃アニメーション
+	animData = res.LoadModelDuplicate(ResourceManager::SRC::ENEMY_ATTACK_ANIM);
+	animController_->Add(L"Attack", animData, AnimationController::PLAY_TYPE::NORMAL, AnimationController::ANIM_SOURCE::EXTERNAL);
+
+	//死亡アニメーション
+	animData = res.LoadModelDuplicate(ResourceManager::SRC::ENEMY_DEATH_ANIM);
+	animController_->Add(L"Death", animData, AnimationController::PLAY_TYPE::NORMAL, AnimationController::ANIM_SOURCE::EXTERNAL);
+
+	//デフォルトアニメーションの設定
+	animController_->SetDefaultAnim(L"Idle");
 }
 
 void EnemyBase::DrawDebug(void)
@@ -110,22 +137,32 @@ void EnemyBase::DrawDebug(void)
 
 void EnemyBase::EnterStay(void)
 {
+	//待機アニメーションの再生
+	animController_->Play(L"Idle");
 }
 
 void EnemyBase::EnterMove(void)
 {
+	//歩きアニメーションの再生
+	animController_->Play(L"Run", RUN_SPEED);
 }
 
 void EnemyBase::EnterAttackReady(void)
 {
+	//待機アニメーションの再生
+	animController_->Play(L"Walk");
 }
 
 void EnemyBase::EnterAttack(void)
 {
 	//攻撃目標座標の設定
-	attackPos_ = quaRot_.PosAxis(VAdd(pos_, ATTACK_LOCAL_POS));
+	//attackPos_ = quaRot_.PosAxis(VAdd(pos_, ATTACK_LOCAL_POS));
 
-	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, ATTACK_BROUD_RADIUS, ATTACK_RADIUS);
+	//std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, ATTACK_BROUD_RADIUS, ATTACK_RADIUS);
+}
+
+void EnemyBase::EnterReturn(void)
+{
 }
 
 void EnemyBase::UpdateStay(void)
@@ -140,11 +177,20 @@ void EnemyBase::UpdateMove(void)
 
 void EnemyBase::UpdateAttackReady(void)
 {
+	//攻撃開始
+	ChangeState(ENEMY_STATE::ATTACK);
+
 	//移動処理
 	Move();
 }
 
 void EnemyBase::UpdateAttack(void)
+{
+	//待機状態に移行
+	ChangeState(ENEMY_STATE::STAY);
+}
+
+void EnemyBase::UpdateReturn(void)
 {
 }
 
@@ -164,10 +210,19 @@ void EnemyBase::ExitAttack(void)
 {
 }
 
+void EnemyBase::ExitReturn(void)
+{
+}
+
 void EnemyBase::Move(void)
 {
-	VECTOR movedPos = VAdd(movedPos_, groupMovePow_);
+	//移動後座標の更新
+	VECTOR movedPos = VAdd(movedPos_, movePow_);
+
+	//回転の更新
 	quaRot_ = quaRot_.LookRotation(Utility::GetMoveVec(movedPos, movedPos_));
+
+	//移動後座標の更新
 	movedPos_ = movedPos;
 }
 

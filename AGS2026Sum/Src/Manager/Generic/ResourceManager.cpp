@@ -58,13 +58,9 @@ void ResourceManager::InitGame(void)
 
 	ResourcePlayer();	//プレイヤー関連
 
-	//敵モデル
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + L"Enemy.mv1");
-	resourcesMap_.emplace(SRC::ENEMY_MDL, res);
+	ResourceEnemy();	//敵関連
 
-	//ボスモデル
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + L"Boss.mv1");
-	resourcesMap_.emplace(SRC::BOSS_MDL, res);
+	ResourceBoss();		//ボス関連
 }
 
 void ResourceManager::InitClear(void)
@@ -115,6 +111,47 @@ void ResourceManager::ResourcePlayer(void)
 	//キック３
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/HurricanKick.mv1");
 	resourcesMap_.emplace(SRC::PLAYER_FINISH_KICK_ANIM, res);
+}
+
+void ResourceManager::ResourceEnemy(void)
+{
+	Resource res;
+
+	//敵モデル
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + L"Enemy.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_MDL, res);
+
+	//敵アニメーション
+	std::wstring animPath = Application::PATH_ANIMATION + L"Enemy/";
+
+	//待機
+	res = Resource(Resource::TYPE::MODEL, animPath + L"Idle.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_IDLE_ANIM, res);
+
+	//歩く
+	res = Resource(Resource::TYPE::MODEL, animPath + L"Walk.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_WALK_ANIM, res);
+
+	//走る
+	res = Resource(Resource::TYPE::MODEL, animPath + L"Run.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_RUN_ANIM, res);
+
+	//攻撃
+	res = Resource(Resource::TYPE::MODEL, animPath + L"Attack.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_ATTACK_ANIM, res);
+
+	//死亡
+	res = Resource(Resource::TYPE::MODEL, animPath + L"Death.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_DEATH_ANIM, res);
+}
+
+void ResourceManager::ResourceBoss(void)
+{
+	Resource res;
+
+	//ボスモデル
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + L"Boss.mv1");
+	resourcesMap_.emplace(SRC::BOSS_MDL, res);
 }
 
 void ResourceManager::Release(void)

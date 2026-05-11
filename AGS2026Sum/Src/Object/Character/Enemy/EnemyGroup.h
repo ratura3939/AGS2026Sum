@@ -19,7 +19,7 @@ public:
 	};
 
 	//敵がグループから離れられる距離
-	static constexpr float LEAVE_GROUP_DIST = 200.0f;
+	static constexpr float LEAVE_GROUP_DIST = 1000.0f;
 
 	/// <summary>
 	/// コンストラクタ
@@ -100,9 +100,6 @@ private:
 
 	//グループ移動
 	void GroupMove(void);
-
-	//グループから離れすぎた敵をグループに戻す
-	void ReturnEnemyToGroup(void);
 
 	//状態遷移時の処理
 	void EnterStay(void);			//待機

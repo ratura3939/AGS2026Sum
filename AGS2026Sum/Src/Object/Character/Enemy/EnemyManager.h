@@ -56,10 +56,7 @@ private:
 	//グループの削除処理
 	void DeleteEnemyGroup(void);
 
-	//グループをプレイヤーに向かわせる
-	void LookPlayer(void);
-
-	//グループに攻撃態勢を取らせる
-	void AttackReady(void);
+	//距離ごとの行動決め
+	void DistanceAction(void);
 };
 

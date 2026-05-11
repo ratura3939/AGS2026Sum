@@ -13,10 +13,12 @@ public:
 		, MOVE				//移動
 		, ATTACK_READY		//攻撃準備
 		, ATTACK			//攻撃
+		, RETURN			//グループに戻る
+		, MAX
 	};
 
 	//コンストラクタ
-	EnemyBase(const VECTOR& _initPos, const VECTOR& _movePow);
+	EnemyBase(const VECTOR& _initPos);
 
 	//デストラクタ
 	~EnemyBase(void);
@@ -32,6 +34,9 @@ public:
 
 	//状態遷移
 	void ChangeState(const ENEMY_STATE _nextState);
+
+	//移動量の設定
+	void SetMovePow(const VECTOR& _movePow) { movePow_ = _movePow; }
 
 private:
 
@@ -52,12 +57,15 @@ private:
 	static constexpr float ATTACK_BROUD_RADIUS = ATTACK_RADIUS + 15.0f;
 	static constexpr VECTOR ATTACK_LOCAL_POS = { 0.0f, 0.0f, 30.0f };
 
+	//アニメーション
+	static constexpr float RUN_SPEED = 2.0f;			//走り速度
+
 	//座標
 	const VECTOR initPos_;	//初期座標
 	VECTOR attackPos_;		//攻撃目標座標
 
-	//グループの移動量
-	const VECTOR& groupMovePow_;
+	//個人の移動量
+	VECTOR movePow_;
 
 	//状態
 	ENEMY_STATE state_;
@@ -83,18 +91,21 @@ private:
 	void EnterMove(void);
 	void EnterAttackReady(void);
 	void EnterAttack(void);
+	void EnterReturn(void);
 
 	//状態ごとの更新
 	void UpdateStay(void);
 	void UpdateMove(void);
 	void UpdateAttackReady(void);
 	void UpdateAttack(void);
+	void UpdateReturn(void);
 
 	//状態抜けの処理
 	void ExitStay(void);
 	void ExitMove(void);
 	void ExitAttackReady(void);
 	void ExitAttack(void);
+	void ExitReturn(void);
 
 	//方向転換
 	void ChangeDir(void);

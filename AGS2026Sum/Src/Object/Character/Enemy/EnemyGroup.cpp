@@ -101,7 +101,7 @@ void EnemyGroup::CreateEnemy(void)
 		randPos.z = pos_.z + static_cast<float>(Utility::GetRandomValue(-LEAVE_GROUP_DIST, LEAVE_GROUP_DIST));
 
 		//敵の生成
-		enemy = std::make_unique<EnemyBase>(randPos, movePow_);
+		enemy = std::make_unique<EnemyBase>(randPos);
 
 		//読み込みと初期化
 		enemy->Load();
@@ -125,12 +125,32 @@ void EnemyGroup::MoveToGoal(void)
 {
 	//移動量の設定
 	movePow_ = Utility::GetMoveVec(pos_, groupGoalPos_, SPEED);
+	movePow_.y = 0.0f;
 }
 
 void EnemyGroup::GroupMove(void)
 {
+	//ある程度近づいたならスキップ
+	if (Utility::Distance(pos_, groupGoalPos_) < SPEED)return;
+
 	//グループ座標の更新
 	pos_ = VAdd(pos_, movePow_);
+
+	//敵の移動
+	for (auto& enemy : enemys_)
+	{
+		if (Utility::Distance(enemy->GetPos(), pos_) > LEAVE_GROUP_DIST)
+		{
+			//グループから離れすぎた敵はグループに戻す
+			enemy->SetMovePow(Utility::GetMoveVec(enemy->GetPos(), pos_, SPEED));
+			enemy->ChangeState(EnemyBase::ENEMY_STATE::MOVE);
+		}
+		else
+		{
+			//グループにいる敵はグループの移動量を設定
+			enemy->SetMovePow(movePow_);
+		}
+	}
 }
 
 void EnemyGroup::EnterStay(void)
