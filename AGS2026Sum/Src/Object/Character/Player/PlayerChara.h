@@ -13,6 +13,10 @@ class PlayerChara :
 		void HitCollider(std::weak_ptr<Collider> _col)override;	//衝突後の処理
         void InputMoveVec(const VECTOR& _inputVec); //移動入力の受付
 
+		void SetIsAttack(const bool _isAttack) { isAttack_ = _isAttack; }	//攻撃状態の設定
+
+		void PlayAnim(const std::wstring& _animName);	//アニメーション再生
+
     private:
         void DoLoad(void)override;			//読み込み
         void DoInit(void)override;			//初期化

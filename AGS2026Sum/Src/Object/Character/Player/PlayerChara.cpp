@@ -22,6 +22,11 @@ PlayerChara::~PlayerChara(void)
 {
 }
 
+void PlayerChara::PlayAnim(const std::wstring& _animName)
+{
+	animController_->Play(_animName);	//アニメーションの新規再生
+}
+
 void PlayerChara::DoLoad(void)
 {
 	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::PLAYER_MDL);	//モデル取得

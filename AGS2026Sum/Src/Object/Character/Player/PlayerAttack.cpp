@@ -1,6 +1,7 @@
 #include "../../../pch.h"
 #include"../../../Manager/Generic/ResourceManager.h"
 #include"../../Common/Geometry/Sphere.h"
+#include"PlayerManager.h"
 #include "PlayerAttack.h"
 
 namespace {
@@ -16,11 +17,13 @@ namespace {
 	const int PUNCH_COLOR = 0x00ff00;
 }
 
-PlayerAttack::PlayerAttack(const VECTOR& _playerPos)
+PlayerAttack::PlayerAttack(const VECTOR& _playerPos, const Quaternion& _playerQuaRot)
 	:ActorBase()
 	,playerPos_(_playerPos)
+	,playerQuaRot_(_playerQuaRot)
 	,currentData_()
-	,level_(0)
+	,currentType_(ATTACK_TYPE::MAX)
+	,level_(-1)
 	,counter_(0)
 	,data_()
 {
@@ -45,7 +48,7 @@ void PlayerAttack::DoInit(void)
 
 void PlayerAttack::DoUpdate(void)
 {
-	pos_ = VAdd(playerPos_,currentData_.localPos);	//プレイヤーの座標にローカル座標を加算して攻撃の座標とする
+	pos_ = VAdd(playerPos_, playerQuaRot_.PosAxis(currentData_.localPos));	//プレイヤーの座標にローカル座標を加算して攻撃の座標とする
 
 	if (counter_ >= currentData_.time) {
 		//攻撃終了
@@ -68,6 +71,14 @@ void PlayerAttack::LoadAttackData(void)
 	data_[static_cast<int>(ATTACK_TYPE::KICK)][0] = res.GetData<AttackData>(KICK_FIRST_KEY);
 	data_[static_cast<int>(ATTACK_TYPE::KICK)][1] = res.GetData<AttackData>(KICK_SECOND_KEY);
 	data_[static_cast<int>(ATTACK_TYPE::KICK)][2] = res.GetData<AttackData>(KICK_THIRD_KEY);
+
+	//アニメーション登録
+	animNames_[static_cast<int>(ATTACK_TYPE::PUNCH)][0] = PlayerManager::ANIM_FIRST_PUNCH;
+	animNames_[static_cast<int>(ATTACK_TYPE::PUNCH)][1] = PlayerManager::ANIM_SECOND_PUNCH;
+	animNames_[static_cast<int>(ATTACK_TYPE::PUNCH)][2] = PlayerManager::ANIM_THIRD_PUNCH;
+	animNames_[static_cast<int>(ATTACK_TYPE::KICK)][0] = PlayerManager::ANIM_MIDDLE_KICK;
+	animNames_[static_cast<int>(ATTACK_TYPE::KICK)][1] = PlayerManager::ANIM_HIGH_KICK;
+	animNames_[static_cast<int>(ATTACK_TYPE::KICK)][2] = PlayerManager::ANIM_FINSH_KICK;
 
 	//コンボ始動は弱パンチから
 	currentData_ = data_[static_cast<int>(ATTACK_TYPE::PUNCH)][level_];
@@ -108,27 +119,51 @@ void PlayerAttack::HitCollider(std::weak_ptr<Collider> _col)
 void PlayerAttack::Attack(const ATTACK_TYPE& _type)
 {
 	debugColor_ = PUNCH_COLOR;
+
+	if (_type == ATTACK_TYPE::MAX) {
+		level_ = -1;	//レベルリセット
+		currentType_ = ATTACK_TYPE::MAX;
+		return;	//処理不可
+	}
+
+	level_++;	//レベルアップ
+
 	int useLevel = level_;
 	if (_type == ATTACK_TYPE::KICK) {
-		useLevel--;	//キックはレベル1から
+		useLevel--;	//キックは段階1から使用可能
 		debugColor_ = KICK_COLOR;
 	}
 
 	if (useLevel >= ATTACK_LEVEL_MAX && _type == ATTACK_TYPE::PUNCH) {
-		level_ = 0;	//レベルリセット
+		level_ = -1;	//レベルリセット
 		useLevel = level_;
 	}
 
 	if (useLevel < 0 || 
 		useLevel > ATTACK_LEVEL_MAX) {
-		level_ = 0;	//レベルリセット
+		level_ = -1;	//レベルリセット
 		return;	//処理不可
 	}
 
 	currentData_ = data_[static_cast<int>(_type)][useLevel];
+	currentType_ = _type;
 	ApplyAttackColliderSettings();		//情報適用);
 	colliders_[0]->SetUseThis(true);	//コライダの有効化
-
-	level_++;	//レベルアップ
 	counter_ = 0;
+}
+
+const std::wstring& PlayerAttack::GetCurrentAttackAnimName(void) const
+{
+	int useLevel = level_;
+
+	if (currentType_ == ATTACK_TYPE::KICK) {
+		useLevel--;
+	}
+
+	return	animNames_[static_cast<int>(currentType_)][useLevel];
+}
+
+const bool PlayerAttack::IsAttacking(void) const
+{
+	return colliders_[0]->IsUseThis();
 }

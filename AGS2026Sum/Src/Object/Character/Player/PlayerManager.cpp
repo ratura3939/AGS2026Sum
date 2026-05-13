@@ -34,7 +34,7 @@ void PlayerManager::Init(void)
 {
 	character_->Init();		//キャラクターの初期化
 
-	attack_ = std::make_unique<PlayerAttack>(character_->GetPos());	//攻撃クラスの生成
+	attack_ = std::make_unique<PlayerAttack>(character_->GetPos(), character_->GetQua());	//攻撃クラスの生成
 	attack_->Init();		//攻撃クラスの初期化
 }
 
@@ -76,6 +76,14 @@ void PlayerManager::UserInput(void)
 	}
 	else if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_STRONG)) {
 		attack_->Attack(PlayerAttack::ATTACK_TYPE::KICK);	//攻撃クラスに攻撃開始を伝える)
+	}
+
+	if (attack_->IsAttacking()) {
+		character_->SetIsAttack(true);	//攻撃中は攻撃状態にする
+		character_->PlayAnim(attack_->GetCurrentAttackAnimName());	//攻撃アニメを再生する
+	}
+	else {
+		character_->SetIsAttack(false);	//そうでないときは攻撃状態を解除する
 	}
 #pragma endregion
 
