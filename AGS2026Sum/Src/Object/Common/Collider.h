@@ -47,7 +47,7 @@ public:
 
 	//形状の取得(派生クラス)
 	template<typename T>
-	T& GetGeometry(void) { return dynamic_cast<T&>(geometry_.get()); }
+	T* GetGeometry(void) { return dynamic_cast<T*>(geometry_.get()); }
 
 	//衝突判定に使用するか
 	const bool IsUseThis(void) const { return isCollision_; }

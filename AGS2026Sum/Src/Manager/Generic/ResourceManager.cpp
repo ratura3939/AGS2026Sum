@@ -115,6 +115,10 @@ void ResourceManager::ResourcePlayer(void)
 	//ÉLÉbÉNÇR
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/HurricanKick.mv1");
 	resourcesMap_.emplace(SRC::PLAYER_FINISH_KICK_ANIM, res);
+
+	//JSON
+	res = Resource(Resource::TYPE::JSON, Application::PATH_JSON + L"PlayerAttackData.json");
+	resourcesMap_.emplace(SRC::PLAYER_ATTACK_DATA_JSON, res);
 }
 
 void ResourceManager::Release(void)

@@ -14,6 +14,7 @@ Resource::Resource(void)
 
 	handleId_ = -1;
 	handleIds_ = nullptr;
+	jsonData_ = nullptr;
 }
 
 Resource::Resource(TYPE type, const std::wstring& path)
@@ -28,6 +29,7 @@ Resource::Resource(TYPE type, const std::wstring& path)
 
 	handleId_ = -1;
 	handleIds_ = nullptr;
+	jsonData_ = nullptr;
 }
 
 Resource::Resource(TYPE type, const std::wstring& path, int numX, int numY, int sizeX, int sizeY)
@@ -41,6 +43,7 @@ Resource::Resource(TYPE type, const std::wstring& path, int numX, int numY, int 
 
 	handleId_ = -1;
 	handleIds_ = nullptr;
+	jsonData_ = nullptr;
 }
 
 Resource::~Resource(void)
@@ -87,6 +90,13 @@ void Resource::Load(void)
 		handleId_ = LoadEffekseerEffect(path_.c_str());
 		break;
 
+	case Resource::TYPE::JSON:{
+			std::ifstream file(path_.c_str());
+
+			if(file.is_open()){
+				file >> jsonData_;
+			}
+		}
 	}
 
 }
@@ -167,6 +177,9 @@ void Resource::Release(void)
 		DeleteEffekseerEffect(handleId_);
 		break;
 
+	case Resource::TYPE::JSON:
+		jsonData_ = nullptr;
+		break;
 	}
 
 }

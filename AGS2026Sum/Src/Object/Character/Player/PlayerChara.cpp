@@ -96,7 +96,7 @@ void PlayerChara::Draw(void)
 	const VECTOR& cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
 	DrawFormatString(10, 30, 0xffffff, L"PlayerPos: %f, %f, %f,\nInputDir: %f, %f, %f\nCameraPos: %f, %f, %f", pos_.x, pos_.y, pos_.z, inputDir_.x, inputDir_.y, inputDir_.z, cameraPos.x, cameraPos.y, cameraPos.z);
 	MV1DrawModel(modelId_);
-	DrawSphere3D(pos_, 8, 8, 0xff0000, 0xff0000, false);
+	//DrawSphere3D(pos_, 8, 8, 0xff0000, 0xff0000, false);
 }
 
 void PlayerChara::Release(void)

@@ -1,5 +1,7 @@
 #pragma once
 #include "../../Common/ActorBase.h"
+#include "PlayerAttackData.h"
+
 class PlayerAttack :
     public ActorBase
 {
@@ -10,14 +12,6 @@ public:
 		,KICK   //キック
         ,MAX
     };
-
-	//jsonから受け取る攻撃データ
-    struct AttackData {
-		int scale;      //大きさ
-		int power;      //攻撃力
-		int time;       //時間
-		VECTOR localPos;   //ローカル座標
-	};
 
     static const int ATTACK_LEVEL_MAX = 3;
 
@@ -32,6 +26,7 @@ public:
 	void Attack(const ATTACK_TYPE& _type);	//攻撃開始
 
 private:
+	void DoLoad(void)override;
 	void DoInit(void)override;
 	void DoUpdate(void)override;
 
@@ -44,5 +39,7 @@ private:
 	AttackData currentData_;	//現在の攻撃データ
 	int level_;		//攻撃レベル
 	int counter_;	//攻撃の時間管理
+
+	int debugColor_;	//デバッグ用の色
 };
 

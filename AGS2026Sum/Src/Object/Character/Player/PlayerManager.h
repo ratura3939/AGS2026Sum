@@ -7,6 +7,7 @@
 class Game;
 class EnemyManager;
 class PlayerChara;
+class PlayerAttack;
 
 class PlayerManager
 {
@@ -42,6 +43,7 @@ private:
 
 	Game& scene_;	//ゲームクラス参照
 
-	std::shared_ptr<PlayerChara> character_;//キャラクター
+	std::shared_ptr<PlayerChara> character_;	//キャラクター
+	std::unique_ptr<PlayerAttack> attack_;		//攻撃
 };
 

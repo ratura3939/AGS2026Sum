@@ -190,6 +190,7 @@
     <ClInclude Include="Src\Object\Character\Player\PlayerAttack.h" />
     <ClInclude Include="Src\Object\Character\Enemy\EnemyGroup.h" />
     <ClInclude Include="Src\Object\Character\Enemy\EnemyBase.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerAttackData.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerChara.h" />
     <ClInclude Include="Src\Object\Character\CharacterBase.h" />
     <ClInclude Include="Src\Application.h" />

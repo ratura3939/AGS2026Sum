@@ -27,6 +27,7 @@ public:
 	static const std::wstring PATH_BGM;
 	static const std::wstring PATH_SE;
 	static const std::wstring PATH_SHADER;
+	static const std::wstring PATH_JSON;
 	//-------------------------------------------
 
 	// 明示的にインステンスを生成する

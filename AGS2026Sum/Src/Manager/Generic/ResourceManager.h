@@ -27,6 +27,10 @@ public:
 		,PLAYER_MIDDLE_KICK_ANIM	//キック１
 		,PLAYER_HIGH_KICK_ANIM		//キック２
 		,PLAYER_FINISH_KICK_ANIM	//キック３
+
+		//JSON
+		,PLAYER_ATTACK_DATA_JSON	//プレイヤー攻撃データ
+
 		,MAX
 	};
 

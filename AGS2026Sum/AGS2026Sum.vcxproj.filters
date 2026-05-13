@@ -281,5 +281,8 @@
     <ClInclude Include="Src\Object\Character\Enemy\EnemyGroup.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Object\Character\Player\PlayerAttackData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

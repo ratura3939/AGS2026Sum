@@ -1,0 +1,67 @@
+{
+  "Punch_First": {
+    "radius": 10.0,
+    "power": 5.0,
+    "time": 10,
+    "localPos": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    }
+  },
+
+  "Punch_Second" :{
+    "radius": 20.0,
+    "power": 10.0,
+    "time": 10,
+    "localPos": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    }
+  },
+
+  "Punch_Third" :{
+    "radius": 30.0,
+    "power": 20.0,
+    "time": 10,
+    "localPos": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    }
+  },
+
+  "Kick_First" :{
+    "radius": 10.0,
+    "power": 5.0,
+    "time": 10,
+    "localPos": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    }
+  },
+
+  "Kick_Second" :{
+    "radius": 20.0,
+    "power": 10.0,
+    "time": 10,
+    "localPos": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    }
+  },
+
+  "Kick_Third" :{
+    "radius": 30.0,
+    "power": 20.0,
+    "time": 10,
+    "localPos": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    }
+  }
+}

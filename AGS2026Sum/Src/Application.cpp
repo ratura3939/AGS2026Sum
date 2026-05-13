@@ -17,6 +17,7 @@ const std::wstring Application::PATH_EFFECT = L"Data/Effect/";
 const std::wstring Application::PATH_BGM = L"Data/Sound/BGM/";
 const std::wstring Application::PATH_SE = L"Data/Sound/SE/";
 const std::wstring Application::PATH_SHADER = L"Data/Shader/";
+const std::wstring Application::PATH_JSON = L"Data/Json/";
 
 void Application::CreateInstance(void)
 {
