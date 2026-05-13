@@ -5,6 +5,7 @@
 #include"../../Common/Quaternion.h"
 
 class EnemyGroup;
+class EnemyBase;
 class Game;
 class AttackManager;
 
@@ -38,6 +39,9 @@ public:
 
 private:
 
+	//敵がグループから離れられる距離
+	static constexpr float LEAVE_GROUP_DIST = 1000.0f;
+
 	//プレイヤーを狙うときの距離半径
 	static constexpr float PLAYER_AIM_RADIUS = 1000.0f;
 
@@ -50,11 +54,20 @@ private:
 	//敵グループ
 	std::vector<std::unique_ptr<EnemyGroup>> enemyGroup_;	
 
+	//敵の情報
+	std::vector<std::unique_ptr<EnemyBase>> enemys_;	
+
 	//プレイヤー座標
 	const VECTOR& playerPos_;
 
+	//敵の削除処理
+	void DeleteEnemy(void);
+
 	//グループの削除処理
 	void DeleteEnemyGroup(void);
+
+	//グループに所属していない敵を別グループに再所属させる
+	void ReJoinGroups(void);
 
 	//距離ごとの行動決め
 	void DistanceAction(void);

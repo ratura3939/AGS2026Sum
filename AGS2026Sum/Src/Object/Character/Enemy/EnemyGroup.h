@@ -1,9 +1,8 @@
 #pragma once
+#include<DxLib.h>
 #include<vector>
 #include<memory>
 #include<functional>
-
-class EnemyBase;
 
 class EnemyGroup
 {
@@ -18,14 +17,8 @@ public:
 		, ATTACK_READY		//攻撃準備
 	};
 
-	//敵がグループから離れられる距離
-	static constexpr float LEAVE_GROUP_DIST = 1000.0f;
-
-	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	/// <param name="_num">生成人数</param>
-	EnemyGroup(const int _num);
+	//コンストラクタ
+	EnemyGroup();
 
 	//デストラクタ
 	~EnemyGroup(void);
@@ -51,8 +44,17 @@ public:
 	//グループの目標座標の取得
 	void SetGoalPos(const VECTOR& _goalPos){groupGoalPos_ = _goalPos;}
 
+	//状態取得
+	const GROUP_STATE GetState(void)const { return state_; }
+
 	//状態遷移
 	void ChangeState(const GROUP_STATE _nextState);
+
+	//位置リセット
+	void ResetPos(void);
+
+	//敵の追加
+	void AddEnemy(EnemyBase* _enemy) { enemys_.push_back(_enemy); }
 
 private:
 
@@ -86,11 +88,7 @@ private:
 	std::unordered_map<GROUP_STATE, StateFunc> stateFunc_;	//状態ごとの処理
 
 	//敵情報
-	int initNum_;										//初期人数
-	std::vector<std::unique_ptr<EnemyBase>> enemys_;	//敵の情報
-
-	//敵の生成
-	void CreateEnemy(void);
+	std::vector<EnemyBase*> enemys_;	//敵の情報(Managerからの参照用)
 
 	//死亡した敵の削除
 	void DeleteEnemy(void);

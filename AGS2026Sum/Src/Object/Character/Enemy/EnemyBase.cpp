@@ -7,8 +7,8 @@
 #include "EnemyGroup.h"
 #include "EnemyBase.h"
 
-EnemyBase::EnemyBase(const VECTOR& _initPos)
-	: initPos_(_initPos)
+EnemyBase::EnemyBase(void)
+	: group_(nullptr)
 	, state_(ENEMY_STATE::NONE)
 	, movePow_(Utility::VECTOR_ZERO)
 {
@@ -56,6 +56,16 @@ void EnemyBase::ChangeState(const ENEMY_STATE _nextState)
 	stateFunc_[state_].enter();
 }
 
+void EnemyBase::ResetPos(void)
+{
+	//座標のリセット
+	if(group_) 
+	{
+		pos_ = group_->GetPos();
+		movedPos_ = pos_;
+	}
+}
+
 void EnemyBase::DoLoad(void)
 {
 	//モデル差し込み
@@ -72,8 +82,8 @@ void EnemyBase::DoInit(void)
 	quaRotLocal_ = Quaternion::Euler(0.0f, 0.0f, 0.0f);
 
 	//座標
-	pos_ = initPos_;
-	movedPos_ = initPos_;
+	pos_ = group_->GetPos();
+	movedPos_ = pos_;
 
 	//当たり判定の生成
 	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, BROUD_RADIUS, RADIUS);
@@ -213,6 +223,11 @@ void EnemyBase::ExitAttack(void)
 
 void EnemyBase::ExitReturn(void)
 {
+}
+
+void EnemyBase::DistanceAction(void)
+{
+	
 }
 
 void EnemyBase::Move(void)

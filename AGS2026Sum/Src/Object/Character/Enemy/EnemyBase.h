@@ -1,5 +1,6 @@
 #pragma once
 #include "../CharacterBase.h"
+#include"EnemyGroup.h"
 
 class EnemyBase : public CharacterBase
 {
@@ -18,7 +19,7 @@ public:
 	};
 
 	//コンストラクタ
-	EnemyBase(const VECTOR& _initPos);
+	EnemyBase(void);
 
 	//デストラクタ
 	~EnemyBase(void);
@@ -37,6 +38,15 @@ public:
 
 	//移動量の設定
 	void SetMovePow(const VECTOR& _movePow) { movePow_ = _movePow; }
+
+	//位置リセット
+	void ResetPos(void);
+
+	//グループに所属しているか
+	bool IsInGroup(void)const { return group_ != nullptr; }
+
+	//敵グループの設定
+	void SetGroup(const EnemyGroup* _group) { group_ = _group; }
 
 private:
 
@@ -60,9 +70,11 @@ private:
 	//アニメーション
 	static constexpr float RUN_SPEED = 2.0f;			//走り速度
 
-	//座標
-	const VECTOR initPos_;	//初期座標
-	VECTOR attackPos_;		//攻撃目標座標
+	//親グループ(Managerからの参照用)
+	const EnemyGroup* group_;
+
+	//攻撃目標座標
+	VECTOR attackPos_;
 
 	//個人の移動量
 	VECTOR movePow_;
@@ -107,8 +119,8 @@ private:
 	void ExitAttack(void);
 	void ExitReturn(void);
 
-	//方向転換
-	void ChangeDir(void);
+	//距離での状態更新
+	void DistanceAction(void);
 
 	//移動処理
 	void Move(void)override;

@@ -3,9 +3,8 @@
 #include "EnemyBase.h"
 #include "EnemyGroup.h"
 
-EnemyGroup::EnemyGroup(const int _num)
+EnemyGroup::EnemyGroup(void)
 	: pos_(Utility::VECTOR_INIT)
-	,initNum_(_num)
 	, actionCnt_(0.0f)
 	, movePow_(Utility::VECTOR_ZERO)
 	, state_(GROUP_STATE::NONE)
@@ -31,9 +30,6 @@ void EnemyGroup::Init(void)
 
 	//状態の初期化
 	ChangeState(GROUP_STATE::STAY);
-
-	//敵の生成
-	CreateEnemy();
 }
 
 void EnemyGroup::Update(void)
@@ -86,30 +82,16 @@ void EnemyGroup::ChangeState(const GROUP_STATE _nextState)
 	stateFunc_[state_].enter();
 }
 
-void EnemyGroup::CreateEnemy(void)
+void EnemyGroup::ResetPos(void)
 {
-	//敵
-	std::unique_ptr<EnemyBase> enemy;
+	//グループ座標のリセット
+	//pos_
 
-	//生成
-	for (int i = 0; i < initNum_;i++)
+	//敵個々の座標リセット
+	for (auto& enemy : enemys_)
 	{
-		//ランダムな初期座標を生成
-		VECTOR randPos;
-		randPos.x = pos_.x + static_cast<float>(Utility::GetRandomValue(-LEAVE_GROUP_DIST, LEAVE_GROUP_DIST));
-		randPos.y = 0.0f;
-		randPos.z = pos_.z + static_cast<float>(Utility::GetRandomValue(-LEAVE_GROUP_DIST, LEAVE_GROUP_DIST));
-
-		//敵の生成
-		enemy = std::make_unique<EnemyBase>(randPos);
-
-		//読み込みと初期化
-		enemy->Load();
-		enemy->Init();
-
-		//格納
-		enemys_.push_back(std::move(enemy));
-	}	
+		enemy->ResetPos();
+	}
 }
 
 void EnemyGroup::DeleteEnemy(void)
@@ -135,34 +117,12 @@ void EnemyGroup::GroupMove(void)
 
 	//グループ座標の更新
 	pos_ = VAdd(pos_, movePow_);
-
-	//敵の移動
-	for (auto& enemy : enemys_)
-	{
-		if (Utility::Distance(enemy->GetPos(), pos_) > LEAVE_GROUP_DIST)
-		{
-			//グループから離れすぎた敵はグループに戻す
-			enemy->SetMovePow(Utility::GetMoveVec(enemy->GetPos(), pos_, SPEED));
-			enemy->ChangeState(EnemyBase::ENEMY_STATE::MOVE);
-		}
-		else
-		{
-			//グループにいる敵はグループの移動量を設定
-			enemy->SetMovePow(movePow_);
-		}
-	}
 }
 
 void EnemyGroup::EnterStay(void)
 {
 	//行動カウンタの初期化
 	actionCnt_ = 0.0f;
-
-	//敵の状態を移動に変更
-	for (auto& enemy : enemys_)
-	{
-		enemy->ChangeState(EnemyBase::ENEMY_STATE::STAY);
-	}
 }
 
 void EnemyGroup::EnterMove(void)
@@ -172,24 +132,12 @@ void EnemyGroup::EnterMove(void)
 
 	//移動方向の設定
 	MoveToGoal();
-
-	//敵の状態を移動に変更
-	for (auto& enemy : enemys_)
-	{
-		enemy->ChangeState(EnemyBase::ENEMY_STATE::MOVE);
-	}
 }
 
 void EnemyGroup::EnterAttackReady(void)
 {
 	//行動カウンタの初期化
 	actionCnt_ = 0.0f;
-
-	//敵の状態を攻撃準備に変更
-	for (auto& enemy : enemys_)
-	{
-		enemy->ChangeState(EnemyBase::ENEMY_STATE::ATTACK_READY);
-	}
 }
 
 void EnemyGroup::UpdateStay(void)

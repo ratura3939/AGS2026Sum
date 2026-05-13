@@ -5,6 +5,7 @@
 #include"../../Scene/Main/Game.h"
 #include"../../Utility/Utility.h"
 #include"EnemyGroup.h"
+#include"EnemyBase.h"
 #include "EnemyManager.h"
 
 EnemyManager::EnemyManager(const VECTOR& _pPos)
@@ -24,9 +25,6 @@ void EnemyManager::Init(void)
 
 void EnemyManager::Update(void)
 {
-	//グループの削除処理
-	DeleteEnemyGroup();
-
 	//距離ごとの行動決め
 	DistanceAction();
 
@@ -35,6 +33,19 @@ void EnemyManager::Update(void)
 	{
 		group->Update();
 	}
+	for (auto& enemy : enemys_)
+	{
+		enemy->Update();
+	}
+
+	//グループの削除処理
+	DeleteEnemyGroup();
+
+	//グループに所属していない敵を別グループに再所属させる
+	ReJoinGroups();
+
+	//敵の削除処理
+	DeleteEnemy();
 }
 
 void EnemyManager::Draw(void)
@@ -60,11 +71,40 @@ void EnemyManager::CreateEnemyGroup(void)
 	//グループ
 	std::unique_ptr<EnemyGroup> group = std::make_unique<EnemyGroup>(CREATE_NUM);
 
+	//敵
+	std::unique_ptr<EnemyBase> enemy;
+
+	//敵の生成
+	for (int i = 0; i < CREATE_NUM;i++)
+	{
+		enemy = std::make_unique<EnemyBase>();
+
+		//読み込みと初期化
+		enemy->Load();
+		enemy->Init();
+
+		//グループに敵を紐づけ
+		group->AddEnemy(enemy.get());
+		enemy->SetGroup(group.get());
+
+		//格納
+		enemys_.push_back(std::move(enemy));
+	}
+
 	//初期化
 	group->Init();
 
 	//格納
 	enemyGroup_.push_back(std::move(group));
+}
+
+void EnemyManager::DeleteEnemy(void)
+{
+	//そもそも敵がいないなら何もしない
+	if (enemys_.empty()) return;
+
+	//死亡した敵　または　グループに所属していない敵の削除
+	std::erase_if(enemys_, [this](std::unique_ptr<EnemyBase>& _enemy) {return !_enemy->IsAlive() || !_enemy->IsInGroup(); });
 }
 
 void EnemyManager::DeleteEnemyGroup(void)
@@ -74,6 +114,22 @@ void EnemyManager::DeleteEnemyGroup(void)
 
 	//グループの削除処理
 	std::erase_if(enemyGroup_, [](const std::unique_ptr<EnemyGroup>& _group) {return _group->IsEmpty();});
+}
+
+void EnemyManager::ReJoinGroups(void)
+{
+	//グループ　または　敵が空なら処理しない
+	if (enemyGroup_.empty() || enemys_.empty())return;
+
+	//グループに所属していない敵を別グループに再所属させる
+	for (auto& enemy : enemys_)
+	{
+		if (!enemy->IsInGroup())
+		{
+			enemyGroup_.back()->AddEnemy(enemy.get());
+			enemy->SetGroup(enemyGroup_.back().get());
+		}
+	}
 }
 
 void EnemyManager::DistanceAction(void)
@@ -98,7 +154,7 @@ void EnemyManager::DistanceAction(void)
 			//グループの目標座標をプレイヤー座標に設定
 			group->SetGoalPos(playerPos_);
 		}
-		if (dist < PLAYER_AIM_RADIUS)
+		else if (dist < PLAYER_AIM_RADIUS)
 		{
 			//グループを移動状態にする
 			group->ChangeState(EnemyGroup::GROUP_STATE::MOVE);
