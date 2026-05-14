@@ -36,6 +36,12 @@ public:
 	//状態遷移
 	void ChangeState(const ENEMY_STATE _nextState);
 
+	//生存判定用番号
+	const int GetActiveIndex(void)const { return activeIndex_; }
+
+	//生存判定用番号の設定
+	void SetActiveIndex(const int _index) { activeIndex_ = _index; }
+
 	//移動量の設定
 	void SetMovePow(const VECTOR& _movePow) { movePow_ = _movePow; }
 
@@ -69,6 +75,9 @@ private:
 
 	//アニメーション
 	static constexpr float RUN_SPEED = 2.0f;			//走り速度
+
+	//自身の生存判定用番号
+	int activeIndex_;
 
 	//親グループ(Managerからの参照用)
 	const EnemyGroup* group_;

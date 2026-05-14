@@ -52,19 +52,10 @@ void EnemyGroup::Draw(void)
 	//デバッグ
 	DrawSphere3D(groupGoalPos_, 20, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), false);
 	DrawSphere3D(pos_, 20, 20, GetColor(255, 255, 0), GetColor(255, 255, 0), false);
-
-	for(auto& enemy : enemys_)
-	{
-		enemy->Draw();
-	}
 }
 
 void EnemyGroup::Release(void)
 {
-	for (auto& enemy : enemys_)
-	{
-		enemy->Release();
-	}
 }
 
 void EnemyGroup::ChangeState(const GROUP_STATE _nextState)

@@ -5,7 +5,7 @@
 #include"../../Common/Quaternion.h"
 
 class EnemyGroup;
-class EnemyBase;
+class EnemyPool;
 class Game;
 class AttackManager;
 
@@ -54,8 +54,8 @@ private:
 	//敵グループ
 	std::vector<std::unique_ptr<EnemyGroup>> enemyGroup_;	
 
-	//敵の情報
-	std::vector<std::unique_ptr<EnemyBase>> enemys_;	
+	//敵情報
+	std::unique_ptr<EnemyPool> enemyPool_;
 
 	//プレイヤー座標
 	const VECTOR& playerPos_;

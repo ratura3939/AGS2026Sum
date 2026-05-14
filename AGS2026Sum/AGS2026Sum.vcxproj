@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Character\Enemy\EnemyPool.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\EnemyGroup.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\EnemyBase.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerChara.cpp" />
@@ -186,6 +187,7 @@
     <ClCompile Include="Src\Utility\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Character\Enemy\EnemyPool.h" />
     <ClInclude Include="Src\Object\Character\Enemy\EnemyGroup.h" />
     <ClInclude Include="Src\Object\Character\Enemy\EnemyBase.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerChara.h" />

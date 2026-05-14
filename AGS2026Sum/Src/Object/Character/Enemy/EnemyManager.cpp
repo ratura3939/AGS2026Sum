@@ -5,6 +5,7 @@
 #include"../../Scene/Main/Game.h"
 #include"../../Utility/Utility.h"
 #include"EnemyGroup.h"
+#include"EnemyPool.h"
 #include"EnemyBase.h"
 #include "EnemyManager.h"
 
@@ -33,10 +34,7 @@ void EnemyManager::Update(void)
 	{
 		group->Update();
 	}
-	for (auto& enemy : enemys_)
-	{
-		enemy->Update();
-	}
+	enemyPool_->Update();
 
 	//グループの削除処理
 	DeleteEnemyGroup();
@@ -55,6 +53,7 @@ void EnemyManager::Draw(void)
 	{
 		group->Draw();
 	}
+	enemyPool_->Draw();
 }
 
 void EnemyManager::Release(void)
@@ -64,32 +63,13 @@ void EnemyManager::Release(void)
 	{
 		group->Release();
 	}
+	enemyPool_->Release();
 }
 
 void EnemyManager::CreateEnemyGroup(void)
 {
 	//グループ
 	std::unique_ptr<EnemyGroup> group = std::make_unique<EnemyGroup>(CREATE_NUM);
-
-	//敵
-	std::unique_ptr<EnemyBase> enemy;
-
-	//敵の生成
-	for (int i = 0; i < CREATE_NUM;i++)
-	{
-		enemy = std::make_unique<EnemyBase>();
-
-		//読み込みと初期化
-		enemy->Load();
-		enemy->Init();
-
-		//グループに敵を紐づけ
-		group->AddEnemy(enemy.get());
-		enemy->SetGroup(group.get());
-
-		//格納
-		enemys_.push_back(std::move(enemy));
-	}
 
 	//初期化
 	group->Init();
@@ -101,10 +81,16 @@ void EnemyManager::CreateEnemyGroup(void)
 void EnemyManager::DeleteEnemy(void)
 {
 	//そもそも敵がいないなら何もしない
-	if (enemys_.empty()) return;
+	if (!enemyPool_) return;
 
 	//死亡した敵　または　グループに所属していない敵の削除
-	std::erase_if(enemys_, [this](std::unique_ptr<EnemyBase>& _enemy) {return !_enemy->IsAlive() || !_enemy->IsInGroup(); });
+	for (auto& activeEnemy : enemyPool_->GetActiveEnemys())
+	{
+		if (!activeEnemy->IsAlive() || !activeEnemy->IsInGroup())
+		{
+			enemyPool_->Remove(activeEnemy);
+		}
+	}
 }
 
 void EnemyManager::DeleteEnemyGroup(void)
@@ -119,17 +105,17 @@ void EnemyManager::DeleteEnemyGroup(void)
 void EnemyManager::ReJoinGroups(void)
 {
 	//グループ　または　敵が空なら処理しない
-	if (enemyGroup_.empty() || enemys_.empty())return;
+	if (enemyGroup_.empty() || !enemyPool_)return;
 
 	//グループに所属していない敵を別グループに再所属させる
-	for (auto& enemy : enemys_)
-	{
-		if (!enemy->IsInGroup())
-		{
-			enemyGroup_.back()->AddEnemy(enemy.get());
-			enemy->SetGroup(enemyGroup_.back().get());
-		}
-	}
+	//for (auto& enemy : enemys_)
+	//{
+	//	if (!enemy->IsInGroup())
+	//	{
+	//		enemyGroup_.back()->AddEnemy(enemy.get());
+	//		enemy->SetGroup(enemyGroup_.back().get());
+	//	}
+	//}
 }
 
 void EnemyManager::DistanceAction(void)

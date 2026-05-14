@@ -33,6 +33,7 @@ protected:
 
 	virtual void Move(void) = 0;				//移動処理
 	virtual void Attack(void) = 0;				//攻撃処理
+	virtual void Death(void);					//死亡処理
 
 	void SetGoalRot(const float _rad);			//回転目標角度
 	void Rotation(void);						//回転
@@ -42,7 +43,6 @@ protected:
 	float hp_;					//体力
 
 private:
-	void Death(void);			//死亡処理
 
 	Quaternion characterRotY_;	//Y軸回転用
 
