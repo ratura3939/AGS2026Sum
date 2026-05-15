@@ -135,12 +135,12 @@ void PlayerAttack::Attack(const ATTACK_TYPE& _type)
 	}
 
 	if (useLevel >= ATTACK_LEVEL_MAX && _type == ATTACK_TYPE::PUNCH) {
-		level_ = -1;	//レベルリセット
+		level_ = 0;	//レベルリセット(即時使用のため0に)
 		useLevel = level_;
 	}
 
 	if (useLevel < 0 || 
-		useLevel > ATTACK_LEVEL_MAX) {
+		useLevel >= ATTACK_LEVEL_MAX) {
 		level_ = -1;	//レベルリセット
 		return;	//処理不可
 	}

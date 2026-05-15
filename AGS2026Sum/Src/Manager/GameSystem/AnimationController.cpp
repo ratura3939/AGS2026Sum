@@ -92,6 +92,7 @@ void AnimationController::Play(const std::wstring& _name, const float _speed, co
 			//ブレンド中のアニメーションを現在のアニメーションにする
 			MV1DetachAnim(modelId_, currentAnimAttachInfo_.attachNum);	//現在のものをデタッチ
 			currentAnim_ = blendAnim_;				//ブレンド中のものを現在のものに
+			currentAnimAttachInfo_ = blendAnimAttachInfo_;	//ブレンドしているものを現在のものに
 		}
 
 		SetAnimationPlayInfo(blendAnim_, animDatas_[_name], blendAnimAttachInfo_, _speed);	//新規のものをブレンド中のものに
