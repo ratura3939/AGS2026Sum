@@ -20,6 +20,9 @@ EnemyManager::~EnemyManager(void)
 
 void EnemyManager::Init(void)
 {
+	//敵のプールを生成
+	enemyPool_ = std::make_unique<EnemyPool>();
+
 	//敵の生成(デバッグ)
 	CreateEnemyGroup();
 }
@@ -69,7 +72,21 @@ void EnemyManager::Release(void)
 void EnemyManager::CreateEnemyGroup(void)
 {
 	//グループ
-	std::unique_ptr<EnemyGroup> group = std::make_unique<EnemyGroup>(CREATE_NUM);
+	std::unique_ptr<EnemyGroup> group = std::make_unique<EnemyGroup>();
+
+	//敵の参照用ポインタ
+	EnemyBase* enemy = nullptr;
+
+	//指定分、敵を生成する
+	for (int i = 0; i < CREATE_NUM; i++)
+	{
+		//生成
+		enemy = enemyPool_->Spawn();
+
+		//グループに設定
+		group->AddEnemy(enemy);
+		enemy->SetGroup(group.get());
+	}
 
 	//初期化
 	group->Init();
@@ -107,15 +124,20 @@ void EnemyManager::ReJoinGroups(void)
 	//グループ　または　敵が空なら処理しない
 	if (enemyGroup_.empty() || !enemyPool_)return;
 
+	//敵グループの末尾
+	EnemyGroup* enemyGroupBack = enemyGroup_.back().get();
+
 	//グループに所属していない敵を別グループに再所属させる
-	//for (auto& enemy : enemys_)
-	//{
-	//	if (!enemy->IsInGroup())
-	//	{
-	//		enemyGroup_.back()->AddEnemy(enemy.get());
-	//		enemy->SetGroup(enemyGroup_.back().get());
-	//	}
-	//}
+	for (auto& enemy : enemyPool_->GetActiveEnemys())
+	{
+		//所属しているか
+		if (!enemy->IsInGroup())
+		{
+			//再所属
+			enemyGroupBack->AddEnemy(enemy);
+			enemy->SetGroup(enemyGroupBack);
+		}
+	}
 }
 
 void EnemyManager::DistanceAction(void)

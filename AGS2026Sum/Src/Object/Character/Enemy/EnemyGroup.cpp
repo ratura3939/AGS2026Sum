@@ -37,12 +37,6 @@ void EnemyGroup::Update(void)
 	//状態ごとの更新
 	stateFunc_[state_].update();
 
-	//敵の更新
-	for(auto& enemy : enemys_)
-	{
-		enemy->Update();
-	}
-
 	//敵の死亡時の処理
 	DeleteEnemy();
 }
@@ -75,14 +69,7 @@ void EnemyGroup::ChangeState(const GROUP_STATE _nextState)
 
 void EnemyGroup::ResetPos(void)
 {
-	//グループ座標のリセット
-	//pos_
 
-	//敵個々の座標リセット
-	for (auto& enemy : enemys_)
-	{
-		enemy->ResetPos();
-	}
 }
 
 void EnemyGroup::DeleteEnemy(void)
@@ -91,7 +78,7 @@ void EnemyGroup::DeleteEnemy(void)
 	if (enemys_.empty()) return;
 
 	//死亡した敵の削除
-	std::erase_if(enemys_, [this](std::unique_ptr<EnemyBase>& _enemy) {return !_enemy->IsAlive(); });
+	std::erase_if(enemys_, [this](EnemyBase* _enemy) {return !_enemy->IsAlive(); });
 }
 
 void EnemyGroup::MoveToGoal(void)
@@ -157,15 +144,6 @@ void EnemyGroup::UpdateMove(void)
 
 void EnemyGroup::UpdateAttackReady(void)
 {
-	for (auto& enemy : enemys_)
-	{
-		//敵とグループの目的地が攻撃距離より遠いなら
-		if (Utility::Distance(enemy->GetPos(), groupGoalPos_) > ATTACK_DISTANCE)continue;
-
-		//攻撃状態に遷移
-		enemy->ChangeState(EnemyBase::ENEMY_STATE::ATTACK);
-	}
-
 	//ゴール地点に向かう
 	MoveToGoal();
 

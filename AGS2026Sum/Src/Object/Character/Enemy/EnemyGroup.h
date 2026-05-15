@@ -4,6 +4,8 @@
 #include<memory>
 #include<functional>
 
+class EnemyBase;///
+
 class EnemyGroup
 {
 public:
