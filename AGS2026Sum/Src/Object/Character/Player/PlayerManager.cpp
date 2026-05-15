@@ -71,18 +71,23 @@ void PlayerManager::UserInput(void)
 	InputManager& ins = InputManager::GetInstance();
 
 #pragma region 攻撃
+	bool isAttackInput = false;
+
 	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_NORMAL)) {
 		attack_->Attack(PlayerAttack::ATTACK_TYPE::PUNCH);	//攻撃クラスに攻撃開始を伝える
+		isAttackInput = true;
 	}
 	else if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_STRONG)) {
 		attack_->Attack(PlayerAttack::ATTACK_TYPE::KICK);	//攻撃クラスに攻撃開始を伝える)
+		isAttackInput = true;
 	}
 
-	if (attack_->IsAttacking()) {
+	if (isAttackInput) {
 		character_->SetIsAttack(true);	//攻撃中は攻撃状態にする
 		character_->PlayAnim(attack_->GetCurrentAttackAnimName());	//攻撃アニメを再生する
 	}
-	else {
+
+	if (!attack_->IsAttacking()) {
 		character_->SetIsAttack(false);	//そうでないときは攻撃状態を解除する
 	}
 #pragma endregion

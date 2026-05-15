@@ -63,10 +63,13 @@ void AnimationController::Add(const std::wstring& _name, const int _animData, co
 	animDatas_.emplace(_name, anim);	//アニメーション情報追加
 }
 
-void AnimationController::Play(const std::wstring& _name, const float _speed, const std::vector<std::wstring> _next)
+void AnimationController::Play(const std::wstring& _name, const float _speed, const std::vector<NextAnimInfo> _next)
 {
 	//アニメーションロック中は再生しない
-	if (isAnimLock_)return;
+	if (isAnimLock_) {
+		AddNextAnim(_name,_speed);	//次のアニメーションに追加
+		return;
+	}
 
 	//要素がないとき
 	if (!animDatas_.contains(_name)) {
@@ -93,6 +96,7 @@ void AnimationController::Play(const std::wstring& _name, const float _speed, co
 			MV1DetachAnim(modelId_, currentAnimAttachInfo_.attachNum);	//現在のものをデタッチ
 			currentAnim_ = blendAnim_;				//ブレンド中のものを現在のものに
 			currentAnimAttachInfo_ = blendAnimAttachInfo_;	//ブレンドしているものを現在のものに
+			isAnimLock_ = blendAnim_.mustPlayOnce;	//再生保障
 		}
 
 		SetAnimationPlayInfo(blendAnim_, animDatas_[_name], blendAnimAttachInfo_, _speed);	//新規のものをブレンド中のものに
@@ -101,8 +105,8 @@ void AnimationController::Play(const std::wstring& _name, const float _speed, co
 	
 	//次に再生されるアニメーションが設定されているとき(LOOPは末尾のみ許可)
 	if (!_next.empty()) {
-		for (auto& wstring : _next) {
-			if (animDatas_[wstring].type == PLAY_TYPE::LOOP && wstring != _next.back()) {
+		for (auto& anim : _next) {
+			if (animDatas_[anim.name].type == PLAY_TYPE::LOOP && anim.name != _next.back().name) {
 				assert("順次再生の個所を見直してください。");
 			}
 		}
@@ -110,7 +114,7 @@ void AnimationController::Play(const std::wstring& _name, const float _speed, co
 	}
 }
 
-void AnimationController::AddNextAnim(const std::wstring& _name)
+void AnimationController::AddNextAnim(const std::wstring& _name, const float _speed)
 {
 	//要素がないとき
 	if (!animDatas_.contains(_name)) {
@@ -118,14 +122,18 @@ void AnimationController::AddNextAnim(const std::wstring& _name)
 		assert("登録されていない要素を連続で再生しようとしています。");
 		return;
 	}
-	nextAnimList_.push_back(_name);
+	NextAnimInfo nextInfo;
+	nextInfo.name = _name;
+	nextInfo.speed = _speed;
+
+	nextAnimList_.push_back(nextInfo);
 }
 
-void AnimationController::AddNextAnim(const std::vector<std::wstring> _names)
+void AnimationController::AddNextAnim(const std::vector<NextAnimInfo> _animations)
 {
-	for (auto& add : _names) {
+	for (auto& add : _animations) {
 		//要素がないとき
-		if (!animDatas_.contains(add)) {
+		if (!animDatas_.contains(add.name)) {
 			//エラー防止
 			assert("登録されていない要素を連続で再生しようとしています。");
 			return;
@@ -203,7 +211,7 @@ void AnimationController::FinishAnimNomal(void)
 	//次に再生されている物が設定されているとき
 	if (!nextAnimList_.empty()) {
 		//配列の最前列を再生
-		Play(nextAnimList_[0], currentAnimAttachInfo_.speed);
+		Play(nextAnimList_[0].name, nextAnimList_[0].speed);
 		//要素の削除
 		nextAnimList_.erase(nextAnimList_.begin());
 		return;
@@ -285,6 +293,7 @@ void AnimationController::FinishBlendAnim(void)
 	MV1DetachAnim(modelId_, currentAnimAttachInfo_.attachNum);			//古いアニメーションをデタッチ
 	currentAnimAttachInfo_ = blendAnimAttachInfo_;	//ブレンドしているものを現在のものに
 	currentAnim_ = blendAnim_;						//ブレンドしているものを現在のものに
+	isAnimLock_ = blendAnim_.mustPlayOnce;	//再生保障
 
 	SetFinishAndUpdateFunc();				//終了時と更新処理の設定
 

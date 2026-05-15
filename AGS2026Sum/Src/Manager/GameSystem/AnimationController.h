@@ -44,6 +44,11 @@ public:
 		float counter;
 	};
 
+	//予約アニメーション情報
+	struct NextAnimInfo {
+		std::wstring name;	//アニメーシwwョン名
+		float speed;		//再w生w速w度w
+	};
 
 	AnimationController(int& _model);
 	~AnimationController(void);
@@ -51,11 +56,11 @@ public:
 	/// <summary>
 	/// アニメーション追加関数
 	/// </summary>
-	/// <param name="_name">登録名</param>
-	/// <param name="_animData">アニメーション番号</param>
-	/// <param name="_type">再生タイプ</param>
-	/// <param name="_source">アニメーションの情報源</param>
-	/// <param name="_isLock">一回の再生を保障するかどうか</param>
+	/// <param name="_name">登録名ww</param>
+	/// <param name="_animData">アニメーション番号ww</param>
+	/// <param name="_type">再生タイプww</param>
+	/// <param name="_source">アニメーションの情報源ww</param>
+	/// <param name="_isLock">一回の再生を保障するかどうかww</param>
 	void Add(const std::wstring& _name, const int _animData, const PLAY_TYPE& _type, const ANIM_SOURCE& _source, const bool _isLock = false);
 
 	/// <summary>
@@ -64,19 +69,19 @@ public:
 	/// <param name="_name">登録名</param>
 	/// <param name="_speed">再生速度</param>
 	/// <param name="_next">連続して再生する物たち<最後以外にLOOPのものを入れないこと！！></param>
-	void Play(const std::wstring& _name, const float _speed = DEFAULT_SPEED, const std::vector<std::wstring> _next = {});
+	void Play(const std::wstring& _name, const float _speed = DEFAULT_SPEED, const std::vector<NextAnimInfo> _next = {});
 
 	/// <summary>
 	/// 連続して再生するアニメーションを途中で追加する
 	/// </summary>
 	/// <param name="_name">追加するアニメーション名</param>
-	void AddNextAnim(const std::wstring& _name);
+	void AddNextAnim(const std::wstring& _name, const float _speed);
 
 	/// <summary>
 	/// 連続して再生するアニメーションを途中で追加する
 	/// </summary>
 	/// <param name="_name">追加するアニメーション名(複数)</param>
-	void AddNextAnim(const std::vector<std::wstring> _names);
+	void AddNextAnim(const std::vector<NextAnimInfo> _animations);
 
 	//更新
 	void Update(void);
@@ -129,7 +134,7 @@ private:
 	bool isSetDefaultAnim_;		//デフォルトアニメーションが設定されているかどうか
 	std::wstring defaultAnim_;	//デフォルトアニメーションの名前
 
-	std::vector<std::wstring> nextAnimList_;	//次に再生するアニメーション(LOOP以外に適用)<最終以外にLOOＰを入れないこと>
+	std::vector<NextAnimInfo> nextAnimList_;	//次に再生するアニメーション(LOOP以外に適用)<最終以外にLOOＰを入れないこと>
 
 	using FinishAnimation = void(AnimationController::*)(void);
 	using UpdateAnimation = void(AnimationController::*)(void);
