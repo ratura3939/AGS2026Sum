@@ -4,6 +4,7 @@
 #include<DxLib.h>
 #include"../../Common/Quaternion.h"
 
+class EnemyBase;
 class EnemyGroup;
 class EnemyPool;
 class Game;
@@ -12,6 +13,9 @@ class AttackManager;
 class EnemyManager
 {
 public:
+
+	//敵がグループから離れられる距離
+	static constexpr float LEAVE_GROUP_DIST = 1000.0f;
 
 	/// <summary>
 	/// コンストラクタ
@@ -39,9 +43,6 @@ public:
 
 private:
 
-	//敵がグループから離れられる距離
-	static constexpr float LEAVE_GROUP_DIST = 1000.0f;
-
 	//プレイヤーを狙うときの距離半径
 	static constexpr float PLAYER_AIM_RADIUS = 1000.0f;
 
@@ -59,6 +60,9 @@ private:
 
 	//プレイヤー座標
 	const VECTOR& playerPos_;
+
+	//グループと敵の関連付け
+	void Grouping(EnemyGroup* _group, EnemyBase* _enemy);
 
 	//敵の削除処理
 	void DeleteEnemy(void);

@@ -74,6 +74,9 @@ void EnemyManager::CreateEnemyGroup(void)
 	//グループ
 	std::unique_ptr<EnemyGroup> group = std::make_unique<EnemyGroup>();
 
+	//初期化
+	group->Init();
+
 	//敵の参照用ポインタ
 	EnemyBase* enemy = nullptr;
 
@@ -84,15 +87,19 @@ void EnemyManager::CreateEnemyGroup(void)
 		enemy = enemyPool_->Spawn();
 
 		//グループに設定
-		group->AddEnemy(enemy);
-		enemy->SetGroup(group.get());
+		Grouping(group.get(), enemy);
+		enemy->InitWithGroup();
 	}
-
-	//初期化
-	group->Init();
 
 	//格納
 	enemyGroup_.push_back(std::move(group));
+}
+
+void EnemyManager::Grouping(EnemyGroup* _group, EnemyBase* _enemy)
+{
+	//グループに所属させる
+	_group->AddEnemy(_enemy);
+	_enemy->SetGroup(_group);
 }
 
 void EnemyManager::DeleteEnemy(void)
@@ -134,8 +141,7 @@ void EnemyManager::ReJoinGroups(void)
 		if (!enemy->IsInGroup())
 		{
 			//再所属
-			enemyGroupBack->AddEnemy(enemy);
-			enemy->SetGroup(enemyGroupBack);
+			Grouping(enemyGroupBack, enemy);
 		}
 	}
 }

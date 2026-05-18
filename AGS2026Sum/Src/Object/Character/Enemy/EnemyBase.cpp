@@ -1,9 +1,10 @@
 #include "../../../pch.h"
-#include "../../../Manager/GameSystem/CollisionManager.h"
 #include "../../../Manager/Generic/ResourceManager.h"
 #include "../../../Manager/Generic/SceneManager.h"
+#include "../../../Manager/GameSystem/CollisionManager.h"
 #include "../../Common/Collider.h"
 #include "../../Common/Geometry/Sphere.h"
+#include "EnemyManager.h"
 #include "EnemyGroup.h"
 #include "EnemyBase.h"
 
@@ -58,12 +59,17 @@ void EnemyBase::ChangeState(const ENEMY_STATE _nextState)
 
 void EnemyBase::ResetPos(void)
 {
+	//グループがないなら処理しない
+	if(!group_) return;
+	
+	//グループ座標の取得
+	VECTOR groupPos = group_->GetPos();
+	VECTOR leavePos = { EnemyManager::LEAVE_GROUP_DIST, 0.0f, EnemyManager::LEAVE_GROUP_DIST };
+	VECTOR randPos = Utility::GetRandomValue(VScale(leavePos, -1.0f), leavePos);
+
 	//座標のリセット
-	if(group_) 
-	{
-		pos_ = group_->GetPos();
-		movedPos_ = pos_;
-	}
+	pos_ = VAdd(groupPos, randPos);
+	movedPos_ = pos_;
 }
 
 void EnemyBase::DoLoad(void)
@@ -81,13 +87,18 @@ void EnemyBase::DoInit(void)
 	hp_ = 100.0f;		
 	quaRotLocal_ = Quaternion::Euler(0.0f, 0.0f, 0.0f);
 
-	//座標
-	pos_ = group_->GetPos();
-	movedPos_ = pos_;
-
 	//当たり判定の生成
 	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, BROUD_RADIUS, RADIUS);
 	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY, { Collider::COL_TAG::PLAYER, Collider::COL_TAG::PLAYER_ATTACK });
+}
+
+void EnemyBase::InitWithGroup(void)
+{
+	//グループがないなら処理しない
+	if (!group_)return;
+
+	//座標
+	ResetPos();
 }
 
 void EnemyBase::DoUpdate(void)

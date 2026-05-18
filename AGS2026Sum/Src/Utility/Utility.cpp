@@ -659,4 +659,14 @@ int Utility::GetRandomValue(int _min, int _max)
     return dist(mt);
 }
 
+VECTOR Utility::GetRandomValue(const VECTOR& _min, const VECTOR& _max)
+{
+    VECTOR ret;
+    ret.x = static_cast<float>(GetRandomValue(static_cast<int>(_min.x), static_cast<int>(_max.x)));
+    ret.y = static_cast<float>(GetRandomValue(static_cast<int>(_min.y), static_cast<int>(_max.y)));
+    ret.z = static_cast<float>(GetRandomValue(static_cast<int>(_min.z), static_cast<int>(_max.z)));
+
+    return ret;
+}
+
 

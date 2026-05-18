@@ -24,6 +24,9 @@ public:
 	//デストラクタ
 	~EnemyBase(void);
 
+	//グループとの初期化
+	void InitWithGroup(void);
+
 	//描画
 	void Draw(void)override;
 
