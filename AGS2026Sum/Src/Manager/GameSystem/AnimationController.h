@@ -42,6 +42,7 @@ public:
 		int attachNum;
 		float speed;
 		float counter;
+		bool isFinish;
 	};
 
 	//予約アニメーション情報
@@ -97,11 +98,11 @@ public:
 
 private:
 	//アニメーション更新処理
-	void UpdateNomalAnim(void);
+	void UpdateNormalAnim(void);
 	void UpdateReturnAnim(void);
 
 	//アニメーション終了時処理
-	void FinishAnimNomal(void);
+	void FinishAnimNormal(void);
 	void FinishAnimLoop(void);
 	void FinishAnimReturn(void);
 

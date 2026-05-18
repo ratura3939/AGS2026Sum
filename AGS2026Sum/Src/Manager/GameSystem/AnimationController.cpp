@@ -10,7 +10,7 @@ namespace {
 		= { AnimationController::PLAY_TYPE::MAX, AnimationController::ANIM_SOURCE::MAX, -1, -1.0f, false };
 
 	const AnimationController::AttachInfo ATTACH_INFO_INIT			//アタッチ情報の初期化
-		= { -1,-1.0f,-1.0f };
+		= { -1,-1.0f,-1.0f,false };
 }
 
 AnimationController::AnimationController(int& _model)
@@ -24,8 +24,8 @@ AnimationController::AnimationController(int& _model)
 	,blendAnimAttachInfo_(ATTACH_INFO_INIT)
 	,speedRate_(1.0f)
 	,isAnimLock_(false)
-	,finishAnim_(&AnimationController::FinishAnimNomal)
-	,updateAnim_(&AnimationController::UpdateNomalAnim)
+	,finishAnim_(&AnimationController::FinishAnimNormal)
+	,updateAnim_(&AnimationController::UpdateNormalAnim)
 	,nextAnimList_({})
 {
 }
@@ -66,8 +66,8 @@ void AnimationController::Add(const std::wstring& _name, const int _animData, co
 void AnimationController::Play(const std::wstring& _name, const float _speed, const std::vector<NextAnimInfo> _next)
 {
 	//アニメーションロック中は再生しない
-	if (isAnimLock_) {
-		AddNextAnim(_name,_speed);	//次のアニメーションに追加
+	if (isAnimLock_ || blendAnim_.mustPlayOnce) {
+		AddNextAnim(_name, _speed);	//次のアニメーションに追加
 		return;
 	}
 
@@ -122,6 +122,11 @@ void AnimationController::AddNextAnim(const std::wstring& _name, const float _sp
 		assert("登録されていない要素を連続で再生しようとしています。");
 		return;
 	}
+
+	if (animDatas_[_name].type == PLAY_TYPE::LOOP) {
+		return;		//ループは連続再生に入れない
+	}
+
 	NextAnimInfo nextInfo;
 	nextInfo.name = _name;
 	nextInfo.speed = _speed;
@@ -175,7 +180,7 @@ void AnimationController::SetDefaultAnim(const std::wstring& _name)
 	defaultAnim_ = _name;
 }
 
-void AnimationController::UpdateNomalAnim(void)
+void AnimationController::UpdateNormalAnim(void)
 {
 	currentAnimAttachInfo_.counter += currentAnimAttachInfo_.speed * speedRate_;	//カウンタ加算
 
@@ -183,8 +188,8 @@ void AnimationController::UpdateNomalAnim(void)
 		BlendAnim();
 		blendAnimAttachInfo_.counter += blendAnimAttachInfo_.speed * speedRate_;	//カウンタ加算
 	}
-	//再生上限にいった場合
-	if (currentAnimAttachInfo_.counter > currentAnim_.total){
+	//再生上限にいった場合(まだアニメーションが終了していないとき→ブレンド中の対策)
+	if (currentAnimAttachInfo_.counter > currentAnim_.total && !currentAnimAttachInfo_.isFinish) {
 		(this->*finishAnim_)();	//アニメーション終了時処理
 	}
 }
@@ -198,15 +203,16 @@ void AnimationController::UpdateReturnAnim(void)
 		blendAnimAttachInfo_.counter -= blendAnimAttachInfo_.speed * speedRate_;	//カウンタ加算
 	}
 	//再生上限にいった場合
-	if (currentAnimAttachInfo_.counter <= 0.0f){
+	if (currentAnimAttachInfo_.counter <= 0.0f && !currentAnimAttachInfo_.isFinish){
 		(this->*finishAnim_)();		//アニメーション終了時処理
 	}
 }
 
-void AnimationController::FinishAnimNomal(void)
+void AnimationController::FinishAnimNormal(void)
 {
 	//アニメーションロック解除
 	isAnimLock_ = false;
+	currentAnimAttachInfo_.isFinish = true;	//アニメーション終了
 
 	//次に再生されている物が設定されているとき
 	if (!nextAnimList_.empty()) {
@@ -220,6 +226,7 @@ void AnimationController::FinishAnimNomal(void)
 	if(isSetDefaultAnim_) {
 		//デフォルトアニメーションが設定されているときはそれを再生
 		Play(defaultAnim_, DEFAULT_SPEED);
+		nextAnimList_.clear();	//予約されているものを出し切ったため
 		return;
 	}
 }
@@ -235,6 +242,7 @@ void AnimationController::FinishAnimReturn(void)
 {
 	//アニメーションロック解除
 	isAnimLock_ = false;
+	currentAnimAttachInfo_.isFinish = true;	//アニメーション終了
 	currentAnimAttachInfo_.counter = currentAnim_.total;
 }
 
@@ -244,6 +252,7 @@ void AnimationController::SetAnimationPlayInfo(AnimationInfo& _animInfo, const A
 	SetAttachAnim(_attachInfo.attachNum, _animInfo.data, _animInfo.source);	//アタッチ
 	_attachInfo.speed = _animSpeed;		//再生速度初期化
 	_attachInfo.counter = 0.0f;			//カウンタ初期化
+	_attachInfo.isFinish = false;		//終了フラグ初期化
 	//逆再生のときはカウンタを総再生時間にする
 	if (_animInfo.type == PLAY_TYPE::RETURN) {
 		_attachInfo.counter = _animInfo.total;
@@ -258,12 +267,12 @@ void AnimationController::SetFinishAndUpdateFunc(void)
 	switch (currentAnim_.type)
 	{
 	case PLAY_TYPE::NORMAL:
-		finishAnim_ = &AnimationController::FinishAnimNomal;
-		updateAnim_ = &AnimationController::UpdateNomalAnim;
+		finishAnim_ = &AnimationController::FinishAnimNormal;
+		updateAnim_ = &AnimationController::UpdateNormalAnim;
 		break;
 	case PLAY_TYPE::LOOP:
 		finishAnim_ = &AnimationController::FinishAnimLoop;
-		updateAnim_ = &AnimationController::UpdateNomalAnim;
+		updateAnim_ = &AnimationController::UpdateNormalAnim;
 		break;
 	case PLAY_TYPE::RETURN:
 		finishAnim_ = &AnimationController::FinishAnimReturn;
