@@ -29,8 +29,8 @@ void EnemyManager::Init(void)
 
 void EnemyManager::Update(void)
 {
-	//距離ごとの行動決め
-	DistanceAction();
+	//距離ごとの命令決め
+	DecideOrderByDistance();
 
 	//更新
 	for (auto& group : enemyGroup_)
@@ -146,7 +146,7 @@ void EnemyManager::ReJoinGroups(void)
 	}
 }
 
-void EnemyManager::DistanceAction(void)
+void EnemyManager::DecideOrderByDistance(void)
 {
 	//グループが空なら処理しない
 	if (enemyGroup_.empty())return;
@@ -163,7 +163,7 @@ void EnemyManager::DistanceAction(void)
 		if (dist < PLAYER_ATTACK_RADIUS)
 		{
 			//グループを攻撃準備状態にする
-			group->ChangeState(EnemyGroup::GROUP_STATE::ATTACK_READY);
+			group->ChangeOrder(EnemyGroup::GROUP_ORDER::ATTACK_READY);
 			
 			//グループの目標座標をプレイヤー座標に設定
 			group->SetGoalPos(playerPos_);
@@ -171,7 +171,7 @@ void EnemyManager::DistanceAction(void)
 		else if (dist < PLAYER_AIM_RADIUS)
 		{
 			//グループを移動状態にする
-			group->ChangeState(EnemyGroup::GROUP_STATE::MOVE);
+			group->ChangeOrder(EnemyGroup::GROUP_ORDER::MOVE);
 
 			//グループの目標座標をプレイヤー座標に設定
 			group->SetGoalPos(playerPos_);
@@ -179,7 +179,7 @@ void EnemyManager::DistanceAction(void)
 		else
 		{
 			//グループを待機状態にする
-			group->ChangeState(EnemyGroup::GROUP_STATE::STAY);
+			group->ChangeOrder(EnemyGroup::GROUP_ORDER::STAY);
 		}
 	}
 }

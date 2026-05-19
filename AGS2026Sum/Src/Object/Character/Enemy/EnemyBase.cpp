@@ -10,15 +10,15 @@
 
 EnemyBase::EnemyBase(void)
 	: group_(nullptr)
-	, state_(ENEMY_STATE::NONE)
+	, action_(ENEMY_ACTION::NONE)
 	, movePow_(Utility::VECTOR_ZERO)
 {
 	//状態ごとの処理の設定
-	stateFunc_[ENEMY_STATE::NONE] = {};
-	stateFunc_[ENEMY_STATE::STAY] = { [this](void) {EnterStay(); }, [this](void) {UpdateStay(); }, [this](void) {ExitStay(); } };
-	stateFunc_[ENEMY_STATE::MOVE] = { [this](void) {EnterMove(); }, [this](void) {UpdateMove(); }, [this](void) {ExitMove(); } };
-	stateFunc_[ENEMY_STATE::ATTACK_READY] = { [this](void) {EnterAttackReady(); }, [this](void) {UpdateAttackReady(); }, [this](void) {ExitAttackReady(); } };
-	stateFunc_[ENEMY_STATE::ATTACK] = { [this](void) {EnterAttack(); }, [this](void) {UpdateAttack(); }, [this](void) {ExitAttack(); } };
+	actionFunc_[ENEMY_ACTION::NONE] = {};
+	actionFunc_[ENEMY_ACTION::STAY] = { [this](void) {EnterStay(); }, [this](void) {UpdateStay(); }, [this](void) {ExitStay(); } };
+	actionFunc_[ENEMY_ACTION::MOVE] = { [this](void) {EnterMove(); }, [this](void) {UpdateMove(); }, [this](void) {ExitMove(); } };
+	actionFunc_[ENEMY_ACTION::ATTACK_READY] = { [this](void) {EnterAttackReady(); }, [this](void) {UpdateAttackReady(); }, [this](void) {ExitAttackReady(); } };
+	actionFunc_[ENEMY_ACTION::ATTACK] = { [this](void) {EnterAttack(); }, [this](void) {UpdateAttack(); }, [this](void) {ExitAttack(); } };
 }
 
 EnemyBase::~EnemyBase(void)
@@ -42,19 +42,19 @@ void EnemyBase::HitCollider(std::weak_ptr<Collider> _col)
 {
 }
 
-void EnemyBase::ChangeState(const ENEMY_STATE _nextState)
+void EnemyBase::ChangeAction(const ENEMY_ACTION _nextAction)
 {
 	//状態が同じなら処理しない
-	if (state_ == _nextState || _nextState == ENEMY_STATE::NONE)return;
+	if (action_ == _nextAction || _nextAction == ENEMY_ACTION::NONE)return;
 
 	//状態抜けの処理
-	stateFunc_[state_].exit();
+	actionFunc_[action_].exit();
 	
 	//状態の変更
-	state_ = _nextState;
+	action_ = _nextAction;
 	
 	//状態遷移の処理
-	stateFunc_[state_].enter();
+	actionFunc_[action_].enter();
 }
 
 void EnemyBase::ResetPos(void)
@@ -64,7 +64,7 @@ void EnemyBase::ResetPos(void)
 	
 	//グループ座標の取得
 	VECTOR groupPos = group_->GetPos();
-	VECTOR leavePos = { EnemyManager::LEAVE_GROUP_DIST, 0.0f, EnemyManager::LEAVE_GROUP_DIST };
+	VECTOR leavePos = { LEAVE_GROUP_DIST, 0.0f, LEAVE_GROUP_DIST };
 	VECTOR randPos = Utility::GetRandomValue(VScale(leavePos, -1.0f), leavePos);
 
 	//座標のリセット
@@ -110,7 +110,7 @@ void EnemyBase::DoUpdate(void)
 	animController_->Update();
 
 	//状態ごとの更新
-	stateFunc_[state_].update();
+	actionFunc_[action_].update();
 }
 
 void EnemyBase::InitAnim(void)
@@ -209,11 +209,13 @@ void EnemyBase::UpdateAttackReady(void)
 void EnemyBase::UpdateAttack(void)
 {
 	//待機状態に移行
-	ChangeState(ENEMY_STATE::STAY);
+	ChangeAction(ENEMY_ACTION::STAY);
 }
 
 void EnemyBase::UpdateReturn(void)
 {
+	//移動処理
+	Move();
 }
 
 void EnemyBase::ExitStay(void)

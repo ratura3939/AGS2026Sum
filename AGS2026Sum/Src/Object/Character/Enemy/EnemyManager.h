@@ -14,9 +14,6 @@ class EnemyManager
 {
 public:
 
-	//敵がグループから離れられる距離
-	static constexpr float LEAVE_GROUP_DIST = 1000.0f;
-
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
@@ -74,6 +71,6 @@ private:
 	void ReJoinGroups(void);
 
 	//距離ごとの行動決め
-	void DistanceAction(void);
+	void DecideOrderByDistance(void);
 };
 

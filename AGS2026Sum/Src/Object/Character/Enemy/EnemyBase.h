@@ -6,15 +6,28 @@ class EnemyBase : public CharacterBase
 {
 public:
 
-	//敵個々の状態
+	//敵がグループから離れられる距離
+	static constexpr float LEAVE_GROUP_DIST = 1000.0f;
+
+	//敵の状態
 	enum class ENEMY_STATE
+	{
+		NONE = -1			//なし
+		, NORMAL			//通常
+		, DAMAGE			//ダメージ
+		, DEATH				//死亡
+		, MAX
+	};
+
+	//敵個々の行動
+	enum class ENEMY_ACTION
 	{
 		NONE = -1			//なし
 		, STAY				//待機
 		, MOVE				//移動
 		, ATTACK_READY		//攻撃準備
 		, ATTACK			//攻撃
-		, RETURN			//グループに戻る
+		, RETURN_GROUP		//グループに戻る
 		, MAX
 	};
 
@@ -37,7 +50,7 @@ public:
 	void HitCollider(std::weak_ptr<Collider> _col)override;
 
 	//状態遷移
-	void ChangeState(const ENEMY_STATE _nextState);
+	void ChangeAction(const ENEMY_ACTION _nextAction);
 
 	//生存判定用番号
 	const int GetActiveIndex(void)const { return activeIndex_; }
@@ -52,19 +65,22 @@ public:
 	void ResetPos(void);
 
 	//グループに所属しているか
-	bool IsInGroup(void)const { return group_ != nullptr; }
+	const bool IsInGroup(void)const { return group_ != nullptr; }
+
+	//所属グループの取得
+	const EnemyGroup* GetGroup(void)const { return group_; }
 
 	//敵グループの設定
 	void SetGroup(const EnemyGroup* _group) { group_ = _group; }
 
 private:
 
-	//状態ごとの処理
-	struct StateFunc
+	//行動ごとの処理
+	struct ActionFunc
 	{
-		std::function<void(void)> enter = []() {};	//状態遷移時の処理
+		std::function<void(void)> enter = []() {};	//行動遷移時の処理
 		std::function<void(void)> update = []() {};	//更新
-		std::function<void(void)> exit = []() {};	//状態抜けの処理
+		std::function<void(void)> exit = []() {};	//行動抜けの処理
 	};
 
 	//当たり判定
@@ -91,9 +107,12 @@ private:
 	//個人の移動量
 	VECTOR movePow_;
 
-	//状態
-	ENEMY_STATE state_;
-	std::unordered_map<ENEMY_STATE, StateFunc> stateFunc_;
+	//行動
+	ENEMY_ACTION action_;
+	std::unordered_map<ENEMY_ACTION, ActionFunc> actionFunc_;
+
+	//グループの命令ごとの判断
+	std::unordered_map<EnemyGroup::GROUP_ORDER, std::function<void(void)>> orderAction_;
 
 	//読み込み
 	void DoLoad(void)override;
@@ -130,6 +149,9 @@ private:
 	void ExitAttackReady(void);
 	void ExitAttack(void);
 	void ExitReturn(void);
+
+	//グループの命令ごとの判断
+	void OrderStayChoise(void);
 
 	//距離での状態更新
 	void DistanceAction(void);

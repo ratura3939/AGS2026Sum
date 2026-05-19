@@ -4,14 +4,14 @@
 #include<memory>
 #include<functional>
 
-class EnemyBase;///
+class EnemyBase;
 
 class EnemyGroup
 {
 public:
 
 	//グループごとの状態
-	enum class GROUP_STATE
+	enum class GROUP_ORDER
 	{
 		NONE = -1			//なし
 		, STAY				//待機
@@ -20,7 +20,7 @@ public:
 	};
 
 	//コンストラクタ
-	EnemyGroup();
+	EnemyGroup(void);
 
 	//デストラクタ
 	~EnemyGroup(void);
@@ -47,10 +47,10 @@ public:
 	void SetGoalPos(const VECTOR& _goalPos){groupGoalPos_ = _goalPos;}
 
 	//状態取得
-	const GROUP_STATE GetState(void)const { return state_; }
+	const GROUP_ORDER GetOrder(void)const { return order_; }
 
 	//状態遷移
-	void ChangeState(const GROUP_STATE _nextState);
+	void ChangeOrder(const GROUP_ORDER _nextOrder);
 
 	//位置リセット
 	void ResetPos(void);
@@ -63,12 +63,12 @@ private:
 	//攻撃を開始する距離
 	static constexpr float ATTACK_DISTANCE = 150.0f;
 
-	//状態ごとの処理
-	struct StateFunc
+	//命令ごとの処理
+	struct OrderFunc
 	{
-		std::function<void(void)> enter = [](){};	//状態遷移時の処理
+		std::function<void(void)> enter = [](){};	//命令遷移時の処理
 		std::function<void(void)> update = [](){};	//更新
-		std::function<void(void)> exit = [](){};	//状態抜けの処理
+		std::function<void(void)> exit = [](){};	//命令抜けの処理
 	};
 
 	//移動速度
@@ -85,9 +85,9 @@ private:
 	//行動関係
 	float actionCnt_;		//行動切り替えのカウント
 
-	//状態
-	GROUP_STATE state_;										//グループの状態
-	std::unordered_map<GROUP_STATE, StateFunc> stateFunc_;	//状態ごとの処理
+	//命令
+	GROUP_ORDER order_;										//グループの命令
+	std::unordered_map<GROUP_ORDER, OrderFunc> orderFunc_;	//命令ごとの処理
 
 	//敵情報
 	std::vector<EnemyBase*> enemys_;	//敵の情報(Managerからの参照用)

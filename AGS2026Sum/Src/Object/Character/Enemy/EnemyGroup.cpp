@@ -7,13 +7,13 @@ EnemyGroup::EnemyGroup(void)
 	: pos_(Utility::VECTOR_INIT)
 	, actionCnt_(0.0f)
 	, movePow_(Utility::VECTOR_ZERO)
-	, state_(GROUP_STATE::NONE)
+	, order_(GROUP_ORDER::NONE)
 {
 	//状態ごとの処理の設定
-	stateFunc_[GROUP_STATE::NONE] = {};
-	stateFunc_[GROUP_STATE::STAY] = { [this](void) {EnterStay(); }, [this](void) {UpdateStay(); }, [this](void) {ExitStay(); } };
-	stateFunc_[GROUP_STATE::MOVE] = { [this](void) {EnterMove(); }, [this](void) {UpdateMove(); }, [this](void) {ExitMove(); } };
-	stateFunc_[GROUP_STATE::ATTACK_READY] = { [this](void) {EnterAttackReady(); }, [this](void) {UpdateAttackReady(); }, [this](void) {ExitAttackReady(); } };
+	orderFunc_[GROUP_ORDER::NONE] = {};
+	orderFunc_[GROUP_ORDER::STAY] = { [this](void) {EnterStay(); }, [this](void) {UpdateStay(); }, [this](void) {ExitStay(); } };
+	orderFunc_[GROUP_ORDER::MOVE] = { [this](void) {EnterMove(); }, [this](void) {UpdateMove(); }, [this](void) {ExitMove(); } };
+	orderFunc_[GROUP_ORDER::ATTACK_READY] = { [this](void) {EnterAttackReady(); }, [this](void) {UpdateAttackReady(); }, [this](void) {ExitAttackReady(); } };
 }
 
 EnemyGroup::~EnemyGroup(void)
@@ -29,13 +29,13 @@ void EnemyGroup::Init(void)
 	actionCnt_ = 0.0f;
 
 	//状態の初期化
-	ChangeState(GROUP_STATE::STAY);
+	ChangeOrder(GROUP_ORDER::STAY);
 }
 
 void EnemyGroup::Update(void)
 {
 	//状態ごとの更新
-	stateFunc_[state_].update();
+	orderFunc_[order_].update();
 
 	//敵の死亡時の処理
 	DeleteEnemy();
@@ -52,19 +52,19 @@ void EnemyGroup::Release(void)
 {
 }
 
-void EnemyGroup::ChangeState(const GROUP_STATE _nextState)
+void EnemyGroup::ChangeOrder(const GROUP_ORDER _nextOrder)
 {
 	//すでにその状態なら何もしない
-	if (state_ == _nextState || _nextState == GROUP_STATE::NONE) return;
+	if (order_ == _nextOrder || _nextOrder == GROUP_ORDER::NONE) return;
 
 	//状態抜けの処理
-	stateFunc_[state_].exit();
+	orderFunc_[order_].exit();
 
 	//状態の変更
-	state_ = _nextState;
+	order_ = _nextOrder;
 
 	//状態遷移時の処理
-	stateFunc_[state_].enter();
+	orderFunc_[order_].enter();
 }
 
 void EnemyGroup::ResetPos(void)
