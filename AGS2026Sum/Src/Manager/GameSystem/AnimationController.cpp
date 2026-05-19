@@ -152,6 +152,8 @@ void AnimationController::Update(void)
 	//初期値のとき
 	if (currentAnimAttachInfo_.attachNum == -1)return;
 
+	isFinishNormalAnim_ = false;
+
 	//カウンタ更新
 	(this->*updateAnim_)();
 
@@ -178,6 +180,11 @@ void AnimationController::SetDefaultAnim(const std::wstring& _name)
 	}
 	isSetDefaultAnim_ = true;
 	defaultAnim_ = _name;
+}
+
+const float AnimationController::GetCurrentAnimationProgressRate(void) const
+{
+	return currentAnimAttachInfo_.counter / currentAnim_.total;
 }
 
 void AnimationController::UpdateNormalAnim(void)
@@ -220,6 +227,7 @@ void AnimationController::FinishAnimNormal(void)
 		Play(nextAnimList_[0].name, nextAnimList_[0].speed);
 		//要素の削除
 		nextAnimList_.erase(nextAnimList_.begin());
+		isFinishNormalAnim_ = true;
 		return;
 	}
 

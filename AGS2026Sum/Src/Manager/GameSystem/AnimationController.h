@@ -93,8 +93,13 @@ public:
 	/// <param name="_percent">0％～100％</param>
 	void ChangeSpeedRate(const float _percent);
 
-	void UnAnimLock(void) { isAnimLock_ = false; }
-	void SetDefaultAnim(const std::wstring& _name);
+	void UnAnimLock(void) { isAnimLock_ = false; }		//アニメーションロック解除
+	void SetDefaultAnim(const std::wstring& _name);		//デフォルトアニメーションの設定
+
+	//現在のアニメーションの再生進行度合いを割合で取得
+	const float GetCurrentAnimationProgressRate(void)const;
+
+	const bool IsFinishNormalAnim(void)const { return isFinishNormalAnim_; }	//次のアニメーションの再生が開始されたかどうか
 
 private:
 	//アニメーション更新処理
@@ -141,5 +146,7 @@ private:
 	using UpdateAnimation = void(AnimationController::*)(void);
 	FinishAnimation finishAnim_;	//終了時処理関数ポインタ
 	UpdateAnimation updateAnim_;	//更新処理関数ポインタ
+
+	bool isFinishNormalAnim_;	//次のアニメーションの再生が開始されたかどうか
 };
 

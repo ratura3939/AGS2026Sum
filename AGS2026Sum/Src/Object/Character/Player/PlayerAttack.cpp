@@ -152,7 +152,7 @@ void PlayerAttack::Attack(const ATTACK_TYPE& _type)
 	counter_ = 0;
 }
 
-const std::wstring& PlayerAttack::GetCurrentAttackAnimName(void) const
+const PlayerAttack::AttackAnimationInfo PlayerAttack::GetCurrentAttackAnimInfo(void) const
 {
 	int useLevel = level_;
 
@@ -160,7 +160,12 @@ const std::wstring& PlayerAttack::GetCurrentAttackAnimName(void) const
 		useLevel--;
 	}
 
-	return	animNames_[static_cast<int>(currentType_)][useLevel];
+	AttackAnimationInfo ret;
+
+	ret.name = animNames_[static_cast<int>(currentType_)][useLevel];
+	ret.speed = data_[static_cast<int>(currentType_)][useLevel].animationSpeed;
+
+	return	ret;
 }
 
 const bool PlayerAttack::IsAttacking(void) const

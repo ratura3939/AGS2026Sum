@@ -13,7 +13,13 @@ public:
         ,MAX
     };
 
-    static const int ATTACK_LEVEL_MAX = 3;
+	struct AttackAnimationInfo {
+		std::wstring name;	//アニメーション登録名
+		float speed;		//アニメーションの再生速度
+	};
+
+	static const int ATTACK_LEVEL_MAX = 3;				//攻撃レベルの最大値
+	static constexpr float ATTACK_CANCEL_RATE = 0.7f;	//攻撃キャンセル可能割合(アニメーションの進行度)
 
 	PlayerAttack(const VECTOR& _playerPos, const Quaternion& _playerQuaRot);
 	~PlayerAttack(void)override;
@@ -25,8 +31,8 @@ public:
 
 	//攻撃開始
 	void Attack(const ATTACK_TYPE& _type);	
-	//現在の攻撃アニメーション登録名の取得
-	const std::wstring& GetCurrentAttackAnimName(void)const;	
+	//現在の攻撃アニメーション情報の取得
+	const AttackAnimationInfo GetCurrentAttackAnimInfo(void)const;
 	//攻撃中か
 	const bool IsAttacking(void)const;
 

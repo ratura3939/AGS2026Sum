@@ -8,6 +8,7 @@ struct AttackData {
 	int power = -1;      //攻撃力
 	int time = -1;       //時間
 	VECTOR localPos = { -1.0f, -1.0f, -1.0f };   //ローカル座標
+	float animationSpeed = -1.0f;	//アニメーションの再生速度
 };
 
 inline void from_json(const nlohmann::json& _data, VECTOR& _vec) {
@@ -26,4 +27,5 @@ inline void from_json(const nlohmann::json& _data, AttackData& _attackData) {
 		_data.value("localPos", nlohmann::json::object()).at("y").get_to(_attackData.localPos.y);
 		_data.value("localPos", nlohmann::json::object()).at("z").get_to(_attackData.localPos.z);
 	}
+	_data.at("animationSpeed").get_to(_attackData.animationSpeed);
 }

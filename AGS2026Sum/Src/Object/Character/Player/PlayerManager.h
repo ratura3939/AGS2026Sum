@@ -3,11 +3,11 @@
 #include<memory>
 #include<DxLib.h>
 #include"../../../Common/Quaternion.h"
+#include"PlayerAttack.h"
 
 class Game;
 class EnemyManager;
 class PlayerChara;
-class PlayerAttack;
 
 class PlayerManager
 {
@@ -39,11 +39,14 @@ public:
 	//const bool IsAlive(void)const;
 
 private:
-	void UserInput(void);				//入力受付
+	void UserInput(void);					//入力受付
+	void SetAttackStateForCharacter(void);	//攻撃に関する状態をキャラクターに反映
+	const bool Attack(PlayerAttack::ATTACK_TYPE _type);	//攻撃判定の設定処理(返り値　true=成功/false=失敗)
 
 	Game& scene_;	//ゲームクラス参照
 
 	std::shared_ptr<PlayerChara> character_;	//キャラクター
 	std::unique_ptr<PlayerAttack> attack_;		//攻撃
+	bool isRefuseAttackInput_;	//攻撃入力を受け付けない状態か
 };
 

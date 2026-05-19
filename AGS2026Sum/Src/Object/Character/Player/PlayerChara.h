@@ -15,7 +15,10 @@ class PlayerChara :
 
 		void SetIsAttack(const bool _isAttack) { isAttack_ = _isAttack; }	//攻撃状態の設定
 
-		void PlayAnim(const std::wstring& _animName);	//アニメーション再生
+        void PlayAnim(const std::wstring& _animName, const float _speed = 1.0f);	//アニメーション再生
+
+		const float GetCurrentAnimationProgressRate(void)const;	//現在のアニメーションの再生進行度を取得
+		const bool IsFinishAttackAnimation(void)const { return animController_->IsFinishNormalAnim(); }	//通常再生のアニメ（主に攻撃関連）が終了しているか
 
     private:
         void DoLoad(void)override;			//読み込み

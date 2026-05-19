@@ -22,9 +22,14 @@ PlayerChara::~PlayerChara(void)
 {
 }
 
-void PlayerChara::PlayAnim(const std::wstring& _animName)
+void PlayerChara::PlayAnim(const std::wstring& _animName, const float _speed)
 {
-	animController_->Play(_animName);	//アニメーションの新規再生
+	animController_->Play(_animName, _speed);	//アニメーションの新規再生
+}
+
+const float PlayerChara::GetCurrentAnimationProgressRate(void) const
+{
+	return animController_->GetCurrentAnimationProgressRate();
 }
 
 void PlayerChara::DoLoad(void)

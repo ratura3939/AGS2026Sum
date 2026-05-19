@@ -22,6 +22,7 @@ PlayerManager::PlayerManager(Game& _gameScene)
 	:scene_(_gameScene)
 	,character_(std::make_shared<PlayerChara>())
 	,attack_(nullptr)
+	,isRefuseAttackInput_(false)
 {
 	character_->Load();		//キャラクターの読み込み
 }
@@ -43,6 +44,10 @@ void PlayerManager::Update(void)
 	UserInput();			//入力受付
 	character_->Update();	//キャラクターの更新
 	attack_->Update();		//攻撃クラスの更新
+
+	if (isRefuseAttackInput_ && character_->IsFinishAttackAnimation()) {
+		isRefuseAttackInput_ = false;	//攻撃入力を受け付ける状態にする
+	}
 }
 
 void PlayerManager::Draw(void)
@@ -73,20 +78,19 @@ void PlayerManager::UserInput(void)
 #pragma region 攻撃
 	bool isAttackInput = false;
 
-	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_NORMAL)) {
-		attack_->Attack(PlayerAttack::ATTACK_TYPE::PUNCH);	//攻撃クラスに攻撃開始を伝える
-		isAttackInput = true;
+	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_NORMAL) && !isRefuseAttackInput_) {
+		isAttackInput = Attack(PlayerAttack::ATTACK_TYPE::PUNCH);	//攻撃クラスに攻撃開始を伝え,結果を得る
 	}
-	else if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_STRONG)) {
-		attack_->Attack(PlayerAttack::ATTACK_TYPE::KICK);	//攻撃クラスに攻撃開始を伝える)
-		isAttackInput = true;
+	else if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_STRONG) && !isRefuseAttackInput_) {
+		isAttackInput = Attack(PlayerAttack::ATTACK_TYPE::KICK);	//攻撃クラスに攻撃開始を伝え,結果を得る
 	}
 
+	//入力があったとき
 	if (isAttackInput) {
-		character_->SetIsAttack(true);	//攻撃中は攻撃状態にする
-		character_->PlayAnim(attack_->GetCurrentAttackAnimName());	//攻撃アニメを再生する
+		SetAttackStateForCharacter();	//攻撃に関する情報をキャラクターに反映
 	}
 
+	//攻撃が終了しているとき
 	if (!attack_->IsAttacking()) {
 		character_->SetIsAttack(false);	//そうでないときは攻撃状態を解除する
 	}
@@ -102,4 +106,38 @@ void PlayerManager::UserInput(void)
 	}
 #pragma endregion
 
+}
+
+void PlayerManager::SetAttackStateForCharacter(void)
+{
+	character_->SetIsAttack(true);	//攻撃中は攻撃状態にする
+
+	auto attackAnimInfo = attack_->GetCurrentAttackAnimInfo();
+	character_->PlayAnim(attackAnimInfo.name, attackAnimInfo.speed);	//攻撃アニメを再生する
+}
+
+const bool PlayerManager::Attack(PlayerAttack::ATTACK_TYPE _type)
+{
+	bool isSuccess = false;	//処理成功フラグ
+
+	//TODO 現在attack_->IsAttacking()で使用されるColliderの生存時間と攻撃アニメーションの同期が取れていないため、キャンセル許容数などに問題が生じている。修正しろ。5/19　松永
+
+
+	//攻撃中の場合
+	if (attack_->IsAttacking()) {
+		//攻撃キャンセル可能な状態であれば
+		if (character_->GetCurrentAnimationProgressRate() >= PlayerAttack::ATTACK_CANCEL_RATE) {
+			attack_->Attack(_type);	//攻撃クラスに攻撃開始を伝える
+
+			//キャンセル可能状態中は一度だけ攻撃入力を受け付ける
+			isRefuseAttackInput_ = true;	//攻撃入力を受け付けない状態にする
+			isSuccess = true;
+		}
+	}
+	else {
+		attack_->Attack(_type);	//攻撃クラスに攻撃開始を伝える
+		isSuccess = true;
+	}
+
+	return isSuccess;
 }
