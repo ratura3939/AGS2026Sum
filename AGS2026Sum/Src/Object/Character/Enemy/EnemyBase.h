@@ -2,6 +2,8 @@
 #include "../CharacterBase.h"
 #include"EnemyGroup.h"
 
+class EnemyBrain;
+
 class EnemyBase : public CharacterBase
 {
 public:
@@ -12,8 +14,7 @@ public:
 	//敵の状態
 	enum class ENEMY_STATE
 	{
-		NONE = -1			//なし
-		, NORMAL			//通常
+		NORMAL				//通常
 		, DAMAGE			//ダメージ
 		, DEATH				//死亡
 		, MAX
@@ -22,8 +23,7 @@ public:
 	//敵個々の行動
 	enum class ENEMY_ACTION
 	{
-		NONE = -1			//なし
-		, STAY				//待機
+		STAY				//待機
 		, MOVE				//移動
 		, ATTACK_READY		//攻撃準備
 		, ATTACK			//攻撃
@@ -50,7 +50,7 @@ public:
 	void HitCollider(std::weak_ptr<Collider> _col)override;
 
 	//状態遷移
-	void ChangeAction(const ENEMY_ACTION _nextAction);
+	void ChangeAction(const int _nextAction);
 
 	//生存判定用番号
 	const int GetActiveIndex(void)const { return activeIndex_; }
@@ -92,8 +92,12 @@ private:
 	static constexpr float ATTACK_BROUD_RADIUS = ATTACK_RADIUS + 15.0f;
 	static constexpr VECTOR ATTACK_LOCAL_POS = { 0.0f, 0.0f, 30.0f };
 
+	//速度
+	static constexpr float SPEED = 2.0f;					//移動速度
+	static constexpr float RUN_SPEED = SPEED * 2.0f;		//走り速度
+
 	//アニメーション
-	static constexpr float RUN_SPEED = 2.0f;			//走り速度
+	static constexpr float RUN_ANIM_SPEED = 2.0f;			//走り速度
 
 	//自身の生存判定用番号
 	int activeIndex_;
@@ -108,11 +112,11 @@ private:
 	VECTOR movePow_;
 
 	//行動
-	ENEMY_ACTION action_;
-	std::unordered_map<ENEMY_ACTION, ActionFunc> actionFunc_;
+	int action_;																//行動の状態
+	std::array<ActionFunc, static_cast<int>(ENEMY_ACTION::MAX)> actionFunc_;	//行動ごとの処理
 
 	//グループの命令ごとの判断
-	std::unordered_map<EnemyGroup::GROUP_ORDER, std::function<void(void)>> orderAction_;
+	std::unique_ptr<EnemyBrain> brain_;
 
 	//読み込み
 	void DoLoad(void)override;

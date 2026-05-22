@@ -24,7 +24,8 @@ void EnemyManager::Init(void)
 	enemyPool_ = std::make_unique<EnemyPool>();
 
 	//敵の生成(デバッグ)
-	CreateEnemyGroup();
+	CreateEnemyGroup(CREATE_NUM);
+	CreateEnemyGroup(2);
 }
 
 void EnemyManager::Update(void)
@@ -69,7 +70,7 @@ void EnemyManager::Release(void)
 	enemyPool_->Release();
 }
 
-void EnemyManager::CreateEnemyGroup(void)
+void EnemyManager::CreateEnemyGroup(const int _createNum)
 {
 	//グループ
 	std::unique_ptr<EnemyGroup> group = std::make_unique<EnemyGroup>();
@@ -77,11 +78,16 @@ void EnemyManager::CreateEnemyGroup(void)
 	//初期化
 	group->Init();
 
+	static VECTOR pos = { 0.0f, 0.0f, 0.0f };
+	group->SetPos(pos);
+
+	pos = VAdd(pos, { 1000.0f, 0.0f, 1000.0f });
+
 	//敵の参照用ポインタ
 	EnemyBase* enemy = nullptr;
 
 	//指定分、敵を生成する
-	for (int i = 0; i < CREATE_NUM; i++)
+	for (int i = 0; i < _createNum; i++)
 	{
 		//生成
 		enemy = enemyPool_->Spawn();
@@ -123,7 +129,7 @@ void EnemyManager::DeleteEnemyGroup(void)
 	if (enemyGroup_.empty())return;
 
 	//グループの削除処理
-	std::erase_if(enemyGroup_, [](const std::unique_ptr<EnemyGroup>& _group) {return _group->IsEmpty();});
+	std::erase_if(enemyGroup_, [this](const std::unique_ptr<EnemyGroup>& _group) {return _group->IsEmpty() || (_group->GetEnemyCount() < MIN_ENEMY_NUM) && enemyGroup_.size() > 1;});
 }
 
 void EnemyManager::ReJoinGroups(void)

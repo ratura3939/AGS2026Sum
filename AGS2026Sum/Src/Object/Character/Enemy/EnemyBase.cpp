@@ -6,19 +6,20 @@
 #include "../../Common/Geometry/Sphere.h"
 #include "EnemyManager.h"
 #include "EnemyGroup.h"
+#include "EnemyBrain.h"
 #include "EnemyBase.h"
 
 EnemyBase::EnemyBase(void)
 	: group_(nullptr)
-	, action_(ENEMY_ACTION::NONE)
+	, action_(static_cast<int>(ENEMY_ACTION::STAY))
 	, movePow_(Utility::VECTOR_ZERO)
 {
 	//状態ごとの処理の設定
-	actionFunc_[ENEMY_ACTION::NONE] = {};
-	actionFunc_[ENEMY_ACTION::STAY] = { [this](void) {EnterStay(); }, [this](void) {UpdateStay(); }, [this](void) {ExitStay(); } };
-	actionFunc_[ENEMY_ACTION::MOVE] = { [this](void) {EnterMove(); }, [this](void) {UpdateMove(); }, [this](void) {ExitMove(); } };
-	actionFunc_[ENEMY_ACTION::ATTACK_READY] = { [this](void) {EnterAttackReady(); }, [this](void) {UpdateAttackReady(); }, [this](void) {ExitAttackReady(); } };
-	actionFunc_[ENEMY_ACTION::ATTACK] = { [this](void) {EnterAttack(); }, [this](void) {UpdateAttack(); }, [this](void) {ExitAttack(); } };
+	actionFunc_[static_cast<int>(ENEMY_ACTION::STAY)] = { [this](void) {EnterStay(); }, [this](void) {UpdateStay(); }, [this](void) {ExitStay(); } };
+	actionFunc_[static_cast<int>(ENEMY_ACTION::MOVE)] = { [this](void) {EnterMove(); }, [this](void) {UpdateMove(); }, [this](void) {ExitMove(); } };
+	actionFunc_[static_cast<int>(ENEMY_ACTION::ATTACK_READY)] = { [this](void) {EnterAttackReady(); }, [this](void) {UpdateAttackReady(); }, [this](void) {ExitAttackReady(); } };
+	actionFunc_[static_cast<int>(ENEMY_ACTION::ATTACK)] = { [this](void) {EnterAttack(); }, [this](void) {UpdateAttack(); }, [this](void) {ExitAttack(); } };
+	actionFunc_[static_cast<int>(ENEMY_ACTION::RETURN_GROUP)] = { [this](void) {EnterReturn(); }, [this](void) {UpdateReturn(); }, [this](void) {ExitReturn(); } };
 }
 
 EnemyBase::~EnemyBase(void)
@@ -42,10 +43,10 @@ void EnemyBase::HitCollider(std::weak_ptr<Collider> _col)
 {
 }
 
-void EnemyBase::ChangeAction(const ENEMY_ACTION _nextAction)
+void EnemyBase::ChangeAction(const int _nextAction)
 {
 	//状態が同じなら処理しない
-	if (action_ == _nextAction || _nextAction == ENEMY_ACTION::NONE)return;
+	if (action_ == _nextAction || _nextAction < 0 || _nextAction >= static_cast<int>(ENEMY_ACTION::MAX))return;
 
 	//状態抜けの処理
 	actionFunc_[action_].exit();
@@ -76,6 +77,9 @@ void EnemyBase::DoLoad(void)
 {
 	//モデル差し込み
 	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_MDL);
+
+	//思考の初期化
+	brain_ = std::make_unique<EnemyBrain>(*this);
 
 	//アニメーションの初期化
 	InitAnim();
@@ -108,6 +112,10 @@ void EnemyBase::DoUpdate(void)
 
 	//アニメーション更新
 	animController_->Update();
+
+	//思考の更新
+	brain_->DecidePriority();
+	brain_->ChoiceAction();
 
 	//状態ごとの更新
 	actionFunc_[action_].update();
@@ -165,7 +173,7 @@ void EnemyBase::EnterStay(void)
 void EnemyBase::EnterMove(void)
 {
 	//歩きアニメーションの再生
-	animController_->Play(L"Run", RUN_SPEED);
+	animController_->Play(L"Run", RUN_ANIM_SPEED);
 }
 
 void EnemyBase::EnterAttackReady(void)
@@ -196,24 +204,37 @@ void EnemyBase::UpdateStay(void)
 
 void EnemyBase::UpdateMove(void)
 {
+	//グループと一体で動く
+	movePow_ = group_->GetMovePow();
+
 	//移動処理
 	Move();
 }
 
 void EnemyBase::UpdateAttackReady(void)
 {
+	//グループの目標地点に直接向かう
+	VECTOR goalPos = group_->GetGoalPos();
+	
+	//目標地点に向かう移動量の設定
+	movePow_ = Utility::GetMoveVec(pos_, goalPos, RUN_SPEED);
+
 	//移動処理
 	Move();
 }
 
 void EnemyBase::UpdateAttack(void)
 {
-	//待機状態に移行
-	ChangeAction(ENEMY_ACTION::STAY);
 }
 
 void EnemyBase::UpdateReturn(void)
 {
+	//グループ座標の取得
+	VECTOR groupPos = group_->GetPos();
+
+	//グループ座標に向かう移動量の設定
+	movePow_ = Utility::GetMoveVec(pos_, groupPos, SPEED);
+
 	//移動処理
 	Move();
 }

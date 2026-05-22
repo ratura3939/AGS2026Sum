@@ -36,7 +36,7 @@ public:
 	void Release(void);
 
 	//敵グループの生成
-	void CreateEnemyGroup(void);
+	void CreateEnemyGroup(const int _createNum);
 
 private:
 
@@ -45,6 +45,9 @@ private:
 
 	//プレイヤーを攻撃態勢に入る距離半径
 	static constexpr float PLAYER_ATTACK_RADIUS = 500.0f;
+
+	//グループを維持できる最小の敵の数
+	static constexpr int MIN_ENEMY_NUM = 3;
 
 	//敵の生成数
 	static constexpr int CREATE_NUM = 7;

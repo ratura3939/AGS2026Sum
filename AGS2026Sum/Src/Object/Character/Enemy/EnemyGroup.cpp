@@ -18,6 +18,7 @@ EnemyGroup::EnemyGroup(void)
 
 EnemyGroup::~EnemyGroup(void)
 {
+	//TODO:敵にグループ崩壊を伝える
 }
 
 void EnemyGroup::Init(void)

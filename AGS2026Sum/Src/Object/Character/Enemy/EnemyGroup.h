@@ -17,6 +17,7 @@ public:
 		, STAY				//待機
 		, MOVE				//移動
 		, ATTACK_READY		//攻撃準備
+		, MAX
 	};
 
 	//コンストラクタ
@@ -40,8 +41,17 @@ public:
 	//敵がいなくなったか
 	bool IsEmpty(void)const { return enemys_.empty(); }
 
+	//グループの移動量の取得
+	const VECTOR& GetMovePow(void)const { return movePow_; }
+
 	//グループ座標の取得
 	const VECTOR& GetPos(void)const { return pos_; }
+
+	//グループ座標の設定
+	void SetPos(const VECTOR& _pos) { pos_ = _pos; }
+
+	//グループの目標座標の取得
+	const VECTOR& GetGoalPos(void)const { return groupGoalPos_; }
 
 	//グループの目標座標の取得
 	void SetGoalPos(const VECTOR& _goalPos){groupGoalPos_ = _goalPos;}
@@ -57,6 +67,9 @@ public:
 
 	//敵の追加
 	void AddEnemy(EnemyBase* _enemy) { enemys_.push_back(_enemy); }
+
+	//敵の数の取得
+	const int GetEnemyCount(void)const { return static_cast<int>(enemys_.size()); }
 
 private:
 

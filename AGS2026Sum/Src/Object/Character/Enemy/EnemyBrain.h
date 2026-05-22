@@ -15,6 +15,9 @@ public:
 	//優先度決定
 	void DecidePriority(void);
 
+	//優先度で行動選択
+	void ChoiceAction(void);
+
 private:
 
 	//行動優先度係数
@@ -24,8 +27,8 @@ private:
 	EnemyBase& parent_;
 
 	//敵の行動優先度(値が高いほど優先する)
-	std::unordered_map<EnemyBase::ENEMY_ACTION, int> actionPriority_;
-	std::unordered_map<EnemyGroup::GROUP_ORDER, std::function<void(void)>> orderPriority_;
+	std::array<int, static_cast<int>(EnemyBase::ENEMY_ACTION::MAX)> actionPriority_;
+	std::array<std::function<void(void)>, static_cast<int>(EnemyGroup::GROUP_ORDER::MAX)> orderPriority_;
 
 	//グループの命令ごとの行動優先度の設定
 	void OrderStayPriority(void);
