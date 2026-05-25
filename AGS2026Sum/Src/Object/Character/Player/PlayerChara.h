@@ -22,6 +22,9 @@ class PlayerChara :
 		const bool IsFinishAttackAnimation(void)const { return animController_->IsFinishNormalAnim(); }	//通常再生のアニメ（主に攻撃関連）が終了しているか
 		const bool IsStartNextAttackAnimation(void)const { return animController_->IsStartNextAnim(); }	//次のアニメ（主に攻撃関連）が開始しているか
 
+		//デバッグ用
+		void DrawNextAnimations(void);
+
     private:
         void DoLoad(void)override;			//読み込み
         void DoInit(void)override;			//初期化

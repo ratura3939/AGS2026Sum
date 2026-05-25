@@ -195,6 +195,14 @@ const float AnimationController::GetAnimTotalTime(const std::wstring& _name) con
 	return animDatas_.at(_name).total;
 }
 
+void AnimationController::DrawNextAnimations(void)
+{
+	int nextNum = nextAnimList_.size();
+	for (int i = 0; i < nextNum; i++) {
+		DrawFormatString(500, 0 + 30 * i, 0xff0000, L"NEXT ANIM %d : %s", i, nextAnimList_[i].name.c_str());
+	}
+}
+
 void AnimationController::UpdateNormalAnim(void)
 {
 	currentAnimAttachInfo_.counter += currentAnimAttachInfo_.speed * speedRate_;	//ƒJƒEƒ“ƒ^‰ÁŽZ

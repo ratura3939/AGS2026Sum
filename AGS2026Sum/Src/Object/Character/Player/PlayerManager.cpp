@@ -64,7 +64,8 @@ void PlayerManager::Draw(void)
 	
 
 	attack_->DrawDebug();	//攻撃クラスのデバッグ描画
-	DrawFormatString(30, 240, 0xffffff, L"AttackCansel = %d", static_cast<int>(isRefuseAttackInput_));	//現在の攻撃アニメーション登録名の先頭文字を表示(デバッグ用)
+	DrawFormatString(30, 280, 0xffffff, L"AttackCansel = %d", static_cast<int>(isRefuseAttackInput_));	//現在の攻撃アニメーション登録名の先頭文字を表示(デバッグ用)
+	character_->DrawNextAnimations();	//キャラクターの次のアニメーションのデバッグ描画
 }
 
 void PlayerManager::Release(void)

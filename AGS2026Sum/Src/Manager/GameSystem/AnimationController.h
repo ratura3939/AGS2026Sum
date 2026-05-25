@@ -104,6 +104,9 @@ public:
 
 	const float GetAnimTotalTime(const std::wstring& _name)const;	//アニメーションの総再生時間を取得
 
+	//デバッグ用
+	void DrawNextAnimations(void);
+
 private:
 	//アニメーション更新処理
 	void UpdateNormalAnim(void);
