@@ -1,6 +1,8 @@
 #pragma once
 #include <unordered_map>
-#include"EnemyBase.h"
+#include "EnemyDefine.h"
+
+class EnemyBase;
 
 class EnemyBrain
 {
@@ -26,9 +28,12 @@ private:
 	//親
 	EnemyBase& parent_;
 
+	//関数ポインタ
+	using Func = void(EnemyBrain::*)(void);
+
 	//敵の行動優先度(値が高いほど優先する)
-	std::array<int, static_cast<int>(EnemyBase::ENEMY_ACTION::MAX)> actionPriority_;
-	std::array<std::function<void(void)>, static_cast<int>(EnemyGroup::GROUP_ORDER::MAX)> orderPriority_;
+	std::array<int, static_cast<int>(ENEMY_ACTION::MAX)> actionPriority_;
+	std::array<Func, static_cast<int>(GROUP_ORDER::MAX)> orderPriority_;
 
 	//グループの命令ごとの行動優先度の設定
 	void OrderStayPriority(void);

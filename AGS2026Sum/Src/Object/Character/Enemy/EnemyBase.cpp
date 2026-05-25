@@ -11,15 +11,18 @@
 
 EnemyBase::EnemyBase(void)
 	: group_(nullptr)
+	, activeIndex_(-1)
+	, attackPos_(Utility::VECTOR_ZERO)
+	, brain_(*this)
 	, action_(static_cast<int>(ENEMY_ACTION::STAY))
 	, movePow_(Utility::VECTOR_ZERO)
 {
 	//状態ごとの処理の設定
-	actionFunc_[static_cast<int>(ENEMY_ACTION::STAY)] = { [this](void) {EnterStay(); }, [this](void) {UpdateStay(); }, [this](void) {ExitStay(); } };
-	actionFunc_[static_cast<int>(ENEMY_ACTION::MOVE)] = { [this](void) {EnterMove(); }, [this](void) {UpdateMove(); }, [this](void) {ExitMove(); } };
-	actionFunc_[static_cast<int>(ENEMY_ACTION::ATTACK_READY)] = { [this](void) {EnterAttackReady(); }, [this](void) {UpdateAttackReady(); }, [this](void) {ExitAttackReady(); } };
-	actionFunc_[static_cast<int>(ENEMY_ACTION::ATTACK)] = { [this](void) {EnterAttack(); }, [this](void) {UpdateAttack(); }, [this](void) {ExitAttack(); } };
-	actionFunc_[static_cast<int>(ENEMY_ACTION::RETURN_GROUP)] = { [this](void) {EnterReturn(); }, [this](void) {UpdateReturn(); }, [this](void) {ExitReturn(); } };
+	actionFunc_[static_cast<int>(ENEMY_ACTION::STAY)] = { &EnemyBase::EnterStay, &EnemyBase::UpdateStay, &EnemyBase::ExitStay };
+	actionFunc_[static_cast<int>(ENEMY_ACTION::MOVE)] = { &EnemyBase::EnterMove, &EnemyBase::UpdateMove, &EnemyBase::ExitMove };
+	actionFunc_[static_cast<int>(ENEMY_ACTION::ATTACK_READY)] = { &EnemyBase::EnterAttackReady, &EnemyBase::UpdateAttackReady, &EnemyBase::ExitAttackReady };
+	actionFunc_[static_cast<int>(ENEMY_ACTION::ATTACK)] = { &EnemyBase::EnterAttack, &EnemyBase::UpdateAttack, &EnemyBase::ExitAttack };
+	actionFunc_[static_cast<int>(ENEMY_ACTION::RETURN_GROUP)] = { &EnemyBase::EnterReturn, &EnemyBase::UpdateReturn, &EnemyBase::ExitReturn };
 }
 
 EnemyBase::~EnemyBase(void)
@@ -49,13 +52,13 @@ void EnemyBase::ChangeAction(const int _nextAction)
 	if (action_ == _nextAction || _nextAction < 0 || _nextAction >= static_cast<int>(ENEMY_ACTION::MAX))return;
 
 	//状態抜けの処理
-	actionFunc_[action_].exit();
+	(this->*actionFunc_[action_].exit)();
 	
 	//状態の変更
 	action_ = _nextAction;
 	
 	//状態遷移の処理
-	actionFunc_[action_].enter();
+	(this->*actionFunc_[action_].enter)();
 }
 
 void EnemyBase::ResetPos(void)
@@ -77,9 +80,6 @@ void EnemyBase::DoLoad(void)
 {
 	//モデル差し込み
 	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_MDL);
-
-	//思考の初期化
-	brain_ = std::make_unique<EnemyBrain>(*this);
 
 	//アニメーションの初期化
 	InitAnim();
@@ -114,11 +114,11 @@ void EnemyBase::DoUpdate(void)
 	animController_->Update();
 
 	//思考の更新
-	brain_->DecidePriority();
-	brain_->ChoiceAction();
+	brain_.DecidePriority();
+	brain_.ChoiceAction();
 
 	//状態ごとの更新
-	actionFunc_[action_].update();
+	(this->*actionFunc_[action_].update)();
 }
 
 void EnemyBase::InitAnim(void)

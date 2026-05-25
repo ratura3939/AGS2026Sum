@@ -76,4 +76,3 @@ private:
 	//‹——£‚²‚Æ‚Ìs“®Œˆ‚ß
 	void DecideOrderByDistance(void);
 };
-

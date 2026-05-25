@@ -11,14 +11,18 @@ EnemyGroup::EnemyGroup(void)
 {
 	//状態ごとの処理の設定
 	orderFunc_[GROUP_ORDER::NONE] = {};
-	orderFunc_[GROUP_ORDER::STAY] = { [this](void) {EnterStay(); }, [this](void) {UpdateStay(); }, [this](void) {ExitStay(); } };
-	orderFunc_[GROUP_ORDER::MOVE] = { [this](void) {EnterMove(); }, [this](void) {UpdateMove(); }, [this](void) {ExitMove(); } };
-	orderFunc_[GROUP_ORDER::ATTACK_READY] = { [this](void) {EnterAttackReady(); }, [this](void) {UpdateAttackReady(); }, [this](void) {ExitAttackReady(); } };
+	orderFunc_[GROUP_ORDER::STAY] = { &EnemyGroup::EnterStay, &EnemyGroup::UpdateStay, &EnemyGroup::ExitStay };
+	orderFunc_[GROUP_ORDER::MOVE] = { &EnemyGroup::EnterMove, &EnemyGroup::UpdateMove, &EnemyGroup::ExitMove };
+	orderFunc_[GROUP_ORDER::ATTACK_READY] = { &EnemyGroup::EnterAttackReady, &EnemyGroup::UpdateAttackReady, &EnemyGroup::ExitAttackReady };
 }
 
 EnemyGroup::~EnemyGroup(void)
 {
 	//TODO:敵にグループ崩壊を伝える
+	for(EnemyBase* enemy : enemys_)
+	{
+		enemy->LeaveGroup();
+	}
 }
 
 void EnemyGroup::Init(void)
@@ -36,7 +40,7 @@ void EnemyGroup::Init(void)
 void EnemyGroup::Update(void)
 {
 	//状態ごとの更新
-	orderFunc_[order_].update();
+	(this->*orderFunc_[order_].update)();
 
 	//敵の死亡時の処理
 	DeleteEnemy();
@@ -59,13 +63,13 @@ void EnemyGroup::ChangeOrder(const GROUP_ORDER _nextOrder)
 	if (order_ == _nextOrder || _nextOrder == GROUP_ORDER::NONE) return;
 
 	//状態抜けの処理
-	orderFunc_[order_].exit();
+	if(orderFunc_[order_].exit)(this->*orderFunc_[order_].exit)();
 
 	//状態の変更
 	order_ = _nextOrder;
 
 	//状態遷移時の処理
-	orderFunc_[order_].enter();
+	(this->*orderFunc_[order_].enter)();
 }
 
 void EnemyGroup::ResetPos(void)
@@ -92,7 +96,7 @@ void EnemyGroup::MoveToGoal(void)
 void EnemyGroup::GroupMove(void)
 {
 	//ある程度近づいたならスキップ
-	if (Utility::Distance(pos_, groupGoalPos_) < SPEED)return;
+	if (Utility::SqrMagnitude(pos_, groupGoalPos_) < SPEED * SPEED)return;
 
 	//グループ座標の更新
 	pos_ = VAdd(pos_, movePow_);

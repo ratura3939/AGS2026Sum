@@ -4,6 +4,7 @@
 #include"../../Manager/GameSystem/AttackManager.h"
 #include"../../Scene/Main/Game.h"
 #include"../../Utility/Utility.h"
+#include"EnemyDefine.h"
 #include"EnemyGroup.h"
 #include"EnemyPool.h"
 #include"EnemyBase.h"
@@ -163,21 +164,21 @@ void EnemyManager::DecideOrderByDistance(void)
 		if (group->IsEmpty())continue;
 
 		//プレイヤーからの距離を取得
-		float dist = Utility::Distance(group->GetPos(), playerPos_);
+		float sqrDist = Utility::SqrMagnitude(group->GetPos(), playerPos_);
 
 		//プレイヤーから一定距離以上離れているグループは無視する
-		if (dist < PLAYER_ATTACK_RADIUS)
+		if (sqrDist < PLAYER_ATTACK_RADIUS * PLAYER_ATTACK_RADIUS)
 		{
 			//グループを攻撃準備状態にする
-			group->ChangeOrder(EnemyGroup::GROUP_ORDER::ATTACK_READY);
+			group->ChangeOrder(GROUP_ORDER::ATTACK_READY);
 			
 			//グループの目標座標をプレイヤー座標に設定
 			group->SetGoalPos(playerPos_);
 		}
-		else if (dist < PLAYER_AIM_RADIUS)
+		else if (sqrDist < PLAYER_AIM_RADIUS * PLAYER_AIM_RADIUS)
 		{
 			//グループを移動状態にする
-			group->ChangeOrder(EnemyGroup::GROUP_ORDER::MOVE);
+			group->ChangeOrder(GROUP_ORDER::MOVE);
 
 			//グループの目標座標をプレイヤー座標に設定
 			group->SetGoalPos(playerPos_);
@@ -185,7 +186,7 @@ void EnemyManager::DecideOrderByDistance(void)
 		else
 		{
 			//グループを待機状態にする
-			group->ChangeOrder(EnemyGroup::GROUP_ORDER::STAY);
+			group->ChangeOrder(GROUP_ORDER::STAY);
 		}
 	}
 }

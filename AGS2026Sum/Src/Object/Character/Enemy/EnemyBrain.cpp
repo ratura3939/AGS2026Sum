@@ -7,9 +7,9 @@ EnemyBrain::EnemyBrain(EnemyBase& _parent)
 	:parent_(_parent)
 {
 	//グループの命令ごとの行動優先度の設定
-	orderPriority_[static_cast<int>(EnemyGroup::GROUP_ORDER::STAY)] = [this](void) {OrderStayPriority(); };
-	orderPriority_[static_cast<int>(EnemyGroup::GROUP_ORDER::MOVE)] = [this](void) {OrderMovePriority(); };
-	orderPriority_[static_cast<int>(EnemyGroup::GROUP_ORDER::ATTACK_READY)] = [this](void) {OrderAttackReadyPriority(); };
+	orderPriority_[static_cast<int>(GROUP_ORDER::STAY)] = &EnemyBrain::OrderStayPriority;
+	orderPriority_[static_cast<int>(GROUP_ORDER::MOVE)] = &EnemyBrain::OrderMovePriority;
+	orderPriority_[static_cast<int>(GROUP_ORDER::ATTACK_READY)] = &EnemyBrain::OrderAttackReadyPriority;
 }
 
 EnemyBrain::~EnemyBrain(void)
@@ -29,15 +29,15 @@ void EnemyBrain::DecidePriority(void)
 	int order = static_cast<int>(group->GetOrder());
 
 	//グループから一定距離以上離れているならグループに戻る行動を優先する
-	if (Utility::Distance(parent_.GetPos(), group->GetPos()) > EnemyBase::LEAVE_GROUP_DIST)
+	if (Utility::SqrMagnitude(parent_.GetPos(), group->GetPos()) > EnemyBase::LEAVE_GROUP_DIST * EnemyBase::LEAVE_GROUP_DIST)
 	{
 		//グループに戻る行動を優先する
-		actionPriority_[static_cast<int>(EnemyBase::ENEMY_ACTION::RETURN_GROUP)] = PRIORITY;
+		actionPriority_[static_cast<int>(ENEMY_ACTION::RETURN_GROUP)] = PRIORITY;
 		return;
 	}
 
 	//グループの命令ごとの行動優先度の設定
-	orderPriority_[order]();
+	(this->*orderPriority_[order])();
 }
 
 void EnemyBrain::ChoiceAction(void)
@@ -58,7 +58,7 @@ void EnemyBrain::OrderStayPriority(void)
 	if (!parent_.IsInGroup() || !parent_.IsAlive())return;
 
 	//グループの命令が待機なら待機行動を優先する
-	actionPriority_[static_cast<int>(EnemyBase::ENEMY_ACTION::STAY)] = PRIORITY;
+	actionPriority_[static_cast<int>(ENEMY_ACTION::STAY)] = PRIORITY;
 }
 
 void EnemyBrain::OrderMovePriority(void)
@@ -67,7 +67,7 @@ void EnemyBrain::OrderMovePriority(void)
 	if (!parent_.IsInGroup() || !parent_.IsAlive())return;
 
 	//グループの命令が移動なら移動行動を優先する
-	actionPriority_[static_cast<int>(EnemyBase::ENEMY_ACTION::MOVE)] = PRIORITY;
+	actionPriority_[static_cast<int>(ENEMY_ACTION::MOVE)] = PRIORITY;
 }
 
 void EnemyBrain::OrderAttackReadyPriority(void)
@@ -76,5 +76,5 @@ void EnemyBrain::OrderAttackReadyPriority(void)
 	if (!parent_.IsInGroup() || !parent_.IsAlive())return;
 
 	//グループの命令が攻撃準備なら攻撃準備行動を優先する
-	actionPriority_[static_cast<int>(EnemyBase::ENEMY_ACTION::ATTACK_READY)] = PRIORITY;
+	actionPriority_[static_cast<int>(ENEMY_ACTION::ATTACK_READY)] = PRIORITY;
 }

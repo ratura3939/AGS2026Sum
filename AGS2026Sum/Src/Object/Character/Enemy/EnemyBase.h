@@ -1,8 +1,8 @@
 #pragma once
 #include "../CharacterBase.h"
+#include "EnemyDefine.h"
+#include"EnemyBrain.h"
 #include"EnemyGroup.h"
-
-class EnemyBrain;
 
 class EnemyBase : public CharacterBase
 {
@@ -10,26 +10,6 @@ public:
 
 	//敵がグループから離れられる距離
 	static constexpr float LEAVE_GROUP_DIST = 1000.0f;
-
-	//敵の状態
-	enum class ENEMY_STATE
-	{
-		NORMAL				//通常
-		, DAMAGE			//ダメージ
-		, DEATH				//死亡
-		, MAX
-	};
-
-	//敵個々の行動
-	enum class ENEMY_ACTION
-	{
-		STAY				//待機
-		, MOVE				//移動
-		, ATTACK_READY		//攻撃準備
-		, ATTACK			//攻撃
-		, RETURN_GROUP		//グループに戻る
-		, MAX
-	};
 
 	//コンストラクタ
 	EnemyBase(void);
@@ -64,6 +44,9 @@ public:
 	//位置リセット
 	void ResetPos(void);
 
+	//グループを抜ける
+	void LeaveGroup(void) { group_ = nullptr; }
+
 	//グループに所属しているか
 	const bool IsInGroup(void)const { return group_ != nullptr; }
 
@@ -75,12 +58,15 @@ public:
 
 private:
 
+	//行動の関数ポインタ
+	using Func = void(EnemyBase::*)(void);
+
 	//行動ごとの処理
 	struct ActionFunc
 	{
-		std::function<void(void)> enter = []() {};	//行動遷移時の処理
-		std::function<void(void)> update = []() {};	//更新
-		std::function<void(void)> exit = []() {};	//行動抜けの処理
+		Func enter = nullptr;	//行動遷移時の処理
+		Func update = nullptr;	//更新
+		Func exit = nullptr;	//行動抜けの処理
 	};
 
 	//当たり判定
@@ -116,7 +102,7 @@ private:
 	std::array<ActionFunc, static_cast<int>(ENEMY_ACTION::MAX)> actionFunc_;	//行動ごとの処理
 
 	//グループの命令ごとの判断
-	std::unique_ptr<EnemyBrain> brain_;
+	EnemyBrain brain_;
 
 	//読み込み
 	void DoLoad(void)override;

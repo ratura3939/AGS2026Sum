@@ -188,6 +188,7 @@
     <ClCompile Include="Src\Utility\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Character\Enemy\EnemyDefine.h" />
     <ClInclude Include="Src\Object\Character\Enemy\EnemyBrain.h" />
     <ClInclude Include="Src\Object\Character\Enemy\EnemyPool.h" />
     <ClInclude Include="Src\Object\Character\Enemy\EnemyGroup.h" />

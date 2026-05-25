@@ -3,22 +3,13 @@
 #include<vector>
 #include<memory>
 #include<functional>
+#include "EnemyDefine.h"
 
 class EnemyBase;
 
 class EnemyGroup
 {
 public:
-
-	//グループごとの状態
-	enum class GROUP_ORDER
-	{
-		NONE = -1			//なし
-		, STAY				//待機
-		, MOVE				//移動
-		, ATTACK_READY		//攻撃準備
-		, MAX
-	};
 
 	//コンストラクタ
 	EnemyGroup(void);
@@ -76,12 +67,15 @@ private:
 	//攻撃を開始する距離
 	static constexpr float ATTACK_DISTANCE = 150.0f;
 
+	//命令の関数ポインタ
+	using Func = void(EnemyGroup::*)(void);
+
 	//命令ごとの処理
 	struct OrderFunc
 	{
-		std::function<void(void)> enter = [](){};	//命令遷移時の処理
-		std::function<void(void)> update = [](){};	//更新
-		std::function<void(void)> exit = [](){};	//命令抜けの処理
+		Func enter = nullptr;	//命令遷移時の処理
+		Func update = nullptr;	//更新
+		Func exit = nullptr;	//命令抜けの処理
 	};
 
 	//移動速度

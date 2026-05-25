@@ -1,0 +1,31 @@
+#pragma once
+
+//グループごとの状態
+enum class GROUP_ORDER
+{
+	NONE = -1			//なし
+	, STAY				//待機
+	, MOVE				//移動
+	, ATTACK_READY		//攻撃準備
+	, MAX
+};
+
+//敵個々の行動
+enum class ENEMY_ACTION
+{
+	STAY				//待機
+	, MOVE				//移動
+	, ATTACK_READY		//攻撃準備
+	, ATTACK			//攻撃
+	, RETURN_GROUP		//グループに戻る
+	, MAX
+};
+
+//敵の状態
+enum class ENEMY_STATE
+{
+	NORMAL				//通常
+	, DAMAGE			//ダメージ
+	, DEATH				//死亡
+	, MAX
+};
