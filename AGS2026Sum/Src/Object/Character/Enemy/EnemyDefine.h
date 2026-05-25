@@ -6,7 +6,7 @@ enum class GROUP_ORDER
 	NONE = -1			//なし
 	, STAY				//待機
 	, MOVE				//移動
-	, ATTACK_READY		//攻撃準備
+	, ALERT				//警戒
 	, MAX
 };
 
@@ -15,6 +15,7 @@ enum class ENEMY_ACTION
 {
 	STAY				//待機
 	, MOVE				//移動
+	, ALERT				//警戒
 	, ATTACK_READY		//攻撃準備
 	, ATTACK			//攻撃
 	, RETURN_GROUP		//グループに戻る

@@ -11,6 +11,18 @@ public:
 	//敵がグループから離れられる距離
 	static constexpr float LEAVE_GROUP_DIST = 1000.0f;
 
+	//当たり判定
+	static constexpr float RADIUS = 30.0f;
+	static constexpr float BROUD_RADIUS = RADIUS + 15.0f;
+
+	//攻撃距離
+	static constexpr float ATTACK_RADIUS = RADIUS + 15.0f;
+	static constexpr float ATTACK_BROUD_RADIUS = ATTACK_RADIUS + 15.0f;
+	static constexpr VECTOR ATTACK_LOCAL_POS = { 0.0f, 0.0f, 30.0f };
+
+	//攻撃持続時間
+	static constexpr float ATTACK_DURATION = 1.0f;
+
 	//コンストラクタ
 	EnemyBase(void);
 
@@ -69,15 +81,6 @@ private:
 		Func exit = nullptr;	//行動抜けの処理
 	};
 
-	//当たり判定
-	static constexpr float RADIUS = 30.0f;
-	static constexpr float BROUD_RADIUS = RADIUS + 15.0f;
-
-	//攻撃距離
-	static constexpr float ATTACK_RADIUS = RADIUS + 15.0f;
-	static constexpr float ATTACK_BROUD_RADIUS = ATTACK_RADIUS + 15.0f;
-	static constexpr VECTOR ATTACK_LOCAL_POS = { 0.0f, 0.0f, 30.0f };
-
 	//速度
 	static constexpr float SPEED = 2.0f;					//移動速度
 	static constexpr float RUN_SPEED = SPEED * 2.0f;		//走り速度
@@ -122,6 +125,7 @@ private:
 	//状態遷移時の処理
 	void EnterStay(void);
 	void EnterMove(void);
+	void EnterAlert(void);
 	void EnterAttackReady(void);
 	void EnterAttack(void);
 	void EnterReturn(void);
@@ -129,6 +133,7 @@ private:
 	//状態ごとの更新
 	void UpdateStay(void);
 	void UpdateMove(void);
+	void UpdateAlert(void);
 	void UpdateAttackReady(void);
 	void UpdateAttack(void);
 	void UpdateReturn(void);
@@ -136,6 +141,7 @@ private:
 	//状態抜けの処理
 	void ExitStay(void);
 	void ExitMove(void);
+	void ExitAlert(void);
 	void ExitAttackReady(void);
 	void ExitAttack(void);
 	void ExitReturn(void);

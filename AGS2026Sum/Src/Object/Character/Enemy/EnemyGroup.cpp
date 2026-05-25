@@ -13,7 +13,7 @@ EnemyGroup::EnemyGroup(void)
 	orderFunc_[GROUP_ORDER::NONE] = {};
 	orderFunc_[GROUP_ORDER::STAY] = { &EnemyGroup::EnterStay, &EnemyGroup::UpdateStay, &EnemyGroup::ExitStay };
 	orderFunc_[GROUP_ORDER::MOVE] = { &EnemyGroup::EnterMove, &EnemyGroup::UpdateMove, &EnemyGroup::ExitMove };
-	orderFunc_[GROUP_ORDER::ATTACK_READY] = { &EnemyGroup::EnterAttackReady, &EnemyGroup::UpdateAttackReady, &EnemyGroup::ExitAttackReady };
+	orderFunc_[GROUP_ORDER::ALERT] = { &EnemyGroup::EnterAlert, &EnemyGroup::UpdateAlert, &EnemyGroup::ExitAlert };
 }
 
 EnemyGroup::~EnemyGroup(void)
@@ -117,7 +117,7 @@ void EnemyGroup::EnterMove(void)
 	MoveToGoal();
 }
 
-void EnemyGroup::EnterAttackReady(void)
+void EnemyGroup::EnterAlert(void)
 {
 	//行動カウンタの初期化
 	actionCnt_ = 0.0f;
@@ -147,7 +147,7 @@ void EnemyGroup::UpdateMove(void)
 	GroupMove();
 }
 
-void EnemyGroup::UpdateAttackReady(void)
+void EnemyGroup::UpdateAlert(void)
 {
 	//ゴール地点に向かう
 	MoveToGoal();
@@ -164,6 +164,6 @@ void EnemyGroup::ExitMove(void)
 {
 }
 
-void EnemyGroup::ExitAttackReady(void)
+void EnemyGroup::ExitAlert(void)
 {
 }

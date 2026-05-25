@@ -9,7 +9,7 @@ EnemyBrain::EnemyBrain(EnemyBase& _parent)
 	//グループの命令ごとの行動優先度の設定
 	orderPriority_[static_cast<int>(GROUP_ORDER::STAY)] = &EnemyBrain::OrderStayPriority;
 	orderPriority_[static_cast<int>(GROUP_ORDER::MOVE)] = &EnemyBrain::OrderMovePriority;
-	orderPriority_[static_cast<int>(GROUP_ORDER::ATTACK_READY)] = &EnemyBrain::OrderAttackReadyPriority;
+	orderPriority_[static_cast<int>(GROUP_ORDER::ALERT)] = &EnemyBrain::OrderAlertPriority;
 }
 
 EnemyBrain::~EnemyBrain(void)
@@ -70,11 +70,23 @@ void EnemyBrain::OrderMovePriority(void)
 	actionPriority_[static_cast<int>(ENEMY_ACTION::MOVE)] = PRIORITY;
 }
 
-void EnemyBrain::OrderAttackReadyPriority(void)
+void EnemyBrain::OrderAlertPriority(void)
 {
 	//グループに所属していない　または　グループが死んでいるなら何もしない
 	if (!parent_.IsInGroup() || !parent_.IsAlive())return;
 
-	//グループの命令が攻撃準備なら攻撃準備行動を優先する
-	actionPriority_[static_cast<int>(ENEMY_ACTION::ATTACK_READY)] = PRIORITY;
+	//目標地点
+	const VECTOR& goalPos = parent_.GetGroup()->GetGoalPos();
+
+	//プレイヤー(目標地点)との距離に応じて攻撃か警戒行動を優先する
+	if(Utility::SqrMagnitude(parent_.GetPos(), goalPos) < EnemyBase::ATTACK_RADIUS * EnemyBase::ATTACK_RADIUS)
+	{
+		//攻撃行動を優先する
+		actionPriority_[static_cast<int>(ENEMY_ACTION::ATTACK_READY)] = PRIORITY;
+	}
+	else
+	{
+		//警戒行動を優先する
+		actionPriority_[static_cast<int>(ENEMY_ACTION::ALERT)] = PRIORITY;
+	}
 }

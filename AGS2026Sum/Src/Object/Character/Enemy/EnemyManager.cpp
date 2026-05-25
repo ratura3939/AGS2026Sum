@@ -170,7 +170,7 @@ void EnemyManager::DecideOrderByDistance(void)
 		if (sqrDist < PLAYER_ATTACK_RADIUS * PLAYER_ATTACK_RADIUS)
 		{
 			//グループを攻撃準備状態にする
-			group->ChangeOrder(GROUP_ORDER::ATTACK_READY);
+			group->ChangeOrder(GROUP_ORDER::ALERT);
 			
 			//グループの目標座標をプレイヤー座標に設定
 			group->SetGoalPos(playerPos_);

@@ -111,16 +111,16 @@ private:
 	//状態遷移時の処理
 	void EnterStay(void);			//待機
 	void EnterMove(void);			//移動
-	void EnterAttackReady(void);	//攻撃準備
+	void EnterAlert(void);			//警戒
 
 	//更新処理
 	void UpdateStay(void);			//待機
 	void UpdateMove(void);			//移動
-	void UpdateAttackReady(void);	//攻撃準備
+	void UpdateAlert(void);			//警戒
 
 	//状態抜けの処理
 	void ExitStay(void);			//待機
 	void ExitMove(void);			//移動
-	void ExitAttackReady(void);		//攻撃準備
+	void ExitAlert(void);			//警戒
 };
 

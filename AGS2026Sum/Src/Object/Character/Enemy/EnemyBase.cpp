@@ -20,6 +20,7 @@ EnemyBase::EnemyBase(void)
 	//状態ごとの処理の設定
 	actionFunc_[static_cast<int>(ENEMY_ACTION::STAY)] = { &EnemyBase::EnterStay, &EnemyBase::UpdateStay, &EnemyBase::ExitStay };
 	actionFunc_[static_cast<int>(ENEMY_ACTION::MOVE)] = { &EnemyBase::EnterMove, &EnemyBase::UpdateMove, &EnemyBase::ExitMove };
+	actionFunc_[static_cast<int>(ENEMY_ACTION::ALERT)] = { &EnemyBase::EnterAlert, &EnemyBase::UpdateAlert, &EnemyBase::ExitAlert };
 	actionFunc_[static_cast<int>(ENEMY_ACTION::ATTACK_READY)] = { &EnemyBase::EnterAttackReady, &EnemyBase::UpdateAttackReady, &EnemyBase::ExitAttackReady };
 	actionFunc_[static_cast<int>(ENEMY_ACTION::ATTACK)] = { &EnemyBase::EnterAttack, &EnemyBase::UpdateAttack, &EnemyBase::ExitAttack };
 	actionFunc_[static_cast<int>(ENEMY_ACTION::RETURN_GROUP)] = { &EnemyBase::EnterReturn, &EnemyBase::UpdateReturn, &EnemyBase::ExitReturn };
@@ -176,22 +177,20 @@ void EnemyBase::EnterMove(void)
 	animController_->Play(L"Run", RUN_ANIM_SPEED);
 }
 
-void EnemyBase::EnterAttackReady(void)
+void EnemyBase::EnterAlert(void)
 {
 	//待機アニメーションの再生
 	animController_->Play(L"Walk");
 }
 
+void EnemyBase::EnterAttackReady(void)
+{
+}
+
 void EnemyBase::EnterAttack(void)
 {
-	//攻撃目標座標の設定
-	attackPos_ = VAdd(pos_, quaRot_.PosAxis(ATTACK_LOCAL_POS));
-
-	//攻撃コライダ
-	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, ATTACK_BROUD_RADIUS, ATTACK_RADIUS);
-
-	//攻撃アニメーションの再生
-	animController_->Play(L"Attack");
+	//攻撃処理
+	Attack();
 }
 
 void EnemyBase::EnterReturn(void)
@@ -211,7 +210,7 @@ void EnemyBase::UpdateMove(void)
 	Move();
 }
 
-void EnemyBase::UpdateAttackReady(void)
+void EnemyBase::UpdateAlert(void)
 {
 	//グループの目標地点に直接向かう
 	VECTOR goalPos = group_->GetGoalPos();
@@ -221,6 +220,10 @@ void EnemyBase::UpdateAttackReady(void)
 
 	//移動処理
 	Move();
+}
+
+void EnemyBase::UpdateAttackReady(void)
+{
 }
 
 void EnemyBase::UpdateAttack(void)
@@ -247,12 +250,18 @@ void EnemyBase::ExitMove(void)
 {
 }
 
+void EnemyBase::ExitAlert(void)
+{
+}
+
 void EnemyBase::ExitAttackReady(void)
 {
 }
 
 void EnemyBase::ExitAttack(void)
 {
+	//攻撃コライダの削除
+	DeleteColliderAtTag(Collider::COL_TAG::ENEMY_ATTACK);
 }
 
 void EnemyBase::ExitReturn(void)
@@ -278,4 +287,13 @@ void EnemyBase::Move(void)
 
 void EnemyBase::Attack(void)
 {
+	//攻撃目標座標の設定
+	attackPos_ = VAdd(pos_, quaRot_.PosAxis(ATTACK_LOCAL_POS));
+
+	//攻撃コライダ
+	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, ATTACK_BROUD_RADIUS, ATTACK_RADIUS);
+	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY_ATTACK, { Collider::COL_TAG::PLAYER });
+
+	//攻撃アニメーションの再生
+	animController_->Play(L"Attack");
 }

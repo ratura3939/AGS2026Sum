@@ -38,5 +38,5 @@ private:
 	//グループの命令ごとの行動優先度の設定
 	void OrderStayPriority(void);
 	void OrderMovePriority(void);
-	void OrderAttackReadyPriority(void);
+	void OrderAlertPriority(void);
 };
