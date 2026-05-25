@@ -24,14 +24,54 @@ PlayerAttack::PlayerAttack(const VECTOR& _playerPos, const Quaternion& _playerQu
 	,currentData_()
 	,currentType_(ATTACK_TYPE::MAX)
 	,level_(-1)
-	,counter_(0)
 	,data_()
+	,animNames_()
+	,nextType_(ATTACK_TYPE::MAX)
+	,latestReserveType_(ATTACK_TYPE::MAX)
 {
 	debugColor_ = 0xffffff;
 }
 
 PlayerAttack::~PlayerAttack(void)
 {
+}
+
+void PlayerAttack::DrawDebug(void)
+{
+	if (currentType_ == ATTACK_TYPE::MAX) {
+		DrawFormatString(30, 150, 0xff0000, L"CURRENT = MAX");
+	}
+	else if (currentType_ == ATTACK_TYPE::PUNCH) {
+		DrawFormatString(30, 150, 0xff0000, L"CURRENT = PUNCH");
+	}
+	else if (currentType_ == ATTACK_TYPE::KICK) {
+		DrawFormatString(30, 150, 0xff0000, L"CURRENT = KICK");
+	}
+
+	if (nextType_ == ATTACK_TYPE::MAX) {
+		DrawFormatString(30, 180, 0xff0000, L"NEXT = MAX");
+	}
+	else if (nextType_ == ATTACK_TYPE::DEBUG) {
+		DrawFormatString(30, 180, 0xff0000, L"ERROR");
+	}
+	else if (nextType_ == ATTACK_TYPE::PUNCH) {
+		DrawFormatString(30, 180, 0xff0000, L"NEXT = PUNCH");
+	}
+	else if (nextType_ == ATTACK_TYPE::KICK) {
+		DrawFormatString(30, 180, 0xff0000, L"NEXT = KICK");
+	}
+
+	if (latestReserveType_ == ATTACK_TYPE::MAX) {
+		DrawFormatString(30, 210, 0xff0000, L"LATEST = MAX");
+	}
+	else if (latestReserveType_ == ATTACK_TYPE::PUNCH) {
+		DrawFormatString(30, 210, 0xff0000, L"LATEST = PUNCH");
+	}
+	else if (latestReserveType_ == ATTACK_TYPE::KICK) {
+		DrawFormatString(30, 210, 0xff0000, L"LATEST = KICK");
+	}
+
+	DrawFormatString(30, 240, 0xff0000, L"LEVEL = %d", level_);
 }
 
 void PlayerAttack::DoLoad(void)
@@ -50,14 +90,14 @@ void PlayerAttack::DoUpdate(void)
 {
 	pos_ = VAdd(playerPos_, playerQuaRot_.PosAxis(currentData_.localPos));	//プレイヤーの座標にローカル座標を加算して攻撃の座標とする
 
-	if (counter_ >= currentData_.time) {
+	if (currentData_.counter >= currentData_.time) {
 		//攻撃終了
 		currentData_ = {};
 		colliders_[0]->SetUseThis(false);	//コライダの無効化
 		return;
 	}
 
-	counter_++;
+	currentData_.counter++;
 }
 
 void PlayerAttack::LoadAttackData(void)
@@ -116,54 +156,96 @@ void PlayerAttack::HitCollider(std::weak_ptr<Collider> _col)
 {
 }
 
-void PlayerAttack::Attack(const ATTACK_TYPE& _type)
+void PlayerAttack::ReserveAttack(const ATTACK_TYPE& _type)
 {
+	//レベルの上昇
 	debugColor_ = PUNCH_COLOR;
 
-	if (_type == ATTACK_TYPE::MAX) {
-		level_ = -1;	//レベルリセット
-		currentType_ = ATTACK_TYPE::MAX;
-		return;	//処理不可
+	if (_type == ATTACK_TYPE::KICK) {
+		if (!isKickCorrection_) {
+			level_--;
+			isKickCorrection_ = true;
+		}
+	}
+	else {
+		isKickCorrection_ = false;
 	}
 
 	level_++;	//レベルアップ
+	nextType_ = _type;
+	latestReserveType_ = _type;
 
-	int useLevel = level_;
-	if (_type == ATTACK_TYPE::KICK) {
-		useLevel--;	//キックは段階1から使用可能
-		debugColor_ = KICK_COLOR;
-	}
+	
+	//レベル補正関連
+	// ******************************************************************
+	//攻撃種別が不正だった場合
+	if (_type == ATTACK_TYPE::MAX) {
+		level_ = 0;	//レベルリセット
 
-	if (useLevel >= ATTACK_LEVEL_MAX && _type == ATTACK_TYPE::PUNCH) {
-		level_ = 0;	//レベルリセット(即時使用のため0に)
-		useLevel = level_;
-	}
+		currentType_ = ATTACK_TYPE::MAX;
+		//nextType_ = ATTACK_TYPE::MAX;
+		nextType_ = ATTACK_TYPE::DEBUG;
 
-	if (useLevel < 0 || 
-		useLevel >= ATTACK_LEVEL_MAX) {
-		level_ = -1;	//レベルリセット
 		return;	//処理不可
 	}
+	
+	//レベルが範囲外の場合（コンボを初段に）
+	//0未満(キック時にのみ出現)
+	if (level_ < 0) {
+		level_ = 0;	//レベルリセット
+		isKickCorrection_ = false;
 
-	currentData_ = data_[static_cast<int>(_type)][useLevel];
-	currentType_ = _type;
-	ApplyAttackColliderSettings();		//情報適用);
+		//キックは一段目からは発生不可のため、攻撃を行わないように設定
+		currentType_ = ATTACK_TYPE::MAX;
+		//nextType_ = ATTACK_TYPE::MAX;
+		nextType_ = ATTACK_TYPE::DEBUG;
+	}
+	else if (level_ >= ATTACK_LEVEL_MAX) {
+		isKickCorrection_ = false;
+		level_ = 0;	//レベルリセット
+
+		if (_type == ATTACK_TYPE::KICK) {
+			currentType_ = ATTACK_TYPE::MAX;
+			//nextType_ = ATTACK_TYPE::MAX;
+			nextType_ = ATTACK_TYPE::DEBUG;
+		}
+		else {
+			nextType_ = ATTACK_TYPE::PUNCH;	//パンチは初段攻撃のため、次の攻撃種別をパンチにする
+		}
+	}
+}
+
+void PlayerAttack::Attack(void)
+{
+	if (nextType_ == ATTACK_TYPE::MAX) {
+		return;	//攻撃予約なし
+	}
+
+	currentData_ = data_[static_cast<int>(nextType_)][level_];
+	if (nextType_ == ATTACK_TYPE::DEBUG) {
+		currentType_ = ATTACK_TYPE::PUNCH;
+		nextType_ = ATTACK_TYPE::DEBUG;		//次の攻撃種別リセット
+	}
+	else {
+		currentType_ = nextType_;
+		nextType_ = ATTACK_TYPE::MAX;		//次の攻撃種別リセット
+	}
+	
+	ApplyAttackColliderSettings();		//情報適用;
 	colliders_[0]->SetUseThis(true);	//コライダの有効化
-	counter_ = 0;
+	currentData_.counter = 0;
 }
 
 const PlayerAttack::AttackAnimationInfo PlayerAttack::GetCurrentAttackAnimInfo(void) const
 {
-	int useLevel = level_;
-
-	if (currentType_ == ATTACK_TYPE::KICK) {
-		useLevel--;
+	if(currentType_ == ATTACK_TYPE::MAX) {
+		return AttackAnimationInfo();	//攻撃なし
 	}
 
 	AttackAnimationInfo ret;
 
-	ret.name = animNames_[static_cast<int>(currentType_)][useLevel];
-	ret.speed = data_[static_cast<int>(currentType_)][useLevel].animationSpeed;
+	ret.name = animNames_[static_cast<int>(currentType_)][level_];
+	ret.speed = data_[static_cast<int>(currentType_)][level_].animationSpeed;
 
 	return	ret;
 }

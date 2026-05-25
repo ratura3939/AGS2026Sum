@@ -47,8 +47,8 @@ public:
 
 	//予約アニメーション情報
 	struct NextAnimInfo {
-		std::wstring name;	//アニメーシwwョン名
-		float speed;		//再w生w速w度w
+		std::wstring name;	//アニメーション名
+		float speed;		//再生速度
 	};
 
 	AnimationController(int& _model);
@@ -57,11 +57,11 @@ public:
 	/// <summary>
 	/// アニメーション追加関数
 	/// </summary>
-	/// <param name="_name">登録名ww</param>
-	/// <param name="_animData">アニメーション番号ww</param>
-	/// <param name="_type">再生タイプww</param>
-	/// <param name="_source">アニメーションの情報源ww</param>
-	/// <param name="_isLock">一回の再生を保障するかどうかww</param>
+	/// <param name="_name">登録名</param>
+	/// <param name="_animData">アニメーション番号</param>
+	/// <param name="_type">再生タイプ</param>
+	/// <param name="_source">アニメーションの情報源</param>
+	/// <param name="_isLock">一回の再生を保障するかどうか</param>
 	void Add(const std::wstring& _name, const int _animData, const PLAY_TYPE& _type, const ANIM_SOURCE& _source, const bool _isLock = false);
 
 	/// <summary>
@@ -99,7 +99,10 @@ public:
 	//現在のアニメーションの再生進行度合いを割合で取得
 	const float GetCurrentAnimationProgressRate(void)const;
 
-	const bool IsFinishNormalAnim(void)const { return isFinishNormalAnim_; }	//次のアニメーションの再生が開始されたかどうか
+	const bool IsFinishNormalAnim(void)const { return isFinishNormalAnim_; }	//今のアニメーションの再生が終了したかどうか
+	const bool IsStartNextAnim(void)const { return isStartNextAnim_; }			//次のアニメーションの再生が開始されたかどうか
+
+	const float GetAnimTotalTime(const std::wstring& _name)const;	//アニメーションの総再生時間を取得
 
 private:
 	//アニメーション更新処理
@@ -147,6 +150,7 @@ private:
 	FinishAnimation finishAnim_;	//終了時処理関数ポインタ
 	UpdateAnimation updateAnim_;	//更新処理関数ポインタ
 
-	bool isFinishNormalAnim_;	//次のアニメーションの再生が開始されたかどうか
+	bool isFinishNormalAnim_;	//今のアニメーションの再生が終了したかどうか
+	bool isStartNextAnim_;		//次のアニメーションの再生が開始されたかどうか
 };
 

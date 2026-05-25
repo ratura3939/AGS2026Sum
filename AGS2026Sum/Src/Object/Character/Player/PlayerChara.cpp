@@ -27,6 +27,11 @@ void PlayerChara::PlayAnim(const std::wstring& _animName, const float _speed)
 	animController_->Play(_animName, _speed);	//アニメーションの新規再生
 }
 
+void PlayerChara::GetAnimTotalTime(const std::wstring& _animName) const
+{
+	animController_->GetAnimTotalTime(_animName);	//アニメーションの総再生時間を取得
+}
+
 const float PlayerChara::GetCurrentAnimationProgressRate(void) const
 {
 	return animController_->GetCurrentAnimationProgressRate();
@@ -76,6 +81,7 @@ void PlayerChara::InitAnim(void)
 	//アニメーションの登録
 	animController_->Add(PlayerManager::ANIM_IDLE, resM.Load(SRC::PLAYER_IDLE_ANIM).handleId_, ANIM_PLAY_TYPE::LOOP, ANIM_SOURCE::EXTERNAL);
 	animController_->Add(PlayerManager::ANIM_RUN, resM.Load(SRC::PLAYER_RUN_ANIM).handleId_, ANIM_PLAY_TYPE::LOOP, ANIM_SOURCE::EXTERNAL);
+	animController_->Add(PlayerManager::ANIM_DAMAGE, resM.Load(SRC::PLAYER_DAMAGE_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL);
 	animController_->Add(PlayerManager::ANIM_FIRST_PUNCH, resM.Load(SRC::PLAYER_FIRST_PUNCH_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL, true);
 	animController_->Add(PlayerManager::ANIM_SECOND_PUNCH, resM.Load(SRC::PLAYER_SECOND_PUNCH_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL, true);
 	animController_->Add(PlayerManager::ANIM_THIRD_PUNCH, resM.Load(SRC::PLAYER_THIRD_PUNCH_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL, true);

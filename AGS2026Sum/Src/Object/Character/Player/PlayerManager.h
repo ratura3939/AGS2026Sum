@@ -15,6 +15,7 @@ public:
 #pragma region アニメーション登録名
 	static const std::wstring ANIM_IDLE;		//待機
 	static const std::wstring ANIM_RUN;			//移動
+	static const std::wstring ANIM_DAMAGE;		//ダメージ
 	static const std::wstring ANIM_FIRST_PUNCH;	//初回パンチ
 	static const std::wstring ANIM_SECOND_PUNCH;//二回目パンチ
 	static const std::wstring ANIM_THIRD_PUNCH;	//三回目パンチ

@@ -9,6 +9,7 @@ struct AttackData {
 	int time = -1;       //時間
 	VECTOR localPos = { -1.0f, -1.0f, -1.0f };   //ローカル座標
 	float animationSpeed = -1.0f;	//アニメーションの再生速度
+	int counter = 0;		//攻撃の時間管理
 };
 
 inline void from_json(const nlohmann::json& _data, VECTOR& _vec) {

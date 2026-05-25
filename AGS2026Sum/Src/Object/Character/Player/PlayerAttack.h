@@ -11,6 +11,7 @@ public:
 		PUNCH   //パンチ
 		,KICK   //キック
         ,MAX
+		,DEBUG
     };
 
 	struct AttackAnimationInfo {
@@ -29,12 +30,21 @@ public:
 
 	void HitCollider(std::weak_ptr<Collider> _col)override;
 
+	//攻撃の予約
+	void ReserveAttack(const ATTACK_TYPE& _type);
+
 	//攻撃開始
-	void Attack(const ATTACK_TYPE& _type);	
+	void Attack(void);	
 	//現在の攻撃アニメーション情報の取得
 	const AttackAnimationInfo GetCurrentAttackAnimInfo(void)const;
 	//攻撃中か
 	const bool IsAttacking(void)const;
+
+	void SetCurrentAttackTotalTime(const float _totalTime, const float _speedRate) { currentData_.time = static_cast<int>(_totalTime * _speedRate); }	//現在の攻撃の総時間の設定(主にアニメーションの総再生時間)
+
+
+	//デバッグ用
+	void DrawDebug(void);
 
 private:
 	void DoLoad(void)override;
@@ -54,8 +64,10 @@ private:
 
 	AttackData currentData_;	//現在の攻撃データ
 	ATTACK_TYPE currentType_;	//現在の攻撃種別
+	ATTACK_TYPE nextType_;		//次の攻撃種別
+	ATTACK_TYPE latestReserveType_;		//最新に予約された攻撃種別
 	int level_;		//攻撃レベル
-	int counter_;	//攻撃の時間管理
+	bool isKickCorrection_;	//キックのレベル補正中か
 
 	int debugColor_;	//デバッグ用の色
 };

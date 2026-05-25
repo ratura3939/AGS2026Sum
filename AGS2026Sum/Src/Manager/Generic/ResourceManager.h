@@ -21,6 +21,7 @@ public:
 		//プレイヤー
 		,PLAYER_IDLE_ANIM			//待機
 		,PLAYER_RUN_ANIM			//走る
+		,PLAYER_DAMAGE_ANIM			//ダメージ
 		,PLAYER_FIRST_PUNCH_ANIM	//パンチ１
 		,PLAYER_SECOND_PUNCH_ANIM	//パンチ２
 		,PLAYER_THIRD_PUNCH_ANIM	//パンチ３

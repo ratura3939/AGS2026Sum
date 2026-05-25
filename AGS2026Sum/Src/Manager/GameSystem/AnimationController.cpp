@@ -27,6 +27,8 @@ AnimationController::AnimationController(int& _model)
 	,finishAnim_(&AnimationController::FinishAnimNormal)
 	,updateAnim_(&AnimationController::UpdateNormalAnim)
 	,nextAnimList_({})
+	,isFinishNormalAnim_(false)
+	,isStartNextAnim_(false)
 {
 }
 
@@ -153,6 +155,7 @@ void AnimationController::Update(void)
 	if (currentAnimAttachInfo_.attachNum == -1)return;
 
 	isFinishNormalAnim_ = false;
+	isStartNextAnim_ = false;
 
 	//カウンタ更新
 	(this->*updateAnim_)();
@@ -185,6 +188,11 @@ void AnimationController::SetDefaultAnim(const std::wstring& _name)
 const float AnimationController::GetCurrentAnimationProgressRate(void) const
 {
 	return currentAnimAttachInfo_.counter / currentAnim_.total;
+}
+
+const float AnimationController::GetAnimTotalTime(const std::wstring& _name) const
+{
+	return animDatas_.at(_name).total;
 }
 
 void AnimationController::UpdateNormalAnim(void)
@@ -221,13 +229,15 @@ void AnimationController::FinishAnimNormal(void)
 	isAnimLock_ = false;
 	currentAnimAttachInfo_.isFinish = true;	//アニメーション終了
 
+	isFinishNormalAnim_ = true;
+
 	//次に再生されている物が設定されているとき
 	if (!nextAnimList_.empty()) {
 		//配列の最前列を再生
 		Play(nextAnimList_[0].name, nextAnimList_[0].speed);
 		//要素の削除
 		nextAnimList_.erase(nextAnimList_.begin());
-		isFinishNormalAnim_ = true;
+		isStartNextAnim_ = true;
 		return;
 	}
 
