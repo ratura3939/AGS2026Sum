@@ -24,6 +24,7 @@ PlayerManager::PlayerManager(Game& _gameScene)
 	,character_(std::make_shared<PlayerChara>())
 	,attack_(nullptr)
 	,isRefuseAttackInput_(false)
+	,isForcePlayAnim_(false)
 {
 	character_->Load();		//キャラクターの読み込み
 }
@@ -48,12 +49,17 @@ void PlayerManager::Update(void)
 
 	if (character_->IsFinishAttackAnimation()) {
 
+		//攻撃予約関係
+		isRefuseAttackInput_ = false;	//攻撃入力を受け付ける状態にする
+
 		if (character_->IsStartNextAttackAnimation()) {
 			attack_->Attack();	//攻撃開始
 		}
-
-		//攻撃予約関係
-		isRefuseAttackInput_ = false;	//攻撃入力を受け付ける状態にする
+		else {
+			//コンボの終了
+			attack_->FinishAttack();	//攻撃終了処理
+			character_->SetIsAttack(false);	//そうでないときは攻撃状態を解除する
+		}
 	}
 }
 
@@ -94,17 +100,12 @@ void PlayerManager::UserInput(void)
 		isAttackInput = Attack(PlayerAttack::ATTACK_TYPE::PUNCH);	//攻撃クラスに攻撃開始を伝え,結果を得る
 	}
 	else if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_STRONG) && !isRefuseAttackInput_) {
-		isAttackInput = Attack(PlayerAttack::ATTACK_TYPE::KICK);	//攻撃クラスに攻撃開始を伝え,結果を得る
+		//isAttackInput = Attack(PlayerAttack::ATTACK_TYPE::KICK);	//攻撃クラスに攻撃開始を伝え,結果を得る
 	}
 
 	//入力があったとき
 	if (isAttackInput) {
 		SetAttackStateForCharacter();	//攻撃に関する情報をキャラクターに反映
-	}
-
-	//攻撃が終了しているとき
-	if (!attack_->IsAttacking()) {
-		character_->SetIsAttack(false);	//そうでないときは攻撃状態を解除する
 	}
 #pragma endregion
 
@@ -122,25 +123,34 @@ void PlayerManager::UserInput(void)
 
 void PlayerManager::SetAttackStateForCharacter(void)
 {
-	auto attackAnimInfo = attack_->GetCurrentAttackAnimInfo();
+	auto attackAnimInfo = attack_->GetCurrentAttackAnimInfo();	//再生するアニメーション名取得
+
+	//例外の場合
 	if (attackAnimInfo.name.empty()) {
 		return;
 	}
 
 	character_->SetIsAttack(true);	//攻撃中は攻撃状態にする
-	character_->PlayAnim(attackAnimInfo.name, attackAnimInfo.speed);	//攻撃アニメを再生する
+
+	//アニメーションの再生
+	if (isForcePlayAnim_) {
+		character_->ForcePlayAnim(attackAnimInfo.name, attackAnimInfo.speed);	//攻撃アニメを強制再生する
+	}
+	else {
+		character_->PlayAnim(attackAnimInfo.name, attackAnimInfo.speed);	//攻撃アニメを再生する
+	}
 }
 
 const bool PlayerManager::Attack(PlayerAttack::ATTACK_TYPE _type)
 {
 	bool isSuccess = false;	//処理成功フラグ
+	isForcePlayAnim_ = false;
 
 	//攻撃中の場合
 	if (attack_->IsAttacking()) {
 		//攻撃キャンセル可能な状態であれば
 		if (character_->GetCurrentAnimationProgressRate() >= PlayerAttack::ATTACK_CANCEL_RATE) {
-			//attack_->Attack(_type);	//攻撃クラスに攻撃開始を伝える
-			attack_->ReserveAttack(_type);
+			attack_->ReserveAttack(_type);	//次段の攻撃予約
 
 			//キャンセル可能状態中は一度だけ攻撃入力を受け付ける
 			isRefuseAttackInput_ = true;	//攻撃入力を受け付けない状態にする
@@ -148,9 +158,10 @@ const bool PlayerManager::Attack(PlayerAttack::ATTACK_TYPE _type)
 		}
 	}
 	else {
-		//attack_->Attack(_type);	//攻撃クラスに攻撃開始を伝える
-		attack_->ReserveAttack(_type);
-		attack_->Attack();	//攻撃開始(コンボ始動のため即時発動)
+		//攻撃始動
+		attack_->ReserveAttack(_type);	//初段の攻撃予約
+		attack_->Attack();				//攻撃開始(コンボ始動のため即時発動)
+		isForcePlayAnim_ = true;		//強制再生フラグON
 		isSuccess = true;
 	}
 

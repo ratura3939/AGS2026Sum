@@ -80,7 +80,7 @@ void AnimationController::Play(const std::wstring& _name, const float _speed, co
 		return;
 	}
 
-	//すでに再生が確定されている物の場合
+	//すでに再生が確定されている物の場合(現状も同様)
 	if (currentAnim_.data == animDatas_[_name].data|| blendAnim_.data == animDatas_[_name].data) {
 		return;	//処理を行わない
 	}
@@ -89,16 +89,16 @@ void AnimationController::Play(const std::wstring& _name, const float _speed, co
 	if (currentAnim_.data == -1) {
 		SetAnimationPlayInfo(currentAnim_, animDatas_[_name], currentAnimAttachInfo_, _speed);	//再生情報の設定
 		isAnimLock_ = animDatas_[_name].mustPlayOnce;	//再生保障
-		SetFinishAndUpdateFunc();	//終了時と更新処理の設定
+		SetFinishAndUpdateFunc();						//終了時と更新処理の設定
 	}
 	else {
 		//現在ブレンド中のアニメーションがあるか
 		if (blendAnim_.data != -1) {
 			//ブレンド中のアニメーションを現在のアニメーションにする
 			MV1DetachAnim(modelId_, currentAnimAttachInfo_.attachNum);	//現在のものをデタッチ
-			currentAnim_ = blendAnim_;				//ブレンド中のものを現在のものに
-			currentAnimAttachInfo_ = blendAnimAttachInfo_;	//ブレンドしているものを現在のものに
-			isAnimLock_ = blendAnim_.mustPlayOnce;	//再生保障
+			currentAnim_ = blendAnim_;									//ブレンド中のものを現在のものに
+			currentAnimAttachInfo_ = blendAnimAttachInfo_;				//ブレンドしているものを現在のものに
+			isAnimLock_ = blendAnim_.mustPlayOnce;						//再生保障
 		}
 
 		SetAnimationPlayInfo(blendAnim_, animDatas_[_name], blendAnimAttachInfo_, _speed);	//新規のものをブレンド中のものに
@@ -114,6 +114,31 @@ void AnimationController::Play(const std::wstring& _name, const float _speed, co
 		}
 		nextAnimList_ = _next;
 	}
+}
+
+void AnimationController::ForcePlay(const std::wstring& _name, const float _speed, const std::vector<NextAnimInfo> _next)
+{
+
+	//要素がないとき
+	if (!animDatas_.contains(_name)) {
+		//エラー防止
+		assert("登録されていない要素を再生しようとしています。");
+		return;
+	}
+
+	//すでに再生されようとしているものなら必要ない(Playとの違いは、被ブレンド対象も許容する点)
+	if (blendAnim_.data == animDatas_[_name].data) {
+		return;
+	}
+
+	if (blendAnim_.data != -1) {
+		//ブレンド中のアニメーションを現在のアニメーションにする
+		MV1DetachAnim(modelId_, currentAnimAttachInfo_.attachNum);	//現在のものをデタッチ
+		currentAnim_ = blendAnim_;									//ブレンド中のものを現在のものに
+		currentAnimAttachInfo_ = blendAnimAttachInfo_;				//ブレンドしているものを現在のものに
+		isAnimLock_ = blendAnim_.mustPlayOnce;						//再生保障
+	}
+	SetAnimationPlayInfo(blendAnim_, animDatas_[_name], blendAnimAttachInfo_, _speed);	//新規のものをブレンド中のものに
 }
 
 void AnimationController::AddNextAnim(const std::wstring& _name, const float _speed)

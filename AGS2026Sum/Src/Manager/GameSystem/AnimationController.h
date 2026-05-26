@@ -73,6 +73,14 @@ public:
 	void Play(const std::wstring& _name, const float _speed = DEFAULT_SPEED, const std::vector<NextAnimInfo> _next = {});
 
 	/// <summary>
+	/// 強制再生処理
+	/// </summary>
+	/// <param name="_name">登録名</param>
+	/// <param name="_speed">再生速度</param>
+	/// <param name="_next">連続して再生する物たち<最後以外にLOOPのものを入れないこと！！></param>
+	void ForcePlay(const std::wstring& _name, const float _speed = DEFAULT_SPEED, const std::vector<NextAnimInfo> _next = {});
+
+	/// <summary>
 	/// 連続して再生するアニメーションを途中で追加する
 	/// </summary>
 	/// <param name="_name">追加するアニメーション名</param>

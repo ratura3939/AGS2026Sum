@@ -20,7 +20,7 @@ public:
 	};
 
 	static const int ATTACK_LEVEL_MAX = 3;				//攻撃レベルの最大値
-	static constexpr float ATTACK_CANCEL_RATE = 0.7f;	//攻撃キャンセル可能割合(アニメーションの進行度)
+	static constexpr float ATTACK_CANCEL_RATE = 0.6f;	//攻撃キャンセル可能割合(アニメーションの進行度)
 
 	PlayerAttack(const VECTOR& _playerPos, const Quaternion& _playerQuaRot);
 	~PlayerAttack(void)override;
@@ -40,6 +40,8 @@ public:
 	//攻撃中か
 	const bool IsAttacking(void)const;
 
+	void FinishAttack(void);	//攻撃終了処理
+
 	void SetCurrentAttackTotalTime(const float _totalTime, const float _speedRate) { currentData_.time = static_cast<int>(_totalTime * _speedRate); }	//現在の攻撃の総時間の設定(主にアニメーションの総再生時間)
 
 
@@ -55,6 +57,9 @@ private:
 	void LoadAttackData(void);	
 	//コライダの設定
 	void ApplyAttackColliderSettings(void);
+
+	void CorrectionAttackLevel(const ATTACK_TYPE& _type);	//攻撃レベルの補正
+	void ResetAttackLevel(void);	//攻撃のリセット
 
 	const VECTOR& playerPos_;	//プレイヤーの座標参照
 	const Quaternion& playerQuaRot_;	//プレイヤーの回転参照

@@ -49,5 +49,6 @@ private:
 	std::shared_ptr<PlayerChara> character_;	//キャラクター
 	std::unique_ptr<PlayerAttack> attack_;		//攻撃
 	bool isRefuseAttackInput_;	//攻撃入力を受け付けない状態か
+	bool isForcePlayAnim_;		//強制再生させるか(攻撃の初段のみ強制再生)
 };
 

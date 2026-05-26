@@ -90,12 +90,12 @@ void PlayerAttack::DoUpdate(void)
 {
 	pos_ = VAdd(playerPos_, playerQuaRot_.PosAxis(currentData_.localPos));	//プレイヤーの座標にローカル座標を加算して攻撃の座標とする
 
-	if (currentData_.counter >= currentData_.time) {
-		//攻撃終了
-		currentData_ = {};
-		colliders_[0]->SetUseThis(false);	//コライダの無効化
-		return;
-	}
+	//if (currentData_.counter >= currentData_.time) {
+	//	//攻撃終了
+	//	currentData_ = {};
+	//	colliders_[0]->SetUseThis(false);	//コライダの無効化
+	//	return;
+	//}
 
 	currentData_.counter++;
 }
@@ -137,11 +137,41 @@ void PlayerAttack::ApplyAttackColliderSettings(void)
 	}
 }
 
+void PlayerAttack::CorrectionAttackLevel(const ATTACK_TYPE& _type)
+{
+	//キックの場合
+	if (_type == ATTACK_TYPE::KICK) {
+		//補正がまだされていなかったら
+		if (!isKickCorrection_) {
+			level_--;	//補正
+			isKickCorrection_ = true;	//補正完了
+		}
+	}
+	//パンチの場合
+	else {
+		//補正がされていたら
+		if(isKickCorrection_) {
+			level_++;	//キックの補正を戻す
+			isKickCorrection_ = false;	//補正解除
+		}
+	}
+}
+
+void PlayerAttack::ResetAttackLevel(void)
+{
+	level_ = -1;
+	isKickCorrection_ = false;
+	currentType_ = ATTACK_TYPE::MAX;
+	//nextType_ = ATTACK_TYPE::MAX;
+	nextType_ = ATTACK_TYPE::DEBUG;
+	latestReserveType_ = ATTACK_TYPE::MAX;
+}
+
 void PlayerAttack::Draw(void)
 {
 	//デバッグ表記
 	if (colliders_[0]->IsUseThis()) {
-		DrawSphere3D(pos_, currentData_.radius, 16, debugColor_, debugColor_, false);
+		DrawSphere3D(pos_, currentData_.radius, 16, debugColor_, debugColor_, false);	//コライダーの描画
 	}
 	
 
@@ -159,17 +189,8 @@ void PlayerAttack::HitCollider(std::weak_ptr<Collider> _col)
 void PlayerAttack::ReserveAttack(const ATTACK_TYPE& _type)
 {
 	//レベルの上昇
-	debugColor_ = PUNCH_COLOR;
 
-	if (_type == ATTACK_TYPE::KICK) {
-		if (!isKickCorrection_) {
-			level_--;
-			isKickCorrection_ = true;
-		}
-	}
-	else {
-		isKickCorrection_ = false;
-	}
+	CorrectionAttackLevel(_type);	//レベル補正
 
 	level_++;	//レベルアップ
 	nextType_ = _type;
@@ -178,45 +199,29 @@ void PlayerAttack::ReserveAttack(const ATTACK_TYPE& _type)
 	
 	//レベル補正関連
 	// ******************************************************************
-	//攻撃種別が不正だった場合
-	if (_type == ATTACK_TYPE::MAX) {
-		level_ = 0;	//レベルリセット
-
-		currentType_ = ATTACK_TYPE::MAX;
-		//nextType_ = ATTACK_TYPE::MAX;
-		nextType_ = ATTACK_TYPE::DEBUG;
-
-		return;	//処理不可
+	//レベル最大後、パンチの攻撃が繰り出されていた場合
+	if (level_ >= ATTACK_LEVEL_MAX && _type == ATTACK_TYPE::PUNCH) {
+		level_ = 0;	//初段の設定
+		nextType_ = _type;
+		latestReserveType_ = _type;
+		return;	//初段設定のためここで終了
 	}
-	
-	//レベルが範囲外の場合（コンボを初段に）
-	//0未満(キック時にのみ出現)
-	if (level_ < 0) {
-		level_ = 0;	//レベルリセット
-		isKickCorrection_ = false;
 
-		//キックは一段目からは発生不可のため、攻撃を行わないように設定
-		currentType_ = ATTACK_TYPE::MAX;
-		//nextType_ = ATTACK_TYPE::MAX;
-		nextType_ = ATTACK_TYPE::DEBUG;
+	//レベルが範囲外の場合
+	if (level_ < 0 || level_ >= ATTACK_LEVEL_MAX || _type == ATTACK_TYPE::MAX) {
+		ResetAttackLevel();	//レベルリセット
 	}
-	else if (level_ >= ATTACK_LEVEL_MAX) {
-		isKickCorrection_ = false;
-		level_ = 0;	//レベルリセット
 
-		if (_type == ATTACK_TYPE::KICK) {
-			currentType_ = ATTACK_TYPE::MAX;
-			//nextType_ = ATTACK_TYPE::MAX;
-			nextType_ = ATTACK_TYPE::DEBUG;
-		}
-		else {
-			nextType_ = ATTACK_TYPE::PUNCH;	//パンチは初段攻撃のため、次の攻撃種別をパンチにする
-		}
-	}
+
 }
 
 void PlayerAttack::Attack(void)
 {
+	debugColor_ = PUNCH_COLOR;
+	if (nextType_ == ATTACK_TYPE::KICK) {
+		debugColor_ = KICK_COLOR;
+	}
+
 	if (nextType_ == ATTACK_TYPE::MAX) {
 		return;	//攻撃予約なし
 	}
@@ -253,4 +258,13 @@ const PlayerAttack::AttackAnimationInfo PlayerAttack::GetCurrentAttackAnimInfo(v
 const bool PlayerAttack::IsAttacking(void) const
 {
 	return colliders_[0]->IsUseThis();
+}
+
+void PlayerAttack::FinishAttack(void)
+{
+	currentData_ = {};
+	colliders_[0]->SetUseThis(false);	//コライダの無効化
+
+	//レベルリセット関連
+	ResetAttackLevel();
 }

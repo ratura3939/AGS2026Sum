@@ -27,6 +27,11 @@ void PlayerChara::PlayAnim(const std::wstring& _animName, const float _speed)
 	animController_->Play(_animName, _speed);	//アニメーションの新規再生
 }
 
+void PlayerChara::ForcePlayAnim(const std::wstring& _animName, const float _speed)
+{
+	animController_->ForcePlay(_animName, _speed);
+}
+
 void PlayerChara::GetAnimTotalTime(const std::wstring& _animName) const
 {
 	animController_->GetAnimTotalTime(_animName);	//アニメーションの総再生時間を取得
