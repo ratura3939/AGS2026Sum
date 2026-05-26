@@ -31,12 +31,12 @@ public:
 	void HitCollider(std::weak_ptr<Collider> _col)override;
 
 	//攻撃の予約
-	void ReserveAttack(const ATTACK_TYPE& _type);
+	const bool ReserveAttack(const ATTACK_TYPE& _type);
 
 	//攻撃開始
 	void Attack(void);	
 	//現在の攻撃アニメーション情報の取得
-	const AttackAnimationInfo GetCurrentAttackAnimInfo(void)const;
+	const AttackAnimationInfo GetNextAttackAnimInfo(void)const;
 	//攻撃中か
 	const bool IsAttacking(void)const;
 

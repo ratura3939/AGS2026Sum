@@ -100,7 +100,7 @@ void PlayerManager::UserInput(void)
 		isAttackInput = Attack(PlayerAttack::ATTACK_TYPE::PUNCH);	//攻撃クラスに攻撃開始を伝え,結果を得る
 	}
 	else if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_STRONG) && !isRefuseAttackInput_) {
-		//isAttackInput = Attack(PlayerAttack::ATTACK_TYPE::KICK);	//攻撃クラスに攻撃開始を伝え,結果を得る
+		isAttackInput = Attack(PlayerAttack::ATTACK_TYPE::KICK);	//攻撃クラスに攻撃開始を伝え,結果を得る
 	}
 
 	//入力があったとき
@@ -123,7 +123,7 @@ void PlayerManager::UserInput(void)
 
 void PlayerManager::SetAttackStateForCharacter(void)
 {
-	auto attackAnimInfo = attack_->GetCurrentAttackAnimInfo();	//再生するアニメーション名取得
+	auto attackAnimInfo = attack_->GetNextAttackAnimInfo();	//再生するアニメーション名取得
 
 	//例外の場合
 	if (attackAnimInfo.name.empty()) {
@@ -134,6 +134,7 @@ void PlayerManager::SetAttackStateForCharacter(void)
 
 	//アニメーションの再生
 	if (isForcePlayAnim_) {
+		attack_->Attack();				//攻撃開始(コンボ始動のため即時発動)
 		character_->ForcePlayAnim(attackAnimInfo.name, attackAnimInfo.speed);	//攻撃アニメを強制再生する
 	}
 	else {
@@ -150,19 +151,16 @@ const bool PlayerManager::Attack(PlayerAttack::ATTACK_TYPE _type)
 	if (attack_->IsAttacking()) {
 		//攻撃キャンセル可能な状態であれば
 		if (character_->GetCurrentAnimationProgressRate() >= PlayerAttack::ATTACK_CANCEL_RATE) {
-			attack_->ReserveAttack(_type);	//次段の攻撃予約
+			isSuccess = attack_->ReserveAttack(_type);	//次段の攻撃予約
 
 			//キャンセル可能状態中は一度だけ攻撃入力を受け付ける
 			isRefuseAttackInput_ = true;	//攻撃入力を受け付けない状態にする
-			isSuccess = true;
 		}
 	}
 	else {
 		//攻撃始動
-		attack_->ReserveAttack(_type);	//初段の攻撃予約
-		attack_->Attack();				//攻撃開始(コンボ始動のため即時発動)
+		isSuccess = attack_->ReserveAttack(_type);	//初段の攻撃予約
 		isForcePlayAnim_ = true;		//強制再生フラグON
-		isSuccess = true;
 	}
 
 	return isSuccess;

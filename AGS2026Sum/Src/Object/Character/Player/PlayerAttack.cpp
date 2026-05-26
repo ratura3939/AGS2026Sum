@@ -116,6 +116,7 @@ void PlayerAttack::LoadAttackData(void)
 	animNames_[static_cast<int>(ATTACK_TYPE::PUNCH)][0] = PlayerManager::ANIM_FIRST_PUNCH;
 	animNames_[static_cast<int>(ATTACK_TYPE::PUNCH)][1] = PlayerManager::ANIM_SECOND_PUNCH;
 	animNames_[static_cast<int>(ATTACK_TYPE::PUNCH)][2] = PlayerManager::ANIM_THIRD_PUNCH;
+
 	animNames_[static_cast<int>(ATTACK_TYPE::KICK)][0] = PlayerManager::ANIM_MIDDLE_KICK;
 	animNames_[static_cast<int>(ATTACK_TYPE::KICK)][1] = PlayerManager::ANIM_HIGH_KICK;
 	animNames_[static_cast<int>(ATTACK_TYPE::KICK)][2] = PlayerManager::ANIM_FINSH_KICK;
@@ -186,7 +187,7 @@ void PlayerAttack::HitCollider(std::weak_ptr<Collider> _col)
 {
 }
 
-void PlayerAttack::ReserveAttack(const ATTACK_TYPE& _type)
+const bool PlayerAttack::ReserveAttack(const ATTACK_TYPE& _type)
 {
 	//レベルの上昇
 
@@ -204,15 +205,16 @@ void PlayerAttack::ReserveAttack(const ATTACK_TYPE& _type)
 		level_ = 0;	//初段の設定
 		nextType_ = _type;
 		latestReserveType_ = _type;
-		return;	//初段設定のためここで終了
+		return true;	//初段設定のためここで終了
 	}
 
 	//レベルが範囲外の場合
 	if (level_ < 0 || level_ >= ATTACK_LEVEL_MAX || _type == ATTACK_TYPE::MAX) {
 		ResetAttackLevel();	//レベルリセット
+		return false;
 	}
 
-
+	return true;
 }
 
 void PlayerAttack::Attack(void)
@@ -241,16 +243,16 @@ void PlayerAttack::Attack(void)
 	currentData_.counter = 0;
 }
 
-const PlayerAttack::AttackAnimationInfo PlayerAttack::GetCurrentAttackAnimInfo(void) const
+const PlayerAttack::AttackAnimationInfo PlayerAttack::GetNextAttackAnimInfo(void) const
 {
-	if(currentType_ == ATTACK_TYPE::MAX) {
+	if(nextType_ == ATTACK_TYPE::MAX) {
 		return AttackAnimationInfo();	//攻撃なし
 	}
 
 	AttackAnimationInfo ret;
 
-	ret.name = animNames_[static_cast<int>(currentType_)][level_];
-	ret.speed = data_[static_cast<int>(currentType_)][level_].animationSpeed;
+	ret.name = animNames_[static_cast<int>(nextType_)][level_];
+	ret.speed = data_[static_cast<int>(nextType_)][level_].animationSpeed;
 
 	return	ret;
 }
