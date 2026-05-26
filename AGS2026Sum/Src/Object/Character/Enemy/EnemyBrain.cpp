@@ -49,7 +49,7 @@ void EnemyBrain::ChoiceAction(void)
 	if (*max == 0)return;
 	
 	//優先行動を選択する
-	parent_.ChangeAction(std::distance(actionPriority_.begin(), max));
+	parent_.ChangeAction(static_cast<ENEMY_ACTION>(std::distance(actionPriority_.begin(), max)));
 }
 
 void EnemyBrain::OrderStayPriority(void)

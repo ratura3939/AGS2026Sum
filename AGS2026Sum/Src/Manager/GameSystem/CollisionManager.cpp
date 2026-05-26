@@ -54,6 +54,9 @@ void CollisionManager::UpdateColliders(void)
 
 		//Œ»İˆÈ~‚Ì•¨‚Æ‚µ‚©”»’è‚ğ‚Æ‚ç‚È‚¢(Šù‚É”»’è‚ğs‚Á‚Ä‚¢‚é‚½‚ß)
 		for(int i = idx + 1; i < static_cast<int>(colliders_.size()); i++) {
+			//‘¶İ‚µ‚Ä‚¢‚È‚¢‚È‚ç”»’è‚µ‚È‚¢
+			if (colliders_[i].expired())continue;
+
 			//g‚í‚È‚¢‚à‚Ì‚Í”»’è‚µ‚È‚¢
 			if (!colliders_[i].lock()->IsUseThis())continue;
 			CollisionGeometry(col, colliders_[i]);

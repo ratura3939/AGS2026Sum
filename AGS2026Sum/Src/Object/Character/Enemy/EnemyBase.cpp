@@ -4,6 +4,7 @@
 #include "../../../Manager/GameSystem/CollisionManager.h"
 #include "../../Common/Collider.h"
 #include "../../Common/Geometry/Sphere.h"
+#include "State/EnemyState.h"
 #include "EnemyManager.h"
 #include "EnemyGroup.h"
 #include "EnemyBrain.h"
@@ -13,17 +14,28 @@ EnemyBase::EnemyBase(void)
 	: group_(nullptr)
 	, activeIndex_(-1)
 	, attackPos_(Utility::VECTOR_ZERO)
+	, attackCnt_(0.0f)
 	, brain_(*this)
-	, action_(static_cast<int>(ENEMY_ACTION::STAY))
+	, onHit_(*this)
+	, action_(ENEMY_ACTION::STAY)
+	, state_(nullptr)
 	, movePow_(Utility::VECTOR_ZERO)
-{
-	//状態ごとの処理の設定
+{	
+	//行動ごとの処理の設定
 	actionFunc_[static_cast<int>(ENEMY_ACTION::STAY)] = { &EnemyBase::EnterStay, &EnemyBase::UpdateStay, &EnemyBase::ExitStay };
 	actionFunc_[static_cast<int>(ENEMY_ACTION::MOVE)] = { &EnemyBase::EnterMove, &EnemyBase::UpdateMove, &EnemyBase::ExitMove };
 	actionFunc_[static_cast<int>(ENEMY_ACTION::ALERT)] = { &EnemyBase::EnterAlert, &EnemyBase::UpdateAlert, &EnemyBase::ExitAlert };
 	actionFunc_[static_cast<int>(ENEMY_ACTION::ATTACK_READY)] = { &EnemyBase::EnterAttackReady, &EnemyBase::UpdateAttackReady, &EnemyBase::ExitAttackReady };
 	actionFunc_[static_cast<int>(ENEMY_ACTION::ATTACK)] = { &EnemyBase::EnterAttack, &EnemyBase::UpdateAttack, &EnemyBase::ExitAttack };
 	actionFunc_[static_cast<int>(ENEMY_ACTION::RETURN_GROUP)] = { &EnemyBase::EnterReturn, &EnemyBase::UpdateReturn, &EnemyBase::ExitReturn };
+
+	//行動ごとの影響情報の設定
+	actionInfo_[static_cast<int>(ENEMY_ACTION::STAY)] = { .isLock = false, .canMove = true };
+	actionInfo_[static_cast<int>(ENEMY_ACTION::MOVE)] = { .isLock = false, .canMove = true };
+	actionInfo_[static_cast<int>(ENEMY_ACTION::ALERT)] = { .isLock = false, .canMove = true };
+	actionInfo_[static_cast<int>(ENEMY_ACTION::ATTACK_READY)] = { .isLock = true, .canMove = false };
+	actionInfo_[static_cast<int>(ENEMY_ACTION::ATTACK)] = { .isLock = true, .canMove = false };
+	actionInfo_[static_cast<int>(ENEMY_ACTION::RETURN_GROUP)] = { .isLock = false, .canMove = true };
 }
 
 EnemyBase::~EnemyBase(void)
@@ -45,21 +57,60 @@ void EnemyBase::Release(void)
 
 void EnemyBase::HitCollider(std::weak_ptr<Collider> _col)
 {
+	//当たり判定の処理
+	onHit_.HitCollider(_col);
 }
 
-void EnemyBase::ChangeAction(const int _nextAction)
+void EnemyBase::ChangeState(std::unique_ptr<EnemyState> _nextState)
 {
 	//状態が同じなら処理しない
-	if (action_ == _nextAction || _nextAction < 0 || _nextAction >= static_cast<int>(ENEMY_ACTION::MAX))return;
+	if (!_nextState || state_->GetStateId() == _nextState->GetStateId())return;
 
 	//状態抜けの処理
-	(this->*actionFunc_[action_].exit)();
+	if(state_) state_->Exit(*this);
+
+	//状態の変更
+	state_ = std::move(_nextState);
+
+	//状態遷移の処理
+	state_->Enter(*this);
+}
+
+void EnemyBase::ChangeAction(const ENEMY_ACTION _nextAction)
+{
+	//状態が同じなら処理しない
+	if (action_ == _nextAction || _nextAction == ENEMY_ACTION::MAX)return;
+
+	//状態抜けの処理
+	(this->*actionFunc_[static_cast<int>(action_)].exit)();
 	
 	//状態の変更
 	action_ = _nextAction;
 	
 	//状態遷移の処理
-	(this->*actionFunc_[action_].enter)();
+	(this->*actionFunc_[static_cast<int>(action_)].enter)();
+}
+
+void EnemyBase::UpdateBrain(void)
+{
+	//思考の更新
+	if (!actionInfo_[static_cast<int>(action_)].isLock)
+	{
+		//優先度決定
+		brain_.DecidePriority();
+
+		//行動選択
+		brain_.ChoiceAction();
+	}
+}
+
+void EnemyBase::UpdateAction(void)
+{
+	//状態ごとの更新
+	(this->*actionFunc_[static_cast<int>(action_)].update)();
+
+	//移動処理
+	if (actionInfo_[static_cast<int>(action_)].canMove)Move();
 }
 
 void EnemyBase::ResetPos(void)
@@ -114,12 +165,8 @@ void EnemyBase::DoUpdate(void)
 	//アニメーション更新
 	animController_->Update();
 
-	//思考の更新
-	brain_.DecidePriority();
-	brain_.ChoiceAction();
-
-	//状態ごとの更新
-	(this->*actionFunc_[action_].update)();
+	//状態の更新
+	state_->Update(*this);
 }
 
 void EnemyBase::InitAnim(void)
@@ -205,9 +252,6 @@ void EnemyBase::UpdateMove(void)
 {
 	//グループと一体で動く
 	movePow_ = group_->GetMovePow();
-
-	//移動処理
-	Move();
 }
 
 void EnemyBase::UpdateAlert(void)
@@ -217,17 +261,20 @@ void EnemyBase::UpdateAlert(void)
 	
 	//目標地点に向かう移動量の設定
 	movePow_ = Utility::GetMoveVec(pos_, goalPos, RUN_SPEED);
-
-	//移動処理
-	Move();
 }
 
 void EnemyBase::UpdateAttackReady(void)
 {
+	//攻撃準備時間を超えたら攻撃状態に遷移
+	if (attackCnt_ > ATTACK_READY_TIME) ChangeAction(ENEMY_ACTION::ATTACK);
+	else attackCnt_ += SceneManager::GetInstance().GetDeltaTime();
 }
 
 void EnemyBase::UpdateAttack(void)
 {
+	//攻撃時間を超えたら待機状態に遷移
+	if (attackCnt_ > ATTACK_TIME) ChangeAction(ENEMY_ACTION::STAY);
+	else attackCnt_ += SceneManager::GetInstance().GetDeltaTime();
 }
 
 void EnemyBase::UpdateReturn(void)
@@ -237,9 +284,6 @@ void EnemyBase::UpdateReturn(void)
 
 	//グループ座標に向かう移動量の設定
 	movePow_ = Utility::GetMoveVec(pos_, groupPos, SPEED);
-
-	//移動処理
-	Move();
 }
 
 void EnemyBase::ExitStay(void)
@@ -256,21 +300,21 @@ void EnemyBase::ExitAlert(void)
 
 void EnemyBase::ExitAttackReady(void)
 {
+	//攻撃カウンタのリセット
+	attackCnt_ = 0.0f;
 }
 
 void EnemyBase::ExitAttack(void)
 {
+	//攻撃カウンタのリセット
+	attackCnt_ = 0.0f;
+
 	//攻撃コライダの削除
 	DeleteColliderAtTag(Collider::COL_TAG::ENEMY_ATTACK);
 }
 
 void EnemyBase::ExitReturn(void)
 {
-}
-
-void EnemyBase::DistanceAction(void)
-{
-	
 }
 
 void EnemyBase::Move(void)
@@ -291,7 +335,7 @@ void EnemyBase::Attack(void)
 	attackPos_ = VAdd(pos_, quaRot_.PosAxis(ATTACK_LOCAL_POS));
 
 	//攻撃コライダ
-	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, ATTACK_BROUD_RADIUS, ATTACK_RADIUS);
+	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(attackPos_, attackPos_, ATTACK_BROUD_RADIUS, ATTACK_RADIUS);
 	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY_ATTACK, { Collider::COL_TAG::PLAYER });
 
 	//攻撃アニメーションの再生

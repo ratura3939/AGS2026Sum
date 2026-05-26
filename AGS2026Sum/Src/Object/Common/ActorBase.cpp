@@ -133,15 +133,20 @@ void ActorBase::DeleteAllColliders(void)
 	for(auto& col : colliders_) {
 		col->Kill();
 	}
+	colliders_.clear();
 }
 
 void ActorBase::DeleteColliderAtTag(const Collider::COL_TAG& _tag)
 {
+	//タグによるコライダの削除
 	for (auto& col : colliders_) {
 		if (col->IsContainsTag(_tag)) {
 			col->Kill();
 		}
 	}
+
+	//必要なくなったコライダの削除
+	SweepColliders();
 }
 
 void ActorBase::UpdateRotQuat(void)
