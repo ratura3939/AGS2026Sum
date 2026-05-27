@@ -7,17 +7,19 @@ namespace {
 	const float BLEND_RATE_MIN = 0.0f;	//ブレンド率の最小値
 	const float BLEND_RATE_ACC = 0.05f;	//ブレンド率の上昇量
 	const AnimationController::AnimationInfo ANIMATION_INFO_INIT	//アニメーション情報の初期化
-		= { AnimationController::PLAY_TYPE::MAX, AnimationController::ANIM_SOURCE::MAX, -1, -1.0f, false };
+		= { L"",AnimationController::PLAY_TYPE::MAX, AnimationController::ANIM_SOURCE::MAX, -1, -1.0f, false ,false };
 
 	const AnimationController::AttachInfo ATTACH_INFO_INIT			//アタッチ情報の初期化
 		= { -1,-1.0f,-1.0f,false };
+
+	const AnimationController::FixAnimationAxis FIX_AXIS_INIT = { false,false,false };
 }
 
 AnimationController::AnimationController(int& _model)
 	:modelId_(_model)
 	,animBlendRate_(BLEND_RATE_MIN)
 	,currentAnim_(ANIMATION_INFO_INIT)
-	, blendAnim_(ANIMATION_INFO_INIT)
+	,blendAnim_(ANIMATION_INFO_INIT)
 	,isSetDefaultAnim_(false)
 	,defaultAnim_(L"")
 	,currentAnimAttachInfo_(ATTACH_INFO_INIT)
@@ -29,6 +31,8 @@ AnimationController::AnimationController(int& _model)
 	,nextAnimList_({})
 	,isFinishNormalAnim_(false)
 	,isStartNextAnim_(false)
+	,rootFrameIdx_(-1)
+	,isUseFixPositionMethod_(false)
 {
 }
 
@@ -36,7 +40,7 @@ AnimationController::~AnimationController(void)
 {
 }
 
-void AnimationController::Add(const std::wstring& _name, const int _animData, const PLAY_TYPE& _type, const ANIM_SOURCE& _source, const bool _isLock)
+void AnimationController::Add(const std::wstring& _name, const int _animData, const PLAY_TYPE& _type, const ANIM_SOURCE& _source, const bool _isLock, const bool _isFixPosition)
 {
 	//すでに要素がある時
 	if (animDatas_.contains(_name)) {
@@ -47,10 +51,12 @@ void AnimationController::Add(const std::wstring& _name, const int _animData, co
 
 	//初期化(アタッチ番号だけ入れる)
 	AnimationInfo anim = {};
+	anim.name = _name;
 	anim.type = _type;
 	anim.source = _source;
 	anim.data = _animData;
 	anim.mustPlayOnce = _isLock;
+	anim.isFixPosition = _isFixPosition;
 
 	if (_type == PLAY_TYPE::LOOP) {
 		anim.mustPlayOnce = false;	//ループは再生保障の対象外
@@ -63,6 +69,11 @@ void AnimationController::Add(const std::wstring& _name, const int _animData, co
 
 	MV1DetachAnim(modelId_, attach);	//必要ないのでデタッチ
 	animDatas_.emplace(_name, anim);	//アニメーション情報追加
+
+	//補正情報の追加
+	if (_isFixPosition) {
+		fixAxisData_.emplace(_name, FIX_AXIS_INIT);
+	}
 }
 
 void AnimationController::Play(const std::wstring& _name, const float _speed, const std::vector<NextAnimInfo> _next)
@@ -182,6 +193,13 @@ void AnimationController::Update(void)
 	isFinishNormalAnim_ = false;
 	isStartNextAnim_ = false;
 
+	bool isFix = (currentAnim_.isFixPosition || blendAnim_.isFixPosition) && rootFrameIdx_ != -1;
+
+	//補正が必要な状態ならば
+	if (isFix) {
+		MV1ResetFrameUserLocalMatrix(modelId_, rootFrameIdx_);	//一度リセット
+	}
+
 	//カウンタ更新
 	(this->*updateAnim_)();
 
@@ -190,6 +208,9 @@ void AnimationController::Update(void)
 	if (blendAnimAttachInfo_.attachNum != -1) {
 		MV1SetAttachAnimTime(modelId_, blendAnimAttachInfo_.attachNum, blendAnimAttachInfo_.counter);
 	}
+
+	//位置補正処理
+	FixPosition();
 }
 
 void AnimationController::ChangeSpeedRate(const float _percent)
@@ -218,6 +239,27 @@ const float AnimationController::GetCurrentAnimationProgressRate(void) const
 const float AnimationController::GetAnimTotalTime(const std::wstring& _name) const
 {
 	return animDatas_.at(_name).total;
+}
+
+void AnimationController::SetRootFrameIndex(const std::wstring& _frameName)
+{
+	//MV1SearchFrameのエラー時の返り値
+	const int ERROR_SEARCH_CODE = -1;
+	const int ERROR_SEARCH_CODE_2 = -2;
+
+	int idx = MV1SearchFrame(modelId_, _frameName.c_str());
+
+	//MV1SearchFrameのエラーコードの場合
+	if (idx == ERROR_SEARCH_CODE || idx == ERROR_SEARCH_CODE_2) {
+		return;	//処理しない
+	}
+
+	rootFrameIdx_ = idx;	//設定
+}
+
+void AnimationController::SetFixAnimationAxisInfo(const std::wstring _name, const bool _x, const bool _y, const bool _z)
+{
+	fixAxisData_.at(_name) = { _x,_y,_z };
 }
 
 void AnimationController::DrawNextAnimations(void)
@@ -373,4 +415,57 @@ void AnimationController::SetAttachAnim(int& _attachAnim, const int _animData, c
 	else {
 		assert("アニメーション登録でエラーが起きています");
 	}
+}
+
+void AnimationController::FixPosition(void)
+{
+	//親フレームが設定されていない場合
+	if (rootFrameIdx_ == -1) {
+		return;	//処理を行わない
+	}
+
+	if ((currentAnim_.isFixPosition || blendAnim_.isFixPosition)) {
+		static const int MATRIX_MOVEMENT = 3;
+
+		//補正を行う軸を取得
+		const FixAnimationAxis useFixAxis = GetUseFixAnimationAxisData();
+		
+		//移動方向の打消し
+		MATRIX localMat = MV1GetFrameLocalMatrix(modelId_, rootFrameIdx_);
+
+		if (useFixAxis.x)localMat.m[MATRIX_MOVEMENT][0] = 0.0f;	//X
+		if (useFixAxis.y)localMat.m[MATRIX_MOVEMENT][1] = 0.0f;	//Y
+		if (useFixAxis.z)localMat.m[MATRIX_MOVEMENT][2] = 0.0f;	//Z
+		MV1SetFrameUserLocalMatrix(modelId_, rootFrameIdx_, localMat);
+
+		isUseFixPositionMethod_ = true;	//処理を行った
+	}
+	else if (isUseFixPositionMethod_) {
+		//これまで補正を行っていたが、もう必要がなくなったとき
+		MV1ResetFrameUserLocalMatrix(modelId_, rootFrameIdx_);	//通常に戻す
+
+		isUseFixPositionMethod_ = false;	//処理を行わなかった
+	}
+}
+
+const AnimationController::FixAnimationAxis AnimationController::GetUseFixAnimationAxisData(void) const
+{
+	FixAnimationAxis ret = FIX_AXIS_INIT;
+
+	if (currentAnim_.isFixPosition) {
+		FixAnimationAxis currentAnimFixAxisData = fixAxisData_.at(currentAnim_.name);
+
+		if (currentAnimFixAxisData.x)ret.x = currentAnimFixAxisData.x;
+		if (currentAnimFixAxisData.y)ret.y = currentAnimFixAxisData.y;
+		if (currentAnimFixAxisData.z)ret.z = currentAnimFixAxisData.z;
+	}
+	if (blendAnim_.isFixPosition) {
+		FixAnimationAxis blendAnimFixAxisData = fixAxisData_.at(blendAnim_.name);
+
+		if (blendAnimFixAxisData.x)ret.x = blendAnimFixAxisData.x;
+		if (blendAnimFixAxisData.y)ret.y = blendAnimFixAxisData.y;
+		if (blendAnimFixAxisData.z)ret.z = blendAnimFixAxisData.z;
+	}
+
+	return ret;
 }

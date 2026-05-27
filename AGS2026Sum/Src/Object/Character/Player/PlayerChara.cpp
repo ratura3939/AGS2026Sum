@@ -7,6 +7,7 @@
 
 namespace {
 	const float MOVE_SPEED = 10.1f;	//移動速度
+	const std::wstring ROOT_NAME = L"mixamorig8:Hips";
 }
 
 PlayerChara::PlayerChara(void)
@@ -97,7 +98,10 @@ void PlayerChara::InitAnim(void)
 	animController_->Add(PlayerManager::ANIM_THIRD_PUNCH, resM.Load(SRC::PLAYER_THIRD_PUNCH_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL, true);
 	animController_->Add(PlayerManager::ANIM_MIDDLE_KICK, resM.Load(SRC::PLAYER_MIDDLE_KICK_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL, true);
 	animController_->Add(PlayerManager::ANIM_HIGH_KICK, resM.Load(SRC::PLAYER_HIGH_KICK_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL, true);
-	animController_->Add(PlayerManager::ANIM_FINSH_KICK, resM.Load(SRC::PLAYER_FINISH_KICK_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL, true);
+	animController_->Add(PlayerManager::ANIM_FINSH_KICK, resM.Load(SRC::PLAYER_FINISH_KICK_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL, true, true);
+	animController_->SetFixAnimationAxisInfo(PlayerManager::ANIM_FINSH_KICK, true, false, true);	//竜巻旋風脚の移動補正
+
+	animController_->SetRootFrameIndex(ROOT_NAME);	//親ボーン名
 
 	animController_->SetDefaultAnim(PlayerManager::ANIM_IDLE);	//デフォルトを待機にする
 	animController_->Play(PlayerManager::ANIM_IDLE);			//待機アニメ再生
