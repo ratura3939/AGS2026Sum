@@ -4,7 +4,8 @@
 #include "../../../Manager/GameSystem/CollisionManager.h"
 #include "../../Common/Collider.h"
 #include "../../Common/Geometry/Sphere.h"
-#include "State/EnemyState.h"
+#include "State/EnemyStateBase.h"
+#include "State/EnemyNormalState.h"
 #include "EnemyManager.h"
 #include "EnemyGroup.h"
 #include "EnemyBrain.h"
@@ -61,7 +62,7 @@ void EnemyBase::HitCollider(std::weak_ptr<Collider> _col)
 	onHit_.HitCollider(_col);
 }
 
-void EnemyBase::ChangeState(std::unique_ptr<EnemyState> _nextState)
+void EnemyBase::ChangeState(std::unique_ptr<EnemyStateBase> _nextState)
 {
 	//状態が同じなら処理しない
 	if (!_nextState || state_->GetStateId() == _nextState->GetStateId())return;
@@ -135,6 +136,10 @@ void EnemyBase::DoLoad(void)
 
 	//アニメーションの初期化
 	InitAnim();
+
+	//状態の初期化
+	state_ = std::make_unique<EnemyNormalState>();
+	state_->Enter(*this);
 }
 
 void EnemyBase::DoInit(void)

@@ -22,4 +22,12 @@ public:
 	
 	//状態IDの取得
 	const ENEMY_STATE GetStateId(void)const override { return ENEMY_STATE::DAMAGE; }
+
+private:
+
+	//移動時間の最大値
+	static constexpr float DAMAGE_MOVE_TIME_MAX = 0.5f;
+
+	//ダメージを受けたときの移動時間
+	float damageMoveTime_;
 };

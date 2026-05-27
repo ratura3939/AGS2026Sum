@@ -1,5 +1,6 @@
 #include "../pch.h"
 #include "EnemyBase.h"
+#include "State/EnemyDamageState.h"
 #include "EnemyOnHit.h"
 
 EnemyOnHit::EnemyOnHit(EnemyBase& _parent)
@@ -30,9 +31,10 @@ void EnemyOnHit::HitPlayerAttack(const std::weak_ptr<Collider> _col)
 	parent_.SetMovePow(VScale(Utility::GetMoveVec(parent_.GetPos(), _col.lock()->GetGeometry().GetColPos()), -1.0f));
 
 	//ダメージ状態
-	parent_.SetState(EnemyBase::STATE::DAMAGE);
+	parent_.ChangeState(std::make_unique<EnemyDamageState>());
 
 	//ダメージ処理
+	parent_.Damage(1.0f);
 }
 
 void EnemyOnHit::HitEnemy(const std::weak_ptr<Collider> _col)

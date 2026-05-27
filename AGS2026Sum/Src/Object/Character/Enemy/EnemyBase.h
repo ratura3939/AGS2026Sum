@@ -5,7 +5,7 @@
 #include"EnemyOnHit.h"
 #include"EnemyGroup.h"
 
-class EnemyState;
+class EnemyStateBase;
  
 class EnemyBase : public CharacterBase
 {
@@ -45,7 +45,7 @@ public:
 	void HitCollider(std::weak_ptr<Collider> _col)override;
 
 	//状態遷移
-	void ChangeState(std::unique_ptr<EnemyState> _nextState);
+	void ChangeState(std::unique_ptr<EnemyStateBase> _nextState);
 
 	//行動遷移
 	void ChangeAction(const ENEMY_ACTION _nextAction);
@@ -61,6 +61,9 @@ public:
 
 	//生存判定用番号の設定
 	void SetActiveIndex(const int _index) { activeIndex_ = _index; }
+
+	//移動量の取得
+	const VECTOR& GetMovePow(void)const { return movePow_; }
 
 	//移動量の設定
 	void SetMovePow(const VECTOR& _movePow) { movePow_ = _movePow; }
@@ -79,6 +82,9 @@ public:
 
 	//敵グループの設定
 	void SetGroup(const EnemyGroup* _group) { group_ = _group; }
+
+	//移動処理
+	void Move(void)override;
 
 private:
 
@@ -127,7 +133,7 @@ private:
 	VECTOR movePow_;
 
 	//状態
-	std::unique_ptr<EnemyState> state_;
+	std::unique_ptr<EnemyStateBase> state_;
 
 	//行動
 	ENEMY_ACTION action_;														//行動の状態
@@ -178,9 +184,6 @@ private:
 	void ExitAttackReady(void);
 	void ExitAttack(void);
 	void ExitReturn(void);
-
-	//移動処理
-	void Move(void)override;
 
 	//攻撃処理
 	void Attack(void)override;

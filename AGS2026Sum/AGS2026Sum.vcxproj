@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Character\Enemy\State\EnemyDeathState.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\State\EnemyDamageState.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\State\EnemyNormalState.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\State\EnemyStateBase.cpp" />
@@ -192,6 +193,7 @@
     <ClCompile Include="Src\Utility\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Character\Enemy\State\EnemyDeathState.h" />
     <ClInclude Include="Src\Object\Character\Enemy\State\EnemyDamageState.h" />
     <ClInclude Include="Src\Object\Character\Enemy\State\EnemyNormalState.h" />
     <ClInclude Include="Src\Object\Character\Enemy\State\EnemyStateBase.h" />
