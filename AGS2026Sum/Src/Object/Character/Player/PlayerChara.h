@@ -13,6 +13,19 @@ class PlayerChara :
 		void HitCollider(std::weak_ptr<Collider> _col)override;	//衝突後の処理
         void InputMoveVec(const VECTOR& _inputVec); //移動入力の受付
 
+		void SetIsAttack(const bool _isAttack) { isAttack_ = _isAttack; }	//攻撃状態の設定
+
+        void PlayAnim(const std::wstring& _animName, const float _speed = 1.0f);		//アニメーション再生
+		void ForcePlayAnim(const std::wstring& _animName, const float _speed = 1.0f);	//アニメーション強制再生
+		void GetAnimTotalTime(const std::wstring& _animName)const;	//アニメーションの総再生時間を取得
+
+		const float GetCurrentAnimationProgressRate(void)const;	//現在のアニメーションの再生進行度を取得
+		const bool IsFinishAttackAnimation(void)const { return animController_->IsFinishNormalAnim(); }	//通常再生のアニメ（主に攻撃関連）が終了しているか
+		const bool IsStartNextAttackAnimation(void)const { return animController_->IsStartNextAnim(); }	//次のアニメ（主に攻撃関連）が開始しているか
+
+		//デバッグ用
+		void DrawNextAnimations(void);
+
     private:
         void DoLoad(void)override;			//読み込み
         void DoInit(void)override;			//初期化
@@ -27,6 +40,6 @@ class PlayerChara :
 		float moveSpeed_;       //移動速度
 		bool isMove_;           //移動しているか
 		bool isAttack_;         //攻撃しているか  
-		std::wstring useAnim_;     //現在のアニメーション
+		std::wstring useAnim_;  //現在のアニメーション
 };
 

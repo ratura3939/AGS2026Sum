@@ -139,15 +139,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <ClCompile Include="Src\Object\Character\Player\PlayerAttack.cpp" />
-    <ClCompile Include="Src\Object\Character\Enemy\State\EnemyDeathState.cpp" />
-    <ClCompile Include="Src\Object\Character\Enemy\State\EnemyDamageState.cpp" />
-    <ClCompile Include="Src\Object\Character\Enemy\State\EnemyNormalState.cpp" />
-    <ClCompile Include="Src\Object\Character\Enemy\State\EnemyStateBase.cpp" />
-    <ClCompile Include="Src\Object\Character\Enemy\EnemyOnHit.cpp" />
-    <ClCompile Include="Src\Object\Character\Enemy\EnemyBrain.cpp" />
-    <ClCompile Include="Src\Object\Character\Enemy\EnemyPool.cpp" />
+=======
     <ClCompile Include="Src\Object\Character\Enemy\EnemyGroup.cpp" />
+>>>>>>> main
     <ClCompile Include="Src\Object\Character\Enemy\EnemyBase.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerChara.cpp" />
     <ClCompile Include="Src\Object\Character\CharacterBase.cpp" />
@@ -194,18 +190,12 @@
     <ClCompile Include="Src\Utility\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <ClInclude Include="Src\Object\Character\Player\PlayerAttack.h" />
-    <ClInclude Include="Src\Object\Character\Enemy\State\EnemyDeathState.h" />
-    <ClInclude Include="Src\Object\Character\Enemy\State\EnemyDamageState.h" />
-    <ClInclude Include="Src\Object\Character\Enemy\State\EnemyNormalState.h" />
-    <ClInclude Include="Src\Object\Character\Enemy\State\EnemyStateBase.h" />
-    <ClInclude Include="Src\Object\Character\Enemy\EnemyOnHit.h" />
-    <ClInclude Include="Src\Object\Character\Enemy\EnemyDefine.h" />
-    <ClInclude Include="Src\Object\Character\Enemy\EnemyBrain.h" />
-    <ClInclude Include="Src\Object\Character\Enemy\EnemyPool.h" />
+=======
     <ClInclude Include="Src\Object\Character\Enemy\EnemyGroup.h" />
+>>>>>>> main
     <ClInclude Include="Src\Object\Character\Enemy\EnemyBase.h" />
-    <ClInclude Include="Src\Object\Character\Player\PlayerAttackData.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerChara.h" />
     <ClInclude Include="Src\Object\Character\CharacterBase.h" />
     <ClInclude Include="Src\Application.h" />

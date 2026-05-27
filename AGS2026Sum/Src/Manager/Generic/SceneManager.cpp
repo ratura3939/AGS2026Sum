@@ -58,8 +58,9 @@ void SceneManager::Init(void)
 	SetInitScene(std::make_shared<Title>());
 
 	// メインスクリーン
+	Application& app = Application::GetInstance();
 	mainScreen_ = MakeScreen(
-		Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
+		app.GetWindowWidth(), app.GetWindowHeight(), true);
 }
 
 void SceneManager::Init3D(void)

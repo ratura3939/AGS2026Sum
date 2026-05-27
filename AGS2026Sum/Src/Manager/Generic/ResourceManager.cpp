@@ -93,6 +93,9 @@ void ResourceManager::ResourcePlayer(void)
 	//ダッシュ
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/Run.mv1");
 	resourcesMap_.emplace(SRC::PLAYER_RUN_ANIM, res);
+	//ダメージ
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/HitDamage.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_DAMAGE_ANIM, res);
 	//パンチ１
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/FirstPunch.mv1");
 	resourcesMap_.emplace(SRC::PLAYER_FIRST_PUNCH_ANIM, res);
@@ -100,7 +103,7 @@ void ResourceManager::ResourcePlayer(void)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/SecondPunch.mv1");
 	resourcesMap_.emplace(SRC::PLAYER_SECOND_PUNCH_ANIM, res);
 	//パンチ３
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/ThirdPunch.mv1");
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/FinishPunch.mv1");
 	resourcesMap_.emplace(SRC::PLAYER_THIRD_PUNCH_ANIM, res);
 	//キック１
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/MiddleKick.mv1");
@@ -111,6 +114,10 @@ void ResourceManager::ResourcePlayer(void)
 	//キック３
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/HurricanKick.mv1");
 	resourcesMap_.emplace(SRC::PLAYER_FINISH_KICK_ANIM, res);
+
+	//JSON
+	res = Resource(Resource::TYPE::JSON, Application::PATH_JSON + L"PlayerAttackData.json");
+	resourcesMap_.emplace(SRC::PLAYER_ATTACK_DATA_JSON, res);
 }
 
 void ResourceManager::ResourceEnemy(void)

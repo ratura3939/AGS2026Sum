@@ -140,14 +140,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Src\Object\Character\Player\PlayerAttack.cpp" />
-    <ClCompile Include="Src\Object\Character\Enemy\State\EnemyDeathState.cpp" />
-    <ClCompile Include="Src\Object\Character\Enemy\State\EnemyDamageState.cpp" />
-    <ClCompile Include="Src\Object\Character\Enemy\State\EnemyNormalState.cpp" />
-    <ClCompile Include="Src\Object\Character\Enemy\State\EnemyStateBase.cpp" />
-    <ClCompile Include="Src\Object\Character\Enemy\EnemyOnHit.cpp" />
-    <ClCompile Include="Src\Object\Character\Enemy\EnemyBrain.cpp" />
-    <ClCompile Include="Src\Object\Character\Enemy\EnemyPool.cpp" />
-    <ClCompile Include="Src\Object\Character\Enemy\EnemyGroup.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\EnemyBase.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerChara.cpp" />
     <ClCompile Include="Src\Object\Character\CharacterBase.cpp" />
@@ -163,8 +155,8 @@
     <ClCompile Include="Src\Manager\GameSystem\AnimationController.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\AttackManager.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\CollisionManager.cpp" />
+    <ClCompile Include="Src\Manager\GameSystem\EnemyManager.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerManager.cpp" />
-    <ClCompile Include="Src\Object\Character\Enemy\EnemyManager.cpp" />
     <ClCompile Include="Src\Manager\Generic\Camera.cpp" />
     <ClCompile Include="Src\Manager\Generic\CameraCollider.cpp" />
     <ClCompile Include="Src\Manager\Generic\InputManager.cpp" />
@@ -195,17 +187,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Object\Character\Player\PlayerAttack.h" />
-    <ClInclude Include="Src\Object\Character\Enemy\State\EnemyDeathState.h" />
-    <ClInclude Include="Src\Object\Character\Enemy\State\EnemyDamageState.h" />
-    <ClInclude Include="Src\Object\Character\Enemy\State\EnemyNormalState.h" />
-    <ClInclude Include="Src\Object\Character\Enemy\State\EnemyStateBase.h" />
-    <ClInclude Include="Src\Object\Character\Enemy\EnemyOnHit.h" />
-    <ClInclude Include="Src\Object\Character\Enemy\EnemyDefine.h" />
-    <ClInclude Include="Src\Object\Character\Enemy\EnemyBrain.h" />
-    <ClInclude Include="Src\Object\Character\Enemy\EnemyPool.h" />
-    <ClInclude Include="Src\Object\Character\Enemy\EnemyGroup.h" />
     <ClInclude Include="Src\Object\Character\Enemy\EnemyBase.h" />
-    <ClInclude Include="Src\Object\Character\Player\PlayerAttackData.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerChara.h" />
     <ClInclude Include="Src\Object\Character\CharacterBase.h" />
     <ClInclude Include="Src\Application.h" />
@@ -222,8 +204,8 @@
     <ClInclude Include="Src\Manager\GameSystem\AnimationController.h" />
     <ClInclude Include="Src\Manager\GameSystem\AttackManager.h" />
     <ClInclude Include="Src\Manager\GameSystem\CollisionManager.h" />
+    <ClInclude Include="Src\Manager\GameSystem\EnemyManager.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerManager.h" />
-    <ClInclude Include="Src\Object\Character\Enemy\EnemyManager.h" />
     <ClInclude Include="Src\Manager\Generic\Camera.h" />
     <ClInclude Include="Src\Manager\Generic\CameraCollider.h" />
     <ClInclude Include="Src\Manager\Generic\InputManager.h" />
