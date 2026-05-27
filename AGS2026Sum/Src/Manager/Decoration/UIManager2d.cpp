@@ -1,5 +1,7 @@
 #include"../../pch.h"
 #include"../../Utility/Utility.h"
+#include"../../Renderer/PixelMaterial.h"
+#include"../../Renderer/PixelRenderer.h"
 #include "UIManager2d.h"
 
 UIManager2d* UIManager2d::instance_ = nullptr;
@@ -38,6 +40,8 @@ void UIManager2d::Add(const UI_NAME& _name, const int _imgHndl, const UI_DIRECTI
 	info.scl = 1.0f;
 	info.deg = 0.0f;
 	info.alpha = ALPHA_MAX;
+	info.material = nullptr;
+	info.renderer = nullptr;
 
 	//基礎情報追加
 	infoes_.emplace(_name, info);
@@ -154,6 +158,11 @@ void UIManager2d::SetUIDirectionPram(const UI_NAME& _name, const UI_DIRECTION_GR
 	
 }
 
+void UIManager2d::SetShaderMaterial(const UI_NAME& _name, std::wstring shaderFileName, int constBufFloat4Size) {
+
+	infoes_.at(_name).material = std::make_unique<PixelMaterial>(shaderFileName, constBufFloat4Size);
+}
+
 void UIManager2d::SetPos(const UI_NAME& _name, const VECTOR& _pos)
 {
 	//動きのエフェクトがあるかを検出
@@ -232,7 +241,7 @@ void UIManager2d::Update(const std::vector<UI_NAME>& _names)
 
 void UIManager2d::Draw(const UI_NAME& _name)
 {
-	auto info = infoes_[_name];
+	auto& info = infoes_[_name];
 	//うっすら黒くする
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(info.alpha));
 	if (info.dimension == UI_DRAW_DIMENSION::DIMENSION_2) {

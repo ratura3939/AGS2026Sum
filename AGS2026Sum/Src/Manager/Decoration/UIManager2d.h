@@ -2,7 +2,11 @@
 #include<string>
 #include<vector>
 #include<map>
+#include<memory>
 #include<DxLib.h>
+
+class PixelMaterial;
+class PixelRenderer;
 
 class UIManager2d
 {
@@ -62,6 +66,9 @@ public:
 		float scl;	//大きさ
 		float deg;	//角度
 		float alpha;//透明度
+
+		std::unique_ptr<PixelMaterial>material;
+		std::unique_ptr<PixelRenderer>renderer;
 	};
 
 	//演出一つにつき必要なもの
@@ -128,6 +135,13 @@ public:
 	/// <param name="_max">最大値(詳細は各項目の更新処理参照)</param>
 	/// <param name="_min">最小値(詳細は各項目の更新処理参照)</param>
 	void SetUIDirectionPram(const UI_NAME& _name, const UI_DIRECTION_GROUP _group, const float _acc, const float _max, const float _min);
+
+	/// <summary>
+	/// シェーダのマテリアル設定
+	/// </summary>
+	/// <param name="shaderFileName">シェーダファイル名</param>
+	/// <param name="constBufFloat4Size">バッファサイズ</param>
+	void SetShaderMaterial(const UI_NAME& _name, std::wstring shaderFileName, int constBufFloat4Size);
 
 	//パラメータ再設定
 	void SetPos(const UI_NAME& _name,const VECTOR& _pos);	//位置
