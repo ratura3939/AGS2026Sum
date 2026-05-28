@@ -1,8 +1,4 @@
 #include"../../pch.h"
-#include"../../Application.h"
-#include"../../Manager/Generic/ResourceManager.h"
-#include"../../Manager/GameSystem/AttackManager.h"
-#include"../../Scene/Main/Game.h"
 #include"../../Utility/Utility.h"
 #include"EnemyDefine.h"
 #include"EnemyGroup.h"
@@ -25,8 +21,8 @@ void EnemyManager::Init(void)
 	enemyPool_ = std::make_unique<EnemyPool>();
 
 	//敵の生成(デバッグ)
-	//CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(1);
+	CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(1);
 }
 
 void EnemyManager::Update(void)

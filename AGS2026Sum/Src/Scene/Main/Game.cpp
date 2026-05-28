@@ -237,14 +237,14 @@ void Game::Update(void)
 	//}
 
 	// ƒV[ƒ“‘JˆÚ
-	if (inpM.IsTrigerrDown(InputManager::INPUT_COMMAND::ENTER))
-	{
-		SceneManager::GetInstance().ChangeScene(std::make_shared<Title>());
-	}
-	//else if(enemy_->GetActiveEnemyNum() <= 0)
+	//if (inpM.IsTrigerrDown(InputManager::INPUT_COMMAND::ENTER))
 	//{
 	//	SceneManager::GetInstance().ChangeScene(std::make_shared<Title>());
 	//}
+	if(enemy_->GetActiveEnemyNum() <= 0)
+	{
+		SceneManager::GetInstance().ChangeScene(std::make_shared<Title>());
+	}
 
 #pragma endregion
 
