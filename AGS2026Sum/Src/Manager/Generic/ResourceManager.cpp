@@ -147,6 +147,10 @@ void ResourceManager::ResourceEnemy(void)
 	res = Resource(Resource::TYPE::MODEL, animPath + L"Attack.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_ATTACK_ANIM, res);
 
+	//êÅÇ¡îÚÇ—
+	res = Resource(Resource::TYPE::MODEL, animPath + L"Blow.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_BLOW_ANIM, res);
+
 	//éÄñS
 	res = Resource(Resource::TYPE::MODEL, animPath + L"Death.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_DEATH_ANIM, res);

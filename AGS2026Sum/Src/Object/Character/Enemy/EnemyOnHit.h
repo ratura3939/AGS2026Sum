@@ -19,6 +19,9 @@ public:
 
 private:
 
+	//吹っ飛び速度
+	static constexpr float BLOW_POWER = 5.0f;
+
 	//親
 	EnemyBase& parent_;
 

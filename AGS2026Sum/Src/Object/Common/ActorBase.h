@@ -27,8 +27,11 @@ public:
 
 	//位置設定
 	void SetPos(const VECTOR& _pos);
-	void SetPrevPos(void);
 	const VECTOR& GetPos(void)const;
+
+	//移動後の位置設定
+	void SetLocalPos(const VECTOR& _localPos);
+	const VECTOR& GetLocalPos(void)const;
 
 	// 各種方向を取得
 	const VECTOR& GetForward(void) const;
@@ -64,7 +67,7 @@ protected:
 
 	VECTOR pos_;		//座標
 	VECTOR movedPos_;	//移動後座標
-	VECTOR prevPos_;	//前フレームの座標
+	VECTOR localPos_;	//ローカル座標
 	VECTOR scl_;		//モデル大きさ
 	VECTOR rot_;		//回転情報(XYZ)
 

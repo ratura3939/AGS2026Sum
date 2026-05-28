@@ -1,6 +1,6 @@
 {
   "Punch_First": {
-    "radius": 30.0,
+    "radius": 300.0,
     "power": 10.0,
     "time": 20,
     "localPos": {

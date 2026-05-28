@@ -26,7 +26,7 @@ public:
 private:
 
 	//移動時間の最大値
-	static constexpr float DAMAGE_MOVE_TIME_MAX = 0.5f;
+	static constexpr float DAMAGE_MOVE_TIME_MAX = 1.5f;
 
 	//ダメージを受けたときの移動時間
 	float damageMoveTime_;

@@ -38,6 +38,9 @@ public:
 	//敵グループの生成
 	void CreateEnemyGroup(const int _createNum);
 
+	//生存中の敵の数を取得
+	const int GetActiveEnemyNum(void)const;
+
 private:
 
 	//プレイヤーを狙うときの距離半径

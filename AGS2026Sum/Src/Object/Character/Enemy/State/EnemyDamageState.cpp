@@ -17,6 +17,9 @@ void EnemyDamageState::Enter(EnemyBase& _enemy)
 {
 	//移動時間の初期化
 	damageMoveTime_ = 0.0f;
+
+	//ダメージアニメーション
+	_enemy.PlayAnim(L"Blow");
 }
 
 void EnemyDamageState::Update(EnemyBase& _enemy)
@@ -26,7 +29,7 @@ void EnemyDamageState::Update(EnemyBase& _enemy)
 	else damageMoveTime_ += SceneManager::GetInstance().GetDeltaTime();
 
 	//移動更新
-	_enemy.Move();
+	_enemy.BackMove();
 }
 
 void EnemyDamageState::Exit(EnemyBase& _enemy)

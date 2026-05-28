@@ -11,6 +11,9 @@
 #include "EnemyBrain.h"
 #include "EnemyBase.h"
 
+//親ボーン名
+const std::wstring EnemyBase::ROOT_NAME = L"mixamorig:Hips";
+
 EnemyBase::EnemyBase(void)
 	: group_(nullptr)
 	, activeIndex_(-1)
@@ -198,10 +201,18 @@ void EnemyBase::InitAnim(void)
 	animData = res.LoadModelDuplicate(ResourceManager::SRC::ENEMY_ATTACK_ANIM);
 	animController_->Add(L"Attack", animData, AnimationController::PLAY_TYPE::NORMAL, AnimationController::ANIM_SOURCE::EXTERNAL);
 
+	//吹っ飛びアニメーション
+	animData = res.LoadModelDuplicate(ResourceManager::SRC::ENEMY_BLOW_ANIM);
+	animController_->Add(L"Blow", animData, AnimationController::PLAY_TYPE::NORMAL, AnimationController::ANIM_SOURCE::EXTERNAL, false, true);
+	animController_->SetFixAnimationAxisInfo(L"Blow", true, true, true);
+
 	//死亡アニメーション
 	animData = res.LoadModelDuplicate(ResourceManager::SRC::ENEMY_DEATH_ANIM);
 	animController_->Add(L"Death", animData, AnimationController::PLAY_TYPE::NORMAL, AnimationController::ANIM_SOURCE::EXTERNAL);
 
+	//重心ボーンの設定
+	animController_->SetRootFrameIndex(ROOT_NAME);
+		
 	//デフォルトアニメーションの設定
 	animController_->SetDefaultAnim(L"Idle");
 }
@@ -334,6 +345,23 @@ void EnemyBase::Move(void)
 	movedPos_ = movedPos;
 }
 
+void EnemyBase::BackMove(void)
+{
+	//移動後座標の更新
+	VECTOR movedPos = VAdd(movedPos_, movePow_);
+
+	//回転の更新
+	quaRot_ = quaRot_.LookRotation(VScale(Utility::GetMoveVec(movedPos, movedPos_), -1.0f));
+
+	//移動後座標の更新
+	movedPos_ = movedPos;
+}
+
+void EnemyBase::PlayAnim(const std::wstring& _animName, const float _speed)
+{
+	animController_->Play(_animName, _speed);
+}
+
 void EnemyBase::Attack(void)
 {
 	//攻撃目標座標の設定
@@ -345,4 +373,13 @@ void EnemyBase::Attack(void)
 
 	//攻撃アニメーションの再生
 	animController_->Play(L"Attack");
+}
+
+void EnemyBase::Death(void)
+{
+	//死亡アニメーションの再生
+	//animController_->Play(L"Death");
+	
+	//グループから離れる
+	LeaveGroup();
 }

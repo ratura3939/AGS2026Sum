@@ -25,8 +25,8 @@ void EnemyManager::Init(void)
 	enemyPool_ = std::make_unique<EnemyPool>();
 
 	//敵の生成(デバッグ)
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(2);
+	//CreateEnemyGroup(CREATE_NUM);
+	CreateEnemyGroup(1);
 }
 
 void EnemyManager::Update(void)
@@ -100,6 +100,13 @@ void EnemyManager::CreateEnemyGroup(const int _createNum)
 
 	//格納
 	enemyGroup_.push_back(std::move(group));
+}
+
+const int EnemyManager::GetActiveEnemyNum(void) const
+{
+	if (!enemyPool_) return 0;
+
+	return static_cast<int>(enemyPool_->GetActiveEnemys().size());
 }
 
 void EnemyManager::Grouping(EnemyGroup* _group, EnemyBase* _enemy)

@@ -19,6 +19,8 @@ EnemyOnHit::~EnemyOnHit(void)
 
 void EnemyOnHit::HitCollider(const std::weak_ptr<Collider> _col)
 {
+	//当たり判定のタグごとの処理の呼び出し
+	((this)->*onHit_[static_cast<int>(_col.lock()->GetTags())])(_col);
 }
 
 void EnemyOnHit::HitPlayer(const std::weak_ptr<Collider> _col)
@@ -28,7 +30,9 @@ void EnemyOnHit::HitPlayer(const std::weak_ptr<Collider> _col)
 void EnemyOnHit::HitPlayerAttack(const std::weak_ptr<Collider> _col)
 {
 	//吹っ飛び
-	parent_.SetMovePow(VScale(Utility::GetMoveVec(parent_.GetPos(), _col.lock()->GetGeometry().GetColPos()), -1.0f));
+	VECTOR blowPow = VScale(Utility::GetMoveVec(parent_.GetPos(), _col.lock()->GetGeometry().GetColPos()), -BLOW_POWER);
+	blowPow.y = 0.0f;
+	parent_.SetMovePow(blowPow);
 
 	//ダメージ状態
 	parent_.ChangeState(std::make_unique<EnemyDamageState>());

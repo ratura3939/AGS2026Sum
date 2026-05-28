@@ -1,4 +1,6 @@
 #pragma once
+#include <array>
+#include <string>
 #include "../CharacterBase.h"
 #include "EnemyDefine.h"
 #include"EnemyBrain.h"
@@ -86,7 +88,16 @@ public:
 	//移動処理
 	void Move(void)override;
 
+	//バック移動
+	void BackMove(void);
+
+	//アニメーションプレイ
+	void PlayAnim(const std::wstring& _animName, const float _speed = 1.0f);
+
 private:
+
+	//親ボーン名
+	static const std::wstring ROOT_NAME;
 
 	//行動の関数ポインタ
 	using Func = void(EnemyBase::*)(void);
@@ -187,4 +198,7 @@ private:
 
 	//攻撃処理
 	void Attack(void)override;
+
+	//死亡処理
+	void Death(void)override;
 };

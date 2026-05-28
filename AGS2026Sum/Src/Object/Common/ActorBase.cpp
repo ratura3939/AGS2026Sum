@@ -5,7 +5,9 @@
 
 ActorBase::ActorBase(void)
 	: modelId_(-1)
+	, movedPos_(Utility::VECTOR_ZERO)
 	, pos_(Utility::VECTOR_ZERO)
+	, localPos_(Utility::VECTOR_ZERO)
 	, scl_(Utility::VECTOR_ONE)
 	, rot_(Utility::VECTOR_ZERO)
 	, matScl_(MGetIdent())
@@ -17,7 +19,6 @@ ActorBase::ActorBase(void)
 	, speciesName_(L"")
 	, power_(0.0f)
 	, gravity_(Utility::VECTOR_ZERO)
-	, prevPos_(Utility::VECTOR_ZERO)
 {
 }
 
@@ -45,7 +46,8 @@ void ActorBase::Init(void)
 
 void ActorBase::Update(void)
 {
-	prevPos_ = pos_;
+	//移動後の座標を影響
+	pos_ = movedPos_;
 	//派生クラスの更新処理
 	DoUpdate();
 	//共通処理
@@ -66,14 +68,19 @@ void ActorBase::SetPos(const VECTOR& _pos)
 	pos_ = _pos;
 }
 
-void ActorBase::SetPrevPos(void)
-{
-	pos_ = prevPos_;
-}
-
 const VECTOR& ActorBase::GetPos(void) const
 {
 	return pos_;
+}
+
+void ActorBase::SetLocalPos(const VECTOR& _localPos)
+{
+	localPos_ = _localPos;
+}
+
+const VECTOR& ActorBase::GetLocalPos(void) const
+{
+	return localPos_;
 }
 
 const VECTOR& ActorBase::GetForward(void) const

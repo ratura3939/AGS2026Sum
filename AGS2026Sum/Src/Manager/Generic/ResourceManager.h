@@ -34,6 +34,7 @@ public:
 		, ENEMY_WALK_ANIM			//•à‚­
 		, ENEMY_RUN_ANIM			//‘–‚é
 		, ENEMY_ATTACK_ANIM			//UŒ‚
+		, ENEMY_BLOW_ANIM			//‚Á”ò‚Ñ
 		, ENEMY_DEATH_ANIM			//Ž€–S
 
 

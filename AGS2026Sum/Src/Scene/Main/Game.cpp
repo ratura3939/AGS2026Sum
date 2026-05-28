@@ -241,6 +241,11 @@ void Game::Update(void)
 	{
 		SceneManager::GetInstance().ChangeScene(std::make_shared<Title>());
 	}
+	//else if(enemy_->GetActiveEnemyNum() <= 0)
+	//{
+	//	SceneManager::GetInstance().ChangeScene(std::make_shared<Title>());
+	//}
+
 #pragma endregion
 
 	//XV

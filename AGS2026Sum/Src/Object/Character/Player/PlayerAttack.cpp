@@ -80,7 +80,7 @@ void PlayerAttack::DoLoad(void)
 
 void PlayerAttack::DoInit(void)
 {
-	colliders_.push_back(std::make_shared<Collider>(*this, Collider::COL_TAG::PLAYER_ATTACK, std::make_unique<Sphere>(pos_, pos_, currentData_.radius, currentData_.radius), std::set<Collider::COL_TAG>{ Collider::COL_TAG::ENEMY }));
+	MakeCollider(std::make_unique<Sphere>(pos_, pos_, currentData_.radius, currentData_.radius), Collider::COL_TAG::PLAYER_ATTACK, { Collider::COL_TAG::ENEMY });	//攻撃用のコライダ生成
 	LoadAttackData();
 
 	colliders_[0]->SetUseThis(false);	//コライダの無効化
@@ -134,7 +134,8 @@ void PlayerAttack::ApplyAttackColliderSettings(void)
 	Sphere* attackSphere = colliders_[0]->GetGeometry<Sphere>();
 	
 	if (attackSphere != nullptr) {
-		attackSphere->SetRadius(currentData_.radius);	//半径変更
+		attackSphere->SetRadius(currentData_.radius);		//半径変更
+		attackSphere->SetBroudRadius(currentData_.radius);	//前判定用半径変更
 	}
 }
 
