@@ -148,7 +148,7 @@ void EnemyBase::DoLoad(void)
 void EnemyBase::DoInit(void)
 {
 	//体力
-	hp_ = 100.0f;		
+	hp_ = 10.0f;		
 	quaRotLocal_ = Quaternion::Euler(0.0f, 0.0f, 0.0f);
 
 	//当たり判定の生成

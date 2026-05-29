@@ -112,7 +112,7 @@ void PlayerChara::Move(void)
 	VECTOR moveVec = inputDir_;
 	moveVec.y = 0.0f;	//Y軸方向の移動はなし
 
-	pos_ = VAdd(pos_, VScale(moveVec, moveSpeed_));	//移動
+	movedPos_ = VAdd(movedPos_, VScale(moveVec, moveSpeed_));	//移動
 	isMove_ = false;
 }
 
