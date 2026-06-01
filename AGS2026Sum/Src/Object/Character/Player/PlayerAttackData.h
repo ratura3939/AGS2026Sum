@@ -2,6 +2,8 @@
 #include<DxLib.h>
 #include"../../../Lib/nlohmann/json.hpp"
 
+static const int ATTACK_TYPE_NUM = 2;	//攻撃の種類の数
+
 //jsonから受け取る攻撃データ
 struct AttackData {
 	int radius = -1;      //大きさ
@@ -10,6 +12,7 @@ struct AttackData {
 	VECTOR localPos = { -1.0f, -1.0f, -1.0f };   //ローカル座標
 	float animationSpeed = -1.0f;	//アニメーションの再生速度
 	int counter = 0;		//攻撃の時間管理
+	std::array<std::string, ATTACK_TYPE_NUM>nextAttacks;	//次の攻撃(パンチorキックの最大２派生)
 };
 
 inline void from_json(const nlohmann::json& _data, VECTOR& _vec) {
@@ -29,4 +32,11 @@ inline void from_json(const nlohmann::json& _data, AttackData& _attackData) {
 		_data.value("localPos", nlohmann::json::object()).at("z").get_to(_attackData.localPos.z);
 	}
 	_data.at("animationSpeed").get_to(_attackData.animationSpeed);
+
+	if (_data.contains("nextAttacks")) {
+		const auto& next = _data.at("nextAttacks");
+		for (int i = 0; i < ATTACK_TYPE_NUM; i++) {
+			_attackData.nextAttacks[i] = next[i].get<std::string>();
+		}
+	}
 }

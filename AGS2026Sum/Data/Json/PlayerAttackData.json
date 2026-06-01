@@ -8,7 +8,8 @@
       "y": 50.0,
       "z": 50.0
     },
-    "animationSpeed": 2.5
+    "animationSpeed": 2.5,
+    "nextAttacks": ["Punch_Second", "Kick_First"]
   },
 
   "Punch_Second": {
@@ -20,7 +21,8 @@
       "y": 50.0,
       "z": 70.0
     },
-    "animationSpeed": 2.0
+    "animationSpeed": 2.0,
+    "nextAttacks": [ "Punch_Third", "Kick_Second" ]]
   },
 
   "Punch_Third": {
@@ -32,7 +34,8 @@
       "y": 50.0,
       "z": 120.0
     },
-    "animationSpeed": 2.0
+    "animationSpeed": 2.0,
+    "nextAttacks": [ "","Kick_Third" ]]
   },
 
   "Kick_First": {
@@ -44,7 +47,8 @@
       "y": 50.0,
       "z": 50.0
     },
-    "animationSpeed": 1.5
+    "animationSpeed": 1.5,
+    "nextAttacks": [ "", "Kick_Second" ]]
   },
 
   "Kick_Second": {
@@ -56,7 +60,8 @@
       "y": 50.0,
       "z": 70.0
     },
-    "animationSpeed": 3.0
+    "animationSpeed": 3.0,
+    "nextAttacks": [ "", "" ]
   },
 
   "Kick_Third": {
@@ -68,6 +73,7 @@
       "y": 50.0,
       "z": 120.0
     },
-    "animationSpeed": 2.5
+    "animationSpeed": 2.5,
+    "nextAttacks": [ "", "" ]
   }
 }
