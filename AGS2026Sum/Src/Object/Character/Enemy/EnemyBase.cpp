@@ -151,9 +151,17 @@ void EnemyBase::DoInit(void)
 	hp_ = 10.0f;		
 	quaRotLocal_ = Quaternion::Euler(0.0f, 0.0f, 0.0f);
 
+	//コライダの初期化
+	DeleteAllColliders();
+
 	//当たり判定の生成
 	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, BROUD_RADIUS, RADIUS);
 	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY, { Collider::COL_TAG::PLAYER, Collider::COL_TAG::PLAYER_ATTACK });
+
+	//攻撃コライダ
+	geo = std::make_unique<Sphere>(attackPos_, attackPos_, ATTACK_BROUD_RADIUS, ATTACK_RADIUS);
+	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY_ATTACK, { Collider::COL_TAG::PLAYER });
+	DisableColliderAtTag(Collider::COL_TAG::ENEMY_ATTACK);
 }
 
 void EnemyBase::InitWithGroup(void)
@@ -222,7 +230,7 @@ void EnemyBase::DrawDebug(void)
 #ifdef _DEBUG
 
 	for (auto& col : colliders_) {
-		col->DrawDebugCollider();
+		if(col->IsUseThis())col->DrawDebugCollider();
 	}
 
 #endif // DEBUG
@@ -325,8 +333,8 @@ void EnemyBase::ExitAttack(void)
 	//攻撃カウンタのリセット
 	attackCnt_ = 0.0f;
 
-	//攻撃コライダの削除
-	DeleteColliderAtTag(Collider::COL_TAG::ENEMY_ATTACK);
+	//攻撃コライダの無効化
+	DisableColliderAtTag(Collider::COL_TAG::ENEMY_ATTACK);
 }
 
 void EnemyBase::ExitReturn(void)
@@ -357,6 +365,24 @@ void EnemyBase::BackMove(void)
 	movedPos_ = movedPos;
 }
 
+void EnemyBase::EnableHitCollider(void)
+{
+	//当たり判定の有効化
+	EnableColliderAtTag(Collider::COL_TAG::ENEMY);
+}
+
+void EnemyBase::DisableHitCollider(void)
+{
+	//当たり判定の無効化
+	DisableColliderAtTag(Collider::COL_TAG::ENEMY);
+}
+
+void EnemyBase::DisableAttack(void)
+{
+	//攻撃コライダの無効化
+	DisableColliderAtTag(Collider::COL_TAG::ENEMY_ATTACK);
+}
+
 void EnemyBase::PlayAnim(const std::wstring& _animName, const float _speed)
 {
 	animController_->Play(_animName, _speed);
@@ -367,9 +393,8 @@ void EnemyBase::Attack(void)
 	//攻撃目標座標の設定
 	attackPos_ = VAdd(pos_, quaRot_.PosAxis(ATTACK_LOCAL_POS));
 
-	//攻撃コライダ
-	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(attackPos_, attackPos_, ATTACK_BROUD_RADIUS, ATTACK_RADIUS);
-	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY_ATTACK, { Collider::COL_TAG::PLAYER });
+	//攻撃コライダの有効化
+	EnableColliderAtTag(Collider::COL_TAG::ENEMY_ATTACK);
 
 	//攻撃アニメーションの再生
 	animController_->Play(L"Attack");

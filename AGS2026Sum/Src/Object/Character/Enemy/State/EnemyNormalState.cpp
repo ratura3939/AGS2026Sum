@@ -12,6 +12,11 @@ EnemyNormalState::~EnemyNormalState(void)
 
 void EnemyNormalState::Enter(EnemyBase& _enemy)
 {
+	//当たり判定の有効化
+	_enemy.EnableHitCollider();
+
+	//アクションの初期化
+	_enemy.ChangeAction(ENEMY_ACTION::STAY);
 }
 
 void EnemyNormalState::Update(EnemyBase& _enemy)

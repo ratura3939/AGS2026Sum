@@ -27,6 +27,7 @@ enum class ENEMY_STATE
 {
 	NORMAL				//通常
 	, DAMAGE			//ダメージ
+	, KNOCK_DOWN		//ダウン
 	, DEATH				//死亡
 	, MAX
 };

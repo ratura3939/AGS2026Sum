@@ -21,8 +21,8 @@ void EnemyManager::Init(void)
 	enemyPool_ = std::make_unique<EnemyPool>();
 
 	//敵の生成(デバッグ)
-	CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(1);
+	//CreateEnemyGroup(CREATE_NUM);
+	CreateEnemyGroup(1);
 }
 
 void EnemyManager::Update(void)
