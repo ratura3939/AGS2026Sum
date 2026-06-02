@@ -64,12 +64,16 @@ private:
 	const VECTOR& playerPos_;	//プレイヤーの座標参照
 	const Quaternion& playerQuaRot_;	//プレイヤーの回転参照
 
-	AttackData data_[static_cast<int>(ATTACK_TYPE::MAX)][ATTACK_LEVEL_MAX];	//攻撃データ
-	std::wstring animNames_[static_cast<int>(ATTACK_TYPE::MAX)][ATTACK_LEVEL_MAX];	//攻撃アニメーション登録名
+	std::unordered_map<std::string, AttackData> data_;	//攻撃データ
+	std::unordered_map < std::string,std::wstring> animNames_;	//攻撃アニメーション登録名
 
 	AttackData currentData_;	//現在の攻撃データ
 	ATTACK_TYPE currentType_;	//現在の攻撃種別
 	ATTACK_TYPE nextType_;		//次の攻撃種別
+
+	std::string currentAttackName_;	//現在の攻撃アニメーション登録名
+	std::string nextAttackName_;		//次の攻撃アニメーション登録名
+
 	ATTACK_TYPE latestReserveType_;		//最新に予約された攻撃種別
 	int level_;		//攻撃レベル
 	bool isKickCorrection_;	//キックのレベル補正中か

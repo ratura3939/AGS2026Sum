@@ -28,6 +28,9 @@ PlayerAttack::PlayerAttack(const VECTOR& _playerPos, const Quaternion& _playerQu
 	,animNames_()
 	,nextType_(ATTACK_TYPE::MAX)
 	,latestReserveType_(ATTACK_TYPE::MAX)
+	,isKickCorrection_(false)
+	,currentAttackName_()
+	,nextAttackName_()
 {
 	debugColor_ = 0xffffff;
 }
@@ -105,24 +108,24 @@ void PlayerAttack::LoadAttackData(void)
 	Resource res = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_ATTACK_DATA_JSON);
 
 	//登録
-	data_[static_cast<int>(ATTACK_TYPE::PUNCH)][0] = res.GetData<AttackData>(PUNCH_FIRST_KEY);
-	data_[static_cast<int>(ATTACK_TYPE::PUNCH)][1] = res.GetData<AttackData>(PUNCH_SECOND_KEY);
-	data_[static_cast<int>(ATTACK_TYPE::PUNCH)][2] = res.GetData<AttackData>(PUNCH_THIRD_KEY);
-	data_[static_cast<int>(ATTACK_TYPE::KICK)][0] = res.GetData<AttackData>(KICK_FIRST_KEY);
-	data_[static_cast<int>(ATTACK_TYPE::KICK)][1] = res.GetData<AttackData>(KICK_SECOND_KEY);
-	data_[static_cast<int>(ATTACK_TYPE::KICK)][2] = res.GetData<AttackData>(KICK_THIRD_KEY);
+	data_.emplace(PUNCH_FIRST_KEY,res.GetData<AttackData>(PUNCH_FIRST_KEY));
+	data_.emplace(PUNCH_SECOND_KEY,res.GetData<AttackData>(PUNCH_SECOND_KEY));
+	data_.emplace(PUNCH_THIRD_KEY,res.GetData<AttackData>(PUNCH_THIRD_KEY));
+	data_.emplace(KICK_FIRST_KEY,res.GetData<AttackData>(KICK_FIRST_KEY));
+	data_.emplace(KICK_SECOND_KEY,res.GetData<AttackData>(KICK_SECOND_KEY));
+	data_.emplace(KICK_THIRD_KEY,res.GetData<AttackData>(KICK_THIRD_KEY));
 
 	//アニメーション登録
-	animNames_[static_cast<int>(ATTACK_TYPE::PUNCH)][0] = PlayerManager::ANIM_FIRST_PUNCH;
-	animNames_[static_cast<int>(ATTACK_TYPE::PUNCH)][1] = PlayerManager::ANIM_SECOND_PUNCH;
-	animNames_[static_cast<int>(ATTACK_TYPE::PUNCH)][2] = PlayerManager::ANIM_THIRD_PUNCH;
-
-	animNames_[static_cast<int>(ATTACK_TYPE::KICK)][0] = PlayerManager::ANIM_MIDDLE_KICK;
-	animNames_[static_cast<int>(ATTACK_TYPE::KICK)][1] = PlayerManager::ANIM_HIGH_KICK;
-	animNames_[static_cast<int>(ATTACK_TYPE::KICK)][2] = PlayerManager::ANIM_FINSH_KICK;
+	animNames_.emplace(PUNCH_FIRST_KEY, PlayerManager::ANIM_FIRST_PUNCH);
+	animNames_.emplace(PUNCH_SECOND_KEY, PlayerManager::ANIM_SECOND_PUNCH);
+	animNames_.emplace(PUNCH_THIRD_KEY, PlayerManager::ANIM_THIRD_PUNCH);
+	animNames_.emplace(KICK_FIRST_KEY, PlayerManager::ANIM_MIDDLE_KICK);
+	animNames_.emplace(KICK_SECOND_KEY, PlayerManager::ANIM_HIGH_KICK);
+	animNames_.emplace(KICK_THIRD_KEY, PlayerManager::ANIM_FINSH_KICK);
 
 	//コンボ始動は弱パンチから
-	currentData_ = data_[static_cast<int>(ATTACK_TYPE::PUNCH)][level_];
+	currentData_ = data_[PUNCH_FIRST_KEY];
+	currentAttackName_ = PUNCH_FIRST_KEY;
 
 	ApplyAttackColliderSettings();	//情報適用
 }
@@ -189,31 +192,57 @@ void PlayerAttack::HitCollider(std::weak_ptr<Collider> _col)
 
 const bool PlayerAttack::ReserveAttack(const ATTACK_TYPE& _type)
 {
-	//レベルの上昇
+	////レベルの上昇
 
-	CorrectionAttackLevel(_type);	//レベル補正
+	//CorrectionAttackLevel(_type);	//レベル補正
 
-	level_++;	//レベルアップ
-	nextType_ = _type;
-	latestReserveType_ = _type;
+	//level_++;	//レベルアップ
+	//nextType_ = _type;
+	//latestReserveType_ = _type;
 
+	//
+	////レベル補正関連
+	//// ******************************************************************
+	////レベル最大後、パンチの攻撃が繰り出されていた場合
+	//if (level_ >= ATTACK_LEVEL_MAX && _type == ATTACK_TYPE::PUNCH) {
+	//	level_ = 0;	//初段の設定
+	//	nextType_ = _type;
+	//	latestReserveType_ = _type;
+	//	return true;	//初段設定のためここで終了
+	//}
+
+	////レベルが範囲外の場合
+	//if (level_ < 0 || level_ >= ATTACK_LEVEL_MAX || _type == ATTACK_TYPE::MAX) {
+	//	ResetAttackLevel();	//レベルリセット
+	//	return false;
+	//}
+
+
+	//次の攻撃の予約
+	//例外
+	if (_type == ATTACK_TYPE::MAX) {
+		return false;	//攻撃予約なし
+	}
+
+	//現在の攻撃が最終段である場合
+
+	std::string nextAttackKey = data_[currentAttackName_].nextAttacks[static_cast<int>(_type)];
+
+	//次の攻撃が設定されていない場合(コンボの最終段、または引数タイプに派生がない)
+	if (nextAttackKey == "") {
+		//初段はパンチのみのため、入力がパンチだった場合,それに設定
+		if (_type == ATTACK_TYPE::PUNCH) {
+			nextAttackKey = PUNCH_FIRST_KEY;	//初段のパンチ設定
+		}
+		else {
+			nextAttackName_ = "";	//空を設定
+		}
+	}
+	//次の攻撃が設定されている場合
+	else {
+		nextAttackName_ = nextAttackKey;	//次の攻撃アニメーション登録名の設定
+	}
 	
-	//レベル補正関連
-	// ******************************************************************
-	//レベル最大後、パンチの攻撃が繰り出されていた場合
-	if (level_ >= ATTACK_LEVEL_MAX && _type == ATTACK_TYPE::PUNCH) {
-		level_ = 0;	//初段の設定
-		nextType_ = _type;
-		latestReserveType_ = _type;
-		return true;	//初段設定のためここで終了
-	}
-
-	//レベルが範囲外の場合
-	if (level_ < 0 || level_ >= ATTACK_LEVEL_MAX || _type == ATTACK_TYPE::MAX) {
-		ResetAttackLevel();	//レベルリセット
-		return false;
-	}
-
 	return true;
 }
 
@@ -224,11 +253,13 @@ void PlayerAttack::Attack(void)
 		debugColor_ = KICK_COLOR;
 	}
 
-	if (nextType_ == ATTACK_TYPE::MAX) {
-		return;	//攻撃予約なし
+	if (nextAttackName_ == "") {
+		return;	//次の攻撃が設定されていない
 	}
 
-	currentData_ = data_[static_cast<int>(nextType_)][level_];
+	//currentData_ = data_[static_cast<int>(nextType_)][level_];
+	currentData_ = data_[nextAttackName_];
+
 	if (nextType_ == ATTACK_TYPE::DEBUG) {
 		currentType_ = ATTACK_TYPE::PUNCH;
 		nextType_ = ATTACK_TYPE::DEBUG;		//次の攻撃種別リセット
@@ -251,8 +282,8 @@ const PlayerAttack::AttackAnimationInfo PlayerAttack::GetNextAttackAnimInfo(void
 
 	AttackAnimationInfo ret;
 
-	ret.name = animNames_[static_cast<int>(nextType_)][level_];
-	ret.speed = data_[static_cast<int>(nextType_)][level_].animationSpeed;
+	ret.name = animNames_.at(nextAttackName_);
+	ret.speed = data_.at(nextAttackName_).animationSpeed;
 
 	return	ret;
 }
