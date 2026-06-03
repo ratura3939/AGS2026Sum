@@ -19,8 +19,14 @@ public:
 		float speed;		//アニメーションの再生速度
 	};
 
+	struct ComboRouteInfo {
+		ATTACK_TYPE type;	//攻撃種別
+		bool isUsed;		//攻撃を行ったか
+		bool isDrawed;		//描画したか
+	};
+
 	static const int ATTACK_LEVEL_MAX = 3;				//攻撃レベルの最大値
-	static constexpr float ATTACK_CANCEL_RATE = 0.6f;	//攻撃キャンセル可能割合(アニメーションの進行度)
+	static constexpr float ATTACK_CANCEL_RATE = 0.5f;	//攻撃キャンセル可能割合(アニメーションの進行度)
 
 	PlayerAttack(const VECTOR& _playerPos, const Quaternion& _playerQuaRot);
 	~PlayerAttack(void)override;
@@ -30,20 +36,14 @@ public:
 
 	void HitCollider(std::weak_ptr<Collider> _col)override;
 
-	//攻撃の予約
-	const bool ReserveAttack(const ATTACK_TYPE& _type);
-
-	//攻撃開始
-	void Attack(void);	
-	//現在の攻撃アニメーション情報の取得
-	const AttackAnimationInfo GetNextAttackAnimInfo(void)const;
-	//攻撃中か
-	const bool IsAttacking(void)const;
-
+	
+	const bool ReserveAttack(const ATTACK_TYPE& _type);	//攻撃の予約
+	void Attack(void);			//攻撃開始
 	void FinishAttack(void);	//攻撃終了処理
 
-	void SetCurrentAttackTotalTime(const float _totalTime, const float _speedRate) { currentData_.time = static_cast<int>(_totalTime * _speedRate); }	//現在の攻撃の総時間の設定(主にアニメーションの総再生時間)
-
+	const AttackAnimationInfo GetNextAttackAnimInfo(void)const;		//現在の攻撃アニメーション情報の取得
+	
+	const bool IsAttacking(void)const;	//攻撃中か
 
 	//デバッグ用
 	void DrawDebug(void);
@@ -53,30 +53,32 @@ private:
 	void DoInit(void)override;
 	void DoUpdate(void)override;
 
-	//攻撃データの読み込み
-	void LoadAttackData(void);	
-	//コライダの設定
-	void ApplyAttackColliderSettings(void);
+	void DrawComboRoute(void);	//コンボルートの描画
+	void DrawComboRouteElement(const std::string& _attackKey, const VECTOR& _pos);	//コンボルートの要素の描画
 
-	void CorrectionAttackLevel(const ATTACK_TYPE& _type);	//攻撃レベルの補正
-	void ResetAttackLevel(void);	//攻撃のリセット
+	void LoadAttackData(void);				//攻撃データの読み込み
+	void ApplyAttackColliderSettings(void);	//コライダの設定
+	void ResetCombo(void);					//コンボのリセット
+	void ResetComboRoute(void);				//コンボルートのリセット
 
 	const VECTOR& playerPos_;	//プレイヤーの座標参照
 	const Quaternion& playerQuaRot_;	//プレイヤーの回転参照
 
-	std::unordered_map<std::string, AttackData> data_;	//攻撃データ
-	std::unordered_map < std::string,std::wstring> animNames_;	//攻撃アニメーション登録名
+	std::unordered_map<std::string, AttackData> data_;			//攻撃データ
+	std::unordered_map <std::string,std::wstring> animNames_;	//攻撃アニメーション登録名
+	std::unordered_map <std::string, ComboRouteInfo> comboRouteInfos_;		//コンボルート情報
 
 	AttackData currentData_;	//現在の攻撃データ
-	ATTACK_TYPE currentType_;	//現在の攻撃種別
-	ATTACK_TYPE nextType_;		//次の攻撃種別
 
 	std::string currentAttackName_;	//現在の攻撃アニメーション登録名
 	std::string nextAttackName_;		//次の攻撃アニメーション登録名
 
 	ATTACK_TYPE latestReserveType_;		//最新に予約された攻撃種別
-	int level_;		//攻撃レベル
-	bool isKickCorrection_;	//キックのレベル補正中か
+
+	bool comboReset_;	//コンボリセットフラグ
+	int comboResetCounter_;	//コンボリセットカウンタ
+
+	std::string startAttackAnimName_;	//攻撃開始アニメーション登録名
 
 	int debugColor_;	//デバッグ用の色
 };

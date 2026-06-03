@@ -2,7 +2,6 @@
   "Punch_First": {
     "radius": 30.0,
     "power": 10.0,
-    "time": 20,
     "localPos": {
       "x": 0.0,
       "y": 50.0,
@@ -15,59 +14,54 @@
   "Punch_Second": {
     "radius": 50.0,
     "power": 20.0,
-    "time": 40,
     "localPos": {
       "x": 0.0,
       "y": 50.0,
       "z": 70.0
     },
     "animationSpeed": 2.0,
-    "nextAttacks": [ "Punch_Third", "Kick_Second" ]]
+    "nextAttacks": [ "Punch_Third", "Kick_Second" ]
   },
 
   "Punch_Third": {
     "radius": 90.0,
     "power": 20.0,
-    "time": 60,
     "localPos": {
       "x": 0.0,
       "y": 50.0,
       "z": 120.0
     },
     "animationSpeed": 2.0,
-    "nextAttacks": [ "","Kick_Third" ]]
+    "nextAttacks": [ "","Kick_Third" ]
   },
 
   "Kick_First": {
     "radius": 30.0,
     "power": 10.0,
-    "time": 10,
     "localPos": {
       "x": 0.0,
       "y": 50.0,
       "z": 50.0
     },
     "animationSpeed": 1.5,
-    "nextAttacks": [ "", "Kick_Second" ]]
+    "nextAttacks": [ "", "Kick_Second" ]
   },
 
   "Kick_Second": {
     "radius": 50.0,
     "power": 20.0,
-    "time": 30,
     "localPos": {
       "x": 0.0,
       "y": 50.0,
       "z": 70.0
     },
     "animationSpeed": 3.0,
-    "nextAttacks": [ "", "" ]
+    "nextAttacks": [ "", "Kick_Third" ]
   },
 
   "Kick_Third": {
     "radius": 90.0,
     "power": 20.0,
-    "time": 60,
     "localPos": {
       "x": 0.0,
       "y": 50.0,

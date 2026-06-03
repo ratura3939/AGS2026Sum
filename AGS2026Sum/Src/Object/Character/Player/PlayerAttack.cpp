@@ -13,8 +13,15 @@ namespace {
 	const std::string KICK_SECOND_KEY = "Kick_Second";
 	const std::string KICK_THIRD_KEY = "Kick_Third";
 
+	const int DEFAULT_COLOR = 0xffffff;
 	const int KICK_COLOR = 0x0000ff;
 	const int PUNCH_COLOR = 0x00ff00;
+
+	const int COMBO_RESET_FRAME = 30;	//コンボリセットまでのフレーム数
+	const int CIRCLE_SCALE = 10;	//表記する円の大きさ
+
+	const float COMBO_ELEMENT_DRAW_DIF_X = 50;	//コンボルートの要素の表記差分X座標
+	const float COMBO_ELEMENT_DRAW_DIF_Y = 50;	//コンボルートの要素の表記差分Y座標
 }
 
 PlayerAttack::PlayerAttack(const VECTOR& _playerPos, const Quaternion& _playerQuaRot)
@@ -22,15 +29,13 @@ PlayerAttack::PlayerAttack(const VECTOR& _playerPos, const Quaternion& _playerQu
 	,playerPos_(_playerPos)
 	,playerQuaRot_(_playerQuaRot)
 	,currentData_()
-	,currentType_(ATTACK_TYPE::MAX)
-	,level_(-1)
 	,data_()
 	,animNames_()
-	,nextType_(ATTACK_TYPE::MAX)
 	,latestReserveType_(ATTACK_TYPE::MAX)
-	,isKickCorrection_(false)
 	,currentAttackName_()
 	,nextAttackName_()
+	,comboReset_(true)
+	,comboResetCounter_(0)
 {
 	debugColor_ = 0xffffff;
 }
@@ -41,40 +46,6 @@ PlayerAttack::~PlayerAttack(void)
 
 void PlayerAttack::DrawDebug(void)
 {
-	if (currentType_ == ATTACK_TYPE::MAX) {
-		DrawFormatString(30, 150, 0xff0000, L"CURRENT = MAX");
-	}
-	else if (currentType_ == ATTACK_TYPE::PUNCH) {
-		DrawFormatString(30, 150, 0xff0000, L"CURRENT = PUNCH");
-	}
-	else if (currentType_ == ATTACK_TYPE::KICK) {
-		DrawFormatString(30, 150, 0xff0000, L"CURRENT = KICK");
-	}
-
-	if (nextType_ == ATTACK_TYPE::MAX) {
-		DrawFormatString(30, 180, 0xff0000, L"NEXT = MAX");
-	}
-	else if (nextType_ == ATTACK_TYPE::DEBUG) {
-		DrawFormatString(30, 180, 0xff0000, L"ERROR");
-	}
-	else if (nextType_ == ATTACK_TYPE::PUNCH) {
-		DrawFormatString(30, 180, 0xff0000, L"NEXT = PUNCH");
-	}
-	else if (nextType_ == ATTACK_TYPE::KICK) {
-		DrawFormatString(30, 180, 0xff0000, L"NEXT = KICK");
-	}
-
-	if (latestReserveType_ == ATTACK_TYPE::MAX) {
-		DrawFormatString(30, 210, 0xff0000, L"LATEST = MAX");
-	}
-	else if (latestReserveType_ == ATTACK_TYPE::PUNCH) {
-		DrawFormatString(30, 210, 0xff0000, L"LATEST = PUNCH");
-	}
-	else if (latestReserveType_ == ATTACK_TYPE::KICK) {
-		DrawFormatString(30, 210, 0xff0000, L"LATEST = KICK");
-	}
-
-	DrawFormatString(30, 240, 0xff0000, L"LEVEL = %d", level_);
 }
 
 void PlayerAttack::DoLoad(void)
@@ -91,16 +62,83 @@ void PlayerAttack::DoInit(void)
 
 void PlayerAttack::DoUpdate(void)
 {
-	pos_ = VAdd(playerPos_, playerQuaRot_.PosAxis(currentData_.localPos));	//プレイヤーの座標にローカル座標を加算して攻撃の座標とする
+	if (IsAttacking()) {
+		//攻撃中は座標を更新
+		pos_ = VAdd(playerPos_, playerQuaRot_.PosAxis(currentData_.localPos));	//プレイヤーの座標にローカル座標を加算して攻撃の座標とする
+	}
+	//攻撃していないとき
+	else {
+		comboResetCounter_++;	//コンボリセットカウンタを加算
+		if (!comboReset_ && comboResetCounter_ > COMBO_RESET_FRAME) {
+			//コンボリセットフラグが立っていない、かつコンボリセットカウンタが規定値を超えたとき
+			ResetCombo();	//コンボリセット
+		}
+	}
+	
+}
 
-	//if (currentData_.counter >= currentData_.time) {
-	//	//攻撃終了
-	//	currentData_ = {};
-	//	colliders_[0]->SetUseThis(false);	//コライダの無効化
-	//	return;
-	//}
+void PlayerAttack::DrawComboRoute(void)
+{
+	const int DrawStartX = 30;	//表記開始X座標
+	const int DrawStartY = 200;	//表記開始Y座標
+	
 
-	currentData_.counter++;
+	const int KickCircleDifferenceY = 50;
+
+	int differenceDrawPosX = 0;	//表記差分X座標
+	int differenceDrawPosY = 0;	//表記差分Y座標
+
+	DrawComboRouteElement(startAttackAnimName_, { DrawStartX,DrawStartY,0 });	//コンボ始動の表記
+
+	for (auto& info : comboRouteInfos_) {
+		info.second.isDrawed = false;	//描画フラグリセット
+	}
+}
+
+void PlayerAttack::DrawComboRouteElement(const std::string& _attackKey, const VECTOR& _pos)
+{
+	//すでに描画している場合は描画しない
+	if (comboRouteInfos_[_attackKey].isDrawed) {
+		return;		//終了
+	}
+	
+	int useColor = DEFAULT_COLOR;	//デフォルト白
+	if (comboRouteInfos_[_attackKey].isUsed) {
+		if (comboRouteInfos_[_attackKey].type == ATTACK_TYPE::KICK) {
+			useColor = KICK_COLOR;	//キックなら青
+		}
+		else if (comboRouteInfos_[_attackKey].type == ATTACK_TYPE::PUNCH) {
+			useColor = PUNCH_COLOR;	//使用済みなら緑
+		}
+	}
+	DrawCircle(static_cast<int>(_pos.x), static_cast<int>(_pos.y), CIRCLE_SCALE, useColor);
+	comboRouteInfos_[_attackKey].isDrawed = true;
+
+	std::string nextPunchAttackName = data_[_attackKey].nextAttacks[static_cast<int>(ATTACK_TYPE::PUNCH)];	//次のパンチ攻撃
+	std::string nextKickAttackName = data_[_attackKey].nextAttacks[static_cast<int>(ATTACK_TYPE::KICK)];	//次のキック攻撃
+
+	//次の要素の描画位置調整
+	VECTOR nextPos = _pos;
+	nextPos.x += COMBO_ELEMENT_DRAW_DIF_X;	//次の要素の表記位置をずらす
+
+	//要素がある場合
+	if (nextPunchAttackName != "") {
+		//パンチ派生時、現在の攻撃がキックの場合
+		if (comboRouteInfos_[_attackKey].type == ATTACK_TYPE::KICK) {
+			nextPos.y -= COMBO_ELEMENT_DRAW_DIF_Y;	//パンチの要素の表記位置をさらにずらす
+		}
+
+		DrawComboRouteElement(nextPunchAttackName, nextPos);	//パンチ派生の描画
+	}
+
+	if (nextKickAttackName != "") {
+		//キック派生時、現在の攻撃がパンチの場合
+		if (comboRouteInfos_[_attackKey].type == ATTACK_TYPE::PUNCH) {
+			nextPos.y += COMBO_ELEMENT_DRAW_DIF_Y;	//キックの要素の表記位置をさらにずらす
+		}
+
+		DrawComboRouteElement(nextKickAttackName, nextPos);	//キック派生の描画
+	}
 }
 
 void PlayerAttack::LoadAttackData(void)
@@ -123,9 +161,19 @@ void PlayerAttack::LoadAttackData(void)
 	animNames_.emplace(KICK_SECOND_KEY, PlayerManager::ANIM_HIGH_KICK);
 	animNames_.emplace(KICK_THIRD_KEY, PlayerManager::ANIM_FINSH_KICK);
 
+	//フラグ管理(コンボ履歴用)
+	comboRouteInfos_.emplace(PUNCH_FIRST_KEY, ComboRouteInfo{ ATTACK_TYPE::PUNCH,false,false });
+	comboRouteInfos_.emplace(PUNCH_SECOND_KEY, ComboRouteInfo{ ATTACK_TYPE::PUNCH,false,false });
+	comboRouteInfos_.emplace(PUNCH_THIRD_KEY, ComboRouteInfo{ ATTACK_TYPE::PUNCH,false,false });
+	comboRouteInfos_.emplace(KICK_FIRST_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });
+	comboRouteInfos_.emplace(KICK_SECOND_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });
+	comboRouteInfos_.emplace(KICK_THIRD_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });
+
 	//コンボ始動は弱パンチから
 	currentData_ = data_[PUNCH_FIRST_KEY];
-	currentAttackName_ = PUNCH_FIRST_KEY;
+	startAttackAnimName_ = PUNCH_FIRST_KEY;
+
+	currentAttackName_ = KICK_THIRD_KEY;	//予約→発生というロジックの関係上、初段に設定するためには「次の攻撃」が設定されていない最終段を用いる
 
 	ApplyAttackColliderSettings();	//情報適用
 }
@@ -141,34 +189,20 @@ void PlayerAttack::ApplyAttackColliderSettings(void)
 	}
 }
 
-void PlayerAttack::CorrectionAttackLevel(const ATTACK_TYPE& _type)
+void PlayerAttack::ResetCombo(void)
 {
-	//キックの場合
-	if (_type == ATTACK_TYPE::KICK) {
-		//補正がまだされていなかったら
-		if (!isKickCorrection_) {
-			level_--;	//補正
-			isKickCorrection_ = true;	//補正完了
-		}
-	}
-	//パンチの場合
-	else {
-		//補正がされていたら
-		if(isKickCorrection_) {
-			level_++;	//キックの補正を戻す
-			isKickCorrection_ = false;	//補正解除
-		}
-	}
+	currentAttackName_ = KICK_THIRD_KEY;	//現在の攻撃アニメーション登録名をリセット
+	nextAttackName_ = "";	//次の攻撃アニメーション登録名をリセット
+	comboReset_ = true;		//コンボリセットフラグを立てる
+
+	ResetComboRoute();	//コンボルートのリセット
 }
 
-void PlayerAttack::ResetAttackLevel(void)
+void PlayerAttack::ResetComboRoute(void)
 {
-	level_ = -1;
-	isKickCorrection_ = false;
-	currentType_ = ATTACK_TYPE::MAX;
-	//nextType_ = ATTACK_TYPE::MAX;
-	nextType_ = ATTACK_TYPE::DEBUG;
-	latestReserveType_ = ATTACK_TYPE::MAX;
+	for (auto& info : comboRouteInfos_) {
+		info.second.isUsed = false;	//使用フラグリセット
+	}
 }
 
 void PlayerAttack::Draw(void)
@@ -180,6 +214,7 @@ void PlayerAttack::Draw(void)
 	
 
 	//コンボ分岐の表記
+	DrawComboRoute();
 }
 
 void PlayerAttack::Release(void)
@@ -192,39 +227,11 @@ void PlayerAttack::HitCollider(std::weak_ptr<Collider> _col)
 
 const bool PlayerAttack::ReserveAttack(const ATTACK_TYPE& _type)
 {
-	////レベルの上昇
-
-	//CorrectionAttackLevel(_type);	//レベル補正
-
-	//level_++;	//レベルアップ
-	//nextType_ = _type;
-	//latestReserveType_ = _type;
-
-	//
-	////レベル補正関連
-	//// ******************************************************************
-	////レベル最大後、パンチの攻撃が繰り出されていた場合
-	//if (level_ >= ATTACK_LEVEL_MAX && _type == ATTACK_TYPE::PUNCH) {
-	//	level_ = 0;	//初段の設定
-	//	nextType_ = _type;
-	//	latestReserveType_ = _type;
-	//	return true;	//初段設定のためここで終了
-	//}
-
-	////レベルが範囲外の場合
-	//if (level_ < 0 || level_ >= ATTACK_LEVEL_MAX || _type == ATTACK_TYPE::MAX) {
-	//	ResetAttackLevel();	//レベルリセット
-	//	return false;
-	//}
-
-
 	//次の攻撃の予約
 	//例外
 	if (_type == ATTACK_TYPE::MAX) {
 		return false;	//攻撃予約なし
 	}
-
-	//現在の攻撃が最終段である場合
 
 	std::string nextAttackKey = data_[currentAttackName_].nextAttacks[static_cast<int>(_type)];
 
@@ -232,10 +239,11 @@ const bool PlayerAttack::ReserveAttack(const ATTACK_TYPE& _type)
 	if (nextAttackKey == "") {
 		//初段はパンチのみのため、入力がパンチだった場合,それに設定
 		if (_type == ATTACK_TYPE::PUNCH) {
-			nextAttackKey = PUNCH_FIRST_KEY;	//初段のパンチ設定
+			nextAttackName_ = PUNCH_FIRST_KEY;	//初段のパンチ設定
 		}
+		//キックの場合
 		else {
-			nextAttackName_ = "";	//空を設定
+			nextAttackName_ = "";	//空を設定(初段にキックを許さない)
 		}
 	}
 	//次の攻撃が設定されている場合
@@ -249,34 +257,25 @@ const bool PlayerAttack::ReserveAttack(const ATTACK_TYPE& _type)
 void PlayerAttack::Attack(void)
 {
 	debugColor_ = PUNCH_COLOR;
-	if (nextType_ == ATTACK_TYPE::KICK) {
-		debugColor_ = KICK_COLOR;
-	}
-
 	if (nextAttackName_ == "") {
 		return;	//次の攻撃が設定されていない
 	}
 
-	//currentData_ = data_[static_cast<int>(nextType_)][level_];
-	currentData_ = data_[nextAttackName_];
+	if (nextAttackName_ == startAttackAnimName_) {
+		ResetComboRoute();	//コンボルートリセット
+	}
 
-	if (nextType_ == ATTACK_TYPE::DEBUG) {
-		currentType_ = ATTACK_TYPE::PUNCH;
-		nextType_ = ATTACK_TYPE::DEBUG;		//次の攻撃種別リセット
-	}
-	else {
-		currentType_ = nextType_;
-		nextType_ = ATTACK_TYPE::MAX;		//次の攻撃種別リセット
-	}
+	currentData_ = data_[nextAttackName_];
 	
+	currentAttackName_ = nextAttackName_;	//現在の攻撃アニメーション登録名の設定
 	ApplyAttackColliderSettings();		//情報適用;
 	colliders_[0]->SetUseThis(true);	//コライダの有効化
-	currentData_.counter = 0;
+	comboRouteInfos_[currentAttackName_].isUsed = true;	//コンボルートの使用フラグを立てる
 }
 
 const PlayerAttack::AttackAnimationInfo PlayerAttack::GetNextAttackAnimInfo(void) const
 {
-	if(nextType_ == ATTACK_TYPE::MAX) {
+	if(nextAttackName_ == "") {
 		return AttackAnimationInfo();	//攻撃なし
 	}
 
@@ -297,7 +296,6 @@ void PlayerAttack::FinishAttack(void)
 {
 	currentData_ = {};
 	colliders_[0]->SetUseThis(false);	//コライダの無効化
-
-	//レベルリセット関連
-	ResetAttackLevel();
+	comboReset_ = false;
+	comboResetCounter_ = 0;
 }

@@ -6,12 +6,10 @@ static const int ATTACK_TYPE_NUM = 2;	//攻撃の種類の数
 
 //jsonから受け取る攻撃データ
 struct AttackData {
-	int radius = -1;      //大きさ
-	int power = -1;      //攻撃力
-	int time = -1;       //時間
+	float radius = -1.0f;      //大きさ
+	float power = -1.0f;      //攻撃力
 	VECTOR localPos = { -1.0f, -1.0f, -1.0f };   //ローカル座標
 	float animationSpeed = -1.0f;	//アニメーションの再生速度
-	int counter = 0;		//攻撃の時間管理
 	std::array<std::string, ATTACK_TYPE_NUM>nextAttacks;	//次の攻撃(パンチorキックの最大２派生)
 };
 
@@ -24,7 +22,6 @@ inline void from_json(const nlohmann::json& _data, VECTOR& _vec) {
 inline void from_json(const nlohmann::json& _data, AttackData& _attackData) {
 	_data.at("radius").get_to(_attackData.radius);
 	_data.at("power").get_to(_attackData.power);
-	_data.at("time").get_to(_attackData.time);
 	
 	if (_data.contains("localPos")) {
 		_data.value("localPos", nlohmann::json::object()).at("x").get_to(_attackData.localPos.x);

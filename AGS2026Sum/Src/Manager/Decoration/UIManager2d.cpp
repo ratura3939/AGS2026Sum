@@ -1,7 +1,5 @@
 #include"../../pch.h"
 #include"../../Utility/Utility.h"
-#include"../../Renderer/PixelMaterial.h"
-#include"../../Renderer/PixelRenderer.h"
 #include "UIManager2d.h"
 
 UIManager2d* UIManager2d::instance_ = nullptr;
@@ -40,8 +38,8 @@ void UIManager2d::Add(const UI_NAME& _name, const int _imgHndl, const UI_DIRECTI
 	info.scl = 1.0f;
 	info.deg = 0.0f;
 	info.alpha = ALPHA_MAX;
-	info.material = nullptr;
-	info.renderer = nullptr;
+	/*info.material = nullptr;
+	info.renderer = nullptr;*/
 
 	//äÓëbèÓïÒí«â¡
 	infoes_.emplace(_name, info);
@@ -160,7 +158,7 @@ void UIManager2d::SetUIDirectionPram(const UI_NAME& _name, const UI_DIRECTION_GR
 
 void UIManager2d::SetShaderMaterial(const UI_NAME& _name, std::wstring shaderFileName, int constBufFloat4Size) {
 
-	infoes_.at(_name).material = std::make_unique<PixelMaterial>(shaderFileName, constBufFloat4Size);
+	//infoes_.at(_name).material = std::make_unique<PixelMaterial>(shaderFileName, constBufFloat4Size);
 }
 
 void UIManager2d::SetPos(const UI_NAME& _name, const VECTOR& _pos)

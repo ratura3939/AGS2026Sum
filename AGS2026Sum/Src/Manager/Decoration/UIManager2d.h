@@ -5,9 +5,6 @@
 #include<memory>
 #include<DxLib.h>
 
-class PixelMaterial;
-class PixelRenderer;
-
 class UIManager2d
 {
 public:
@@ -67,8 +64,8 @@ public:
 		float deg;	//角度
 		float alpha;//透明度
 
-		std::unique_ptr<PixelMaterial>material;
-		std::unique_ptr<PixelRenderer>renderer;
+		//std::unique_ptr<PixelMaterial>material;
+		//std::unique_ptr<PixelRenderer>renderer;
 	};
 
 	//演出一つにつき必要なもの
