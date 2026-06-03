@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Character\Enemy\EnemyGroupPool.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\ChunkManager.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\State\EnemyKnockDownState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerAttack.cpp" />
@@ -196,6 +197,7 @@
     <ClCompile Include="Src\Utility\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Character\Enemy\EnemyGroupPool.h" />
     <ClInclude Include="Src\Manager\GameSystem\ChunkManager.h" />
     <ClInclude Include="Src\Object\Character\Enemy\State\EnemyKnockDownState.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerAttack.h" />

@@ -13,52 +13,65 @@ ChunkManager::~ChunkManager()
 int ChunkManager::GetChunkIndex(const VECTOR& _pos) const
 {
 	//座標からセルの座標を求める
-	int cellX = static_cast<int>(_pos.x / CELL_SIZE);
-	int cellZ = static_cast<int>(_pos.z / CELL_SIZE);
+	int cellX = static_cast<int>(std::floor(_pos.x / CELL_SIZE));
+	int cellZ = static_cast<int>(std::floor(_pos.z / CELL_SIZE));
 	int index = cellX + cellZ * CHUNK_X;
 
-	return 0;
+	//セルがチャンクの範囲外ならエラーを返す
+	if (cellX < 0 || cellX >= CHUNK_X || cellZ < 0 || cellZ >= CHUNK_Z)
+	{
+		assert("チャンクの範囲外の座標が渡されました");
+		return -1;	//エラー
+	}
+
+	return index;
 }
 
-void ChunkManager::AddEnemy(EnemyBase* _enemy)
+void ChunkManager::AddEnemyGroup(EnemyGroup* _enemyGroup)
 {
 	//敵の座標からセルの座標を求める
-	int index = GetChunkIndex(_enemy->GetPos());
+	int index = GetChunkIndex(_enemyGroup->GetPos());
 
 	//チャンクに登録
-	chunkEnemyMap_[index].push_back(_enemy);
+	chunkEnemyMap_[index].push_back(_enemyGroup);
+
+	//敵グループにチャンクの添え字を設定
+	_enemyGroup->SetChunkIndex(index);
 }
 
-void ChunkManager::RemoveEnemy(EnemyBase* _enemy)
+void ChunkManager::RemoveEnemyGroup(EnemyGroup* _enemyGroup)
 {
 	//敵の座標からセルの座標を求める
-	int index = GetChunkIndex(_enemy->GetPos());
+	int index = _enemyGroup->GetChunkIndex();
 
 	//チャンクから削除
-	auto& enemies = chunkEnemyMap_[index];
-	enemies.erase(std::remove(enemies.begin(), enemies.end(), _enemy), enemies.end());
+	auto& group = chunkEnemyMap_[index];
+	group.erase(std::remove(group.begin(), group.end(), _enemyGroup), group.end());
 }
 
-void ChunkManager::MoveEnemy(EnemyBase* _enemy, const VECTOR& _oldPos)
+void ChunkManager::MoveEnemyGroup(EnemyGroup* _enemyGroup, const VECTOR& _oldPos)
 {
 	//古い座標からセルの座標を求める
-	int oldIndex = GetChunkIndex(_oldPos);
+	int oldIndex = _enemyGroup->GetChunkIndex();
 
 	//新しい座標からセルの座標を求める
-	int newIndex = GetChunkIndex(_enemy->GetPos());
+	int newIndex = GetChunkIndex(_enemyGroup->GetPos());
 
 	//セルが変わっていない場合は何もしない
 	if (oldIndex == newIndex) return;
 
 	//古いチャンクから削除
-	auto& oldEnemies = chunkEnemyMap_[oldIndex];
-	oldEnemies.erase(std::remove(oldEnemies.begin(), oldEnemies.end(), _enemy), oldEnemies.end());
+	auto& oldGroup = chunkEnemyMap_[oldIndex];
+	oldGroup.erase(std::remove(oldGroup.begin(), oldGroup.end(), _enemyGroup), oldGroup.end());
 
 	//新しいチャンクに登録
-	chunkEnemyMap_[newIndex].push_back(_enemy);
+	chunkEnemyMap_[newIndex].push_back(_enemyGroup);
+
+	//敵グループにチャンクの添え字を再設定
+	_enemyGroup->SetChunkIndex(newIndex);
 }
 
-const std::vector<EnemyBase*>& ChunkManager::GetEnemiesInChunk(const VECTOR& _pos) const
+const std::vector<EnemyGroup*>& ChunkManager::GetEnemyGroupInChunk(const VECTOR& _pos) const
 {
 	//座標からセルの座標を求める
 	int index = GetChunkIndex(_pos);
@@ -67,12 +80,12 @@ const std::vector<EnemyBase*>& ChunkManager::GetEnemiesInChunk(const VECTOR& _po
 	return chunkEnemyMap_[index];
 }
 
-const std::vector<EnemyBase*>& ChunkManager::GetEnemiesInChunkWithRange(const VECTOR& _pos, const int _cellRange) const
+void ChunkManager::GetEnemyGroupsInRangeChunk(std::vector<EnemyGroup*>& _enemyGroups, const VECTOR& _pos, const int _cellRange) const
 {
-	std::vector<EnemyBase*> ret;
-
 	//座標からセルの座標を求める
 	int index = GetChunkIndex(_pos);
+	int centerX = index % CHUNK_X;
+	int centerZ = index / CHUNK_X;
 
 	//セル範囲分ループ
 	for (int i = -_cellRange; i <= _cellRange; i++)
@@ -80,8 +93,8 @@ const std::vector<EnemyBase*>& ChunkManager::GetEnemiesInChunkWithRange(const VE
 		for(int j = -_cellRange; j <= _cellRange; j++)
 		{
 			//セルの座標を求める
-			int cellX = index + i;
-			int cellZ = index + j;
+			int cellX = centerX + i;
+			int cellZ = centerZ + j;
 
 			//セルがチャンクの範囲外ならスキップ
 			if(cellX < 0 || cellX >= CHUNK_X || cellZ < 0 || cellZ >= CHUNK_Z) continue;
@@ -91,10 +104,7 @@ const std::vector<EnemyBase*>& ChunkManager::GetEnemiesInChunkWithRange(const VE
 			const auto& enemies = chunkEnemyMap_[chunkIndex];
 
 			//セル内の敵を結果に追加
-			ret.insert(ret.end(), enemies.begin(), enemies.end());
+			_enemyGroups.insert(_enemyGroups.end(), enemies.begin(), enemies.end());
 		}
 	}
-
-	//範囲内の敵を返す
-	return ret;
 }

@@ -1,7 +1,7 @@
 #pragma once
 #include"../../Common/Singleton.h"
 
-class EnemyBase;
+class EnemyGroup;
 
 class ChunkManager : public Singleton<ChunkManager>
 {
@@ -11,19 +11,24 @@ class ChunkManager : public Singleton<ChunkManager>
 public:
 
 	//敵の登録
-	void AddEnemy(EnemyBase* _enemy);
+	void AddEnemyGroup(EnemyGroup* _enemyGroup);
 
 	//敵の削除
-	void RemoveEnemy(EnemyBase* _enemy);
+	void RemoveEnemyGroup(EnemyGroup* _enemyGroup);
 
 	//チャンク移動
-	void MoveEnemy(EnemyBase* _enemy, const VECTOR& _oldPos);
+	void MoveEnemyGroup(EnemyGroup* _enemyGroup, const VECTOR& _oldPos);
 
 	//チャンク内の敵の取得
-	const std::vector<EnemyBase*>& GetEnemiesInChunk(const VECTOR& _pos) const;
+	const std::vector<EnemyGroup*>& GetEnemyGroupInChunk(const VECTOR& _pos) const;
 
-	//指定座標から指定セル分の範囲の敵の取得
-	const std::vector<EnemyBase*>& GetEnemiesInChunkWithRange(const VECTOR& _pos, const int _cellRange) const;
+	/// <summary>
+	/// 指定座標から指定セル分の範囲の敵グループの取得
+	/// </summary>
+	/// <param name="_enemyGroups">格納用敵グループ配列</param>
+	/// <param name="_pos">基準となる座標</param>
+	/// <param name="_cellRange">取得する範囲のセル数</param>
+	void GetEnemyGroupsInRangeChunk(std::vector<EnemyGroup*>& _enemyGroups, const VECTOR& _pos, const int _cellRange) const;
 
 private:
 
@@ -44,6 +49,6 @@ private:
 	int GetChunkIndex(const VECTOR& _pos) const;
 
 	//チャンクごとの敵の管理
-	std::array<std::vector<EnemyBase*>, CHUNK_X * CHUNK_Z> chunkEnemyMap_;
+	std::array<std::vector<EnemyGroup*>, CHUNK_X * CHUNK_Z> chunkEnemyMap_;
 };
 

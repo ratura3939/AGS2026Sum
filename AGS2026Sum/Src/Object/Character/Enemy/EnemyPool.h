@@ -15,12 +15,6 @@ public:
 	//初期化
 	void Init(void);
 
-	//更新
-	void Update(void);
-
-	//描画
-	void Draw(void);
-
 	//解放
 	void Release(void);
 
@@ -33,7 +27,7 @@ public:
 	/// <summary>
 	/// 敵の削除
 	/// </summary>
-	/// <param name="_enemy"></param>
+	/// <param name="_enemy">削除する敵のポインタ</param>
 	void Remove(EnemyBase* _enemy);
 
 	//生存している敵の参照用リストの取得

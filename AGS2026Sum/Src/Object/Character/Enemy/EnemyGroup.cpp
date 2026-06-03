@@ -4,7 +4,8 @@
 #include "EnemyGroup.h"
 
 EnemyGroup::EnemyGroup(void)
-	: pos_(Utility::VECTOR_INIT)
+	: chunkIndex_(-1)
+	, pos_(Utility::VECTOR_INIT)
 	, actionCnt_(0.0f)
 	, movePow_(Utility::VECTOR_ZERO)
 	, order_(GROUP_ORDER::NONE)
@@ -42,6 +43,12 @@ void EnemyGroup::Update(void)
 	//状態ごとの更新
 	(this->*orderFunc_[order_].update)();
 
+	//敵の更新
+	for (auto& enemy : enemys_)
+	{
+		enemy->Update();
+	}
+
 	//敵の死亡時の処理
 	DeleteEnemy();
 }
@@ -51,6 +58,12 @@ void EnemyGroup::Draw(void)
 	//デバッグ
 	DrawSphere3D(groupGoalPos_, 20, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), false);
 	DrawSphere3D(pos_, 20, 20, GetColor(255, 255, 0), GetColor(255, 255, 0), false);
+
+	//敵の描画
+	for (auto& enemy : enemys_)
+	{
+		enemy->Draw();
+	}
 }
 
 void EnemyGroup::Release(void)

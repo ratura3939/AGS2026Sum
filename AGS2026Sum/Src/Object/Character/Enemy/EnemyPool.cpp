@@ -15,24 +15,6 @@ void EnemyPool::Init(void)
 	//敵の生成や初期化はSpawnで行うのでここでは行わない
 }
 
-void EnemyPool::Update(void)
-{
-	//生存している敵の更新
-	for (auto& enemy : activeEnemys_)
-	{
-		enemy->Update();
-	}
-}
-
-void EnemyPool::Draw(void)
-{
-	//生存している敵の描画
-	for (auto& enemy : activeEnemys_)
-	{
-		enemy->Draw();
-	}
-}
-
 void EnemyPool::Release(void)
 {
 	//参照ポインタの削除

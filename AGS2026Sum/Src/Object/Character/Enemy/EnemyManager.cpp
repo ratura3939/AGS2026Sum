@@ -1,7 +1,9 @@
 #include"../../pch.h"
 #include"../../Utility/Utility.h"
+#include"../../Manager/GameSystem/ChunkManager.h"
 #include"EnemyDefine.h"
 #include"EnemyGroup.h"
+#include"EnemyGroupPool.h"
 #include"EnemyPool.h"
 #include"EnemyBase.h"
 #include "EnemyManager.h"
@@ -9,6 +11,8 @@
 EnemyManager::EnemyManager(const VECTOR& _pPos)
 	:playerPos_(_pPos)
 {
+	//チャンク内の敵の管理用のリストにとりあえず初期確保数分の容量を確保しておく(確保・削除を減らすため)
+	chunkGroups_.reserve(INIT_CHUNK_GROUP_NUM);
 }
 
 EnemyManager::~EnemyManager(void)
@@ -17,6 +21,9 @@ EnemyManager::~EnemyManager(void)
 
 void EnemyManager::Init(void)
 {
+	//敵グループのプールを生成
+	enemyGroup_ = std::make_unique<EnemyGroupPool>();
+
 	//敵のプールを生成
 	enemyPool_ = std::make_unique<EnemyPool>();
 
@@ -76,15 +83,23 @@ void EnemyManager::Init(void)
 
 void EnemyManager::Update(void)
 {
+	//インスタンス
+	ChunkManager& chunkMng = ChunkManager::GetInstance();
+
 	//距離ごとの命令決め
 	DecideOrderByDistance();
 
-	//更新
-	for (auto& group : enemyGroup_)
+	//チャンク管理リストを空にする
+	chunkGroups_.clear();
+
+	//チャンク管理用のリストを更新
+	chunkMng.GetEnemyGroupsInRangeChunk(chunkGroups_, playerPos_, CHUNK_RANGE);
+
+	//チャンク内のみ更新
+	for (auto& group : chunkGroups_)
 	{
 		group->Update();
 	}
-	enemyPool_->Update();
 
 	//グループの削除処理
 	DeleteEnemyGroup();
@@ -98,36 +113,35 @@ void EnemyManager::Update(void)
 
 void EnemyManager::Draw(void)
 {
-	//描画
-	for (auto& group : enemyGroup_)
+	//チャンク内のみ描画
+	for (auto& group : chunkGroups_)
 	{
 		group->Draw();
 	}
-	enemyPool_->Draw();
 }
 
 void EnemyManager::Release(void)
 {
 	//解放
-	for (auto& group : enemyGroup_)
-	{
-		group->Release();
-	}
+	enemyGroup_->Release();
 	enemyPool_->Release();
 }
 
 void EnemyManager::CreateEnemyGroup(const int _createNum)
 {
 	//グループ
-	std::unique_ptr<EnemyGroup> group = std::make_unique<EnemyGroup>();
+	EnemyGroup* group = enemyGroup_->Spawn();
 
 	//初期化
 	group->Init();
 
+	//グループの初期座標(デバッグ)
 	static VECTOR pos = { 0.0f, 0.0f, 0.0f };
 	group->SetPos(pos);
-
 	pos = VAdd(pos, { 1000.0f, 0.0f, 1000.0f });
+
+	//グループのチャンク管理用の添え字を設定
+	ChunkManager::GetInstance().AddEnemyGroup(group);
 
 	//敵の参照用ポインタ
 	EnemyBase* enemy = nullptr;
@@ -139,12 +153,9 @@ void EnemyManager::CreateEnemyGroup(const int _createNum)
 		enemy = enemyPool_->Spawn();
 
 		//グループに設定
-		Grouping(group.get(), enemy);
+		Grouping(group, enemy);
 		enemy->InitWithGroup();
 	}
-
-	//格納
-	enemyGroup_.push_back(std::move(group));
 }
 
 const int EnemyManager::GetActiveEnemyNum(void) const
@@ -166,32 +177,62 @@ void EnemyManager::DeleteEnemy(void)
 	//そもそも敵がいないなら何もしない
 	if (!enemyPool_) return;
 
+	//削除する敵のリスト
+	std::vector<EnemyBase*> removeEnemys;
+
 	//死亡した敵　または　グループに所属していない敵の削除
 	for (auto& activeEnemy : enemyPool_->GetActiveEnemys())
 	{
 		if (!activeEnemy->IsAlive() || !activeEnemy->IsInGroup())
 		{
-			enemyPool_->Remove(activeEnemy);
+			//削除する敵のリストに追加
+			removeEnemys.push_back(activeEnemy);
 		}
+	}
+
+	//削除する敵のリストにいる敵を削除
+	for (auto& removeEnemy : removeEnemys)
+	{
+		enemyPool_->Remove(removeEnemy);
 	}
 }
 
 void EnemyManager::DeleteEnemyGroup(void)
 {
 	//グループが空なら処理しない
-	if (enemyGroup_.empty())return;
+	if (!enemyGroup_)return;
+
+	//削除するグループのリスト
+	std::vector<EnemyGroup*> removeGroups;
 
 	//グループの削除処理
-	std::erase_if(enemyGroup_, [this](const std::unique_ptr<EnemyGroup>& _group) {return _group->IsEmpty() || (_group->GetEnemyCount() < MIN_ENEMY_NUM) && enemyGroup_.size() > 1;});
+	for (auto& group : enemyGroup_->GetActiveEnemyGroups())
+	{
+		//グループに所属している敵の数が一定数以下　または　グループが空なら削除
+		if (group->IsEmpty() || (group->GetEnemyCount() < MIN_ENEMY_NUM) && enemyGroup_->GetActiveEnemyGroups().size() > 1)
+		{
+			//削除するグループのリストに追加
+			removeGroups.push_back(group);
+		}
+	}
+
+	//削除するグループのリストにいるグループを削除
+	for (auto& removeGroup : removeGroups)
+	{
+		enemyGroup_->Remove(removeGroup);
+	}
 }
 
 void EnemyManager::ReJoinGroups(void)
 {
 	//グループ　または　敵が空なら処理しない
-	if (enemyGroup_.empty() || !enemyPool_)return;
+	if (!enemyGroup_ || !enemyPool_)return;
 
 	//敵グループの末尾
-	EnemyGroup* enemyGroupBack = enemyGroup_.back().get();
+	EnemyGroup* enemyGroupBack = enemyGroup_->GetActiveEnemyGroupBack();
+
+	//グループの末尾が空なら処理しない
+	if (enemyGroupBack->IsEmpty())return;
 
 	//グループに所属していない敵を別グループに再所属させる
 	for (auto& enemy : enemyPool_->GetActiveEnemys())
@@ -208,9 +249,9 @@ void EnemyManager::ReJoinGroups(void)
 void EnemyManager::DecideOrderByDistance(void)
 {
 	//グループが空なら処理しない
-	if (enemyGroup_.empty())return;
+	if (!enemyGroup_)return;
 
-	for (auto& group : enemyGroup_)
+	for (auto& group : enemyGroup_->GetActiveEnemyGroups())
 	{
 		//グループが空なら処理しない
 		if (group->IsEmpty())continue;
