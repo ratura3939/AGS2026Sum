@@ -149,5 +149,6 @@ public:
 
 	//ƒ‰ƒ“ƒ_ƒ€‚Ì’l‚ðŽæ“¾
 	static int GetRandomValue(int _min, int _max);
+	static VECTOR GetRandomValue(const VECTOR& _min, const VECTOR& _max);
 };
 

@@ -29,6 +29,15 @@ public:
 		,PLAYER_HIGH_KICK_ANIM		//キック２
 		,PLAYER_FINISH_KICK_ANIM	//キック３
 
+		//敵
+		, ENEMY_IDLE_ANIM			//待機
+		, ENEMY_WALK_ANIM			//歩く
+		, ENEMY_RUN_ANIM			//走る
+		, ENEMY_ATTACK_ANIM			//攻撃
+		, ENEMY_BLOW_ANIM			//吹っ飛び
+		, ENEMY_DEATH_ANIM			//死亡
+
+
 		//JSON
 		,PLAYER_ATTACK_DATA_JSON	//プレイヤー攻撃データ
 
@@ -64,6 +73,8 @@ private:
 	void InitPause(void);
 
 	void ResourcePlayer(void);	//プレイヤー関連リソース
+	void ResourceEnemy(void);	//敵関連リソース
+	void ResourceBoss(void);	//ボス関連リソース
 
 	// デフォルトコンストラクタをprivateにして、
 	// 外部から生成できない様にする

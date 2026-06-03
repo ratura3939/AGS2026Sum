@@ -4,7 +4,9 @@
 #include<DxLib.h>
 #include"../../Common/Quaternion.h"
 
+class EnemyBase;
 class EnemyGroup;
+class EnemyPool;
 class Game;
 class AttackManager;
 
@@ -34,7 +36,10 @@ public:
 	void Release(void);
 
 	//敵グループの生成
-	void CreateEnemyGroup(void);
+	void CreateEnemyGroup(const int _createNum);
+
+	//生存中の敵の数を取得
+	const int GetActiveEnemyNum(void)const;
 
 private:
 
@@ -44,22 +49,33 @@ private:
 	//プレイヤーを攻撃態勢に入る距離半径
 	static constexpr float PLAYER_ATTACK_RADIUS = 500.0f;
 
+	//グループを維持できる最小の敵の数
+	static constexpr int MIN_ENEMY_NUM = 3;
+
 	//敵の生成数
 	static constexpr int CREATE_NUM = 7;
 
 	//敵グループ
 	std::vector<std::unique_ptr<EnemyGroup>> enemyGroup_;	
 
+	//敵情報
+	std::unique_ptr<EnemyPool> enemyPool_;
+
 	//プレイヤー座標
 	const VECTOR& playerPos_;
+
+	//グループと敵の関連付け
+	void Grouping(EnemyGroup* _group, EnemyBase* _enemy);
+
+	//敵の削除処理
+	void DeleteEnemy(void);
 
 	//グループの削除処理
 	void DeleteEnemyGroup(void);
 
-	//グループをプレイヤーに向かわせる
-	void LookPlayer(void);
+	//グループに所属していない敵を別グループに再所属させる
+	void ReJoinGroups(void);
 
-	//グループに攻撃態勢を取らせる
-	void AttackReady(void);
+	//距離ごとの行動決め
+	void DecideOrderByDistance(void);
 };
-

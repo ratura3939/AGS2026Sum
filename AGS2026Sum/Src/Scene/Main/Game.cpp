@@ -237,10 +237,15 @@ void Game::Update(void)
 	//}
 
 	// シーン遷移
-	if (inpM.IsTrigerrDown(InputManager::INPUT_COMMAND::ENTER))
+	//if (inpM.IsTrigerrDown(InputManager::INPUT_COMMAND::ENTER))
+	//{
+	//	SceneManager::GetInstance().ChangeScene(std::make_shared<Title>());
+	//}
+	if(enemy_->GetActiveEnemyNum() <= 0)
 	{
 		SceneManager::GetInstance().ChangeScene(std::make_shared<Title>());
 	}
+
 #pragma endregion
 
 	//更新
