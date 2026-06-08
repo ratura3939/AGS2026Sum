@@ -56,6 +56,9 @@ void ResourceManager::InitGame(void)
 {
 	Resource res;
 
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + L"tutorial.mv1");
+	resourcesMap_.emplace(SRC::STAGE_MDL, res);
+
 	ResourcePlayer();	//プレイヤー関連
 
 	ResourceEnemy();	//敵関連

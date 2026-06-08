@@ -10,6 +10,7 @@
 #include"../../Manager/Decoration/EffectManager.h"
 #include"../../Manager/Decoration/UIManager2d.h"
 #include"../../Object/Character/Player/PlayerManager.h"
+#include"../../Object/Stage/StageManager.h"
 #include "../../Scene/Sub/PauseScene.h"
 #include"../../Utility/Utility.h"
 #include"../../Renderer/PixelMaterial.h"
@@ -89,6 +90,8 @@ void Game::Init(void)
 
 	//生成
 	//ステージ
+	stage_ = std::make_unique<StageManager>();
+	stage_->Init();
 
 	//攻撃
 	atkMng_ = std::make_shared<AttackManager>();
@@ -499,6 +502,7 @@ void Game::Draw(void)
 {
 	DrawString(10, 10, L"GameScene", 0xffffff);
 
+	stage_->Draw();
 	enemy_->Draw();
 	player_->Draw();
 

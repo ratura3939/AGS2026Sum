@@ -37,6 +37,8 @@ public:
 		, ENEMY_BLOW_ANIM			//吹っ飛び
 		, ENEMY_DEATH_ANIM			//死亡
 
+		//ステージ
+		,STAGE_MDL
 
 		//JSON
 		,PLAYER_ATTACK_DATA_JSON	//プレイヤー攻撃データ

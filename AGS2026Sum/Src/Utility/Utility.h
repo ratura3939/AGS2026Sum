@@ -150,5 +150,9 @@ public:
 	//ƒ‰ƒ“ƒ_ƒ€‚Ì’l‚ðŽæ“¾
 	static int GetRandomValue(int _min, int _max);
 	static VECTOR GetRandomValue(const VECTOR& _min, const VECTOR& _max);
+
+	//•¶Žš—ñ•ÏŠ·
+	static std::string WstringToString(const std::wstring& _wstr);
+	static std::wstring StringToWstring(const std::string& _str);
 };
 

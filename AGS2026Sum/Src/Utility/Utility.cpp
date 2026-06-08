@@ -669,4 +669,26 @@ VECTOR Utility::GetRandomValue(const VECTOR& _min, const VECTOR& _max)
     return ret;
 }
 
+std::string Utility::WstringToString(const std::wstring& _wstr)
+{
+    int size = WideCharToMultiByte(CP_UTF8, 0, _wstr.c_str(), -1, nullptr, 0, nullptr, nullptr);
+
+    std::string result(size, 0);
+
+    WideCharToMultiByte(CP_UTF8, 0, _wstr.c_str(), -1, &result[0], size, nullptr, nullptr);
+
+    return result;
+}
+
+std::wstring Utility::StringToWstring(const std::string& _str)
+{
+    int size = MultiByteToWideChar(CP_UTF8, 0, _str.c_str(), -1, nullptr, 0);
+
+    std::wstring wstr(size, L'\0');
+
+    MultiByteToWideChar(CP_ACP, 0, _str.c_str(), -1, &wstr[0], size);
+    return wstr;
+
+}
+
 
