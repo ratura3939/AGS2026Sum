@@ -504,6 +504,7 @@ void Game::Draw(void)
 {
 	DrawString(10, 10, L"GameScene", 0xffffff);
 
+	ChunkManager::GetInstance().DebugDraw();
 	enemy_->Draw();
 	player_->Draw();
 

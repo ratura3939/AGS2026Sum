@@ -88,9 +88,21 @@ void EnemyGroupPool::Remove(EnemyGroup* _enemyGroup)
 		enemyGroupBack->SetActiveIndex(index);
 	}
 
+	//死亡判定
+	_enemyGroup->Kill();
+
 	//非稼働中の敵グループのリストに追加
 	inactiveEnemyGroups_.push_back(_enemyGroup);
 
 	//生存リストの末尾から削除
 	activeEnemyGroups_.pop_back();
+}
+
+EnemyGroup* EnemyGroupPool::GetActiveEnemyGroupBack(void) const
+{
+	//敵がいないなら
+	if (activeEnemyGroups_.size() == 0)return nullptr;
+
+	//末尾を返す
+	return activeEnemyGroups_.back(); 
 }

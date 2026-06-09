@@ -10,6 +10,9 @@ class ChunkManager : public Singleton<ChunkManager>
 
 public:
 
+	//デバッグ描画
+	void DebugDraw(void) const;
+
 	//敵の登録
 	void AddEnemyGroup(EnemyGroup* _enemyGroup);
 
@@ -33,11 +36,14 @@ public:
 private:
 
 	//セルの大きさ
-	static constexpr float CELL_SIZE = 100.0f;
+	static constexpr float CELL_SIZE = 1000.0f;
+
+	//セル数
+	static constexpr int CELL_NUM = 100;
 
 	//チャンクの数
-	static constexpr int CHUNK_X = 100000 / CELL_SIZE;		//チャンクのXの数
-	static constexpr int CHUNK_Z = 100000 / CELL_SIZE;		//チャンクのZの数
+	static constexpr int CHUNK_X = CELL_SIZE / CELL_NUM;		//チャンクのXの数
+	static constexpr int CHUNK_Z = CELL_SIZE / CELL_NUM;		//チャンクのZの数
 
 	//コンストラクタ
 	ChunkManager();

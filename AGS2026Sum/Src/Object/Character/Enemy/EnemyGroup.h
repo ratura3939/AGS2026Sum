@@ -74,6 +74,12 @@ public:
 	//敵の数の取得
 	const int GetEnemyCount(void)const { return static_cast<int>(enemys_.size()); }
 
+	//生存状態の取得
+	const bool IsActive(void)const { return isActive_; }
+
+	//死亡
+	void Kill(void) { isActive_ = false; }
+
 private:
 
 	//攻撃を開始する距離
@@ -109,6 +115,9 @@ private:
 
 	//行動関係
 	float actionCnt_;		//行動切り替えのカウント
+
+	//生存状態
+	bool isActive_;
 
 	//命令
 	GROUP_ORDER order_;										//グループの命令

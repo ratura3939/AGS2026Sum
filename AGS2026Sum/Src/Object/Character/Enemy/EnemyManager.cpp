@@ -22,61 +22,61 @@ EnemyManager::~EnemyManager(void)
 void EnemyManager::Init(void)
 {
 	//敵グループのプールを生成
-	enemyGroup_ = std::make_unique<EnemyGroupPool>();
+	enemyGroupPool_ = std::make_unique<EnemyGroupPool>();
 
 	//敵のプールを生成
 	enemyPool_ = std::make_unique<EnemyPool>();
 
 	//敵の生成(デバッグ)
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
+	//CreateEnemyGroup(CREATE_NUM);
 	CreateEnemyGroup(CREATE_NUM);
 	CreateEnemyGroup(1);
 }
@@ -94,6 +94,10 @@ void EnemyManager::Update(void)
 
 	//チャンク管理用のリストを更新
 	chunkMng.GetEnemyGroupsInRangeChunk(chunkGroups_, playerPos_, CHUNK_RANGE);
+
+	printfDx(
+		L"ChunkGroups=%d",
+		chunkGroups_.size());
 
 	//チャンク内のみ更新
 	for (auto& group : chunkGroups_)
@@ -123,22 +127,24 @@ void EnemyManager::Draw(void)
 void EnemyManager::Release(void)
 {
 	//解放
-	enemyGroup_->Release();
+	enemyGroupPool_->Release();
+	enemyGroupPool_.reset();
 	enemyPool_->Release();
+	enemyPool_.reset();
 }
 
 void EnemyManager::CreateEnemyGroup(const int _createNum)
 {
 	//グループ
-	EnemyGroup* group = enemyGroup_->Spawn();
+	EnemyGroup* group = enemyGroupPool_->Spawn();
 
 	//初期化
 	group->Init();
 
 	//グループの初期座標(デバッグ)
 	static VECTOR pos = { 0.0f, 0.0f, 0.0f };
-	group->SetPos(pos);
-	pos = VAdd(pos, { 1000.0f, 0.0f, 1000.0f });
+	//group->SetPos(pos);
+	//pos = VAdd(pos, { 1000.0f, 0.0f, 1000.0f });
 
 	//グループのチャンク管理用の添え字を設定
 	ChunkManager::GetInstance().AddEnemyGroup(group);
@@ -200,16 +206,19 @@ void EnemyManager::DeleteEnemy(void)
 void EnemyManager::DeleteEnemyGroup(void)
 {
 	//グループが空なら処理しない
-	if (!enemyGroup_)return;
+	if (!enemyGroupPool_)return;
 
 	//削除するグループのリスト
 	std::vector<EnemyGroup*> removeGroups;
 
+	//活動中のグループの数
+	int activeGroupNum = static_cast<int>(enemyGroupPool_->GetActiveEnemyGroups().size());
+
 	//グループの削除処理
-	for (auto& group : enemyGroup_->GetActiveEnemyGroups())
+	for (auto& group : enemyGroupPool_->GetActiveEnemyGroups())
 	{
 		//グループに所属している敵の数が一定数以下　または　グループが空なら削除
-		if (group->IsEmpty() || (group->GetEnemyCount() < MIN_ENEMY_NUM) && enemyGroup_->GetActiveEnemyGroups().size() > 1)
+		if (group->IsEmpty() || (group->GetEnemyCount() < MIN_ENEMY_NUM) && activeGroupNum > 1)
 		{
 			//削除するグループのリストに追加
 			removeGroups.push_back(group);
@@ -219,20 +228,24 @@ void EnemyManager::DeleteEnemyGroup(void)
 	//削除するグループのリストにいるグループを削除
 	for (auto& removeGroup : removeGroups)
 	{
-		enemyGroup_->Remove(removeGroup);
+		//チャンク管理から削除
+		ChunkManager::GetInstance().RemoveEnemyGroup(removeGroup);
+
+		//グループに所属している敵をグループから抜けさせる
+		enemyGroupPool_->Remove(removeGroup);
 	}
 }
 
 void EnemyManager::ReJoinGroups(void)
 {
 	//グループ　または　敵が空なら処理しない
-	if (!enemyGroup_ || !enemyPool_)return;
+	if (!enemyGroupPool_ || !enemyPool_)return;
 
 	//敵グループの末尾
-	EnemyGroup* enemyGroupBack = enemyGroup_->GetActiveEnemyGroupBack();
+	EnemyGroup* enemyGroupBack = enemyGroupPool_->GetActiveEnemyGroupBack();
 
 	//グループの末尾が空なら処理しない
-	if (enemyGroupBack->IsEmpty())return;
+	if (!enemyGroupBack)return;
 
 	//グループに所属していない敵を別グループに再所属させる
 	for (auto& enemy : enemyPool_->GetActiveEnemys())
@@ -249,9 +262,9 @@ void EnemyManager::ReJoinGroups(void)
 void EnemyManager::DecideOrderByDistance(void)
 {
 	//グループが空なら処理しない
-	if (!enemyGroup_)return;
+	if (!enemyGroupPool_)return;
 
-	for (auto& group : enemyGroup_->GetActiveEnemyGroups())
+	for (auto& group : enemyGroupPool_->GetActiveEnemyGroups())
 	{
 		//グループが空なら処理しない
 		if (group->IsEmpty())continue;

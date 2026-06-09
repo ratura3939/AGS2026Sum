@@ -60,10 +60,10 @@ private:
 	static constexpr int CREATE_NUM = 7;
 
 	//チャンク範囲
-	static constexpr int CHUNK_RANGE = 1;
+	static constexpr int CHUNK_RANGE = 2;
 
 	//敵グループ
-	std::unique_ptr<EnemyGroupPool> enemyGroup_;
+	std::unique_ptr<EnemyGroupPool> enemyGroupPool_;
 
 	//チャンク内の敵グループ(参照用)
 	std::vector<EnemyGroup*> chunkGroups_;

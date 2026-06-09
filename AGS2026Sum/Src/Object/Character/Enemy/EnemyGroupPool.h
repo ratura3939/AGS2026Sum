@@ -34,7 +34,7 @@ public:
 	const std::vector<EnemyGroup*>& GetActiveEnemyGroups(void)const { return activeEnemyGroups_; }
 
 	//生存敵グループの末尾を取得
-	EnemyGroup* GetActiveEnemyGroupBack(void)const { return activeEnemyGroups_.back(); }
+	EnemyGroup* GetActiveEnemyGroupBack(void)const;
 
 private:
 

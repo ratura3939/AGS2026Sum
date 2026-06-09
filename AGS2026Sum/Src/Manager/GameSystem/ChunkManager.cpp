@@ -8,6 +8,7 @@ ChunkManager::ChunkManager()
 
 ChunkManager::~ChunkManager()
 {
+	chunkEnemyMap_.fill({});
 }
 
 int ChunkManager::GetChunkIndex(const VECTOR& _pos) const
@@ -20,11 +21,32 @@ int ChunkManager::GetChunkIndex(const VECTOR& _pos) const
 	//セルがチャンクの範囲外ならエラーを返す
 	if (cellX < 0 || cellX >= CHUNK_X || cellZ < 0 || cellZ >= CHUNK_Z)
 	{
-		assert("チャンクの範囲外の座標が渡されました");
+		assert(!"Out of Chunk");
 		return -1;	//エラー
 	}
 
 	return index;
+}
+
+void ChunkManager::DebugDraw(void) const
+{
+	//チャンクの線を描画
+	for (int z = 0; z <= CHUNK_Z; z++)
+	{
+		DrawLine3D(
+			VGet(0.0f, 0.0f, z * CELL_SIZE),
+			VGet(CHUNK_X * CELL_SIZE, 0.0f, z * CELL_SIZE),
+			GetColor(255, 255, 255));
+	}
+
+	for (int x = 0; x <= CHUNK_X; x++)
+	{
+		DrawLine3D(
+			VGet(x * CELL_SIZE, 0.0f, 0.0f),
+			VGet(x * CELL_SIZE, 0.0f, CHUNK_Z * CELL_SIZE),
+			GetColor(255, 255, 255));
+	}
+
 }
 
 void ChunkManager::AddEnemyGroup(EnemyGroup* _enemyGroup)
@@ -34,6 +56,12 @@ void ChunkManager::AddEnemyGroup(EnemyGroup* _enemyGroup)
 
 	//チャンクに登録
 	chunkEnemyMap_[index].push_back(_enemyGroup);
+
+	printfDx(
+		L"Pos(%.0f %.0f) Index=%d\n",
+		_enemyGroup->GetPos().x,
+		_enemyGroup->GetPos().z,
+		index);
 
 	//敵グループにチャンクの添え字を設定
 	_enemyGroup->SetChunkIndex(index);
