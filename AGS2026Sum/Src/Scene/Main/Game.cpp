@@ -2,6 +2,7 @@
 #include"../../Object/Character/Enemy/EnemyManager.h"
 #include"../../Manager/GameSystem/AttackManager.h"
 #include"../../Manager/GameSystem/CollisionManager.h"
+#include"../../Manager/GameSystem/ChunkManager.h"
 #include"../../Manager/Generic/Camera.h"
 #include"../../Manager/Generic/SceneManager.h"
 #include"../../Manager/Generic/InputManager.h"
@@ -88,6 +89,10 @@ void Game::Init(void)
 	update_ = &Game::GameUpdate;
 
 	//生成
+	
+	//チャンク管理
+	ChunkManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::GAME_END);
+
 	//ステージ
 
 	//攻撃
@@ -499,6 +504,7 @@ void Game::Draw(void)
 {
 	DrawString(10, 10, L"GameScene", 0xffffff);
 
+	ChunkManager::GetInstance().DebugDraw();
 	enemy_->Draw();
 	player_->Draw();
 
@@ -571,6 +577,7 @@ void Game::Release(void)
 	SoundManager& sndM = SoundManager::GetInstance();
 	sndM.Stop(SoundManager::SOUND_NAME::GAME_NORMAL_BGM);	//今まで流していたものを停止\
 	CollisionManager::GetInstance().DeleteAllCollider();
+	ChunkManager::GetInstance().DestroyInstance();
 }
 
 void Game::Reset(void)

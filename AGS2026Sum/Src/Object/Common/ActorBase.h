@@ -59,6 +59,8 @@ protected:
 
 	void MakeCollider(std::unique_ptr<Geometry> _geo, const Collider::COL_TAG _tag, const std::set<Collider::COL_TAG> _hitTags = {});	//コライダの生成
 
+	void EnableColliderAtTag(const Collider::COL_TAG& _tag);		//タグによるコライダの有効化
+	void DisableColliderAtTag(const Collider::COL_TAG& _tag);		//タグによるコライダの無効化
 	void DeleteAllColliders(void);									//コライダの全削除
 	void DeleteColliderAtTag(const Collider::COL_TAG& _tag);		//タグによるコライダの削除
 

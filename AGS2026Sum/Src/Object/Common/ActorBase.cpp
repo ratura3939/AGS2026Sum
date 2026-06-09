@@ -140,6 +140,26 @@ void ActorBase::MakeCollider(std::unique_ptr<Geometry> _geo, const Collider::COL
 	CollisionManager::GetInstance().AddCollider(col);
 }
 
+void ActorBase::EnableColliderAtTag(const Collider::COL_TAG& _tag)
+{
+	//タグによるコライダの有効化
+	for (auto& col : colliders_) {
+		if (col->IsContainsTag(_tag)) {
+			col->SetUseThis(true);
+		}
+	}
+}
+
+void ActorBase::DisableColliderAtTag(const Collider::COL_TAG& _tag)
+{
+	//タグによるコライダの無効化
+	for (auto& col : colliders_) {
+		if (col->IsContainsTag(_tag)) {
+			col->SetUseThis(false);
+		}
+	}
+}
+
 void ActorBase::DeleteAllColliders(void)
 {
 	//コライダの全削除

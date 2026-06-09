@@ -91,6 +91,15 @@ public:
 	//バック移動
 	void BackMove(void);
 
+	//本体当たり判定の有効化
+	void EnableHitCollider(void);
+
+	//本体当たり判定の無効化
+	void DisableHitCollider(void);
+
+	//攻撃の無効化
+	void DisableAttack(void);
+
 	//アニメーションプレイ
 	void PlayAnim(const std::wstring& _animName, const float _speed = 1.0f);
 

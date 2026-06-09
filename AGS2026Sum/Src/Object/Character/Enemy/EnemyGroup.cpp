@@ -4,10 +4,12 @@
 #include "EnemyGroup.h"
 
 EnemyGroup::EnemyGroup(void)
-	: pos_(Utility::VECTOR_INIT)
+	: chunkIndex_(-1)
+	, pos_(Utility::VECTOR_INIT)
 	, actionCnt_(0.0f)
 	, movePow_(Utility::VECTOR_ZERO)
 	, order_(GROUP_ORDER::NONE)
+	, isActive_(false)
 {
 	//状態ごとの処理の設定
 	orderFunc_[GROUP_ORDER::NONE] = {};
@@ -28,7 +30,10 @@ EnemyGroup::~EnemyGroup(void)
 void EnemyGroup::Init(void)
 {
 	//座標の初期化
-	pos_ = Utility::VECTOR_ZERO;
+	pos_ = { 100.0f,0.0f,100.0f };
+
+	//生存判定の初期化
+	isActive_ = true;
 	
 	//行動カウントの初期化
 	actionCnt_ = 0.0f;
@@ -42,6 +47,12 @@ void EnemyGroup::Update(void)
 	//状態ごとの更新
 	(this->*orderFunc_[order_].update)();
 
+	//敵の更新
+	for (auto& enemy : enemys_)
+	{
+		enemy->Update();
+	}
+
 	//敵の死亡時の処理
 	DeleteEnemy();
 }
@@ -51,6 +62,12 @@ void EnemyGroup::Draw(void)
 	//デバッグ
 	DrawSphere3D(groupGoalPos_, 20, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), false);
 	DrawSphere3D(pos_, 20, 20, GetColor(255, 255, 0), GetColor(255, 255, 0), false);
+
+	//敵の描画
+	for (auto& enemy : enemys_)
+	{
+		enemy->Draw();
+	}
 }
 
 void EnemyGroup::Release(void)

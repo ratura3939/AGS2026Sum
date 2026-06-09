@@ -5,8 +5,9 @@
 #include"../../Common/Quaternion.h"
 
 class EnemyBase;
-class EnemyGroup;
 class EnemyPool;
+class EnemyGroup;
+class EnemyGroupPool;
 class Game;
 class AttackManager;
 
@@ -49,14 +50,23 @@ private:
 	//プレイヤーを攻撃態勢に入る距離半径
 	static constexpr float PLAYER_ATTACK_RADIUS = 500.0f;
 
+	//チャンク管理用の初期確保数
+	static constexpr int INIT_CHUNK_GROUP_NUM = 100;
+
 	//グループを維持できる最小の敵の数
 	static constexpr int MIN_ENEMY_NUM = 3;
 
 	//敵の生成数
 	static constexpr int CREATE_NUM = 7;
 
+	//チャンク範囲
+	static constexpr int CHUNK_RANGE = 2;
+
 	//敵グループ
-	std::vector<std::unique_ptr<EnemyGroup>> enemyGroup_;	
+	std::unique_ptr<EnemyGroupPool> enemyGroupPool_;
+
+	//チャンク内の敵グループ(参照用)
+	std::vector<EnemyGroup*> chunkGroups_;
 
 	//敵情報
 	std::unique_ptr<EnemyPool> enemyPool_;
