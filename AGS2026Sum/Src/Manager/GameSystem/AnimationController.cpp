@@ -6,13 +6,17 @@ namespace {
 	const float BLEND_RATE_MAX = 1.0f;	//ブレンド率の最大値
 	const float BLEND_RATE_MIN = 0.0f;	//ブレンド率の最小値
 	const float BLEND_RATE_ACC = 0.05f;	//ブレンド率の上昇量
+	const AnimationController::AnimationSoundInfo SE_INFO_INIT	//アニメーションに合わせて再生するSEの情報の初期化
+		= { SoundManager::SOUND_NAME::MAX, 0.0f, true };
 	const AnimationController::AnimationInfo ANIMATION_INFO_INIT	//アニメーション情報の初期化
-		= { L"",AnimationController::PLAY_TYPE::MAX, AnimationController::ANIM_SOURCE::MAX, -1, -1.0f, false ,false };
+		= { L"",AnimationController::PLAY_TYPE::MAX, AnimationController::ANIM_SOURCE::MAX, -1, -1.0f, false ,false,SE_INFO_INIT };
 
 	const AnimationController::AttachInfo ATTACH_INFO_INIT			//アタッチ情報の初期化
 		= { -1,-1.0f,-1.0f,false };
 
 	const AnimationController::FixAnimationAxis FIX_AXIS_INIT = { false,false,false };
+
+	const float ANIMATION_RATE_MAX = 1.0f;
 }
 
 AnimationController::AnimationController(int& _model)
@@ -57,6 +61,7 @@ void AnimationController::Add(const std::wstring& _name, const int _animData, co
 	anim.data = _animData;
 	anim.mustPlayOnce = _isLock;
 	anim.isFixPosition = _isFixPosition;
+	anim.seInfo = SE_INFO_INIT;
 
 	if (_type == PLAY_TYPE::LOOP) {
 		anim.mustPlayOnce = false;	//ループは再生保障の対象外
@@ -76,7 +81,7 @@ void AnimationController::Add(const std::wstring& _name, const int _animData, co
 	}
 }
 
-void AnimationController::Play(const std::wstring& _name, const float _speed, const std::vector<NextAnimInfo> _next)
+void AnimationController::Play(const std::wstring& _name, const float _speed, const AnimationSoundInfo& _seInfo, const std::vector<NextAnimInfo> _next)
 {
 	//アニメーションロック中は再生しない
 	if (isAnimLock_ || blendAnim_.mustPlayOnce) {
@@ -98,7 +103,7 @@ void AnimationController::Play(const std::wstring& _name, const float _speed, co
 
 	//まだアニメーションがないとき
 	if (currentAnim_.data == -1) {
-		SetAnimationPlayInfo(currentAnim_, animDatas_[_name], currentAnimAttachInfo_, _speed);	//再生情報の設定
+		SetAnimationPlayInfo(currentAnim_, animDatas_[_name], currentAnimAttachInfo_, _speed, _seInfo);	//再生情報の設定
 		isAnimLock_ = animDatas_[_name].mustPlayOnce;	//再生保障
 		SetFinishAndUpdateFunc();						//終了時と更新処理の設定
 	}
@@ -112,7 +117,7 @@ void AnimationController::Play(const std::wstring& _name, const float _speed, co
 			isAnimLock_ = blendAnim_.mustPlayOnce;						//再生保障
 		}
 
-		SetAnimationPlayInfo(blendAnim_, animDatas_[_name], blendAnimAttachInfo_, _speed);	//新規のものをブレンド中のものに
+		SetAnimationPlayInfo(blendAnim_, animDatas_[_name], blendAnimAttachInfo_, _speed, _seInfo);	//新規のものをブレンド中のものに
 	}
 	
 	
@@ -127,7 +132,7 @@ void AnimationController::Play(const std::wstring& _name, const float _speed, co
 	}
 }
 
-void AnimationController::ForcePlay(const std::wstring& _name, const float _speed, const std::vector<NextAnimInfo> _next)
+void AnimationController::ForcePlay(const std::wstring& _name, const float _speed, const AnimationSoundInfo& _seInfo, const std::vector<NextAnimInfo> _next)
 {
 
 	//要素がないとき
@@ -149,7 +154,7 @@ void AnimationController::ForcePlay(const std::wstring& _name, const float _spee
 		currentAnimAttachInfo_ = blendAnimAttachInfo_;				//ブレンドしているものを現在のものに
 		isAnimLock_ = blendAnim_.mustPlayOnce;						//再生保障
 	}
-	SetAnimationPlayInfo(blendAnim_, animDatas_[_name], blendAnimAttachInfo_, _speed);	//新規のものをブレンド中のものに
+	SetAnimationPlayInfo(blendAnim_, animDatas_[_name], blendAnimAttachInfo_, _speed, _seInfo);	//新規のものをブレンド中のものに
 }
 
 void AnimationController::AddNextAnim(const std::wstring& _name, const float _speed)
@@ -236,6 +241,14 @@ const float AnimationController::GetCurrentAnimationProgressRate(void) const
 	return currentAnimAttachInfo_.counter / currentAnim_.total;
 }
 
+const float AnimationController::GetBlendAnimationProgressRate(void) const
+{
+	if (blendAnimAttachInfo_.attachNum == -1) {
+		return 0.0f;
+	}
+	return blendAnimAttachInfo_.counter / blendAnim_.total;
+}
+
 const float AnimationController::GetAnimTotalTime(const std::wstring& _name) const
 {
 	return animDatas_.at(_name).total;
@@ -274,10 +287,27 @@ void AnimationController::UpdateNormalAnim(void)
 {
 	currentAnimAttachInfo_.counter += currentAnimAttachInfo_.speed * speedRate_;	//カウンタ加算
 
+	//まだSEが再生されていないとき
+	if (!currentAnim_.seInfo.isPlayed) {
+		if (currentAnim_.seInfo.playTiming <= GetCurrentAnimationProgressRate()) {
+			SoundManager::GetInstance().Play(currentAnim_.seInfo.name);	//SE再生
+			currentAnim_.seInfo.isPlayed = true;				//再生したフラグを立てる
+		}
+	}
+
 	if (blendAnimAttachInfo_.attachNum != -1) {
 		BlendAnim();
 		blendAnimAttachInfo_.counter += blendAnimAttachInfo_.speed * speedRate_;	//カウンタ加算
+
+		//まだSEが再生されていないとき
+		if (!blendAnim_.seInfo.isPlayed) {
+			if (blendAnim_.seInfo.playTiming <= GetBlendAnimationProgressRate()) {
+				SoundManager::GetInstance().Play(blendAnim_.seInfo.name);	//SE再生
+				blendAnim_.seInfo.isPlayed = true;				//再生したフラグを立てる
+			}
+		}
 	}
+
 	//再生上限にいった場合(まだアニメーションが終了していないとき→ブレンド中の対策)
 	if (currentAnimAttachInfo_.counter > currentAnim_.total && !currentAnimAttachInfo_.isFinish) {
 		(this->*finishAnim_)();	//アニメーション終了時処理
@@ -288,9 +318,26 @@ void AnimationController::UpdateReturnAnim(void)
 {
 	currentAnimAttachInfo_.counter -= currentAnimAttachInfo_.speed * speedRate_;		//カウンタ減算（逆再生のため）
 
+	//まだSEが再生されていないとき
+	if (!currentAnim_.seInfo.isPlayed) {
+		if ((ANIMATION_RATE_MAX - currentAnim_.seInfo.playTiming) >= GetCurrentAnimationProgressRate()) {
+			SoundManager::GetInstance().Play(currentAnim_.seInfo.name);	//SE再生
+			currentAnim_.seInfo.isPlayed = true;				//再生したフラグを立てる
+		}
+	}
+
+
 	if (blendAnimAttachInfo_.attachNum != -1) {
 		BlendAnim();
 		blendAnimAttachInfo_.counter -= blendAnimAttachInfo_.speed * speedRate_;	//カウンタ加算
+
+		//まだSEが再生されていないとき
+		if (!blendAnim_.seInfo.isPlayed) {
+			if ((ANIMATION_RATE_MAX - blendAnim_.seInfo.playTiming) >= GetBlendAnimationProgressRate()) {
+				SoundManager::GetInstance().Play(blendAnim_.seInfo.name);	//SE再生
+				blendAnim_.seInfo.isPlayed = true;				//再生したフラグを立てる
+			}
+		}
 	}
 	//再生上限にいった場合
 	if (currentAnimAttachInfo_.counter <= 0.0f && !currentAnimAttachInfo_.isFinish){
@@ -339,13 +386,14 @@ void AnimationController::FinishAnimReturn(void)
 	currentAnimAttachInfo_.counter = currentAnim_.total;
 }
 
-void AnimationController::SetAnimationPlayInfo(AnimationInfo& _animInfo, const AnimationInfo& _sourceInfo, AttachInfo& _attachInfo, const float _animSpeed)
+void AnimationController::SetAnimationPlayInfo(AnimationInfo& _animInfo, const AnimationInfo& _sourceInfo, AttachInfo& _attachInfo, const float _animSpeed, const AnimationSoundInfo& _seInfo)
 {
 	_animInfo = _sourceInfo;	//アニメーション情報の設定
+	_animInfo.seInfo = _seInfo;	//SE情報の設定
 	SetAttachAnim(_attachInfo.attachNum, _animInfo.data, _animInfo.source);	//アタッチ
 	_attachInfo.speed = _animSpeed;		//再生速度初期化
 	_attachInfo.counter = 0.0f;			//カウンタ初期化
-	_attachInfo.isFinish = false;		//終了フラグ初期化
+	_attachInfo.isFinish = false;		//終了フラグ初期
 	//逆再生のときはカウンタを総再生時間にする
 	if (_animInfo.type == PLAY_TYPE::RETURN) {
 		_attachInfo.counter = _animInfo.total;
