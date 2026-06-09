@@ -9,8 +9,8 @@ namespace {
 	const int VS_BUFF_NUM = 1;
 	const int PS_BUFF_NUM = 0;
 
-	const float SCALING_X = 2.0f;
-	const float SCALING_Y = 2.0f;
+	const float SCALING_X = 1.0f;
+	const float SCALING_Y = 1.0f;
 
 	const FLOAT4 SCALING_UV = { SCALING_X,SCALING_Y,0.0f,0.0f };
 }
