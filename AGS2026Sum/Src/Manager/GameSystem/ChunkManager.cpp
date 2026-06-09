@@ -13,14 +13,6 @@ ChunkManager::~ChunkManager()
 
 void ChunkManager::Destroy(void)
 {
-	size_t total = 0;
-
-	for (auto& chunk : chunkEnemyMap_)
-	{
-		total += chunk.size();
-	}
-
-	printf("Chunk Group Num = %zu\n", total);
 }
 
 int ChunkManager::GetChunkIndex(const VECTOR& _pos) const
@@ -68,12 +60,6 @@ void ChunkManager::AddEnemyGroup(EnemyGroup* _enemyGroup)
 
 	//チャンクに登録
 	chunkEnemyMap_[index].push_back(_enemyGroup);
-
-	printfDx(
-		L"Pos(%.0f %.0f) Index=%d\n",
-		_enemyGroup->GetPos().x,
-		_enemyGroup->GetPos().z,
-		index);
 
 	//敵グループにチャンクの添え字を設定
 	_enemyGroup->SetChunkIndex(index);
