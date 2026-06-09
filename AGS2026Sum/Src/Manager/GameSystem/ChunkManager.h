@@ -20,7 +20,7 @@ public:
 	void RemoveEnemyGroup(EnemyGroup* _enemyGroup);
 
 	//チャンク移動
-	void MoveEnemyGroup(EnemyGroup* _enemyGroup, const VECTOR& _oldPos);
+	void MoveEnemyGroup(EnemyGroup* _enemyGroup);
 
 	//チャンク内の敵の取得
 	const std::vector<EnemyGroup*>& GetEnemyGroupInChunk(const VECTOR& _pos) const;
@@ -50,6 +50,9 @@ private:
 
 	//デストラクタ
 	~ChunkManager()override;
+
+	//削除処理
+	void Destroy(void)override;
 
 	//チャンクのインデックスを計算
 	int GetChunkIndex(const VECTOR& _pos) const;

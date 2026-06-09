@@ -47,9 +47,12 @@ public:
 	virtual void Init(void) {}
 
 	//インスタンスの破棄
-	inline virtual void Destroy(void)
+	inline virtual void DestroyInstance(void)
 	{
 		if (instance_ == nullptr)return;
+
+		//破棄時の処理
+		instance_->Destroy();
 
 		//破棄
 		delete instance_;
@@ -66,6 +69,9 @@ protected:
 
 	//デストラクタ
 	virtual ~Singleton(void) = default;
+
+	//削除時処理
+	virtual void Destroy(void){}
 };
 
 //静的インスタンスの初期化

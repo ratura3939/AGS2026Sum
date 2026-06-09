@@ -577,7 +577,7 @@ void Game::Release(void)
 	SoundManager& sndM = SoundManager::GetInstance();
 	sndM.Stop(SoundManager::SOUND_NAME::GAME_NORMAL_BGM);	//¡‚Ü‚Å—¬‚µ‚Ä‚¢‚½‚à‚Ì‚ğ’â~\
 	CollisionManager::GetInstance().DeleteAllCollider();
-	ChunkManager::GetInstance().Destroy();
+	ChunkManager::GetInstance().DestroyInstance();
 }
 
 void Game::Reset(void)

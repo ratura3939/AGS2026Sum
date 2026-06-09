@@ -78,7 +78,7 @@ void EnemyManager::Init(void)
 	//CreateEnemyGroup(CREATE_NUM);
 	//CreateEnemyGroup(CREATE_NUM);
 	CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(1);
+	//CreateEnemyGroup(1);
 }
 
 void EnemyManager::Update(void)
@@ -95,14 +95,14 @@ void EnemyManager::Update(void)
 	//チャンク管理用のリストを更新
 	chunkMng.GetEnemyGroupsInRangeChunk(chunkGroups_, playerPos_, CHUNK_RANGE);
 
-	printfDx(
-		L"ChunkGroups=%d",
-		chunkGroups_.size());
-
 	//チャンク内のみ更新
 	for (auto& group : chunkGroups_)
 	{
+		//更新
 		group->Update();
+
+		//チャンクの移動確認
+		chunkMng.MoveEnemyGroup(group);
 	}
 
 	//グループの削除処理

@@ -11,6 +11,18 @@ ChunkManager::~ChunkManager()
 	chunkEnemyMap_.fill({});
 }
 
+void ChunkManager::Destroy(void)
+{
+	size_t total = 0;
+
+	for (auto& chunk : chunkEnemyMap_)
+	{
+		total += chunk.size();
+	}
+
+	printf("Chunk Group Num = %zu\n", total);
+}
+
 int ChunkManager::GetChunkIndex(const VECTOR& _pos) const
 {
 	//座標からセルの座標を求める
@@ -77,7 +89,7 @@ void ChunkManager::RemoveEnemyGroup(EnemyGroup* _enemyGroup)
 	group.erase(std::remove(group.begin(), group.end(), _enemyGroup), group.end());
 }
 
-void ChunkManager::MoveEnemyGroup(EnemyGroup* _enemyGroup, const VECTOR& _oldPos)
+void ChunkManager::MoveEnemyGroup(EnemyGroup* _enemyGroup)
 {
 	//古い座標からセルの座標を求める
 	int oldIndex = _enemyGroup->GetChunkIndex();
