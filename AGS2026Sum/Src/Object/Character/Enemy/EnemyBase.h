@@ -8,6 +8,7 @@
 #include"EnemyGroup.h"
 
 class EnemyStateBase;
+class EnemySkillBase;
  
 class EnemyBase : public CharacterBase
 {
@@ -51,6 +52,12 @@ public:
 
 	//行動遷移
 	void ChangeAction(const ENEMY_ACTION _nextAction);
+
+	//攻撃設定
+	void SetAttackSkill(std::unique_ptr<EnemySkillBase> _skill);
+
+	//攻撃破棄
+	void BreakAttackSkill(void);
 
 	//思考の更新
 	void UpdateBrain(void);
@@ -97,13 +104,16 @@ public:
 	//本体当たり判定の無効化
 	void DisableHitCollider(void);
 
+	//攻撃の有効化
+	void EnableAttack(void);
+
 	//攻撃の無効化
 	void DisableAttack(void);
 
 	//アニメーションプレイ
 	void PlayAnim(const std::wstring& _animName, const float _speed = 1.0f);
 
-private:
+protected:
 
 	//親ボーン名
 	static const std::wstring ROOT_NAME;
@@ -135,7 +145,6 @@ private:
 
 	//攻撃時間
 	static constexpr float ATTACK_READY_TIME = 1.0f;	//攻撃準備時間
-	static constexpr float ATTACK_TIME = 3.0f;			//攻撃時間
 
 	//自身の生存判定用番号
 	int activeIndex_;
@@ -159,6 +168,12 @@ private:
 	ENEMY_ACTION action_;														//行動の状態
 	std::array<ActionFunc, static_cast<int>(ENEMY_ACTION::MAX)> actionFunc_;	//行動ごとの処理
 	std::array<ActionInfo, static_cast<int>(ENEMY_ACTION::MAX)> actionInfo_;	//行動ごとの影響情報
+
+	//攻撃
+	std::unique_ptr<EnemySkillBase> skill_;
+
+	//パラメータ情報
+
 
 	//グループの命令ごとの判断
 	EnemyBrain brain_;

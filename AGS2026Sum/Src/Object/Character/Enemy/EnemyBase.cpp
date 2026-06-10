@@ -1,18 +1,15 @@
 #include "../../../pch.h"
-#include "../../../Manager/Generic/ResourceManager.h"
 #include "../../../Manager/Generic/SceneManager.h"
 #include "../../../Manager/GameSystem/CollisionManager.h"
 #include "../../Common/Collider.h"
 #include "../../Common/Geometry/Sphere.h"
 #include "State/EnemyStateBase.h"
 #include "State/EnemyNormalState.h"
+#include "Skill/EnemySkillBase.h"
 #include "EnemyManager.h"
 #include "EnemyGroup.h"
 #include "EnemyBrain.h"
 #include "EnemyBase.h"
-
-//親ボーン名
-const std::wstring EnemyBase::ROOT_NAME = L"mixamorig:Hips";
 
 EnemyBase::EnemyBase(void)
 	: group_(nullptr)
@@ -86,13 +83,37 @@ void EnemyBase::ChangeAction(const ENEMY_ACTION _nextAction)
 	if (action_ == _nextAction || _nextAction == ENEMY_ACTION::MAX)return;
 
 	//状態抜けの処理
-	(this->*actionFunc_[static_cast<int>(action_)].exit)();
+	if(action_ != ENEMY_ACTION::MAX)(this->*actionFunc_[static_cast<int>(action_)].exit)();
 	
 	//状態の変更
 	action_ = _nextAction;
 	
 	//状態遷移の処理
 	(this->*actionFunc_[static_cast<int>(action_)].enter)();
+}
+
+void EnemyBase::SetAttackSkill(std::unique_ptr<EnemySkillBase> _skill)
+{
+	//既にスキルを使っている
+	if (skill_)return;
+
+	//保存
+	skill_ = std::move(_skill);
+
+	//開始
+	skill_->Enter(*this);
+}
+
+void EnemyBase::BreakAttackSkill(void)
+{
+	//ないならスキップ
+	if (!skill_)return;
+
+	//強制終了
+	skill_->Exit(*this);
+
+	//破棄
+	skill_.reset();
 }
 
 void EnemyBase::UpdateBrain(void)
@@ -134,12 +155,6 @@ void EnemyBase::ResetPos(void)
 
 void EnemyBase::DoLoad(void)
 {
-	//モデル差し込み
-	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_MDL);
-
-	//アニメーションの初期化
-	InitAnim();
-
 	//状態の初期化
 	state_ = std::make_unique<EnemyNormalState>();
 	state_->Enter(*this);
@@ -147,10 +162,6 @@ void EnemyBase::DoLoad(void)
 
 void EnemyBase::DoInit(void)
 {
-	//体力
-	hp_ = 10.0f;		
-	quaRotLocal_ = Quaternion::Euler(0.0f, 0.0f, 0.0f);
-
 	//コライダの初期化
 	DeleteAllColliders();
 
@@ -187,42 +198,6 @@ void EnemyBase::DoUpdate(void)
 
 void EnemyBase::InitAnim(void)
 {
-	//インスタンス取得
-	auto& res = ResourceManager::GetInstance();
-
-	//アニメーションの初期化
-	animController_ = std::make_unique<AnimationController>(modelId_);
-
-	//待機アニメーション
-	int animData = res.LoadModelDuplicate(ResourceManager::SRC::ENEMY_IDLE_ANIM);
-	animController_->Add(L"Idle", animData, AnimationController::PLAY_TYPE::LOOP, AnimationController::ANIM_SOURCE::EXTERNAL);
-
-	//歩きアニメーション
-	animData = res.LoadModelDuplicate(ResourceManager::SRC::ENEMY_WALK_ANIM);
-	animController_->Add(L"Walk", animData, AnimationController::PLAY_TYPE::LOOP, AnimationController::ANIM_SOURCE::EXTERNAL);
-
-	//走りアニメーション
-	animData = res.LoadModelDuplicate(ResourceManager::SRC::ENEMY_RUN_ANIM);
-	animController_->Add(L"Run", animData, AnimationController::PLAY_TYPE::LOOP, AnimationController::ANIM_SOURCE::EXTERNAL);
-
-	//攻撃アニメーション
-	animData = res.LoadModelDuplicate(ResourceManager::SRC::ENEMY_ATTACK_ANIM);
-	animController_->Add(L"Attack", animData, AnimationController::PLAY_TYPE::NORMAL, AnimationController::ANIM_SOURCE::EXTERNAL);
-
-	//吹っ飛びアニメーション
-	animData = res.LoadModelDuplicate(ResourceManager::SRC::ENEMY_BLOW_ANIM);
-	animController_->Add(L"Blow", animData, AnimationController::PLAY_TYPE::NORMAL, AnimationController::ANIM_SOURCE::EXTERNAL, false, true);
-	animController_->SetFixAnimationAxisInfo(L"Blow", true, true, true);
-
-	//死亡アニメーション
-	animData = res.LoadModelDuplicate(ResourceManager::SRC::ENEMY_DEATH_ANIM);
-	animController_->Add(L"Death", animData, AnimationController::PLAY_TYPE::NORMAL, AnimationController::ANIM_SOURCE::EXTERNAL);
-
-	//重心ボーンの設定
-	animController_->SetRootFrameIndex(ROOT_NAME);
-		
-	//デフォルトアニメーションの設定
-	animController_->SetDefaultAnim(L"Idle");
 }
 
 void EnemyBase::DrawDebug(void)
@@ -296,9 +271,11 @@ void EnemyBase::UpdateAttackReady(void)
 
 void EnemyBase::UpdateAttack(void)
 {
-	//攻撃時間を超えたら待機状態に遷移
-	if (attackCnt_ > ATTACK_TIME) ChangeAction(ENEMY_ACTION::STAY);
-	else attackCnt_ += SceneManager::GetInstance().GetDeltaTime();
+	//スキルが入ってないなら強制的に待機に移行
+	if (!skill_)ChangeAction(ENEMY_ACTION::STAY);
+
+	//スキルごとの行動
+	skill_->Update(*this);
 }
 
 void EnemyBase::UpdateReturn(void)
@@ -375,6 +352,12 @@ void EnemyBase::DisableHitCollider(void)
 {
 	//当たり判定の無効化
 	DisableColliderAtTag(Collider::COL_TAG::ENEMY);
+}
+
+void EnemyBase::EnableAttack(void)
+{
+	//攻撃コライダの有効化
+	EnableColliderAtTag(Collider::COL_TAG::ENEMY_ATTACK);
 }
 
 void EnemyBase::DisableAttack(void)

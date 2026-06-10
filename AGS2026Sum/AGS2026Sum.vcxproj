@@ -139,7 +139,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Character\Enemy\MiddleBoss.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\NormalEnemy.cpp" />
+    <ClCompile Include="Src\Object\Character\Enemy\Skill\EnemyNormalSkill.cpp" />
+    <ClCompile Include="Src\Object\Character\Enemy\Skill\EnemySkillBase.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\EnemyGroupPool.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\ChunkManager.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\State\EnemyKnockDownState.cpp" />
@@ -198,7 +201,11 @@
     <ClCompile Include="Src\Utility\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Character\Enemy\EnemyParameter.h" />
+    <ClInclude Include="Src\Object\Character\Enemy\MiddleBoss.h" />
     <ClInclude Include="Src\Object\Character\Enemy\NormalEnemy.h" />
+    <ClInclude Include="Src\Object\Character\Enemy\Skill\EnemyNormalSkill.h" />
+    <ClInclude Include="Src\Object\Character\Enemy\Skill\EnemySkillBase.h" />
     <ClInclude Include="Src\Object\Character\Enemy\EnemyGroupPool.h" />
     <ClInclude Include="Src\Manager\GameSystem\ChunkManager.h" />
     <ClInclude Include="Src\Object\Character\Enemy\State\EnemyKnockDownState.h" />
