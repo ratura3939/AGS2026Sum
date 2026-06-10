@@ -12,10 +12,21 @@ class SoundManager
 public:
 	//ìoò^ñº
 	enum class SOUND_NAME {
+		//BGM
 		TITLE_BGM
 		,GAME_NORMAL_BGM
 		,GAME_BATTLE_BGM
 		,GAME_BOSS_BGM
+
+		//SE
+		//ÉvÉåÉCÉÑÅ[çUåÇ
+		,PUNCH_FIRST_PLAYER_SE
+		,PUNCH_SECOND_PLAYER_SE
+		,PUNCH_THIRD_PLAYER_SE
+		,KICK_FIRST_PLAYER_SE
+		,KICK_SECOND_PLAYER_SE
+		,KICK_THIRD_PLAYER_SE
+
 		,MAX
 	};
 

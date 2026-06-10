@@ -118,6 +118,32 @@ void ResourceManager::ResourcePlayer(void)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/HurricanKick.mv1");
 	resourcesMap_.emplace(SRC::PLAYER_FINISH_KICK_ANIM, res);
 
+	//効果音
+	//攻撃
+	//パンチ初段
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + L"Punch_First_Test.mp3");
+	resourcesMap_.emplace(SRC::PUNCH_FIRST_PLAYER_SE, res);
+
+	//パンチ二段目
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + L"Punch_Second_Test.mp3");
+	resourcesMap_.emplace(SRC::PUNCH_SECOND_PLAYER_SE, res);
+
+	//パンチ最終段
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + L"Punch_Third_Test.mp3");
+	resourcesMap_.emplace(SRC::PUNCH_THIRD_PLAYER_SE, res);
+
+	//キック初段
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + L"Kick_First_Test.mp3");
+	resourcesMap_.emplace(SRC::KICK_FIRST_PLAYER_SE, res);
+
+	//キック二段目
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + L"Kick_Second_Test.mp3");
+	resourcesMap_.emplace(SRC::KICK_SECOND_PLAYER_SE, res);
+
+	//キック最終段
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + L"Kick_Third_Test.mp3");
+	resourcesMap_.emplace(SRC::KICK_THIRD_PLAYER_SE, res);
+
 	//JSON
 	res = Resource(Resource::TYPE::JSON, Application::PATH_JSON + L"PlayerAttackData.json");
 	resourcesMap_.emplace(SRC::PLAYER_ATTACK_DATA_JSON, res);

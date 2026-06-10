@@ -4,6 +4,7 @@
 #include<DxLib.h>
 #include"../../../Common/Quaternion.h"
 #include"PlayerAttack.h"
+#include"../CharacterBase.h"
 
 class Game;
 class EnemyManager;
@@ -39,6 +40,9 @@ public:
 
 	//const bool IsAlive(void)const;
 
+	//Œ»İ‚ÌUŒ‚‚Ì‚Á”ò‚Ñ•ûæ“¾
+	const CharacterBase::KNOCKBACK_TYPE GetCurrentKnockBackType(void)const;
+
 private:
 	void UserInput(void);					//“ü—Íó•t
 	void SetAttackStateForCharacter(void);	//UŒ‚‚ÉŠÖ‚·‚éó‘Ô‚ğƒLƒƒƒ‰ƒNƒ^[‚É”½‰f
@@ -50,5 +54,7 @@ private:
 	std::unique_ptr<PlayerAttack> attack_;		//UŒ‚
 	bool isRefuseAttackInput_;	//UŒ‚“ü—Í‚ğó‚¯•t‚¯‚È‚¢ó‘Ô‚©
 	bool isForcePlayAnim_;		//‹­§Ä¶‚³‚¹‚é‚©(UŒ‚‚Ì‰’i‚Ì‚İ‹­§Ä¶)
+
+	bool isSpecialAttackRedy_;	//“ÁêUŒ‚‚Ì€”õ‚ª‚Å‚«‚Ä‚¢‚é‚©
 };
 

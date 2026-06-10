@@ -7,9 +7,6 @@
 class AnimationController
 {
 public:
-	static constexpr float DEFAULT_SPEED = 1.0f;
-	static constexpr float DEFAULT_SPEED_RATE = 100.0f;
-
 	/// <summary>
 	/// アニメーションの情報源
 	/// </summary>
@@ -60,6 +57,7 @@ public:
 	struct NextAnimInfo {
 		std::wstring name;	//アニメーション名
 		float speed;		//再生速度
+		AnimationSoundInfo seInfo;	//アニメーションに合わせて再生するSEの情報
 	};
 
 	//補正を行う軸
@@ -68,6 +66,9 @@ public:
 		bool y;
 		bool z;
 	};
+
+	static constexpr float DEFAULT_SPEED = 1.0f;
+	static constexpr float DEFAULT_SPEED_RATE = 100.0f;
 
 	AnimationController(int& _model);
 	~AnimationController(void);
@@ -103,7 +104,7 @@ public:
 	/// 連続して再生するアニメーションを途中で追加する
 	/// </summary>
 	/// <param name="_name">追加するアニメーション名</param>
-	void AddNextAnim(const std::wstring& _name, const float _speed);
+	void AddNextAnim(const std::wstring& _name, const float _speed, const AnimationSoundInfo& _seInfo);
 
 	/// <summary>
 	/// 連続して再生するアニメーションを途中で追加する

@@ -25,6 +25,7 @@ PlayerManager::PlayerManager(Game& _gameScene)
 	,attack_(nullptr)
 	,isRefuseAttackInput_(false)
 	,isForcePlayAnim_(false)
+	,isSpecialAttackRedy_(false)
 {
 	character_->Load();		//キャラクターの読み込み
 }
@@ -68,6 +69,9 @@ void PlayerManager::Draw(void)
 	character_->Draw();		//キャラクターの描画
 	attack_->Draw();		//攻撃クラスの描画
 	
+	if (isSpecialAttackRedy_) {
+		DrawString(30, 300, L"SpecialRedy!!!", 0xffffff);
+	}
 
 	attack_->DrawDebug();	//攻撃クラスのデバッグ描画
 	DrawFormatString(30, 280, 0xffffff, L"AttackCansel = %d", static_cast<int>(isRefuseAttackInput_));	//現在の攻撃アニメーション登録名の先頭文字を表示(デバッグ用)
@@ -89,6 +93,36 @@ const Quaternion& PlayerManager::GetQua(void)
 	return character_->GetQua();
 }
 
+const CharacterBase::KNOCKBACK_TYPE PlayerManager::GetCurrentKnockBackType(void) const
+{
+	const std::string knockBackTypeString = attack_->GetCurrentAttackKnockBackType();	//攻撃クラスから現在の攻撃の吹っ飛び方の文字列を取得
+
+	using KNOCKBACK_TYPE = CharacterBase::KNOCKBACK_TYPE;
+
+	//文字列と照らし合わせて、ノックバックの種類を返す
+	if (knockBackTypeString == CharacterBase::KNOCKBACK_TYPE_STRING[static_cast<int>(KNOCKBACK_TYPE::STAGGER)]) {
+		return KNOCKBACK_TYPE::STAGGER;
+	}
+	else if (knockBackTypeString == CharacterBase::KNOCKBACK_TYPE_STRING[static_cast<int>(KNOCKBACK_TYPE::PUSH_BACK)]) {
+		return KNOCKBACK_TYPE::PUSH_BACK;
+	}
+	else if (knockBackTypeString == CharacterBase::KNOCKBACK_TYPE_STRING[static_cast<int>(KNOCKBACK_TYPE::LAUNCH)]) {
+		return KNOCKBACK_TYPE::LAUNCH;
+	}
+	else if (knockBackTypeString == CharacterBase::KNOCKBACK_TYPE_STRING[static_cast<int>(KNOCKBACK_TYPE::FLOAT)]) {
+		return KNOCKBACK_TYPE::FLOAT;
+	}
+	else if (knockBackTypeString == CharacterBase::KNOCKBACK_TYPE_STRING[static_cast<int>(KNOCKBACK_TYPE::SLAM)]) {
+		return KNOCKBACK_TYPE::SLAM;
+	}
+	else if (knockBackTypeString == CharacterBase::KNOCKBACK_TYPE_STRING[static_cast<int>(KNOCKBACK_TYPE::BLOW_AWAY)]) {
+		return KNOCKBACK_TYPE::BLOW_AWAY;
+	}
+
+	//例外
+	return KNOCKBACK_TYPE();
+}
+
 void PlayerManager::UserInput(void)
 {
 	InputManager& ins = InputManager::GetInstance();
@@ -107,6 +141,9 @@ void PlayerManager::UserInput(void)
 	if (isAttackInput) {
 		SetAttackStateForCharacter();	//攻撃に関する情報をキャラクターに反映
 	}
+
+	//スペシャル
+	isSpecialAttackRedy_ = ins.IsPressed(InputManager::INPUT_COMMAND::ATTACK_SPECIAL);
 #pragma endregion
 
 
@@ -132,13 +169,15 @@ void PlayerManager::SetAttackStateForCharacter(void)
 
 	character_->SetIsAttack(true);	//攻撃中は攻撃状態にする
 
+	auto seInfo = attack_->GetNextAttackSeInfo();	//SE情報取得
+
 	//アニメーションの再生
 	if (isForcePlayAnim_) {
 		attack_->Attack();				//攻撃開始(コンボ始動のため即時発動)
-		character_->ForcePlayAnim(attackAnimInfo.name, attackAnimInfo.speed);	//攻撃アニメを強制再生する
+		character_->ForcePlayAnim(attackAnimInfo.name, attackAnimInfo.speed, seInfo.seName, seInfo.timing);	//攻撃アニメを強制再生する
 	}
 	else {
-		character_->PlayAnim(attackAnimInfo.name, attackAnimInfo.speed);	//攻撃アニメを再生する
+		character_->PlayAnim(attackAnimInfo.name, attackAnimInfo.speed, seInfo.seName, seInfo.timing);	//攻撃アニメを再生する
 	}
 }
 

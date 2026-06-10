@@ -85,7 +85,7 @@ void AnimationController::Play(const std::wstring& _name, const float _speed, co
 {
 	//アニメーションロック中は再生しない
 	if (isAnimLock_ || blendAnim_.mustPlayOnce) {
-		AddNextAnim(_name, _speed);	//次のアニメーションに追加
+		AddNextAnim(_name, _speed, _seInfo);	//次のアニメーションに追加
 		return;
 	}
 
@@ -157,7 +157,7 @@ void AnimationController::ForcePlay(const std::wstring& _name, const float _spee
 	SetAnimationPlayInfo(blendAnim_, animDatas_[_name], blendAnimAttachInfo_, _speed, _seInfo);	//新規のものをブレンド中のものに
 }
 
-void AnimationController::AddNextAnim(const std::wstring& _name, const float _speed)
+void AnimationController::AddNextAnim(const std::wstring& _name, const float _speed, const AnimationSoundInfo& _seInfo)
 {
 	//要素がないとき
 	if (!animDatas_.contains(_name)) {
@@ -173,6 +173,7 @@ void AnimationController::AddNextAnim(const std::wstring& _name, const float _sp
 	NextAnimInfo nextInfo;
 	nextInfo.name = _name;
 	nextInfo.speed = _speed;
+	nextInfo.seInfo = _seInfo;
 
 	nextAnimList_.push_back(nextInfo);
 }
@@ -356,7 +357,7 @@ void AnimationController::FinishAnimNormal(void)
 	//次に再生されている物が設定されているとき
 	if (!nextAnimList_.empty()) {
 		//配列の最前列を再生
-		Play(nextAnimList_[0].name, nextAnimList_[0].speed);
+		Play(nextAnimList_[0].name, nextAnimList_[0].speed, nextAnimList_[0].seInfo);
 		//要素の削除
 		nextAnimList_.erase(nextAnimList_.begin());
 		isStartNextAnim_ = true;
