@@ -38,6 +38,7 @@ public:
 	~PlayerAttack(void)override;
 
 	void Draw(void)override;
+	void DrawSpecialAttack(void);
 	void Release(void)override;
 
 	void HitCollider(std::weak_ptr<Collider> _col)override;

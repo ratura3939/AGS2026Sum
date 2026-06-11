@@ -24,6 +24,8 @@ namespace {
 
 	const float COMBO_ELEMENT_DRAW_DIF_X = 50;	//コンボルートの要素の表記差分X座標
 	const float COMBO_ELEMENT_DRAW_DIF_Y = 50;	//コンボルートの要素の表記差分Y座標
+
+	const float DRAW_SPECIAL_INFO_X = 2 / 3;
 }
 
 PlayerAttack::PlayerAttack(const VECTOR& _playerPos, const Quaternion& _playerQuaRot)
@@ -48,6 +50,9 @@ PlayerAttack::~PlayerAttack(void)
 
 void PlayerAttack::DrawDebug(void)
 {
+	if (colliders_[0]->IsUseThis()) {
+		DrawSphere3D(pos_, currentData_.radius, 16, debugColor_, debugColor_, false);	//コライダーの描画
+	}
 }
 
 void PlayerAttack::DoLoad(void)
@@ -241,13 +246,16 @@ void PlayerAttack::ResetComboRoute(void)
 void PlayerAttack::Draw(void)
 {
 	//デバッグ表記
-	if (colliders_[0]->IsUseThis()) {
-		DrawSphere3D(pos_, currentData_.radius, 16, debugColor_, debugColor_, false);	//コライダーの描画
-	}
+	DrawDebug();
 	
 
 	//コンボ分岐の表記
 	DrawComboRoute();
+}
+
+void PlayerAttack::DrawSpecialAttack(void)
+{
+
 }
 
 void PlayerAttack::Release(void)
