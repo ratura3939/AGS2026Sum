@@ -19,6 +19,10 @@ const std::wstring PlayerManager::ANIM_MIDDLE_KICK = L"MiddleKick";
 const std::wstring PlayerManager::ANIM_HIGH_KICK = L"HighKick";
 const std::wstring PlayerManager::ANIM_FINSH_KICK = L"FinishKick";
 
+namespace {
+	const VECTOR FOCUS_RELATIVE = { 0.0f,0.0f,300.0f };
+}
+
 PlayerManager::PlayerManager(Game& _gameScene)
 	:scene_(_gameScene)
 	,character_(std::make_shared<PlayerChara>())
@@ -40,6 +44,10 @@ void PlayerManager::Init(void)
 
 	attack_ = std::make_unique<PlayerAttack>(character_->GetPos(), character_->GetQua());	//攻撃クラスの生成
 	attack_->Init();		//攻撃クラスの初期化
+
+	//注視点の更新
+	Camera& camera = SceneManager::GetInstance().GetCamera();
+	focusPos_ = VAdd(character_->GetPos(), camera.GetRot().PosAxis(FOCUS_RELATIVE));
 }
 
 void PlayerManager::Update(void)
@@ -48,6 +56,11 @@ void PlayerManager::Update(void)
 	character_->Update();	//キャラクターの更新
 	attack_->Update();		//攻撃クラスの更新
 
+	//注視点の更新
+	Camera& camera = SceneManager::GetInstance().GetCamera();
+	focusPos_ = VAdd(character_->GetPos(), camera.GetRot().PosAxis(FOCUS_RELATIVE));
+
+	//アニメーションが終了していたら(攻撃関連のアニメーションに限り発生するもの)
 	if (character_->IsFinishAttackAnimation()) {
 
 		//攻撃予約関係
@@ -88,6 +101,11 @@ const VECTOR& PlayerManager::GetPos(void) const
 	return character_->GetPos();
 }
 
+const VECTOR& PlayerManager::GetFocusPos(void)
+{
+	return focusPos_;
+}
+
 const Quaternion& PlayerManager::GetQua(void)
 {
 	return character_->GetQua();
@@ -123,6 +141,11 @@ const CharacterBase::KNOCKBACK_TYPE PlayerManager::GetCurrentKnockBackType(void)
 	return KNOCKBACK_TYPE();
 }
 
+void PlayerManager::SetAnimSpeedPercent(const float _percent)
+{
+	character_->SetAnimationSpeedPercent(_percent);
+}
+
 void PlayerManager::UserInput(void)
 {
 	InputManager& ins = InputManager::GetInstance();
@@ -143,7 +166,14 @@ void PlayerManager::UserInput(void)
 	}
 
 	//スペシャル
-	isSpecialAttackRedy_ = ins.IsPressed(InputManager::INPUT_COMMAND::ATTACK_SPECIAL);
+	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_SPECIAL)) {
+		isSpecialAttackRedy_ = true;
+		scene_.StartSlow();
+	}
+	else if (ins.IsTrigerrUp(InputManager::INPUT_COMMAND::ATTACK_SPECIAL)) {
+		isSpecialAttackRedy_ = false;
+		scene_.EndSlow();
+	}
 #pragma endregion
 
 

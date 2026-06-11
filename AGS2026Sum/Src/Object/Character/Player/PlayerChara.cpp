@@ -6,7 +6,7 @@
 #include "PlayerChara.h"
 
 namespace {
-	const float MOVE_SPEED = 10.1f;	//移動速度
+	const float MOVE_SPEED = 15.0f;	//移動速度
 	const std::wstring ROOT_NAME = L"mixamorig8:Hips";
 }
 
@@ -112,13 +112,12 @@ void PlayerChara::Move(void)
 	VECTOR moveVec = inputDir_;
 	moveVec.y = 0.0f;	//Y軸方向の移動はなし
 
-	movedPos_ = VAdd(movedPos_, VScale(moveVec, moveSpeed_));	//移動
+	movedPos_ = VAdd(movedPos_, VScale(moveVec, moveSpeed_*SceneManager::GetInstance().GetUpdateSpeedRate_()));	//移動
 	isMove_ = false;
 }
 
 void PlayerChara::Attack(void)
 {
-	isAttack_ = true;
 }
 
 void PlayerChara::Draw(void)
@@ -139,6 +138,8 @@ void PlayerChara::HitCollider(std::weak_ptr<Collider> _col)
 
 void PlayerChara::InputMoveVec(const VECTOR& _inputVec)
 {
+	//攻撃中は移動入力を受け付けない
+	if (isAttack_)return;
 
 #pragma region 入力→移動方向
 	// 入力がほぼゼロの場合

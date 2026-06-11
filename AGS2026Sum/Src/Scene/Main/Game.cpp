@@ -28,11 +28,11 @@ namespace {
 	constexpr int BOSS_IDX = 0;		//ボスの配列番号(ボス単体のため必ず0)
 
 
-	const int LIMIT_SLOW = 200;					//スロー演出時間
+	const int LIMIT_SLOW = 120;					//スロー演出時間
 	const int BGM_VOL_MAX = 100;				//BGM音量最大値
 	const int BGM_VOL_ACC = 1;					//BGM切り換えスピード
-	const float NOMAL_SPEED_PERCENT = 100.0f;	//通常の割合
-	const float SLOW_SPEED_PERCENT = 25.0f;		//スローの割合(通常時から半分の速度にする)
+	const float NORMAL_SPEED_PERCENT = 100.0f;	//通常の割合
+	const float SLOW_SPEED_PERCENT = 10.0f;		//スローの割合
 		  
 	const int WARNING_DIRECTION_TIME = 150;		//WARNING警告時間
 	const int CAMERA_SHAKE_NUM = 3;				//カメラ演出における振動回数
@@ -109,8 +109,7 @@ void Game::Init(void)
 	Camera& camera = SceneManager::GetInstance().GetCamera();
 	camera.ChangeMode(Camera::MODE::FOLLOW);					//モード選択
 	camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象
-	//camera.SetGoalFocusPos(player_->GetFocusPoint());				//注視点
-	camera.SetGoalFocusPos(player_->GetPos());					//注視点
+	camera.SetGoalFocusPos(player_->GetFocusPos());				//注視点
 	camera.SetLockOnDistanceMin(LOCK_DISTANCE_MIN_NOMAL);		//ロックオン最低距離
 
 	//音関係初期設定
@@ -343,7 +342,7 @@ void Game::GameUpdate(void)
 	//	camera.SetFollow(abilityFollow, player_->GetQua());		//追従対象の更新
 	//}
 
-	camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象の更新
+	camera.SetFollow(player_->GetFocusPos(), player_->GetQua());		//追従対象の更新
 	
 #pragma endregion
 }
@@ -648,25 +647,34 @@ void Game::FinishSwitchBgm(void)
 
 void Game::StartSlow(void)
 {
+	if (isSlowEffect_)return;
+
 	auto& scM = SceneManager::GetInstance();
 	//スロー演出準備
 	slowCnt_ = 0;
-	ChangeActionDirec(ACTION_DIRECTION::JUST_DODGE);	//演出
-	isSlowEffect_ = true;
+	
 	//更新スピードを50％に設定
 	scM.SetUpdateSpeedRate_(SLOW_SPEED_PERCENT);
 	//敵もそれに対応
 	//enemy_->SetAnimSpeedRate(scM.GetUpdateSpeedRatePercent_());
+
+	//プレイヤーのアニメーションも調整
+	player_->SetAnimSpeedPercent(scM.GetUpdateSpeedRatePercent_());
+
+	isSlowEffect_ = true;
 }
 
 void Game::EndSlow(void)
 {
+	if (!isSlowEffect_)return;
+
 	auto& scM = SceneManager::GetInstance();
 	isSlowEffect_ = false;
-	ChangeActionDirec(ACTION_DIRECTION::NOMAL);
+	//ChangeActionDirec(ACTION_DIRECTION::NOMAL);
 	//更新処理を100％にもどす
-	scM.SetUpdateSpeedRate_(NOMAL_SPEED_PERCENT);
+	scM.SetUpdateSpeedRate_(NORMAL_SPEED_PERCENT);
 	//enemy_->SetAnimSpeedRate(scM.GetUpdateSpeedRatePercent_());
+	player_->SetAnimSpeedPercent(scM.GetUpdateSpeedRatePercent_());
 }
 
 
