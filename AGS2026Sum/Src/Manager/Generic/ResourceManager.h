@@ -13,9 +13,9 @@ public:
 	enum class SRC
 	{
 		//モデル
-		PLAYER_MDL	//プレイヤー
-		,ENEMY_MDL	//敵
-		,BOSS_MDL	//ボス
+		PLAYER_MDL			//プレイヤー
+		,ENEMY_MDL			//敵
+		,MIDDLE_BOSS_MDL	//ボス
 
 		//アニメーション
 		//プレイヤー
@@ -40,6 +40,8 @@ public:
 
 		//JSON
 		,PLAYER_ATTACK_DATA_JSON	//プレイヤー攻撃データ
+		,NORMAL_ENEMY_PARAMETER		//雑魚敵パラメーター
+		,MIDDLE_BOSS_PARAMETER		//中ボスパラメーター
 
 		,MAX
 	};

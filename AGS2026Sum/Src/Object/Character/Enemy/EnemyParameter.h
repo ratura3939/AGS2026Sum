@@ -1,35 +1,91 @@
 #pragma once
 #include"../../../Lib/nlohmann/json.hpp"
+#include<DxLib.h>
 #include<vector>
+#include<string>
+#include<unordered_map>
 
+//敵パラメーター
 struct EnemyParameter
 {
+	//アニメーション関係
+	struct AnimParameter
+	{
+		//座標固定
+		struct FixPos
+		{
+			bool x = false;
+			bool y = false;
+			bool z = false;
+		};
+
+		//アニメーションループ
+		bool isLoop = false;
+
+		//アニメーションロック
+		bool isLock = false;
+
+		//座標固定の有無
+		bool isFixPos = false;
+
+		//座標固定
+		FixPos fixPos = {};
+	};
+
 	//体力
-	int hp = 0;
+	int hp = -1;
 
 	//モデル
-	int modelId = -1;
+	std::wstring modelName = L"";
+
+	//メインボーン名
+	std::wstring mainFrameName = L"";
 
 	//アニメーション
-	std::vector<int> anim;
+	std::unordered_map<std::string, AnimParameter> animParam;
 };
 
-inline void from_json(const nlohmann::json& _data, EnemyParameter& _attackData) 
+inline void from_json(const nlohmann::json& _data, EnemyParameter& _param) 
 {
-	_data.at("radius").get_to(_attackData.radius);
-	_data.at("power").get_to(_attackData.power);
+	//体力
+	_data.at("hp").get_to(_param.hp);
 
-	if (_data.contains("localPos")) {
-		_data.value("localPos", nlohmann::json::object()).at("x").get_to(_attackData.localPos.x);
-		_data.value("localPos", nlohmann::json::object()).at("y").get_to(_attackData.localPos.y);
-		_data.value("localPos", nlohmann::json::object()).at("z").get_to(_attackData.localPos.z);
-	}
-	_data.at("animationSpeed").get_to(_attackData.animationSpeed);
+	//モデル名
+	_data.at("modelName").get_to(_param.modelName);
 
-	if (_data.contains("nextAttacks")) {
-		const auto& next = _data.at("nextAttacks");
-		for (int i = 0; i < ATTACK_TYPE_NUM; i++) {
-			_attackData.nextAttacks[i] = next[i].get<std::string>();
+	//メインボーン名
+	_data.at("mainFrameName").get_to(_param.mainFrameName);
+
+	//アニメーション関係
+	if (_data.contains("animation")) {
+
+		//アニメーション配列
+		const auto& animationJson = _data.at("animation");
+
+		//アニメーション分取得
+		for (const auto& [animName, animJson] : animationJson.items())
+		{
+			//アニメーション情報
+			EnemyParameter::AnimParameter animParam = {};
+
+			//ループの有無
+			animParam.isLoop = animJson.value("isLoop", false);
+
+			//ロック
+			animParam.isLock = animJson.value("isLock", false);
+
+			//位置固定
+			if (animJson.contains("fixPos"))
+			{
+				animParam.isFixPos = true;
+				const auto& fixPos = animJson.at("fixPos");
+				animParam.fixPos.x = fixPos.value("x", false);
+				animParam.fixPos.y = fixPos.value("y", false);
+				animParam.fixPos.z = fixPos.value("z", false);
+			}
+
+			//格納
+			_param.animParam.emplace(animName,animParam);
 		}
 	}
 }

@@ -184,6 +184,16 @@ void EnemyBase::InitWithGroup(void)
 	ResetPos();
 }
 
+void EnemyBase::SetModel(const int _modelId)
+{
+	modelId_ = _modelId;
+}
+
+void EnemyBase::SetAnim(std::unique_ptr<AnimationController> _anim)
+{
+	animController_ = std::move(_anim);
+}
+
 void EnemyBase::DoUpdate(void)
 {
 	//移動後座標に更新

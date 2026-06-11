@@ -3,6 +3,8 @@
 #include<vector>
 #include<DxLib.h>
 #include"../../Common/Quaternion.h"
+#include"EnemyDefine.h"
+#include"EnemyParameter.h"
 
 class EnemyBase;
 class EnemyPool;
@@ -10,6 +12,7 @@ class EnemyGroup;
 class EnemyGroupPool;
 class Game;
 class AttackManager;
+class AnimationController;
 
 class EnemyManager
 {
@@ -23,6 +26,9 @@ public:
 	
 	//デストラクタ
 	~EnemyManager(void);
+
+	//読み込み
+	void Load(void);
 
 	//初期化
 	void Init(void);
@@ -62,6 +68,9 @@ private:
 	//チャンク範囲
 	static constexpr int CHUNK_RANGE = 2;
 
+	//敵のパラメータ情報
+	std::array<EnemyParameter, static_cast<int>(ENEMY_TYPE::MAX)> parameters_;
+
 	//敵グループ
 	std::unique_ptr<EnemyGroupPool> enemyGroupPool_;
 
@@ -73,6 +82,9 @@ private:
 
 	//プレイヤー座標
 	const VECTOR& playerPos_;
+
+	//モデルアニメーション読み込み
+	void LoadEnemyAnim(EnemyBase* _enemy, const ENEMY_TYPE& _type);
 
 	//グループと敵の関連付け
 	void Grouping(EnemyGroup* _group, EnemyBase* _enemy);

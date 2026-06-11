@@ -154,6 +154,10 @@ void ResourceManager::ResourceEnemy(void)
 	//死亡
 	res = Resource(Resource::TYPE::MODEL, animPath + L"Death.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_DEATH_ANIM, res);
+
+	//パラメーター
+	res = Resource(Resource::TYPE::JSON, Application::PATH_JSON + L"NormalEnemyParam.json");
+	resourcesMap_.emplace(SRC::NORMAL_ENEMY_PARAMETER, res);
 }
 
 void ResourceManager::ResourceBoss(void)
@@ -161,8 +165,8 @@ void ResourceManager::ResourceBoss(void)
 	Resource res;
 
 	//ボスモデル
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + L"Boss.mv1");
-	resourcesMap_.emplace(SRC::BOSS_MDL, res);
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + L"MiddleBoss.mv1");
+	resourcesMap_.emplace(SRC::MIDDLE_BOSS_MDL, res);
 }
 
 void ResourceManager::Release(void)

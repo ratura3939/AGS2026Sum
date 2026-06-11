@@ -1,5 +1,14 @@
 #pragma once
 
+//敵の種類
+enum class ENEMY_TYPE
+{
+	NORMAL,			//雑魚
+	MIDDLE_BOSS,	//中ボス
+	BOSS,			//大ボス
+	MAX
+};
+
 //グループごとの状態
 enum class GROUP_ORDER
 {

@@ -38,6 +38,12 @@ public:
 	//グループとの初期化
 	void InitWithGroup(void);
 
+	//モデル設定
+	void SetModel(const int _modelId);
+
+	//アニメーション設定
+	void SetAnim(std::unique_ptr<AnimationController> _anim);
+
 	//描画
 	void Draw(void)override;
 

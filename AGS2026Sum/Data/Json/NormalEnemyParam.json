@@ -1,0 +1,38 @@
+{
+  "NormalEnemy": {
+    "hp": 10,
+    "modelName": "Enemy",
+    "mainFrameName": "mixamorig:Hips",
+    "animation": {
+      "Idle": {
+        "isLoop": true,
+        "isLock": false
+      },
+      "Walk": {
+        "isLoop": true,
+        "isLock": false
+      },
+      "Run": {
+        "isLoop": true,
+        "isLock": false
+      },
+      "Attack": {
+        "isLoop": false,
+        "isLock": false
+      },
+      "Blow": {
+        "isLoop": false,
+        "isLock": false,
+        "fixPos": {
+          "x": true,
+          "y": true,
+          "z": true
+        }
+      },
+      "Death": {
+        "isLoop": false,
+        "isLock": false
+      }
+    }
+  }
+}

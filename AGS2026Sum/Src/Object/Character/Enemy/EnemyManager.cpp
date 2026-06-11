@@ -1,12 +1,42 @@
 #include"../../pch.h"
 #include"../../Utility/Utility.h"
-#include"../../Manager/GameSystem/ChunkManager.h"
+#include"../../../Manager/Generic/ResourceManager.h"
+#include"../../../Manager/GameSystem/ChunkManager.h"
+#include"EnemyParameter.h"
 #include"EnemyDefine.h"
 #include"EnemyGroup.h"
 #include"EnemyGroupPool.h"
 #include"EnemyPool.h"
 #include"EnemyBase.h"
 #include "EnemyManager.h"
+
+namespace
+{
+	const std::array<
+		std::unordered_map<std::wstring, ResourceManager::SRC>,
+		static_cast<int>(ENEMY_TYPE::MAX)
+	> SRC_TABLE =
+	{
+		//雑魚
+		std::unordered_map<std::wstring, ResourceManager::SRC>
+		{
+			{L"ModelName",   ResourceManager::SRC::ENEMY_MDL},
+			{L"Idle",   ResourceManager::SRC::ENEMY_IDLE_ANIM},
+			{L"Walk",   ResourceManager::SRC::ENEMY_WALK_ANIM},
+			{L"Run",    ResourceManager::SRC::ENEMY_RUN_ANIM},
+			{L"Attack", ResourceManager::SRC::ENEMY_ATTACK_ANIM},
+			{L"Blow", ResourceManager::SRC::ENEMY_BLOW_ANIM},
+			{L"Death", ResourceManager::SRC::ENEMY_DEATH_ANIM}
+		},
+
+		//中ボス
+		std::unordered_map<std::wstring, ResourceManager::SRC>
+		{
+			//{L"Idle",   ResourceManager::SRC::BOSS_IDLE_ANIM},
+			//{L"Attack", ResourceManager::SRC::BOSS_ATTACK_ANIM},
+		}
+	};
+}
 
 EnemyManager::EnemyManager(const VECTOR& _pPos)
 	:playerPos_(_pPos)
@@ -17,6 +47,15 @@ EnemyManager::EnemyManager(const VECTOR& _pPos)
 
 EnemyManager::~EnemyManager(void)
 {
+}
+
+void EnemyManager::Load(void)
+{
+	//リソース
+	auto& res = ResourceManager::GetInstance();
+
+	//外部ファイル取得
+	parameters_[static_cast<int>(ENEMY_TYPE::NORMAL)] = res.Load(ResourceManager::SRC::NORMAL_ENEMY_PARAMETER).GetData<EnemyParameter>();
 }
 
 void EnemyManager::Init(void)
@@ -158,6 +197,9 @@ void EnemyManager::CreateEnemyGroup(const int _createNum)
 		//生成
 		enemy = enemyPool_->Spawn();
 
+		//モデルとアニメーション作成
+		LoadEnemyAnim(enemy, ENEMY_TYPE::NORMAL);
+
 		//グループに設定
 		Grouping(group, enemy);
 		enemy->InitWithGroup();
@@ -169,6 +211,51 @@ const int EnemyManager::GetActiveEnemyNum(void) const
 	if (!enemyPool_) return 0;
 
 	return static_cast<int>(enemyPool_->GetActiveEnemys().size());
+}
+
+void EnemyManager::LoadEnemyAnim(EnemyBase* _enemy, const ENEMY_TYPE& _type)
+{
+	//リソース
+	auto& res = ResourceManager::GetInstance();
+	int animModel = -1;
+	int type = static_cast<int>(_type);
+
+	//参照パラメータ
+	const auto& param = parameters_[type];
+
+	//モデル
+	_enemy->SetModel(res.LoadModelDuplicate(SRC_TABLE[type].at(L"ModelName")));
+
+	//アニメーション
+	std::unique_ptr<AnimationController> anim = std::make_unique<AnimationController>(_enemy->GetModelID());
+
+	//メインボーン
+	anim->SetRootFrameIndex(param.mainFrameName);
+
+	for (auto& [animName, animParam] : param.animParam)
+	{
+		//アニメーション名
+		std::wstring animNameWstr = Utility::StrToWStr(animName);
+		
+		//アニメーションのモデルID
+		animModel = res.LoadModelDuplicate(SRC_TABLE[type].at(animNameWstr));
+
+		//ループ
+		AnimationController::PLAY_TYPE playType = AnimationController::PLAY_TYPE::NORMAL;
+		if (animParam.isLoop)playType = AnimationController::PLAY_TYPE::LOOP;
+		
+		//追加
+		anim->Add(animNameWstr, animModel, playType, AnimationController::ANIM_SOURCE::EXTERNAL, animParam.isLock, animParam.isFixPos);
+
+		//座標固定
+		if (animParam.isFixPos)
+		{
+			anim->SetFixAnimationAxisInfo(animNameWstr, animParam.fixPos.x, animParam.fixPos.y, animParam.fixPos.z);
+		}
+	}
+
+	//アニメーション設定
+	_enemy->SetAnim(std::move(anim));
 }
 
 void EnemyManager::Grouping(EnemyGroup* _group, EnemyBase* _enemy)
