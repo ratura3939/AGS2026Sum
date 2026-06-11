@@ -37,6 +37,17 @@ public:
 		, ENEMY_BLOW_ANIM			//吹っ飛び
 		, ENEMY_DEATH_ANIM			//死亡
 
+		//ステージ
+		,STAGE_MDL
+
+		//サウンド
+		//SE
+		,PUNCH_FIRST_PLAYER_SE		//パンチ初段
+		,PUNCH_SECOND_PLAYER_SE		//パンチ二段目
+		,PUNCH_THIRD_PLAYER_SE		//パンチ最終段
+		,KICK_FIRST_PLAYER_SE		//キック初段
+		,KICK_SECOND_PLAYER_SE		//キック二段目
+		,KICK_THIRD_PLAYER_SE		//キック最終段
 
 		//JSON
 		,PLAYER_ATTACK_DATA_JSON	//プレイヤー攻撃データ

@@ -23,14 +23,14 @@ PlayerChara::~PlayerChara(void)
 {
 }
 
-void PlayerChara::PlayAnim(const std::wstring& _animName, const float _speed)
+void PlayerChara::PlayAnim(const std::wstring& _animName, const float _speed, const SoundManager::SOUND_NAME _seName, const float _seTiming)
 {
-	animController_->Play(_animName, _speed);	//アニメーションの新規再生
+	animController_->Play(_animName, _speed, AnimationController::AnimationSoundInfo{ _seName, _seTiming, false });	//アニメーションの新規再生
 }
 
-void PlayerChara::ForcePlayAnim(const std::wstring& _animName, const float _speed)
+void PlayerChara::ForcePlayAnim(const std::wstring& _animName, const float _speed, const SoundManager::SOUND_NAME _seName, const float _seTiming)
 {
-	animController_->ForcePlay(_animName, _speed);
+	animController_->ForcePlay(_animName, _speed, AnimationController::AnimationSoundInfo{ _seName, _seTiming, false });	//アニメーションの強制再生
 }
 
 void PlayerChara::GetAnimTotalTime(const std::wstring& _animName) const

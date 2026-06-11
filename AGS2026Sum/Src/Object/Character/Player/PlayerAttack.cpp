@@ -12,6 +12,8 @@ namespace {
 	const std::string KICK_FIRST_KEY = "Kick_First";
 	const std::string KICK_SECOND_KEY = "Kick_Second";
 	const std::string KICK_THIRD_KEY = "Kick_Third";
+	const std::string SPECIAL_PUNCH_KEY = "Punch_Special";
+	const std::string SPECIAL_KICK_KEY = "Kick_Special";
 
 	const int DEFAULT_COLOR = 0xffffff;
 	const int KICK_COLOR = 0x0000ff;
@@ -56,6 +58,7 @@ void PlayerAttack::DoInit(void)
 {
 	MakeCollider(std::make_unique<Sphere>(pos_, pos_, currentData_.radius, currentData_.radius), Collider::COL_TAG::PLAYER_ATTACK, { Collider::COL_TAG::ENEMY });	//攻撃用のコライダ生成
 	LoadAttackData();
+	LoadAttackSound();
 
 	colliders_[0]->SetUseThis(false);	//コライダの無効化
 }
@@ -152,6 +155,8 @@ void PlayerAttack::LoadAttackData(void)
 	data_.emplace(KICK_FIRST_KEY,res.GetData<AttackData>(KICK_FIRST_KEY));
 	data_.emplace(KICK_SECOND_KEY,res.GetData<AttackData>(KICK_SECOND_KEY));
 	data_.emplace(KICK_THIRD_KEY,res.GetData<AttackData>(KICK_THIRD_KEY));
+	data_.emplace(SPECIAL_PUNCH_KEY,res.GetData<AttackData>(SPECIAL_PUNCH_KEY));
+	data_.emplace(SPECIAL_KICK_KEY,res.GetData<AttackData>(SPECIAL_KICK_KEY));
 
 	//アニメーション登録
 	animNames_.emplace(PUNCH_FIRST_KEY, PlayerManager::ANIM_FIRST_PUNCH);
@@ -168,6 +173,8 @@ void PlayerAttack::LoadAttackData(void)
 	comboRouteInfos_.emplace(KICK_FIRST_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });
 	comboRouteInfos_.emplace(KICK_SECOND_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });
 	comboRouteInfos_.emplace(KICK_THIRD_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });
+	comboRouteInfos_.emplace(SPECIAL_PUNCH_KEY, ComboRouteInfo{ ATTACK_TYPE::SPECIAL,false,false });
+	comboRouteInfos_.emplace(SPECIAL_KICK_KEY, ComboRouteInfo{ ATTACK_TYPE::SPECIAL,false,false });
 
 	//コンボ始動は弱パンチから
 	currentData_ = data_[PUNCH_FIRST_KEY];
@@ -176,6 +183,31 @@ void PlayerAttack::LoadAttackData(void)
 	currentAttackName_ = KICK_THIRD_KEY;	//予約→発生というロジックの関係上、初段に設定するためには「次の攻撃」が設定されていない最終段を用いる
 
 	ApplyAttackColliderSettings();	//情報適用
+}
+
+void PlayerAttack::LoadAttackSound(void)
+{
+	SoundManager& sndM = SoundManager::GetInstance();
+	ResourceManager& resM = ResourceManager::GetInstance();
+	using SOUND_TYPE = SoundManager::TYPE;
+	using SOUND_NAME = SoundManager::SOUND_NAME;
+	using SOURCE = ResourceManager::SRC;
+
+	//SE読み込み
+	sndM.Add(SOUND_TYPE::SE, SOUND_NAME::PUNCH_FIRST_PLAYER_SE,resM.Load(SOURCE::PUNCH_FIRST_PLAYER_SE).handleId_);
+	sndM.Add(SOUND_TYPE::SE, SOUND_NAME::PUNCH_SECOND_PLAYER_SE,resM.Load(SOURCE::PUNCH_SECOND_PLAYER_SE).handleId_);
+	sndM.Add(SOUND_TYPE::SE, SOUND_NAME::PUNCH_THIRD_PLAYER_SE,resM.Load(SOURCE::PUNCH_THIRD_PLAYER_SE).handleId_);
+	sndM.Add(SOUND_TYPE::SE, SOUND_NAME::KICK_FIRST_PLAYER_SE,resM.Load(SOURCE::KICK_FIRST_PLAYER_SE).handleId_);
+	sndM.Add(SOUND_TYPE::SE, SOUND_NAME::KICK_SECOND_PLAYER_SE,resM.Load(SOURCE::KICK_SECOND_PLAYER_SE).handleId_);
+	sndM.Add(SOUND_TYPE::SE, SOUND_NAME::KICK_THIRD_PLAYER_SE,resM.Load(SOURCE::KICK_THIRD_PLAYER_SE).handleId_);
+
+	//SE連携
+	seNames_.emplace(PUNCH_FIRST_KEY, SOUND_NAME::PUNCH_FIRST_PLAYER_SE);
+	seNames_.emplace(PUNCH_SECOND_KEY, SOUND_NAME::PUNCH_SECOND_PLAYER_SE);
+	seNames_.emplace(PUNCH_THIRD_KEY, SOUND_NAME::PUNCH_THIRD_PLAYER_SE);
+	seNames_.emplace(KICK_FIRST_KEY, SOUND_NAME::KICK_FIRST_PLAYER_SE);
+	seNames_.emplace(KICK_SECOND_KEY, SOUND_NAME::KICK_SECOND_PLAYER_SE);
+	seNames_.emplace(KICK_THIRD_KEY, SOUND_NAME::KICK_THIRD_PLAYER_SE);
 }
 
 void PlayerAttack::ApplyAttackColliderSettings(void)
@@ -286,6 +318,24 @@ const PlayerAttack::AttackAnimationInfo PlayerAttack::GetNextAttackAnimInfo(void
 	ret.speed = data_.at(nextAttackName_).animationSpeed;
 
 	return	ret;
+}
+
+const PlayerAttack::AttackSeInfo PlayerAttack::GetNextAttackSeInfo(void) const
+{
+	if (nextAttackName_ == "") {
+		return AttackSeInfo();	//攻撃なし
+	}
+	AttackSeInfo ret;
+
+	ret.seName = seNames_.at(nextAttackName_);
+	ret.timing = data_.at(nextAttackName_).seTiming;
+
+	return ret;
+}
+
+const std::string& PlayerAttack::GetCurrentAttackKnockBackType(void) const
+{
+	return currentData_.KnockBackType;
 }
 
 const bool PlayerAttack::IsAttacking(void) const

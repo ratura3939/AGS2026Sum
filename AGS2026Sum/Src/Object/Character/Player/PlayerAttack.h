@@ -1,5 +1,6 @@
 #pragma once
 #include "../../Common/ActorBase.h"
+#include"../../../Manager/Decoration/SoundManager.h"
 #include "PlayerAttackData.h"
 
 class PlayerAttack :
@@ -10,8 +11,8 @@ public:
     enum class ATTACK_TYPE {
 		PUNCH   //パンチ
 		,KICK   //キック
+		,SPECIAL //特殊攻撃
         ,MAX
-		,DEBUG
     };
 
 	struct AttackAnimationInfo {
@@ -23,6 +24,11 @@ public:
 		ATTACK_TYPE type;	//攻撃種別
 		bool isUsed;		//攻撃を行ったか
 		bool isDrawed;		//描画したか
+	};
+
+	struct AttackSeInfo {
+		SoundManager::SOUND_NAME seName;
+		float timing;
 	};
 
 	static const int ATTACK_LEVEL_MAX = 3;				//攻撃レベルの最大値
@@ -41,7 +47,10 @@ public:
 	void Attack(void);			//攻撃開始
 	void FinishAttack(void);	//攻撃終了処理
 
-	const AttackAnimationInfo GetNextAttackAnimInfo(void)const;		//現在の攻撃アニメーション情報の取得
+	const AttackAnimationInfo GetNextAttackAnimInfo(void)const;		//次の攻撃アニメーション情報の取得
+	const AttackSeInfo GetNextAttackSeInfo(void)const;				//次の攻撃のSEに関する情報の取得
+
+	const std::string& GetCurrentAttackKnockBackType(void)const;	//現在の攻撃のノックバックの種類の取得
 	
 	const bool IsAttacking(void)const;	//攻撃中か
 
@@ -57,6 +66,7 @@ private:
 	void DrawComboRouteElement(const std::string& _attackKey, const VECTOR& _pos);	//コンボルートの要素の描画
 
 	void LoadAttackData(void);				//攻撃データの読み込み
+	void LoadAttackSound(void);				//効果音などの読み込み
 	void ApplyAttackColliderSettings(void);	//コライダの設定
 	void ResetCombo(void);					//コンボのリセット
 	void ResetComboRoute(void);				//コンボルートのリセット
@@ -65,8 +75,9 @@ private:
 	const Quaternion& playerQuaRot_;	//プレイヤーの回転参照
 
 	std::unordered_map<std::string, AttackData> data_;			//攻撃データ
-	std::unordered_map <std::string,std::wstring> animNames_;	//攻撃アニメーション登録名
-	std::unordered_map <std::string, ComboRouteInfo> comboRouteInfos_;		//コンボルート情報
+	std::unordered_map<std::string, std::wstring> animNames_;	//攻撃アニメーション登録名
+	std::unordered_map<std::string, ComboRouteInfo> comboRouteInfos_;		//コンボルート情報
+	std::unordered_map<std::string, SoundManager::SOUND_NAME> seNames_;	//攻撃効果音登録名
 
 	AttackData currentData_;	//現在の攻撃データ
 

@@ -165,6 +165,9 @@
     <ClCompile Include="Src\Object\Character\Enemy\State\EnemyDeathState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Object\Stage\StageManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Object\Character\Enemy\State\EnemyKnockDownState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -347,5 +350,32 @@
     <ClInclude Include="Src\Object\Character\Enemy\EnemyGroupPool.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Object\Stage\StageManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Src\Shader\PostEffect\JustDodgePS.hlsl" />
+    <FxCompile Include="Src\Shader\PostEffect\NomalTexPS.hlsl" />
+    <FxCompile Include="Src\Shader\PostEffect\ScanLine.hlsl" />
+    <FxCompile Include="Src\Shader\Model\BlurSkinPS.hlsl" />
+    <FxCompile Include="Src\Shader\Model\BlurSkinVS.hlsl" />
+    <FxCompile Include="Src\Shader\Model\MagnetLinePS.hlsl" />
+    <FxCompile Include="Src\Shader\Model\MagnetLineVS.hlsl" />
+    <FxCompile Include="Src\Shader\Model\NoiseWavePS.hlsl" />
+    <FxCompile Include="Src\Shader\Model\SkinVS.hlsl" />
+    <FxCompile Include="Src\Shader\Model\StdModelPS.hlsl" />
+    <FxCompile Include="Src\Shader\Model\StdModelVS.hlsl" />
+    <FxCompile Include="Src\Shader\Model\UVScalingVS.hlsl" />
+    <FxCompile Include="Src\Shader\PostEffect\Blur.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Src\Shader\Common\Pixel\PixelShader2DHeader.hlsli" />
+    <None Include="Src\Shader\Common\Pixel\PixelShader3DHeader.hlsli" />
+    <None Include="Src\Shader\Common\Vertex\CommonShader3DHeader.hlsli" />
+    <None Include="Src\Shader\Common\Vertex\VertexInput.hlsli" />
+    <None Include="Src\Shader\Common\Vertex\VertexInputType.hlsli" />
+    <None Include="Src\Shader\Common\Vertex\VertexShader3DHeader.hlsli" />
+    <None Include="Src\Shader\Common\VertexToPixelHeader.hlsli" />
   </ItemGroup>
 </Project>

@@ -2,13 +2,11 @@
 #include<string>
 #include<vector>
 #include<unordered_map>
+#include"../Decoration/SoundManager.h"
 
 class AnimationController
 {
 public:
-	static constexpr float DEFAULT_SPEED = 1.0f;
-	static constexpr float DEFAULT_SPEED_RATE = 100.0f;
-
 	/// <summary>
 	/// アニメーションの情報源
 	/// </summary>
@@ -28,6 +26,13 @@ public:
 		MAX
 	};
 
+	//アニメーションに合わせて再生するSEの情報
+	struct AnimationSoundInfo {
+		SoundManager::SOUND_NAME name;
+		float playTiming;	//再生するタイミング(アニメーションの再生時間に対する割合)
+		bool isPlayed;		//すでに再生したかどうか
+	};
+
 	//アニメーション関連情報
 	struct AnimationInfo {
 		std::wstring name;	//登録名
@@ -37,6 +42,7 @@ public:
 		float total;		//総再生時間
 		bool mustPlayOnce;	//再生保障
 		bool isFixPosition;	//位置補正を行うか
+		AnimationSoundInfo seInfo;	//アニメーションに合わせて再生するSEの情報
 	};
 
 	//アタッチに関する情報
@@ -51,6 +57,7 @@ public:
 	struct NextAnimInfo {
 		std::wstring name;	//アニメーション名
 		float speed;		//再生速度
+		AnimationSoundInfo seInfo;	//アニメーションに合わせて再生するSEの情報
 	};
 
 	//補正を行う軸
@@ -59,6 +66,9 @@ public:
 		bool y;
 		bool z;
 	};
+
+	static constexpr float DEFAULT_SPEED = 1.0f;
+	static constexpr float DEFAULT_SPEED_RATE = 100.0f;
 
 	AnimationController(int& _model);
 	~AnimationController(void);
@@ -80,7 +90,7 @@ public:
 	/// <param name="_name">登録名</param>
 	/// <param name="_speed">再生速度</param>
 	/// <param name="_next">連続して再生する物たち<最後以外にLOOPのものを入れないこと！！></param>
-	void Play(const std::wstring& _name, const float _speed = DEFAULT_SPEED, const std::vector<NextAnimInfo> _next = {});
+	void Play(const std::wstring& _name, const float _speed = DEFAULT_SPEED, const AnimationSoundInfo& _seInfo = { SoundManager::SOUND_NAME::MAX, 0.0f, true }, const std::vector<NextAnimInfo> _next = {});
 
 	/// <summary>
 	/// 強制再生処理
@@ -88,13 +98,13 @@ public:
 	/// <param name="_name">登録名</param>
 	/// <param name="_speed">再生速度</param>
 	/// <param name="_next">連続して再生する物たち<最後以外にLOOPのものを入れないこと！！></param>
-	void ForcePlay(const std::wstring& _name, const float _speed = DEFAULT_SPEED, const std::vector<NextAnimInfo> _next = {});
+	void ForcePlay(const std::wstring& _name, const float _speed = DEFAULT_SPEED, const AnimationSoundInfo& _seInfo = { SoundManager::SOUND_NAME::MAX, 0.0f, true }, const std::vector<NextAnimInfo> _next = {});
 
 	/// <summary>
 	/// 連続して再生するアニメーションを途中で追加する
 	/// </summary>
 	/// <param name="_name">追加するアニメーション名</param>
-	void AddNextAnim(const std::wstring& _name, const float _speed);
+	void AddNextAnim(const std::wstring& _name, const float _speed, const AnimationSoundInfo& _seInfo);
 
 	/// <summary>
 	/// 連続して再生するアニメーションを途中で追加する
@@ -116,6 +126,7 @@ public:
 
 	//現在のアニメーションの再生進行度合いを割合で取得
 	const float GetCurrentAnimationProgressRate(void)const;
+	const float GetBlendAnimationProgressRate(void)const;
 
 	const bool IsFinishNormalAnim(void)const { return isFinishNormalAnim_; }	//今のアニメーションの再生が終了したかどうか
 	const bool IsStartNextAnim(void)const { return isStartNextAnim_; }			//次のアニメーションの再生が開始されたかどうか
@@ -139,7 +150,7 @@ private:
 	void FinishAnimReturn(void);
 
 	//アニメーション再生情報の設定
-	void SetAnimationPlayInfo(AnimationInfo& _animInfo, const AnimationInfo& _sourceInfo, AttachInfo& _attachInfo, const float _animSpeed);
+	void SetAnimationPlayInfo(AnimationInfo& _animInfo, const AnimationInfo& _sourceInfo, AttachInfo& _attachInfo, const float _animSpeed, const AnimationSoundInfo& _seInfo);
 
 	//アニメーション終了時と更新処理の設定
 	void SetFinishAndUpdateFunc(void);
