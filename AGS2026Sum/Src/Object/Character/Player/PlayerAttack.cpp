@@ -178,8 +178,8 @@ void PlayerAttack::LoadAttackData(void)
 	comboRouteInfos_.emplace(KICK_FIRST_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });
 	comboRouteInfos_.emplace(KICK_SECOND_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });
 	comboRouteInfos_.emplace(KICK_THIRD_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });
-	comboRouteInfos_.emplace(SPECIAL_PUNCH_KEY, ComboRouteInfo{ ATTACK_TYPE::SPECIAL,false,false });
-	comboRouteInfos_.emplace(SPECIAL_KICK_KEY, ComboRouteInfo{ ATTACK_TYPE::SPECIAL,false,false });
+	comboRouteInfos_.emplace(SPECIAL_PUNCH_KEY, ComboRouteInfo{ ATTACK_TYPE::PUNCH,false,false });
+	comboRouteInfos_.emplace(SPECIAL_KICK_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });
 
 	//コンボ始動は弱パンチから
 	currentData_ = data_[PUNCH_FIRST_KEY];
@@ -292,6 +292,24 @@ const bool PlayerAttack::ReserveAttack(const ATTACK_TYPE& _type)
 		nextAttackName_ = nextAttackKey;	//次の攻撃アニメーション登録名の設定
 	}
 	
+	return true;
+}
+
+const bool PlayerAttack::ReserveAttackSpecial(const ATTACK_TYPE& _type)
+{
+	//特殊攻撃の予約
+	//例外
+	if (_type == ATTACK_TYPE::MAX) {
+		return false;	//攻撃予約なし
+	}
+
+	if (_type == ATTACK_TYPE::PUNCH) {
+		nextAttackName_ = SPECIAL_PUNCH_KEY;
+	}
+	else if (_type == ATTACK_TYPE::KICK) {
+		nextAttackName_ = SPECIAL_KICK_KEY;
+	}
+
 	return true;
 }
 

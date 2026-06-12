@@ -660,6 +660,7 @@ void Game::StartSlow(void)
 
 	//プレイヤーのアニメーションも調整
 	player_->SetAnimSpeedPercent(scM.GetUpdateSpeedRatePercent_());
+	player_->SetIsSpecialRedy(true);
 
 	isSlowEffect_ = true;
 }
@@ -675,6 +676,7 @@ void Game::EndSlow(void)
 	scM.SetUpdateSpeedRate_(NORMAL_SPEED_PERCENT);
 	//enemy_->SetAnimSpeedRate(scM.GetUpdateSpeedRatePercent_());
 	player_->SetAnimSpeedPercent(scM.GetUpdateSpeedRatePercent_());
+	player_->SetIsSpecialRedy(false);
 }
 
 

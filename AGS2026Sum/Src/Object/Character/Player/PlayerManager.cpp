@@ -167,11 +167,9 @@ void PlayerManager::UserInput(void)
 
 	//スペシャル
 	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_SPECIAL)) {
-		isSpecialAttackRedy_ = true;
 		scene_.StartSlow();
 	}
 	else if (ins.IsTrigerrUp(InputManager::INPUT_COMMAND::ATTACK_SPECIAL)) {
-		isSpecialAttackRedy_ = false;
 		scene_.EndSlow();
 	}
 #pragma endregion
@@ -233,4 +231,15 @@ const bool PlayerManager::Attack(PlayerAttack::ATTACK_TYPE _type)
 	}
 
 	return isSuccess;
+}
+
+const bool PlayerManager::AttackSpecial(PlayerAttack::ATTACK_TYPE _type)
+{
+	attack_->ReserveAttackSpecial(_type);
+	isForcePlayAnim_ = true;
+
+	//特殊攻撃を発生させるときにスロー終了
+	scene_.EndSlow();
+
+	return true;
 }

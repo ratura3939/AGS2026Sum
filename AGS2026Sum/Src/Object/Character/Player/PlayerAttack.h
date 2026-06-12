@@ -11,7 +11,7 @@ public:
     enum class ATTACK_TYPE {
 		PUNCH   //パンチ
 		,KICK   //キック
-		,SPECIAL //特殊攻撃
+		,ULTIMATE //必殺技
         ,MAX
     };
 
@@ -45,6 +45,7 @@ public:
 
 	
 	const bool ReserveAttack(const ATTACK_TYPE& _type);	//攻撃の予約
+	const bool ReserveAttackSpecial(const ATTACK_TYPE& _type);	//攻撃の予約
 	void Attack(void);			//攻撃開始
 	void FinishAttack(void);	//攻撃終了処理
 
