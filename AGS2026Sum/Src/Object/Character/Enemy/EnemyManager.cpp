@@ -197,9 +197,6 @@ void EnemyManager::CreateEnemyGroup(const int _createNum)
 		//生成
 		enemy = enemyPool_->Spawn();
 
-		//モデルとアニメーション作成
-		LoadEnemyAnim(enemy, ENEMY_TYPE::NORMAL);
-
 		//グループに設定
 		Grouping(group, enemy);
 		enemy->InitWithGroup();
@@ -223,11 +220,14 @@ void EnemyManager::LoadEnemyAnim(EnemyBase* _enemy, const ENEMY_TYPE& _type)
 	//参照パラメータ
 	const auto& param = parameters_[type];
 
-	//モデル
-	_enemy->SetModel(res.LoadModelDuplicate(SRC_TABLE[type].at(L"ModelName")));
+	//モデルID
+	int model = res.LoadModelDuplicate(SRC_TABLE[type].at(L"ModelName"));
 
 	//アニメーション
-	std::unique_ptr<AnimationController> anim = std::make_unique<AnimationController>(_enemy->GetModelID());
+	std::unique_ptr<AnimationController> anim = std::make_unique<AnimationController>(model); 
+
+	//モデル
+	_enemy->SetModel(model);
 
 	//メインボーン
 	anim->SetRootFrameIndex(param.mainFrameName);

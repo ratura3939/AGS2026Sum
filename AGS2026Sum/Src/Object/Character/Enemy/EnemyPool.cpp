@@ -1,4 +1,5 @@
 #include "../../../pch.h"
+#include"EnemyManager.h"
 #include "EnemyBase.h"
 #include "EnemyPool.h"
 
@@ -55,6 +56,9 @@ EnemyBase* EnemyPool::Spawn(void)
 	//読み込みと初期化
 	enemy->Load();
 	enemy->Init();
+
+	//モデルとアニメーション作成
+	//LoadEnemyAnim(enemy, ENEMY_TYPE::NORMAL);
 
 	//生成した敵の添え字を設定
 	enemy->SetActiveIndex(activeEnemys_.size());
