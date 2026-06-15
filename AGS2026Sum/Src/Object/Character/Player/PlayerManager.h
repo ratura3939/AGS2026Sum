@@ -23,6 +23,10 @@ public:
 	static const std::wstring ANIM_MIDDLE_KICK;	//中段キック(二段目を強派生)
 	static const std::wstring ANIM_HIGH_KICK;	//上段キック(三段目を強派生)
 	static const std::wstring ANIM_FINSH_KICK;	//最終段キック（パンチ三回目後、強派生）
+	static const std::wstring ANIM_SPECIAL_PUNCH;	//特殊攻撃（パンチ派生）
+	static const std::wstring ANIM_SPECIAL_KICK;	//特殊攻撃（キック派生）
+	static const std::wstring ANIM_ULTIMET;			//必殺技
+	static const std::wstring ANIM_ULTIMET_TEST;	//必殺技（試し用）
 #pragma endregion
 
 	PlayerManager(Game& _gameScene);

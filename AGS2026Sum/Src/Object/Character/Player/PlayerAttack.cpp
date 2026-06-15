@@ -14,6 +14,8 @@ namespace {
 	const std::string KICK_THIRD_KEY = "Kick_Third";
 	const std::string SPECIAL_PUNCH_KEY = "Punch_Special";
 	const std::string SPECIAL_KICK_KEY = "Kick_Special";
+	const std::string ULTIMET_KEY = "Ultimet";
+	const std::string ULTIMET_TEST_KEY = "Ultimet_Test";
 
 	const int DEFAULT_COLOR = 0xffffff;
 	const int KICK_COLOR = 0x0000ff;
@@ -162,14 +164,20 @@ void PlayerAttack::LoadAttackData(void)
 	data_.emplace(KICK_THIRD_KEY,res.GetData<AttackData>(KICK_THIRD_KEY));
 	data_.emplace(SPECIAL_PUNCH_KEY,res.GetData<AttackData>(SPECIAL_PUNCH_KEY));
 	data_.emplace(SPECIAL_KICK_KEY,res.GetData<AttackData>(SPECIAL_KICK_KEY));
+	data_.emplace(ULTIMET_KEY,res.GetData<AttackData>(ULTIMET_KEY));
+	data_.emplace(ULTIMET_TEST_KEY,res.GetData<AttackData>(ULTIMET_TEST_KEY));
 
-	//アニメーション登録
+	//アニメーション名登録
 	animNames_.emplace(PUNCH_FIRST_KEY, PlayerManager::ANIM_FIRST_PUNCH);
 	animNames_.emplace(PUNCH_SECOND_KEY, PlayerManager::ANIM_SECOND_PUNCH);
 	animNames_.emplace(PUNCH_THIRD_KEY, PlayerManager::ANIM_THIRD_PUNCH);
 	animNames_.emplace(KICK_FIRST_KEY, PlayerManager::ANIM_MIDDLE_KICK);
 	animNames_.emplace(KICK_SECOND_KEY, PlayerManager::ANIM_HIGH_KICK);
 	animNames_.emplace(KICK_THIRD_KEY, PlayerManager::ANIM_FINSH_KICK);
+	animNames_.emplace(SPECIAL_PUNCH_KEY, PlayerManager::ANIM_SPECIAL_PUNCH);
+	animNames_.emplace(SPECIAL_KICK_KEY, PlayerManager::ANIM_SPECIAL_KICK);
+	animNames_.emplace(ULTIMET_KEY, PlayerManager::ANIM_ULTIMET);
+	animNames_.emplace(ULTIMET_TEST_KEY, PlayerManager::ANIM_ULTIMET_TEST);
 
 	//フラグ管理(コンボ履歴用)
 	comboRouteInfos_.emplace(PUNCH_FIRST_KEY, ComboRouteInfo{ ATTACK_TYPE::PUNCH,false,false });
@@ -180,6 +188,8 @@ void PlayerAttack::LoadAttackData(void)
 	comboRouteInfos_.emplace(KICK_THIRD_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });
 	comboRouteInfos_.emplace(SPECIAL_PUNCH_KEY, ComboRouteInfo{ ATTACK_TYPE::PUNCH,false,false });
 	comboRouteInfos_.emplace(SPECIAL_KICK_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });
+	comboRouteInfos_.emplace(ULTIMET_KEY, ComboRouteInfo{ ATTACK_TYPE::ULTIMATE,false,false });
+	comboRouteInfos_.emplace(ULTIMET_TEST_KEY, ComboRouteInfo{ ATTACK_TYPE::ULTIMATE,false,false });
 
 	//コンボ始動は弱パンチから
 	currentData_ = data_[PUNCH_FIRST_KEY];

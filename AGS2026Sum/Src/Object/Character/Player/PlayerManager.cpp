@@ -18,6 +18,10 @@ const std::wstring PlayerManager::ANIM_THIRD_PUNCH = L"ThirdPunch";
 const std::wstring PlayerManager::ANIM_MIDDLE_KICK = L"MiddleKick";
 const std::wstring PlayerManager::ANIM_HIGH_KICK = L"HighKick";
 const std::wstring PlayerManager::ANIM_FINSH_KICK = L"FinishKick";
+const std::wstring PlayerManager::ANIM_SPECIAL_PUNCH = L"SpecialPunch";
+const std::wstring PlayerManager::ANIM_SPECIAL_KICK = L"SpecialKick";
+const std::wstring PlayerManager::ANIM_ULTIMET = L"Ultimet";
+const std::wstring PlayerManager::ANIM_ULTIMET_TEST = L"UltimetTest";
 
 namespace {
 	const VECTOR FOCUS_RELATIVE = { 0.0f,0.0f,300.0f };

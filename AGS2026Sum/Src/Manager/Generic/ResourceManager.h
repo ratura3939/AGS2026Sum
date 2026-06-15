@@ -28,6 +28,10 @@ public:
 		,PLAYER_MIDDLE_KICK_ANIM	//キック１
 		,PLAYER_HIGH_KICK_ANIM		//キック２
 		,PLAYER_FINISH_KICK_ANIM	//キック３
+		,PLAYER_SPECIAL_PUNCH_ANIM	//特殊攻撃(パンチ派生)
+		,PLAYER_SPECIAL_KICK_ANIM	//特殊攻撃(キック派生)
+		,PLAYER_ULTIMET_ANIM		//必殺技
+		,PLAYER_ULTIMET_TEST_ANIM	//必殺技(テスト用)
 
 		//敵
 		, ENEMY_IDLE_ANIM			//待機
