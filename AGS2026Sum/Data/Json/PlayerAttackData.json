@@ -91,7 +91,7 @@
       "y": 50.0,
       "z": 0.0
     },
-    "animationSpeed": 1.0,
+    "animationSpeed": 2.0,
     "nextAttacks": [ "", "" ],
     "SETimingRate": 0.0,
     "KnockBackType": "BlowAway"
@@ -103,9 +103,9 @@
     "localPos": {
       "x": 0.0,
       "y": 50.0,
-      "z": 0.0
+      "z": 300.0
     },
-    "animationSpeed": 1.0,
+    "animationSpeed": 2.0,
     "nextAttacks": [ "", "" ],
     "SETimingRate": 0.0,
     "KnockBackType": "BlowAway"

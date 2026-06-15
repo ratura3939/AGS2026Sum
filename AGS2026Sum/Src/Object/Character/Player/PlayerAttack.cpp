@@ -223,6 +223,11 @@ void PlayerAttack::LoadAttackSound(void)
 	seNames_.emplace(KICK_FIRST_KEY, SOUND_NAME::KICK_FIRST_PLAYER_SE);
 	seNames_.emplace(KICK_SECOND_KEY, SOUND_NAME::KICK_SECOND_PLAYER_SE);
 	seNames_.emplace(KICK_THIRD_KEY, SOUND_NAME::KICK_THIRD_PLAYER_SE);
+	//特殊攻撃および必殺技のSEは現在未定（入れたら上の読み込みにも追加するように）
+	seNames_.emplace(SPECIAL_PUNCH_KEY, SOUND_NAME::MAX);
+	seNames_.emplace(SPECIAL_KICK_KEY, SOUND_NAME::MAX);
+	seNames_.emplace(ULTIMET_KEY, SOUND_NAME::MAX);
+	seNames_.emplace(ULTIMET_TEST_KEY, SOUND_NAME::MAX);
 }
 
 void PlayerAttack::ApplyAttackColliderSettings(void)

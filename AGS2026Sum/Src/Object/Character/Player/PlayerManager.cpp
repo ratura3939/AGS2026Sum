@@ -31,9 +31,10 @@ PlayerManager::PlayerManager(Game& _gameScene)
 	:scene_(_gameScene)
 	,character_(std::make_shared<PlayerChara>())
 	,attack_(nullptr)
-	,isRefuseAttackInput_(false)
+	,isEnableAttackInput_(true)
 	,isForcePlayAnim_(false)
 	,isSpecialAttackRedy_(false)
+	,isEnableSpecial_(true)
 {
 	character_->Load();		//キャラクターの読み込み
 }
@@ -68,7 +69,8 @@ void PlayerManager::Update(void)
 	if (character_->IsFinishAttackAnimation()) {
 
 		//攻撃予約関係
-		isRefuseAttackInput_ = false;	//攻撃入力を受け付ける状態にする
+		isEnableAttackInput_ = true;	//攻撃入力を受け付ける状態にする
+		isEnableSpecial_ = true;		//特殊準備を受け入れる
 
 		if (character_->IsStartNextAttackAnimation()) {
 			attack_->Attack();	//攻撃開始
@@ -91,7 +93,7 @@ void PlayerManager::Draw(void)
 	}
 
 	attack_->DrawDebug();	//攻撃クラスのデバッグ描画
-	DrawFormatString(30, 280, 0xffffff, L"AttackCansel = %d", static_cast<int>(isRefuseAttackInput_));	//現在の攻撃アニメーション登録名の先頭文字を表示(デバッグ用)
+	DrawFormatString(30, 280, 0xffffff, L"AttackCansel = %d", static_cast<int>(isEnableAttackInput_));	//現在の攻撃アニメーション登録名の先頭文字を表示(デバッグ用)
 	character_->DrawNextAnimations();	//キャラクターの次のアニメーションのデバッグ描画
 }
 
@@ -157,11 +159,25 @@ void PlayerManager::UserInput(void)
 #pragma region 攻撃
 	bool isAttackInput = false;
 
-	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_NORMAL) && !isRefuseAttackInput_) {
-		isAttackInput = Attack(PlayerAttack::ATTACK_TYPE::PUNCH);	//攻撃クラスに攻撃開始を伝え,結果を得る
+	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_NORMAL)) {
+		//特殊攻撃準備中の場合
+		if (isSpecialAttackRedy_) {
+			isAttackInput = AttackSpecial(PlayerAttack::ATTACK_TYPE::PUNCH);	//攻撃クラスに特殊攻撃開始を伝え,結果を得る
+		}
+		//通常時、攻撃を受け付ける状態の場合
+		else if (isEnableAttackInput_) {
+			isAttackInput = Attack(PlayerAttack::ATTACK_TYPE::PUNCH);	//攻撃クラスに攻撃開始を伝え,結果を得る
+		}
 	}
-	else if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_STRONG) && !isRefuseAttackInput_) {
-		isAttackInput = Attack(PlayerAttack::ATTACK_TYPE::KICK);	//攻撃クラスに攻撃開始を伝え,結果を得る
+	else if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_STRONG)) {
+		//特殊攻撃準備中の場合
+		if (isSpecialAttackRedy_&& isEnableSpecial_) {
+			isAttackInput = AttackSpecial(PlayerAttack::ATTACK_TYPE::KICK);	//攻撃クラスに特殊攻撃開始を伝え,結果を得る
+		}
+		//通常時、攻撃を受け付ける状態の場合
+		else if (isEnableAttackInput_) {
+			isAttackInput = Attack(PlayerAttack::ATTACK_TYPE::KICK);	//攻撃クラスに攻撃開始を伝え,結果を得る
+		}
 	}
 
 	//入力があったとき
@@ -169,10 +185,12 @@ void PlayerManager::UserInput(void)
 		SetAttackStateForCharacter();	//攻撃に関する情報をキャラクターに反映
 	}
 
-	//スペシャル
-	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_SPECIAL)) {
+	//特殊攻撃準備
+	//開始
+	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_SPECIAL) && isEnableSpecial_) {
 		scene_.StartSlow();
 	}
+	//終了
 	else if (ins.IsTrigerrUp(InputManager::INPUT_COMMAND::ATTACK_SPECIAL)) {
 		scene_.EndSlow();
 	}
@@ -225,7 +243,7 @@ const bool PlayerManager::Attack(PlayerAttack::ATTACK_TYPE _type)
 			isSuccess = attack_->ReserveAttack(_type);	//次段の攻撃予約
 
 			//キャンセル可能状態中は一度だけ攻撃入力を受け付ける
-			isRefuseAttackInput_ = true;	//攻撃入力を受け付けない状態にする
+			isEnableAttackInput_ = false;	//攻撃入力を受け付けない状態にする
 		}
 	}
 	else {
@@ -241,6 +259,7 @@ const bool PlayerManager::AttackSpecial(PlayerAttack::ATTACK_TYPE _type)
 {
 	attack_->ReserveAttackSpecial(_type);
 	isForcePlayAnim_ = true;
+	isEnableSpecial_ = false;	//発生中なので再度発動できないように
 
 	//特殊攻撃を発生させるときにスロー終了
 	scene_.EndSlow();

@@ -101,7 +101,7 @@ void PlayerChara::InitAnim(void)
 	animController_->Add(PlayerManager::ANIM_FINSH_KICK, resM.Load(SRC::PLAYER_FINISH_KICK_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL, true, true);
 	animController_->SetFixAnimationAxisInfo(PlayerManager::ANIM_FINSH_KICK, true, false, true);	//竜巻旋風脚の移動補正
 	animController_->Add(PlayerManager::ANIM_SPECIAL_PUNCH, resM.Load(SRC::PLAYER_SPECIAL_PUNCH_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL, true,true);
-	animController_->SetFixAnimationAxisInfo(PlayerManager::ANIM_FINSH_KICK, true, false, true);	//ジャンプ攻撃の移動補正
+	animController_->SetFixAnimationAxisInfo(PlayerManager::ANIM_SPECIAL_PUNCH, true, false, true);	//ジャンプ攻撃の移動補正
 	animController_->Add(PlayerManager::ANIM_SPECIAL_KICK, resM.Load(SRC::PLAYER_SPECIAL_KICK_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL, true);
 	animController_->Add(PlayerManager::ANIM_ULTIMET, resM.Load(SRC::PLAYER_ULTIMET_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL, true);
 	animController_->Add(PlayerManager::ANIM_ULTIMET_TEST, resM.Load(SRC::PLAYER_ULTIMET_TEST_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL, true);
