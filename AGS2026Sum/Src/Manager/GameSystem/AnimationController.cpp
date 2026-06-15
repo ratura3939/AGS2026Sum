@@ -155,6 +155,9 @@ void AnimationController::ForcePlay(const std::wstring& _name, const float _spee
 		isAnimLock_ = blendAnim_.mustPlayOnce;						//再生保障
 	}
 	SetAnimationPlayInfo(blendAnim_, animDatas_[_name], blendAnimAttachInfo_, _speed, _seInfo);	//新規のものをブレンド中のものに
+
+	//割り込み後に要らないものが再生されないように
+	nextAnimList_.clear();
 }
 
 void AnimationController::AddNextAnim(const std::wstring& _name, const float _speed, const AnimationSoundInfo& _seInfo)

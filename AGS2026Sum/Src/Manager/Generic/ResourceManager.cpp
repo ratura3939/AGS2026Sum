@@ -117,6 +117,18 @@ void ResourceManager::ResourcePlayer(void)
 	//キック３
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/HurricanKick.mv1");
 	resourcesMap_.emplace(SRC::PLAYER_FINISH_KICK_ANIM, res);
+	//特殊攻撃(パンチ派生)
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/SpecialAttack(Jump).mv1");
+	resourcesMap_.emplace(SRC::PLAYER_SPECIAL_PUNCH_ANIM, res);
+	//特殊攻撃(キック派生)
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/SpecialAttack(nagiharai).mv1");
+	resourcesMap_.emplace(SRC::PLAYER_SPECIAL_KICK_ANIM, res);
+	//必殺技
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/UltimetAttack.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_ULTIMET_ANIM, res);
+	//必殺技(テスト用)
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ANIMATION + L"Player/UltimetAttack(tukami).mv1");
+	resourcesMap_.emplace(SRC::PLAYER_ULTIMET_TEST_ANIM, res);
 
 	//効果音
 	//攻撃

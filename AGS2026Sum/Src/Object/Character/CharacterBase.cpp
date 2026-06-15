@@ -68,3 +68,7 @@ void CharacterBase::Damage(const float _damage)
 		Death();	//死亡処理
 	}
 }
+
+void CharacterBase::SetAnimationSpeedPercent(const float _percent) {
+	animController_->ChangeSpeedRate(_percent);
+}

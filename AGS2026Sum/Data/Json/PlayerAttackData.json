@@ -1,11 +1,11 @@
 {
   "Punch_First": {
-    "radius": 30.0,
+    "radius": 100.0,
     "power": 10.0,
     "localPos": {
       "x": 0.0,
       "y": 50.0,
-      "z": 50.0
+      "z": 100.0
     },
     "animationSpeed": 2.5,
     "nextAttacks": [ "Punch_Second", "Kick_First" ],
@@ -14,12 +14,12 @@
   },
 
   "Punch_Second": {
-    "radius": 50.0,
+    "radius": 150.0,
     "power": 20.0,
     "localPos": {
       "x": 0.0,
       "y": 50.0,
-      "z": 70.0
+      "z": 150.0
     },
     "animationSpeed": 2.0,
     "nextAttacks": [ "Punch_Third", "Kick_Second" ],
@@ -28,12 +28,12 @@
   },
 
   "Punch_Third": {
-    "radius": 90.0,
+    "radius": 200.0,
     "power": 20.0,
     "localPos": {
       "x": 0.0,
       "y": 50.0,
-      "z": 120.0
+      "z": 200.0
     },
     "animationSpeed": 2.0,
     "nextAttacks": [ "", "Kick_Third" ],
@@ -42,12 +42,12 @@
   },
 
   "Kick_First": {
-    "radius": 30.0,
+    "radius": 150.0,
     "power": 10.0,
     "localPos": {
       "x": 0.0,
       "y": 50.0,
-      "z": 50.0
+      "z": 100.0
     },
     "animationSpeed": 1.5,
     "nextAttacks": [ "", "Kick_Second" ],
@@ -56,12 +56,12 @@
   },
 
   "Kick_Second": {
-    "radius": 50.0,
+    "radius": 200.0,
     "power": 20.0,
     "localPos": {
       "x": 0.0,
       "y": 50.0,
-      "z": 70.0
+      "z": 150.0
     },
     "animationSpeed": 3.0,
     "nextAttacks": [ "", "Kick_Third" ],
@@ -70,12 +70,12 @@
   },
 
   "Kick_Third": {
-    "radius": 90.0,
+    "radius": 300.0,
     "power": 20.0,
     "localPos": {
       "x": 0.0,
       "y": 50.0,
-      "z": 120.0
+      "z": 0.0
     },
     "animationSpeed": 2.5,
     "nextAttacks": [ "", "" ],
@@ -84,28 +84,56 @@
   },
 
   "Punch_Special": {
-    "radius": 200.0,
+    "radius": 300.0,
     "power": 100.0,
     "localPos": {
       "x": 0.0,
       "y": 50.0,
       "z": 0.0
     },
-    "animationSpeed": 2.5,
+    "animationSpeed": 2.0,
     "nextAttacks": [ "", "" ],
     "SETimingRate": 0.0,
     "KnockBackType": "BlowAway"
   },
 
   "Kick_Special": {
-    "radius": 200.0,
+    "radius": 300.0,
     "power": 100.0,
+    "localPos": {
+      "x": 0.0,
+      "y": 50.0,
+      "z": 300.0
+    },
+    "animationSpeed": 2.0,
+    "nextAttacks": [ "", "" ],
+    "SETimingRate": 0.0,
+    "KnockBackType": "BlowAway"
+  },
+
+  "Ultimet": {
+    "radius": 500.0,
+    "power": 200.0,
     "localPos": {
       "x": 0.0,
       "y": 50.0,
       "z": 0.0
     },
-    "animationSpeed": 2.5,
+    "animationSpeed": 1.0,
+    "nextAttacks": [ "", "" ],
+    "SETimingRate": 0.0,
+    "KnockBackType": "BlowAway"
+  },
+
+  "Ultimet_Test": {
+    "radius": 500.0,
+    "power": 200.0,
+    "localPos": {
+      "x": 0.0,
+      "y": 50.0,
+      "z": 0.0
+    },
+    "animationSpeed": 1.0,
     "nextAttacks": [ "", "" ],
     "SETimingRate": 0.0,
     "KnockBackType": "BlowAway"

@@ -14,6 +14,8 @@ namespace {
 	const std::string KICK_THIRD_KEY = "Kick_Third";
 	const std::string SPECIAL_PUNCH_KEY = "Punch_Special";
 	const std::string SPECIAL_KICK_KEY = "Kick_Special";
+	const std::string ULTIMET_KEY = "Ultimet";
+	const std::string ULTIMET_TEST_KEY = "Ultimet_Test";
 
 	const int DEFAULT_COLOR = 0xffffff;
 	const int KICK_COLOR = 0x0000ff;
@@ -24,6 +26,8 @@ namespace {
 
 	const float COMBO_ELEMENT_DRAW_DIF_X = 50;	//コンボルートの要素の表記差分X座標
 	const float COMBO_ELEMENT_DRAW_DIF_Y = 50;	//コンボルートの要素の表記差分Y座標
+
+	const float DRAW_SPECIAL_INFO_X = 2 / 3;
 }
 
 PlayerAttack::PlayerAttack(const VECTOR& _playerPos, const Quaternion& _playerQuaRot)
@@ -48,6 +52,9 @@ PlayerAttack::~PlayerAttack(void)
 
 void PlayerAttack::DrawDebug(void)
 {
+	if (colliders_[0]->IsUseThis()) {
+		DrawSphere3D(pos_, currentData_.radius, 16, debugColor_, debugColor_, false);	//コライダーの描画
+	}
 }
 
 void PlayerAttack::DoLoad(void)
@@ -157,14 +164,20 @@ void PlayerAttack::LoadAttackData(void)
 	data_.emplace(KICK_THIRD_KEY,res.GetData<AttackData>(KICK_THIRD_KEY));
 	data_.emplace(SPECIAL_PUNCH_KEY,res.GetData<AttackData>(SPECIAL_PUNCH_KEY));
 	data_.emplace(SPECIAL_KICK_KEY,res.GetData<AttackData>(SPECIAL_KICK_KEY));
+	data_.emplace(ULTIMET_KEY,res.GetData<AttackData>(ULTIMET_KEY));
+	data_.emplace(ULTIMET_TEST_KEY,res.GetData<AttackData>(ULTIMET_TEST_KEY));
 
-	//アニメーション登録
+	//アニメーション名登録
 	animNames_.emplace(PUNCH_FIRST_KEY, PlayerManager::ANIM_FIRST_PUNCH);
 	animNames_.emplace(PUNCH_SECOND_KEY, PlayerManager::ANIM_SECOND_PUNCH);
 	animNames_.emplace(PUNCH_THIRD_KEY, PlayerManager::ANIM_THIRD_PUNCH);
 	animNames_.emplace(KICK_FIRST_KEY, PlayerManager::ANIM_MIDDLE_KICK);
 	animNames_.emplace(KICK_SECOND_KEY, PlayerManager::ANIM_HIGH_KICK);
 	animNames_.emplace(KICK_THIRD_KEY, PlayerManager::ANIM_FINSH_KICK);
+	animNames_.emplace(SPECIAL_PUNCH_KEY, PlayerManager::ANIM_SPECIAL_PUNCH);
+	animNames_.emplace(SPECIAL_KICK_KEY, PlayerManager::ANIM_SPECIAL_KICK);
+	animNames_.emplace(ULTIMET_KEY, PlayerManager::ANIM_ULTIMET);
+	animNames_.emplace(ULTIMET_TEST_KEY, PlayerManager::ANIM_ULTIMET_TEST);
 
 	//フラグ管理(コンボ履歴用)
 	comboRouteInfos_.emplace(PUNCH_FIRST_KEY, ComboRouteInfo{ ATTACK_TYPE::PUNCH,false,false });
@@ -173,8 +186,10 @@ void PlayerAttack::LoadAttackData(void)
 	comboRouteInfos_.emplace(KICK_FIRST_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });
 	comboRouteInfos_.emplace(KICK_SECOND_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });
 	comboRouteInfos_.emplace(KICK_THIRD_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });
-	comboRouteInfos_.emplace(SPECIAL_PUNCH_KEY, ComboRouteInfo{ ATTACK_TYPE::SPECIAL,false,false });
-	comboRouteInfos_.emplace(SPECIAL_KICK_KEY, ComboRouteInfo{ ATTACK_TYPE::SPECIAL,false,false });
+	comboRouteInfos_.emplace(SPECIAL_PUNCH_KEY, ComboRouteInfo{ ATTACK_TYPE::PUNCH,false,false });
+	comboRouteInfos_.emplace(SPECIAL_KICK_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });
+	comboRouteInfos_.emplace(ULTIMET_KEY, ComboRouteInfo{ ATTACK_TYPE::ULTIMATE,false,false });
+	comboRouteInfos_.emplace(ULTIMET_TEST_KEY, ComboRouteInfo{ ATTACK_TYPE::ULTIMATE,false,false });
 
 	//コンボ始動は弱パンチから
 	currentData_ = data_[PUNCH_FIRST_KEY];
@@ -208,6 +223,11 @@ void PlayerAttack::LoadAttackSound(void)
 	seNames_.emplace(KICK_FIRST_KEY, SOUND_NAME::KICK_FIRST_PLAYER_SE);
 	seNames_.emplace(KICK_SECOND_KEY, SOUND_NAME::KICK_SECOND_PLAYER_SE);
 	seNames_.emplace(KICK_THIRD_KEY, SOUND_NAME::KICK_THIRD_PLAYER_SE);
+	//特殊攻撃および必殺技のSEは現在未定（入れたら上の読み込みにも追加するように）
+	seNames_.emplace(SPECIAL_PUNCH_KEY, SOUND_NAME::MAX);
+	seNames_.emplace(SPECIAL_KICK_KEY, SOUND_NAME::MAX);
+	seNames_.emplace(ULTIMET_KEY, SOUND_NAME::MAX);
+	seNames_.emplace(ULTIMET_TEST_KEY, SOUND_NAME::MAX);
 }
 
 void PlayerAttack::ApplyAttackColliderSettings(void)
@@ -241,13 +261,16 @@ void PlayerAttack::ResetComboRoute(void)
 void PlayerAttack::Draw(void)
 {
 	//デバッグ表記
-	if (colliders_[0]->IsUseThis()) {
-		DrawSphere3D(pos_, currentData_.radius, 16, debugColor_, debugColor_, false);	//コライダーの描画
-	}
+	DrawDebug();
 	
 
 	//コンボ分岐の表記
 	DrawComboRoute();
+}
+
+void PlayerAttack::DrawSpecialAttack(void)
+{
+
 }
 
 void PlayerAttack::Release(void)
@@ -284,6 +307,24 @@ const bool PlayerAttack::ReserveAttack(const ATTACK_TYPE& _type)
 		nextAttackName_ = nextAttackKey;	//次の攻撃アニメーション登録名の設定
 	}
 	
+	return true;
+}
+
+const bool PlayerAttack::ReserveAttackSpecial(const ATTACK_TYPE& _type)
+{
+	//特殊攻撃の予約
+	//例外
+	if (_type == ATTACK_TYPE::MAX) {
+		return false;	//攻撃予約なし
+	}
+
+	if (_type == ATTACK_TYPE::PUNCH) {
+		nextAttackName_ = SPECIAL_PUNCH_KEY;
+	}
+	else if (_type == ATTACK_TYPE::KICK) {
+		nextAttackName_ = SPECIAL_KICK_KEY;
+	}
+
 	return true;
 }
 

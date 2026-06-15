@@ -133,9 +133,6 @@ private:
 	//std::unique_ptr<PixelRenderer>dodgeRender_;
 	//int dodgeScreen_;
 
-
-
-
 	bool isDrawPostEffect_;	//ポストエフェクトをかけるか
 #pragma endregion
 
