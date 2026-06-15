@@ -11,31 +11,41 @@ EnemyPool::~EnemyPool(void)
 {
 }
 
-void EnemyPool::Init(void)
+void EnemyPool::Load(void)
 {
-	//敵の生成や初期化はSpawnで行うのでここでは行わない
+	//ファクトリーのロード
+	factory_.Load();
 }
 
 void EnemyPool::Release(void)
 {
 	//参照ポインタの削除
 	activeEnemys_.clear();
-	inactiveEnemys_.clear();
+	for (auto& inactiveEnemys : inactiveEnemys_)
+	{
+		inactiveEnemys.clear();
+	}
 
 	//敵の削除(持ち主自体が消えるのでそのまま消去)
 	allEnemys_.clear();
 }
 
-EnemyBase* EnemyPool::Spawn(void)
+EnemyBase* EnemyPool::Spawn(const ENEMY_TYPE& _type)
 {
+	//int変換
+	int type = static_cast<int>(_type);
+
 	//生成済みの敵でもう死んでいるものがいるならそれを再利用する
-	if (!inactiveEnemys_.empty())
+	if (!inactiveEnemys_[type].empty())
 	{
 		//再利用する敵のポインタ
-		EnemyBase* enemy = inactiveEnemys_.back();
+		EnemyBase* enemy = inactiveEnemys_[type].back();
 
 		//再初期化(Loadは済んでいるので行わない)
 		enemy->Init();
+
+		//動的ステータスの初期化
+		enemy->InitRunTimeParameter(factory_.GetParam(_type));
 
 		//生存リストの末尾に追加するのでその添え字を設定
 		enemy->SetActiveIndex(activeEnemys_.size());
@@ -44,21 +54,14 @@ EnemyBase* EnemyPool::Spawn(void)
 		activeEnemys_.push_back(enemy);
 
 		//非稼働中の敵のリストから再利用する敵を削除
-		inactiveEnemys_.pop_back();
+		inactiveEnemys_[type].pop_back();
 
 		//再利用した敵のポインタを返す
 		return enemy;
 	}
 
 	//再利用できる敵がいないなら新たに生成する
-	std::unique_ptr<EnemyBase> enemy = std::make_unique<EnemyBase>();
-
-	//読み込みと初期化
-	enemy->Load();
-	enemy->Init();
-
-	//モデルとアニメーション作成
-	//LoadEnemyAnim(enemy, ENEMY_TYPE::NORMAL);
+	std::unique_ptr<EnemyBase> enemy = factory_.CreateNewEnemy(_type);
 
 	//生成した敵の添え字を設定
 	enemy->SetActiveIndex(activeEnemys_.size());
@@ -81,6 +84,9 @@ void EnemyPool::Remove(EnemyBase* _enemy)
 	//死亡した敵の添え字
 	int index = _enemy->GetActiveIndex();
 
+	//int変換
+	int type = static_cast<int>(_enemy->GetType());
+
 	//末尾の敵が死亡したならスワップを行わない
 	if (index != activeEnemys_.size() - 1)
 	{
@@ -95,7 +101,7 @@ void EnemyPool::Remove(EnemyBase* _enemy)
 	}
 
 	//死亡した敵を非稼働中の敵のリストに追加
-	inactiveEnemys_.push_back(_enemy);
+	inactiveEnemys_[type].push_back(_enemy);
 
 	//死亡した敵を稼働中の敵のリストから削除
 	activeEnemys_.pop_back();

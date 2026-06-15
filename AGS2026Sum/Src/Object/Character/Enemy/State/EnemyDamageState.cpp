@@ -19,7 +19,7 @@ void EnemyDamageState::Enter(EnemyBase& _enemy)
 	damageMoveTime_ = 0.0f;
 
 	//ダメージアニメーション
-	_enemy.PlayAnim(L"Blow");
+	_enemy.PlayAnim(L"BlowFirstHalf", BLOW_SPEED);
 
 	//移動更新
 	_enemy.Update();

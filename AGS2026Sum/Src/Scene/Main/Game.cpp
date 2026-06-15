@@ -105,6 +105,7 @@ void Game::Init(void)
 
 	//“G
 	enemy_ = std::make_unique<EnemyManager>(player_->GetPos());
+	enemy_->Load();
 	enemy_->Init();
 
 	//ƒJƒƒ‰‚Ì‰Šúİ’è

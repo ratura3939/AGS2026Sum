@@ -15,7 +15,7 @@ namespace {
 	const AnimationController::FixAnimationAxis FIX_AXIS_INIT = { false,false,false };
 }
 
-AnimationController::AnimationController(int& _model)
+AnimationController::AnimationController(int _model)
 	:modelId_(_model)
 	,animBlendRate_(BLEND_RATE_MIN)
 	,currentAnim_(ANIMATION_INFO_INIT)

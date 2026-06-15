@@ -13,7 +13,7 @@ public:
 	~EnemyGroupPool(void);
 
 	//初期化
-	void Init(void);
+	void Load(void);
 
 	//解放
 	void Release(void);

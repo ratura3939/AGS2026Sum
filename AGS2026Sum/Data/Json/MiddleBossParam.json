@@ -1,6 +1,6 @@
 {
-  "hp": 10,
-  "modelName": "Enemy",
+  "hp": 100,
+  "modelName": "MiddleBoss",
   "mainFrameName": "mixamorig:Hips",
   "animation": {
     "Idle": {

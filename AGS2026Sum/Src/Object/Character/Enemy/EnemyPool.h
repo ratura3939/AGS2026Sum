@@ -1,4 +1,5 @@
 #pragma once
+#include"EnemyFactory.h"
 
 class EnemyBase;
 
@@ -13,7 +14,7 @@ public:
 	~EnemyPool(void);
 
 	//初期化
-	void Init(void);
+	void Load(void);
 
 	//解放
 	void Release(void);
@@ -22,7 +23,7 @@ public:
 	/// 敵の生成
 	/// </summary>
 	/// <returns>参照用のポインタを返す</returns>
-	EnemyBase* Spawn(void);
+	EnemyBase* Spawn(const ENEMY_TYPE& _type);
 
 	/// <summary>
 	/// 敵の削除
@@ -35,6 +36,9 @@ public:
 
 private:
 
+	//敵ファクトリー
+	EnemyFactory factory_;
+
 	//敵
 	std::vector<std::unique_ptr<EnemyBase>> allEnemys_;
 
@@ -42,6 +46,6 @@ private:
 	std::vector<EnemyBase*> activeEnemys_;
 
 	//非稼働中の敵
-	std::vector<EnemyBase*> inactiveEnemys_;
+	std::array<std::vector<EnemyBase*>,static_cast<int>(ENEMY_TYPE::MAX)> inactiveEnemys_;
 };
 

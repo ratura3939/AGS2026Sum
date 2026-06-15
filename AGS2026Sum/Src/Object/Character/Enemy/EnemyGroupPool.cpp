@@ -9,7 +9,7 @@ EnemyGroupPool::~EnemyGroupPool(void)
 {
 }
 
-void EnemyGroupPool::Init(void)
+void EnemyGroupPool::Load(void)
 {
 	//敵グループの生成や初期化はSpawnで行うのでここでは行わない
 }

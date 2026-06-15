@@ -1,0 +1,130 @@
+#include "../../../pch.h"
+#include "../../../Utility/Utility.h"
+#include "../../../Manager/Generic/ResourceManager.h"
+#include"../../../Manager/GameSystem/AnimationController.h"
+#include "EnemyBase.h"
+#include "EnemyFactory.h"
+
+//ヘッダー内に余計なマネージャーインクルードをしないため、namespaceにて記載
+namespace
+{
+	//リソース名のテーブル
+	const std::array<
+		std::unordered_map<std::wstring, ResourceManager::SRC>,
+		static_cast<int>(ENEMY_TYPE::MAX)
+	> SRC_TABLE =
+	{
+		//雑魚
+		std::unordered_map<std::wstring, ResourceManager::SRC>
+		{
+			{L"ModelName",   ResourceManager::SRC::ENEMY_MDL},
+			{L"Idle",   ResourceManager::SRC::ENEMY_IDLE_ANIM},
+			{L"Walk",   ResourceManager::SRC::ENEMY_WALK_ANIM},
+			{L"Run",    ResourceManager::SRC::ENEMY_RUN_ANIM},
+			{L"Attack", ResourceManager::SRC::ENEMY_ATTACK_ANIM},
+			{L"BlowFirstHalf", ResourceManager::SRC::ENEMY_BLOW_FIRST_HALF_ANIM},
+			{L"BlowSecondHalf", ResourceManager::SRC::ENEMY_BLOW_SECOND_HALF_ANIM},
+			{L"BlowEnd", ResourceManager::SRC::ENEMY_BLOW_END_ANIM}
+		},
+
+		//中ボス
+		std::unordered_map<std::wstring, ResourceManager::SRC>
+		{
+			{L"ModelName", ResourceManager::SRC::MIDDLE_BOSS_MDL},
+			{ L"Idle",   ResourceManager::SRC::ENEMY_IDLE_ANIM },
+			{L"Walk",   ResourceManager::SRC::ENEMY_WALK_ANIM},
+			{L"Run",    ResourceManager::SRC::ENEMY_RUN_ANIM},
+			{L"Attack", ResourceManager::SRC::ENEMY_ATTACK_ANIM},
+			{L"BlowFirstHalf", ResourceManager::SRC::ENEMY_BLOW_FIRST_HALF_ANIM},
+			{L"BlowSecondHalf", ResourceManager::SRC::ENEMY_BLOW_SECOND_HALF_ANIM},
+			{L"BlowEnd", ResourceManager::SRC::ENEMY_BLOW_END_ANIM}
+		}
+	};
+}
+
+void EnemyFactory::Load(void)
+{
+	//リソース
+	auto& res = ResourceManager::GetInstance();
+
+	//外部ファイル取得
+	parameters_[static_cast<int>(ENEMY_TYPE::NORMAL)] = res.Load(ResourceManager::SRC::NORMAL_ENEMY_PARAMETER).GetData<EnemyParameter>();
+	parameters_[static_cast<int>(ENEMY_TYPE::MIDDLE_BOSS)] = res.Load(ResourceManager::SRC::MIDDLE_BOSS_PARAMETER).GetData<EnemyParameter>();
+}
+
+std::unique_ptr<EnemyBase> EnemyFactory::CreateNewEnemy(const ENEMY_TYPE& _type)
+{
+	//敵の生成
+	std::unique_ptr enemy = std::make_unique<EnemyBase>(_type);
+
+	//ロード
+	enemy->Load();
+
+	//初期化
+	enemy->Init();
+
+	//動的パラメーターの初期化
+	enemy->InitRunTimeParameter(parameters_[static_cast<int>(_type)]);
+
+	//モデルとアニメーションのロード
+	LoadModelAndAnimation(*enemy, _type);
+
+	//完成品を返す
+	return enemy;
+}
+
+const EnemyParameter& EnemyFactory::GetParam(const ENEMY_TYPE& _type)
+{
+	return parameters_[static_cast<int>(_type)];
+}
+
+void EnemyFactory::LoadModelAndAnimation(EnemyBase& _enemy, const ENEMY_TYPE& _type)
+{
+	//リソース
+	auto& res = ResourceManager::GetInstance();
+	int animModel = -1;
+	int type = static_cast<int>(_type);
+
+	//参照パラメータ
+	const auto& param = parameters_[type];
+
+	//モデルID
+	int model = res.LoadModelDuplicate(SRC_TABLE[type].at(L"ModelName"));
+
+	//アニメーション
+	std::unique_ptr<AnimationController> anim = std::make_unique<AnimationController>(model);
+
+	//モデル
+	_enemy.SetModel(model);
+
+	//メインボーン
+	anim->SetRootFrameIndex(Utility::StrToWStr(param.mainFrameName));
+
+	for (auto& [animName, animParam] : param.animParam)
+	{
+		//アニメーション名
+		std::wstring animNameWstr = Utility::StrToWStr(animName);
+
+		//アニメーションのモデルID
+		animModel = res.LoadModelDuplicate(SRC_TABLE[type].at(animNameWstr));
+
+		//ループ
+		AnimationController::PLAY_TYPE playType = AnimationController::PLAY_TYPE::NORMAL;
+		if (animParam.isLoop)playType = AnimationController::PLAY_TYPE::LOOP;
+
+		//追加
+		anim->Add(animNameWstr, animModel, playType, AnimationController::ANIM_SOURCE::EXTERNAL, animParam.isLock, animParam.isFixPos);
+
+		//座標固定
+		if (animParam.isFixPos)
+		{
+			anim->SetFixAnimationAxisInfo(animNameWstr, animParam.fixPos.x, animParam.fixPos.y, animParam.fixPos.z);
+		}
+	}
+
+	//デフォルトアニメーション設定
+	anim->SetDefaultAnim(L"Idle");
+
+	//アニメーション設定
+	_enemy.SetAnim(std::move(anim));
+}

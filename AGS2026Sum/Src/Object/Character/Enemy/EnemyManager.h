@@ -4,7 +4,6 @@
 #include<DxLib.h>
 #include"../../Common/Quaternion.h"
 #include"EnemyDefine.h"
-#include"EnemyParameter.h"
 
 class EnemyBase;
 class EnemyPool;
@@ -45,6 +44,9 @@ public:
 	//敵グループの生成
 	void CreateEnemyGroup(const int _createNum);
 
+	//中ボスグループの生成(_createNumは雑魚敵の数)
+	void CreateMiddleBossGroup(const int _createNum);
+
 	//生存中の敵の数を取得
 	const int GetActiveEnemyNum(void)const;
 
@@ -68,9 +70,6 @@ private:
 	//チャンク範囲
 	static constexpr int CHUNK_RANGE = 2;
 
-	//敵のパラメータ情報
-	std::array<EnemyParameter, static_cast<int>(ENEMY_TYPE::MAX)> parameters_;
-
 	//敵グループ
 	std::unique_ptr<EnemyGroupPool> enemyGroupPool_;
 
@@ -82,9 +81,6 @@ private:
 
 	//プレイヤー座標
 	const VECTOR& playerPos_;
-
-	//モデルアニメーション読み込み
-	void LoadEnemyAnim(EnemyBase* _enemy, const ENEMY_TYPE& _type);
 
 	//グループと敵の関連付け
 	void Grouping(EnemyGroup* _group, EnemyBase* _enemy);

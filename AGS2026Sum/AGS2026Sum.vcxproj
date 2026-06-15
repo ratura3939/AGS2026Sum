@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Character\Enemy\EnemyFactory.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\Skill\EnemyNormalSkill.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\Skill\EnemySkillBase.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\EnemyGroupPool.cpp" />
@@ -199,6 +200,7 @@
     <ClCompile Include="Src\Utility\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Character\Enemy\EnemyFactory.h" />
     <ClInclude Include="Src\Object\Character\Enemy\EnemyParameter.h" />
     <ClInclude Include="Src\Object\Character\Enemy\Skill\EnemyNormalSkill.h" />
     <ClInclude Include="Src\Object\Character\Enemy\Skill\EnemySkillBase.h" />

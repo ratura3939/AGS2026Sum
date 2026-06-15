@@ -60,7 +60,7 @@ public:
 		bool z;
 	};
 
-	AnimationController(int& _model);
+	AnimationController(int _model);
 	~AnimationController(void);
 
 	/// <summary>
@@ -156,7 +156,7 @@ private:
 	//位置補正を行う軸を取得
 	const FixAnimationAxis GetUseFixAnimationAxisData(void)const;
 
-	int& modelId_;	//モデルID
+	int modelId_;	//モデルID
 	int rootFrameIdx_;	//モデルの親フレーム
 
 	std::unordered_map<std::wstring, AnimationInfo>animDatas_;	//アニメーションデータ総まとめ

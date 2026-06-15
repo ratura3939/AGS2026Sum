@@ -30,12 +30,14 @@ public:
 		,PLAYER_FINISH_KICK_ANIM	//キック３
 
 		//敵
-		, ENEMY_IDLE_ANIM			//待機
-		, ENEMY_WALK_ANIM			//歩く
-		, ENEMY_RUN_ANIM			//走る
-		, ENEMY_ATTACK_ANIM			//攻撃
-		, ENEMY_BLOW_ANIM			//吹っ飛び
-		, ENEMY_DEATH_ANIM			//死亡
+		, ENEMY_IDLE_ANIM						//待機
+		, ENEMY_WALK_ANIM						//歩く
+		, ENEMY_RUN_ANIM						//走る
+		, ENEMY_ATTACK_ANIM						//攻撃
+		, ENEMY_BLOW_FIRST_HALF_ANIM			//吹っ飛び前半
+		, ENEMY_BLOW_SECOND_HALF_ANIM			//吹っ飛び後半
+		, ENEMY_BLOW_END_ANIM					//吹っ飛び終了
+		, ENEMY_DEATH_ANIM						//死亡
 
 
 		//JSON

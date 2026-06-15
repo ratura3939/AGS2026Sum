@@ -33,13 +33,13 @@ struct EnemyParameter
 	};
 
 	//体力
-	int hp = -1;
+	int initHp = -1;
 
 	//モデル
-	std::wstring modelName = L"";
+	std::string modelName = "";
 
 	//メインボーン名
-	std::wstring mainFrameName = L"";
+	std::string mainFrameName = "";
 
 	//アニメーション
 	std::unordered_map<std::string, AnimParameter> animParam;
@@ -48,7 +48,7 @@ struct EnemyParameter
 inline void from_json(const nlohmann::json& _data, EnemyParameter& _param) 
 {
 	//体力
-	_data.at("hp").get_to(_param.hp);
+	_data.at("hp").get_to(_param.initHp);
 
 	//モデル名
 	_data.at("modelName").get_to(_param.modelName);

@@ -10,34 +10,6 @@
 #include"EnemyBase.h"
 #include "EnemyManager.h"
 
-namespace
-{
-	const std::array<
-		std::unordered_map<std::wstring, ResourceManager::SRC>,
-		static_cast<int>(ENEMY_TYPE::MAX)
-	> SRC_TABLE =
-	{
-		//雑魚
-		std::unordered_map<std::wstring, ResourceManager::SRC>
-		{
-			{L"ModelName",   ResourceManager::SRC::ENEMY_MDL},
-			{L"Idle",   ResourceManager::SRC::ENEMY_IDLE_ANIM},
-			{L"Walk",   ResourceManager::SRC::ENEMY_WALK_ANIM},
-			{L"Run",    ResourceManager::SRC::ENEMY_RUN_ANIM},
-			{L"Attack", ResourceManager::SRC::ENEMY_ATTACK_ANIM},
-			{L"Blow", ResourceManager::SRC::ENEMY_BLOW_ANIM},
-			{L"Death", ResourceManager::SRC::ENEMY_DEATH_ANIM}
-		},
-
-		//中ボス
-		std::unordered_map<std::wstring, ResourceManager::SRC>
-		{
-			//{L"Idle",   ResourceManager::SRC::BOSS_IDLE_ANIM},
-			//{L"Attack", ResourceManager::SRC::BOSS_ATTACK_ANIM},
-		}
-	};
-}
-
 EnemyManager::EnemyManager(const VECTOR& _pPos)
 	:playerPos_(_pPos)
 {
@@ -51,73 +23,29 @@ EnemyManager::~EnemyManager(void)
 
 void EnemyManager::Load(void)
 {
-	//リソース
-	auto& res = ResourceManager::GetInstance();
+	//敵グループのプールを生成
+	enemyGroupPool_ = std::make_unique<EnemyGroupPool>();
+	enemyGroupPool_->Load();
 
-	//外部ファイル取得
-	parameters_[static_cast<int>(ENEMY_TYPE::NORMAL)] = res.Load(ResourceManager::SRC::NORMAL_ENEMY_PARAMETER).GetData<EnemyParameter>();
+	//敵のプールを生成
+	enemyPool_ = std::make_unique<EnemyPool>();
+	enemyPool_->Load();
 }
 
 void EnemyManager::Init(void)
 {
-	//敵グループのプールを生成
-	enemyGroupPool_ = std::make_unique<EnemyGroupPool>();
-
-	//敵のプールを生成
-	enemyPool_ = std::make_unique<EnemyPool>();
+	const int ENEMY_GROUP_NUM = 0;
+	const int MIDDLE_BOSS_GROUP_NUM = 1;
 
 	//敵の生成(デバッグ)
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(CREATE_NUM);
-	CreateEnemyGroup(CREATE_NUM);
-	//CreateEnemyGroup(1);
+	for (int i = 0; i < ENEMY_GROUP_NUM;i++)
+	{
+		CreateEnemyGroup(CREATE_NUM);
+	}
+	for (int i = 0; i < MIDDLE_BOSS_GROUP_NUM;i++)
+	{
+		CreateMiddleBossGroup(CREATE_NUM);
+	}
 }
 
 void EnemyManager::Update(void)
@@ -195,7 +123,41 @@ void EnemyManager::CreateEnemyGroup(const int _createNum)
 	for (int i = 0; i < _createNum; i++)
 	{
 		//生成
-		enemy = enemyPool_->Spawn();
+		enemy = enemyPool_->Spawn(ENEMY_TYPE::NORMAL);
+
+		//グループに設定
+		Grouping(group, enemy);
+		enemy->InitWithGroup();
+	}
+}
+
+void EnemyManager::CreateMiddleBossGroup(const int _createNum)
+{
+	//グループ
+	EnemyGroup* group = enemyGroupPool_->Spawn();
+
+	//初期化
+	group->Init();
+
+	//グループの初期座標(デバッグ)
+	static VECTOR pos = { 0.0f, 0.0f, 0.0f };
+	//group->SetPos(pos);
+	//pos = VAdd(pos, { 1000.0f, 0.0f, 1000.0f });
+
+	//グループのチャンク管理用の添え字を設定
+	ChunkManager::GetInstance().AddEnemyGroup(group);
+
+	//敵の参照用ポインタ
+	EnemyBase* enemy = nullptr;
+
+	//中ボス
+	enemy = enemyPool_->Spawn(ENEMY_TYPE::MIDDLE_BOSS);
+
+	//指定分、敵を生成する
+	for (int i = 0; i < _createNum; i++)
+	{
+		//生成
+		enemy = enemyPool_->Spawn(ENEMY_TYPE::NORMAL);
 
 		//グループに設定
 		Grouping(group, enemy);
@@ -205,57 +167,10 @@ void EnemyManager::CreateEnemyGroup(const int _createNum)
 
 const int EnemyManager::GetActiveEnemyNum(void) const
 {
+	//プールがないならそもそも0
 	if (!enemyPool_) return 0;
 
 	return static_cast<int>(enemyPool_->GetActiveEnemys().size());
-}
-
-void EnemyManager::LoadEnemyAnim(EnemyBase* _enemy, const ENEMY_TYPE& _type)
-{
-	//リソース
-	auto& res = ResourceManager::GetInstance();
-	int animModel = -1;
-	int type = static_cast<int>(_type);
-
-	//参照パラメータ
-	const auto& param = parameters_[type];
-
-	//モデルID
-	int model = res.LoadModelDuplicate(SRC_TABLE[type].at(L"ModelName"));
-
-	//アニメーション
-	std::unique_ptr<AnimationController> anim = std::make_unique<AnimationController>(model); 
-
-	//モデル
-	_enemy->SetModel(model);
-
-	//メインボーン
-	anim->SetRootFrameIndex(param.mainFrameName);
-
-	for (auto& [animName, animParam] : param.animParam)
-	{
-		//アニメーション名
-		std::wstring animNameWstr = Utility::StrToWStr(animName);
-		
-		//アニメーションのモデルID
-		animModel = res.LoadModelDuplicate(SRC_TABLE[type].at(animNameWstr));
-
-		//ループ
-		AnimationController::PLAY_TYPE playType = AnimationController::PLAY_TYPE::NORMAL;
-		if (animParam.isLoop)playType = AnimationController::PLAY_TYPE::LOOP;
-		
-		//追加
-		anim->Add(animNameWstr, animModel, playType, AnimationController::ANIM_SOURCE::EXTERNAL, animParam.isLock, animParam.isFixPos);
-
-		//座標固定
-		if (animParam.isFixPos)
-		{
-			anim->SetFixAnimationAxisInfo(animNameWstr, animParam.fixPos.x, animParam.fixPos.y, animParam.fixPos.z);
-		}
-	}
-
-	//アニメーション設定
-	_enemy->SetAnim(std::move(anim));
 }
 
 void EnemyManager::Grouping(EnemyGroup* _group, EnemyBase* _enemy)

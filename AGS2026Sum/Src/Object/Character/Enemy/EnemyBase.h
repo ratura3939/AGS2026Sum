@@ -3,6 +3,7 @@
 #include <string>
 #include "../CharacterBase.h"
 #include "EnemyDefine.h"
+#include "EnemyParameter.h"
 #include"EnemyBrain.h"
 #include"EnemyOnHit.h"
 #include"EnemyGroup.h"
@@ -30,13 +31,16 @@ public:
 	static constexpr float ATTACK_DURATION = 1.0f;
 
 	//コンストラクタ
-	EnemyBase(void);
+	EnemyBase(ENEMY_TYPE _type);
 
 	//デストラクタ
 	~EnemyBase(void);
 
 	//グループとの初期化
 	void InitWithGroup(void);
+
+	//通常パラメーターの初期化
+	void InitRunTimeParameter(const EnemyParameter& _param);
 
 	//モデル設定
 	void SetModel(const int _modelId);
@@ -76,6 +80,9 @@ public:
 
 	//生存判定用番号の設定
 	void SetActiveIndex(const int _index) { activeIndex_ = _index; }
+
+	//敵の種類の取得
+	const ENEMY_TYPE& GetType(void) { return type_; }
 
 	//移動量の取得
 	const VECTOR& GetMovePow(void)const { return movePow_; }
@@ -154,6 +161,9 @@ protected:
 
 	//自身の生存判定用番号
 	int activeIndex_;
+
+	//敵のタイプ
+	const ENEMY_TYPE type_;
 
 	//親グループ(Managerからの参照用)
 	const EnemyGroup* group_;

@@ -11,9 +11,10 @@
 #include "EnemyBrain.h"
 #include "EnemyBase.h"
 
-EnemyBase::EnemyBase(void)
+EnemyBase::EnemyBase(ENEMY_TYPE _type)
 	: group_(nullptr)
 	, activeIndex_(-1)
+	, type_(_type)
 	, attackPos_(Utility::VECTOR_ZERO)
 	, attackCnt_(0.0f)
 	, brain_(*this)
@@ -162,6 +163,9 @@ void EnemyBase::DoLoad(void)
 
 void EnemyBase::DoInit(void)
 {
+	//ローカル回転
+	quaRotLocal_ = Quaternion();
+
 	//コライダの初期化
 	DeleteAllColliders();
 
@@ -182,6 +186,12 @@ void EnemyBase::InitWithGroup(void)
 
 	//座標
 	ResetPos();
+}
+
+void EnemyBase::InitRunTimeParameter(const EnemyParameter& _param)
+{
+	//体力の初期化
+	hp_ = _param.initHp;
 }
 
 void EnemyBase::SetModel(const int _modelId)
@@ -285,7 +295,7 @@ void EnemyBase::UpdateAttack(void)
 	if (!skill_)ChangeAction(ENEMY_ACTION::STAY);
 
 	//スキルごとの行動
-	skill_->Update(*this);
+	//skill_->Update(*this);
 }
 
 void EnemyBase::UpdateReturn(void)
