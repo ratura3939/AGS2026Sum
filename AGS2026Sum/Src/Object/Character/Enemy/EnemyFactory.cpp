@@ -98,12 +98,12 @@ void EnemyFactory::LoadModelAndAnimation(EnemyBase& _enemy, const ENEMY_TYPE& _t
 	_enemy.SetModel(model);
 
 	//メインボーン
-	anim->SetRootFrameIndex(Utility::StrToWStr(param.mainFrameName));
+	anim->SetRootFrameIndex(Utility::StringToWstring(param.mainFrameName));
 
 	for (auto& [animName, animParam] : param.animParam)
 	{
 		//アニメーション名
-		std::wstring animNameWstr = Utility::StrToWStr(animName);
+		std::wstring animNameWstr = Utility::StringToWstring(animName);
 
 		//アニメーションのモデルID
 		animModel = res.LoadModelDuplicate(SRC_TABLE[type].at(animNameWstr));
