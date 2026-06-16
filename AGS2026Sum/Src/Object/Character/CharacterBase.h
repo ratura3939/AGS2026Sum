@@ -7,9 +7,22 @@ class CharacterBase :
     public ActorBase
 {
 public:
+	//ノックバックの種類
+	enum class KNOCKBACK_TYPE {
+		STAGGER		//のけぞり
+		,PUSH_BACK	//少し後退
+		,LAUNCH		//打ち上げ
+		,FLOAT		//浮き続ける
+		,SLAM		//叩きつけ
+		,BLOW_AWAY	//吹き飛び
+		,MAX
+	};
+
 	//回転作業
 	static constexpr float PER_ROT = 0.2f;			//フレームごとの回転(球面補間における時間の増加量を表す)
 	static constexpr float THRESHOLD_ROT = 0.1f;	//回転のしきい値を表す
+
+	static const std::string KNOCKBACK_TYPE_STRING[static_cast<int>(KNOCKBACK_TYPE::MAX)];	//ノックバックの種類の文字列配列
 
 	CharacterBase(void);
 	virtual ~CharacterBase(void)override;
@@ -23,6 +36,8 @@ public:
 	const bool IsAlive(void)const { return hp_ > 0.0f; }	//生存判定
 
 	const Quaternion& GetQua(void) const { return characterRotY_; }	//回転量の取得
+	
+	void SetAnimationSpeedPercent(const float _percent);	//アニメーション速度倍率設定
 
 protected:
 	virtual void DoInit(void)override = 0;		//初期化

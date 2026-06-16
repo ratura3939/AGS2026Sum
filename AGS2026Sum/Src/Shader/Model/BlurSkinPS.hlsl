@@ -13,7 +13,7 @@ cbuffer cbParam : register(b4)
 	float4 g_color;		//äeéQçl
 }
 
-float4 main(PS_INPUT PSInput) : SV_TARGET0
+float4 main(PS_INPUT PSInput) : SV_TARGET
 {
 	float4 color;
 

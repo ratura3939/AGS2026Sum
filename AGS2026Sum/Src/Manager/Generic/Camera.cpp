@@ -63,6 +63,10 @@ void Camera::Init(void)
 void Camera::Update(void)
 {
 	//collider_->Update();
+
+	if (mode_ == MODE::FREE || mode_ == MODE::FOLLOW) {
+		Rotation();
+	}
 }
 
 void Camera::SetBeforeDraw(void)
@@ -136,13 +140,10 @@ void Camera::SetBeforeDrawFixedPoint(void)
 
 void Camera::SetBeforeDrawFree(void)
 {
-	Rotation();
 }
 
 void Camera::SetBeforeDrawFollow(void)
 {
-	//âÒì]
-	Rotation();
 
 	//í«è]ëŒè€ÇÃà íu
 	VECTOR followPos = followObject_.pos;

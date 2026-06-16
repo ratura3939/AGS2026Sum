@@ -3,6 +3,15 @@
 #include"../../Utility/Utility.h"
 #include "CharacterBase.h"
 
+const std::string CharacterBase::KNOCKBACK_TYPE_STRING[static_cast<int>(CharacterBase::KNOCKBACK_TYPE::MAX)] = {
+	"Stagger",
+	"PushBack",
+	"Launch",
+	"Float",
+	"Slam",
+	"BlowAway"
+};
+
 CharacterBase::CharacterBase(void)
 	:ActorBase()
 	,characterRotY_(Quaternion::Identity())
@@ -58,4 +67,8 @@ void CharacterBase::Damage(const float _damage)
 	if (!IsAlive()){
 		Death();	//死亡処理
 	}
+}
+
+void CharacterBase::SetAnimationSpeedPercent(const float _percent) {
+	animController_->ChangeSpeedRate(_percent);
 }

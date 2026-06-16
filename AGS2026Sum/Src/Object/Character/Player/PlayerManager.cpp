@@ -18,13 +18,23 @@ const std::wstring PlayerManager::ANIM_THIRD_PUNCH = L"ThirdPunch";
 const std::wstring PlayerManager::ANIM_MIDDLE_KICK = L"MiddleKick";
 const std::wstring PlayerManager::ANIM_HIGH_KICK = L"HighKick";
 const std::wstring PlayerManager::ANIM_FINSH_KICK = L"FinishKick";
+const std::wstring PlayerManager::ANIM_SPECIAL_PUNCH = L"SpecialPunch";
+const std::wstring PlayerManager::ANIM_SPECIAL_KICK = L"SpecialKick";
+const std::wstring PlayerManager::ANIM_ULTIMET = L"Ultimet";
+const std::wstring PlayerManager::ANIM_ULTIMET_TEST = L"UltimetTest";
+
+namespace {
+	const VECTOR FOCUS_RELATIVE = { 0.0f,0.0f,300.0f };
+}
 
 PlayerManager::PlayerManager(Game& _gameScene)
 	:scene_(_gameScene)
 	,character_(std::make_shared<PlayerChara>())
 	,attack_(nullptr)
-	,isRefuseAttackInput_(false)
+	,isEnableAttackInput_(true)
 	,isForcePlayAnim_(false)
+	,isSpecialAttackRedy_(false)
+	,isEnableSpecial_(true)
 {
 	character_->Load();		//キャラクターの読み込み
 }
@@ -39,6 +49,10 @@ void PlayerManager::Init(void)
 
 	attack_ = std::make_unique<PlayerAttack>(character_->GetPos(), character_->GetQua());	//攻撃クラスの生成
 	attack_->Init();		//攻撃クラスの初期化
+
+	//注視点の更新
+	Camera& camera = SceneManager::GetInstance().GetCamera();
+	focusPos_ = VAdd(character_->GetPos(), camera.GetRot().PosAxis(FOCUS_RELATIVE));
 }
 
 void PlayerManager::Update(void)
@@ -47,10 +61,16 @@ void PlayerManager::Update(void)
 	character_->Update();	//キャラクターの更新
 	attack_->Update();		//攻撃クラスの更新
 
+	//注視点の更新
+	Camera& camera = SceneManager::GetInstance().GetCamera();
+	focusPos_ = VAdd(character_->GetPos(), camera.GetRot().PosAxis(FOCUS_RELATIVE));
+
+	//アニメーションが終了していたら(攻撃関連のアニメーションに限り発生するもの)
 	if (character_->IsFinishAttackAnimation()) {
 
 		//攻撃予約関係
-		isRefuseAttackInput_ = false;	//攻撃入力を受け付ける状態にする
+		isEnableAttackInput_ = true;	//攻撃入力を受け付ける状態にする
+		isEnableSpecial_ = true;		//特殊準備を受け入れる
 
 		if (character_->IsStartNextAttackAnimation()) {
 			attack_->Attack();	//攻撃開始
@@ -68,9 +88,12 @@ void PlayerManager::Draw(void)
 	character_->Draw();		//キャラクターの描画
 	attack_->Draw();		//攻撃クラスの描画
 	
+	if (isSpecialAttackRedy_) {
+		DrawString(30, 300, L"SpecialRedy!!!", 0xffffff);
+	}
 
 	attack_->DrawDebug();	//攻撃クラスのデバッグ描画
-	DrawFormatString(30, 280, 0xffffff, L"AttackCansel = %d", static_cast<int>(isRefuseAttackInput_));	//現在の攻撃アニメーション登録名の先頭文字を表示(デバッグ用)
+	DrawFormatString(30, 280, 0xffffff, L"AttackCansel = %d", static_cast<int>(isEnableAttackInput_));	//現在の攻撃アニメーション登録名の先頭文字を表示(デバッグ用)
 	character_->DrawNextAnimations();	//キャラクターの次のアニメーションのデバッグ描画
 }
 
@@ -84,9 +107,49 @@ const VECTOR& PlayerManager::GetPos(void) const
 	return character_->GetPos();
 }
 
+const VECTOR& PlayerManager::GetFocusPos(void)
+{
+	return focusPos_;
+}
+
 const Quaternion& PlayerManager::GetQua(void)
 {
 	return character_->GetQua();
+}
+
+const CharacterBase::KNOCKBACK_TYPE PlayerManager::GetCurrentKnockBackType(void) const
+{
+	const std::string knockBackTypeString = attack_->GetCurrentAttackKnockBackType();	//攻撃クラスから現在の攻撃の吹っ飛び方の文字列を取得
+
+	using KNOCKBACK_TYPE = CharacterBase::KNOCKBACK_TYPE;
+
+	//文字列と照らし合わせて、ノックバックの種類を返す
+	if (knockBackTypeString == CharacterBase::KNOCKBACK_TYPE_STRING[static_cast<int>(KNOCKBACK_TYPE::STAGGER)]) {
+		return KNOCKBACK_TYPE::STAGGER;
+	}
+	else if (knockBackTypeString == CharacterBase::KNOCKBACK_TYPE_STRING[static_cast<int>(KNOCKBACK_TYPE::PUSH_BACK)]) {
+		return KNOCKBACK_TYPE::PUSH_BACK;
+	}
+	else if (knockBackTypeString == CharacterBase::KNOCKBACK_TYPE_STRING[static_cast<int>(KNOCKBACK_TYPE::LAUNCH)]) {
+		return KNOCKBACK_TYPE::LAUNCH;
+	}
+	else if (knockBackTypeString == CharacterBase::KNOCKBACK_TYPE_STRING[static_cast<int>(KNOCKBACK_TYPE::FLOAT)]) {
+		return KNOCKBACK_TYPE::FLOAT;
+	}
+	else if (knockBackTypeString == CharacterBase::KNOCKBACK_TYPE_STRING[static_cast<int>(KNOCKBACK_TYPE::SLAM)]) {
+		return KNOCKBACK_TYPE::SLAM;
+	}
+	else if (knockBackTypeString == CharacterBase::KNOCKBACK_TYPE_STRING[static_cast<int>(KNOCKBACK_TYPE::BLOW_AWAY)]) {
+		return KNOCKBACK_TYPE::BLOW_AWAY;
+	}
+
+	//例外
+	return KNOCKBACK_TYPE();
+}
+
+void PlayerManager::SetAnimSpeedPercent(const float _percent)
+{
+	character_->SetAnimationSpeedPercent(_percent);
 }
 
 void PlayerManager::UserInput(void)
@@ -96,16 +159,40 @@ void PlayerManager::UserInput(void)
 #pragma region 攻撃
 	bool isAttackInput = false;
 
-	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_NORMAL) && !isRefuseAttackInput_) {
-		isAttackInput = Attack(PlayerAttack::ATTACK_TYPE::PUNCH);	//攻撃クラスに攻撃開始を伝え,結果を得る
+	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_NORMAL)) {
+		//特殊攻撃準備中の場合
+		if (isSpecialAttackRedy_) {
+			isAttackInput = AttackSpecial(PlayerAttack::ATTACK_TYPE::PUNCH);	//攻撃クラスに特殊攻撃開始を伝え,結果を得る
+		}
+		//通常時、攻撃を受け付ける状態の場合
+		else if (isEnableAttackInput_) {
+			isAttackInput = Attack(PlayerAttack::ATTACK_TYPE::PUNCH);	//攻撃クラスに攻撃開始を伝え,結果を得る
+		}
 	}
-	else if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_STRONG) && !isRefuseAttackInput_) {
-		isAttackInput = Attack(PlayerAttack::ATTACK_TYPE::KICK);	//攻撃クラスに攻撃開始を伝え,結果を得る
+	else if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_STRONG)) {
+		//特殊攻撃準備中の場合
+		if (isSpecialAttackRedy_&& isEnableSpecial_) {
+			isAttackInput = AttackSpecial(PlayerAttack::ATTACK_TYPE::KICK);	//攻撃クラスに特殊攻撃開始を伝え,結果を得る
+		}
+		//通常時、攻撃を受け付ける状態の場合
+		else if (isEnableAttackInput_) {
+			isAttackInput = Attack(PlayerAttack::ATTACK_TYPE::KICK);	//攻撃クラスに攻撃開始を伝え,結果を得る
+		}
 	}
 
 	//入力があったとき
 	if (isAttackInput) {
 		SetAttackStateForCharacter();	//攻撃に関する情報をキャラクターに反映
+	}
+
+	//特殊攻撃準備
+	//開始
+	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_SPECIAL) && isEnableSpecial_) {
+		scene_.StartSlow();
+	}
+	//終了
+	else if (ins.IsTrigerrUp(InputManager::INPUT_COMMAND::ATTACK_SPECIAL)) {
+		scene_.EndSlow();
 	}
 #pragma endregion
 
@@ -132,13 +219,15 @@ void PlayerManager::SetAttackStateForCharacter(void)
 
 	character_->SetIsAttack(true);	//攻撃中は攻撃状態にする
 
+	auto seInfo = attack_->GetNextAttackSeInfo();	//SE情報取得
+
 	//アニメーションの再生
 	if (isForcePlayAnim_) {
 		attack_->Attack();				//攻撃開始(コンボ始動のため即時発動)
-		character_->ForcePlayAnim(attackAnimInfo.name, attackAnimInfo.speed);	//攻撃アニメを強制再生する
+		character_->ForcePlayAnim(attackAnimInfo.name, attackAnimInfo.speed, seInfo.seName, seInfo.timing);	//攻撃アニメを強制再生する
 	}
 	else {
-		character_->PlayAnim(attackAnimInfo.name, attackAnimInfo.speed);	//攻撃アニメを再生する
+		character_->PlayAnim(attackAnimInfo.name, attackAnimInfo.speed, seInfo.seName, seInfo.timing);	//攻撃アニメを再生する
 	}
 }
 
@@ -154,7 +243,7 @@ const bool PlayerManager::Attack(PlayerAttack::ATTACK_TYPE _type)
 			isSuccess = attack_->ReserveAttack(_type);	//次段の攻撃予約
 
 			//キャンセル可能状態中は一度だけ攻撃入力を受け付ける
-			isRefuseAttackInput_ = true;	//攻撃入力を受け付けない状態にする
+			isEnableAttackInput_ = false;	//攻撃入力を受け付けない状態にする
 		}
 	}
 	else {
@@ -164,4 +253,16 @@ const bool PlayerManager::Attack(PlayerAttack::ATTACK_TYPE _type)
 	}
 
 	return isSuccess;
+}
+
+const bool PlayerManager::AttackSpecial(PlayerAttack::ATTACK_TYPE _type)
+{
+	attack_->ReserveAttackSpecial(_type);
+	isForcePlayAnim_ = true;
+	isEnableSpecial_ = false;	//発生中なので再度発動できないように
+
+	//特殊攻撃を発生させるときにスロー終了
+	scene_.EndSlow();
+
+	return true;
 }

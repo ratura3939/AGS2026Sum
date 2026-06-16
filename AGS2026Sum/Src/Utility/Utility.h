@@ -152,7 +152,7 @@ public:
 	static VECTOR GetRandomValue(const VECTOR& _min, const VECTOR& _max);
 
 	//•¶Žš—ñ•ÏŠ·
-	static std::string WStrToStr(const std::wstring& wstr);
-	static std::wstring StrToWStr(const std::string& str);
+	static std::string WstringToString(const std::wstring& _wstr);
+	static std::wstring StringToWstring(const std::string& _str);
 };
 

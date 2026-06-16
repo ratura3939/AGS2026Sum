@@ -669,36 +669,36 @@ VECTOR Utility::GetRandomValue(const VECTOR& _min, const VECTOR& _max)
     return ret;
 }
 
-std::string Utility::WStrToStr(const std::wstring& wstr)
+std::string Utility::WstringToString(const std::wstring& _wstr)
 {
     //空ならそのまま
-    if (wstr.empty()) return "";
+    if (_wstr.empty()) return "";
 
     //文字数分のバイト数を確認
-    int size = WideCharToMultiByte(CP_UTF8,0,wstr.data(),static_cast<int>(wstr.size()),nullptr,0,nullptr,nullptr);
+    int size = WideCharToMultiByte(CP_UTF8,0,_wstr.data(),static_cast<int>(_wstr.size()),nullptr,0,nullptr,nullptr);
 
     //必要文字数分確保
     std::string result(size, '\0');
 
     //変換
-    WideCharToMultiByte(CP_UTF8,0,wstr.data(),static_cast<int>(wstr.size()),result.data(),size,nullptr,nullptr);
+    WideCharToMultiByte(CP_UTF8,0,_wstr.data(),static_cast<int>(_wstr.size()),result.data(),size,nullptr,nullptr);
 
     return result;
 }
 
-std::wstring Utility::StrToWStr(const std::string& str)
+std::wstring Utility::StringToWstring(const std::string& _str)
 {
     //空ならそのまま
-    if (str.empty()) return L"";
+    if (_str.empty()) return L"";
 
     //必要な文字数分確保
-    int size = MultiByteToWideChar(CP_UTF8,0,str.data(),static_cast<int>(str.size()),nullptr,0);
+    int size = MultiByteToWideChar(CP_UTF8,0,_str.data(),static_cast<int>(_str.size()),nullptr,0);
 
     //必要文字数分確保
     std::wstring result(size, L'\0');
 
     //変換
-    MultiByteToWideChar(CP_UTF8,0,str.data(),static_cast<int>(str.size()),result.data(),size);
+    MultiByteToWideChar(CP_UTF8,0,_str.data(),static_cast<int>(_str.size()),result.data(),size);
 
     return result;
 }

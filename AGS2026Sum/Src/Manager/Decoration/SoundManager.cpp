@@ -39,10 +39,17 @@ void SoundManager::Add(const TYPE& _type, const SOUND_NAME& _name, const int _da
 
 void SoundManager::Play(const SOUND_NAME& _name)
 {
+	if (_name == SOUND_NAME::MAX) {
+		return;
+	}
+
 	//元データがないときは警告
 	if (sounds_.find(_name) == sounds_.end())assert("設定していない音声を再生しようとしています。");
 
-	if (isNoPlaySound_)return;
+	//再生不可フラグが立っているときは処理しない
+	if (isNoPlaySound_) {
+		return;
+	}
 
 	//流そうとしているのがBGMのとき
 	if (sounds_[_name].type == TYPE::BGM) {

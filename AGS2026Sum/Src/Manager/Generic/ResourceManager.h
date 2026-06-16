@@ -28,6 +28,10 @@ public:
 		,PLAYER_MIDDLE_KICK_ANIM	//キック１
 		,PLAYER_HIGH_KICK_ANIM		//キック２
 		,PLAYER_FINISH_KICK_ANIM	//キック３
+		,PLAYER_SPECIAL_PUNCH_ANIM	//特殊攻撃(パンチ派生)
+		,PLAYER_SPECIAL_KICK_ANIM	//特殊攻撃(キック派生)
+		,PLAYER_ULTIMET_ANIM		//必殺技
+		,PLAYER_ULTIMET_TEST_ANIM	//必殺技(テスト用)
 
 		//敵
 		, ENEMY_IDLE_ANIM						//待機
@@ -39,6 +43,17 @@ public:
 		, ENEMY_BLOW_END_ANIM					//吹っ飛び終了
 		, ENEMY_DEATH_ANIM						//死亡
 
+		//ステージ
+		,STAGE_MDL
+
+		//サウンド
+		//SE
+		,PUNCH_FIRST_PLAYER_SE		//パンチ初段
+		,PUNCH_SECOND_PLAYER_SE		//パンチ二段目
+		,PUNCH_THIRD_PLAYER_SE		//パンチ最終段
+		,KICK_FIRST_PLAYER_SE		//キック初段
+		,KICK_SECOND_PLAYER_SE		//キック二段目
+		,KICK_THIRD_PLAYER_SE		//キック最終段
 
 		//JSON
 		,PLAYER_ATTACK_DATA_JSON	//プレイヤー攻撃データ
