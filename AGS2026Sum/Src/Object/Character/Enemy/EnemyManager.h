@@ -3,12 +3,15 @@
 #include<vector>
 #include<DxLib.h>
 #include"../../Common/Quaternion.h"
+#include"EnemyDefine.h"
 
 class EnemyBase;
-class EnemyGroup;
 class EnemyPool;
+class EnemyGroup;
+class EnemyGroupPool;
 class Game;
 class AttackManager;
+class AnimationController;
 
 class EnemyManager
 {
@@ -22,6 +25,9 @@ public:
 	
 	//デストラクタ
 	~EnemyManager(void);
+
+	//読み込み
+	void Load(void);
 
 	//初期化
 	void Init(void);
@@ -38,6 +44,9 @@ public:
 	//敵グループの生成
 	void CreateEnemyGroup(const int _createNum);
 
+	//中ボスグループの生成(_createNumは雑魚敵の数)
+	void CreateMiddleBossGroup(const int _createNum);
+
 	//生存中の敵の数を取得
 	const int GetActiveEnemyNum(void)const;
 
@@ -49,14 +58,23 @@ private:
 	//プレイヤーを攻撃態勢に入る距離半径
 	static constexpr float PLAYER_ATTACK_RADIUS = 500.0f;
 
+	//チャンク管理用の初期確保数
+	static constexpr int INIT_CHUNK_GROUP_NUM = 100;
+
 	//グループを維持できる最小の敵の数
 	static constexpr int MIN_ENEMY_NUM = 3;
 
 	//敵の生成数
 	static constexpr int CREATE_NUM = 7;
 
+	//チャンク範囲
+	static constexpr int CHUNK_RANGE = 2;
+
 	//敵グループ
-	std::vector<std::unique_ptr<EnemyGroup>> enemyGroup_;	
+	std::unique_ptr<EnemyGroupPool> enemyGroupPool_;
+
+	//チャンク内の敵グループ(参照用)
+	std::vector<EnemyGroup*> chunkGroups_;
 
 	//敵情報
 	std::unique_ptr<EnemyPool> enemyPool_;

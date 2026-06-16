@@ -38,7 +38,7 @@ void EnemyOnHit::HitPlayerAttack(const std::weak_ptr<Collider> _col)
 	parent_.ChangeState(std::make_unique<EnemyDamageState>());
 
 	//ダメージ処理
-	parent_.Damage(1.0f);
+	parent_.Damage(4.0f);
 }
 
 void EnemyOnHit::HitEnemy(const std::weak_ptr<Collider> _col)

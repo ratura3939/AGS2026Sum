@@ -32,6 +32,18 @@ public:
 	//敵がいなくなったか
 	bool IsEmpty(void)const { return enemys_.empty(); }
 
+	//稼働中添え字の取得
+	const int GetActiveIndex(void)const { return activeIndex_; }
+
+	//稼働中添え字の設定
+	void SetActiveIndex(const int _index) { activeIndex_ = _index; }
+
+	//チャンク管理用の添え字の取得
+	const int GetChunkIndex(void)const { return chunkIndex_; }
+
+	//チャンク管理用の添え字の設定
+	void SetChunkIndex(const int _index) { chunkIndex_ = _index; }
+
 	//グループの移動量の取得
 	const VECTOR& GetMovePow(void)const { return movePow_; }
 
@@ -62,6 +74,12 @@ public:
 	//敵の数の取得
 	const int GetEnemyCount(void)const { return static_cast<int>(enemys_.size()); }
 
+	//生存状態の取得
+	const bool IsActive(void)const { return isActive_; }
+
+	//死亡
+	void Kill(void) { isActive_ = false; }
+
 private:
 
 	//攻撃を開始する距離
@@ -84,6 +102,12 @@ private:
 	//行動切り替えの間隔
 	static constexpr float ACTION_INTERVAL = 2.0f;
 
+	//稼働中添え字
+	int activeIndex_;
+
+	//チャンク管理用の添え字
+	int chunkIndex_;
+
 	//全体関係
 	VECTOR pos_;			//グループ座標
 	VECTOR groupGoalPos_;	//グループの目標座標
@@ -91,6 +115,9 @@ private:
 
 	//行動関係
 	float actionCnt_;		//行動切り替えのカウント
+
+	//生存状態
+	bool isActive_;
 
 	//命令
 	GROUP_ORDER order_;										//グループの命令

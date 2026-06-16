@@ -188,13 +188,25 @@ void ResourceManager::ResourceEnemy(void)
 	res = Resource(Resource::TYPE::MODEL, animPath + L"Attack.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_ATTACK_ANIM, res);
 
-	//吹っ飛び
-	res = Resource(Resource::TYPE::MODEL, animPath + L"Blow.mv1");
-	resourcesMap_.emplace(SRC::ENEMY_BLOW_ANIM, res);
+	//吹っ飛び前半
+	res = Resource(Resource::TYPE::MODEL, animPath + L"BlowFirstHalf.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_BLOW_FIRST_HALF_ANIM, res);
+
+	//吹っ飛び後半
+	res = Resource(Resource::TYPE::MODEL, animPath + L"BlowSecondHalf.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_BLOW_SECOND_HALF_ANIM, res);
+
+	//吹っ飛び終了
+	res = Resource(Resource::TYPE::MODEL, animPath + L"BlowEnd.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_BLOW_END_ANIM, res);
 
 	//死亡
 	res = Resource(Resource::TYPE::MODEL, animPath + L"Death.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_DEATH_ANIM, res);
+
+	//パラメーター
+	res = Resource(Resource::TYPE::JSON, Application::PATH_JSON + L"NormalEnemyParam.json");
+	resourcesMap_.emplace(SRC::NORMAL_ENEMY_PARAMETER, res);
 }
 
 void ResourceManager::ResourceBoss(void)
@@ -202,8 +214,12 @@ void ResourceManager::ResourceBoss(void)
 	Resource res;
 
 	//ボスモデル
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + L"Boss.mv1");
-	resourcesMap_.emplace(SRC::BOSS_MDL, res);
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + L"MiddleBoss.mv1");
+	resourcesMap_.emplace(SRC::MIDDLE_BOSS_MDL, res);
+
+	//パラメーター
+	res = Resource(Resource::TYPE::JSON, Application::PATH_JSON + L"MiddleBossParam.json");
+	resourcesMap_.emplace(SRC::MIDDLE_BOSS_PARAMETER, res);
 }
 
 void ResourceManager::Release(void)

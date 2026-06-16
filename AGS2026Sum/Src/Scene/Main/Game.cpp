@@ -2,6 +2,7 @@
 #include"../../Object/Character/Enemy/EnemyManager.h"
 #include"../../Manager/GameSystem/AttackManager.h"
 #include"../../Manager/GameSystem/CollisionManager.h"
+#include"../../Manager/GameSystem/ChunkManager.h"
 #include"../../Manager/Generic/Camera.h"
 #include"../../Manager/Generic/SceneManager.h"
 #include"../../Manager/Generic/InputManager.h"
@@ -89,6 +90,10 @@ void Game::Init(void)
 	update_ = &Game::GameUpdate;
 
 	//生成
+	
+	//チャンク管理
+	ChunkManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::GAME_END);
+
 	//ステージ
 	stage_ = std::make_unique<StageManager>();
 	stage_->Init();
@@ -103,6 +108,7 @@ void Game::Init(void)
 
 	//敵
 	enemy_ = std::make_unique<EnemyManager>(player_->GetPos());
+	enemy_->Load();
 	enemy_->Init();
 
 	//カメラの初期設定
@@ -502,6 +508,7 @@ void Game::Draw(void)
 	DrawString(10, 10, L"GameScene", 0xffffff);
 
 	stage_->Draw();
+	ChunkManager::GetInstance().DebugDraw();
 	enemy_->Draw();
 	player_->Draw();
 
@@ -574,6 +581,7 @@ void Game::Release(void)
 	SoundManager& sndM = SoundManager::GetInstance();
 	sndM.Stop(SoundManager::SOUND_NAME::GAME_NORMAL_BGM);	//今まで流していたものを停止\
 	CollisionManager::GetInstance().DeleteAllCollider();
+	ChunkManager::GetInstance().DestroyInstance();
 }
 
 void Game::Reset(void)

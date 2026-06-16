@@ -50,7 +50,8 @@ void PlayerChara::DoLoad(void)
 
 void PlayerChara::DoInit(void)
 {
-	pos_ = Utility::VECTOR_ZERO;
+	//pos_ = Utility::VECTOR_ZERO;
+	pos_ = { 100.0f,0.0f,100.0f };
 	moveSpeed_ = MOVE_SPEED;
 	inputDir_ = Utility::VECTOR_ZERO;
 
