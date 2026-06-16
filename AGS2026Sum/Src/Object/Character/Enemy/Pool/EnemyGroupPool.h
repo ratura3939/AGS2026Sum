@@ -1,6 +1,6 @@
 #pragma once
 #include<vector>
-#include"EnemyGroup.h"
+#include"../EnemyGroup.h"
 
 class EnemyGroupPool
 {

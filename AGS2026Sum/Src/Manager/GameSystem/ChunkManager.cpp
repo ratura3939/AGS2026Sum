@@ -22,7 +22,7 @@ int ChunkManager::GetChunkIndex(const VECTOR& _pos) const
 	int cellZ = static_cast<int>(std::floor(_pos.z / CELL_SIZE));
 	int index = cellX + cellZ * CHUNK_X;
 
-	//セルがチャンクの範囲外ならエラーを返す
+	//セルがチャンクの範囲外ならエラー値を返す
 	if (cellX < 0 || cellX >= CHUNK_X || cellZ < 0 || cellZ >= CHUNK_Z)
 	{
 		assert(!"Out of Chunk");
@@ -56,7 +56,7 @@ void ChunkManager::DebugDraw(void) const
 void ChunkManager::AddEnemyGroup(EnemyGroup* _enemyGroup)
 {
 	//敵の座標からセルの座標を求める
-	int index = GetChunkIndex(_enemyGroup->GetPos());
+	int index = GetChunkIndex(_enemyGroup->GetLeaderPos());
 
 	//チャンクに登録
 	chunkEnemyMap_[index].push_back(_enemyGroup);
@@ -81,7 +81,7 @@ void ChunkManager::MoveEnemyGroup(EnemyGroup* _enemyGroup)
 	int oldIndex = _enemyGroup->GetChunkIndex();
 
 	//新しい座標からセルの座標を求める
-	int newIndex = GetChunkIndex(_enemyGroup->GetPos());
+	int newIndex = GetChunkIndex(_enemyGroup->GetLeaderPos());
 
 	//セルが変わっていない場合は何もしない
 	if (oldIndex == newIndex) return;

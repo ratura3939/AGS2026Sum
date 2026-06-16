@@ -11,21 +11,31 @@ public:
 	//デストラクタ
 	~EnemyNormalSkill(void)override;
 
+	//準備開始
+	void ReadyEnter(EnemyBase& _owner)override;
+
+	//更新
+	const bool ReadyUpdate(EnemyBase& _owner)override;
+
+	//終了
+	void ReadyExit(EnemyBase& _owner)override;
+
 	//開始
 	void Enter(EnemyBase& _owner)override;
 
 	//更新
-	void Update(EnemyBase& _owner)override;
+	const bool Update(EnemyBase& _owner)override;
 
 	//終了
 	void Exit(EnemyBase& _owner)override;
 
-	//終了判定
-	const bool IsEnd(void)const override;
-
 private:
 
 	//攻撃時間
-	static constexpr float ATTACK_TIME = 3.0f;
+	static constexpr float ATTACK_READY_TIME = 2.0f;
+	static constexpr float ATTACK_TIME = 2.0f;
+
+	//攻撃の相対座標
+	static constexpr VECTOR ATTACK_LOCAL_POS = { 0.0f, 0.0f, -30.0f };
 };
 

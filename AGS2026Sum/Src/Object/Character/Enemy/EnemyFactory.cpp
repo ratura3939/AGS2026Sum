@@ -1,7 +1,9 @@
 #include "../../../pch.h"
 #include "../../../Utility/Utility.h"
 #include "../../../Manager/Generic/ResourceManager.h"
-#include"../../../Manager/GameSystem/AnimationController.h"
+#include "../../../Manager/GameSystem/AnimationController.h"
+#include "Skill/EnemySkillBase.h"
+#include "EnemyManager.h"
 #include "EnemyBase.h"
 #include "EnemyFactory.h"
 
@@ -42,6 +44,14 @@ namespace
 	};
 }
 
+EnemyFactory::EnemyFactory(void)
+{
+}
+
+EnemyFactory::~EnemyFactory(void)
+{
+}
+
 void EnemyFactory::Load(void)
 {
 	//リソース
@@ -55,7 +65,7 @@ void EnemyFactory::Load(void)
 std::unique_ptr<EnemyBase> EnemyFactory::CreateNewEnemy(const ENEMY_TYPE& _type)
 {
 	//敵の生成
-	std::unique_ptr enemy = std::make_unique<EnemyBase>(_type);
+	std::unique_ptr<EnemyBase> enemy = std::make_unique<EnemyBase>(_type);
 
 	//ロード
 	enemy->Load();
@@ -69,11 +79,14 @@ std::unique_ptr<EnemyBase> EnemyFactory::CreateNewEnemy(const ENEMY_TYPE& _type)
 	//モデルとアニメーションのロード
 	LoadModelAndAnimation(*enemy, _type);
 
+	//スキル生成
+	CreateSkill(*enemy, _type);
+
 	//完成品を返す
 	return enemy;
 }
 
-const EnemyParameter& EnemyFactory::GetParam(const ENEMY_TYPE& _type)
+const EnemyParameter& EnemyFactory::GetParam(const ENEMY_TYPE& _type) const
 {
 	return parameters_[static_cast<int>(_type)];
 }
@@ -86,7 +99,7 @@ void EnemyFactory::LoadModelAndAnimation(EnemyBase& _enemy, const ENEMY_TYPE& _t
 	int type = static_cast<int>(_type);
 
 	//参照パラメータ
-	const auto& param = parameters_[type];
+	const auto& param = parameters_[static_cast<int>(_type)];
 
 	//モデルID
 	int model = res.LoadModelDuplicate(SRC_TABLE[type].at(L"ModelName"));
@@ -127,4 +140,29 @@ void EnemyFactory::LoadModelAndAnimation(EnemyBase& _enemy, const ENEMY_TYPE& _t
 
 	//アニメーション設定
 	_enemy.SetAnim(std::move(anim));
+}
+
+void EnemyFactory::CreateSkill(EnemyBase& _enemy, const ENEMY_TYPE& _type)
+{
+	//パラメーター
+	const auto& param = parameters_[static_cast<int>(_type)];
+
+	//スキル
+	std::vector<std::unique_ptr<EnemySkillBase>> skills;
+
+	//文字列
+	for (const std::string& skillName : param.skillName)
+	{
+		//文字変換
+		std::wstring skillNameW = Utility::StringToWstring(skillName);
+
+		//名前に沿ったスキルの取得
+		auto skill = skillFactory.CreateSkill(skillNameW);
+
+		//存在したなら格納
+		if (skill)skills.push_back(std::move(skill));
+	}
+
+	//敵にスキルを知らせる
+	_enemy.SetSkills(std::move(skills));
 }

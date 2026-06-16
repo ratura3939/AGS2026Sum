@@ -1,5 +1,5 @@
 #pragma once
-#include"EnemyFactory.h"
+#include"../EnemyFactory.h"
 
 class EnemyBase;
 

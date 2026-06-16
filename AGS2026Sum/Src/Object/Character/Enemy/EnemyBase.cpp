@@ -6,9 +6,9 @@
 #include "State/EnemyStateBase.h"
 #include "State/EnemyNormalState.h"
 #include "Skill/EnemySkillBase.h"
+#include "Brain/EnemyBrain.h"
 #include "EnemyManager.h"
 #include "EnemyGroup.h"
-#include "EnemyBrain.h"
 #include "EnemyBase.h"
 
 EnemyBase::EnemyBase(ENEMY_TYPE _type)
@@ -32,7 +32,7 @@ EnemyBase::EnemyBase(ENEMY_TYPE _type)
 	actionFunc_[static_cast<int>(ENEMY_ACTION::RETURN_GROUP)] = { &EnemyBase::EnterReturn, &EnemyBase::UpdateReturn, &EnemyBase::ExitReturn };
 
 	//行動ごとの影響情報の設定
-	actionInfo_[static_cast<int>(ENEMY_ACTION::STAY)] = { .isLock = false, .canMove = true };
+	actionInfo_[static_cast<int>(ENEMY_ACTION::STAY)] = { .isLock = false, .canMove = false };
 	actionInfo_[static_cast<int>(ENEMY_ACTION::MOVE)] = { .isLock = false, .canMove = true };
 	actionInfo_[static_cast<int>(ENEMY_ACTION::ALERT)] = { .isLock = false, .canMove = true };
 	actionInfo_[static_cast<int>(ENEMY_ACTION::ATTACK_READY)] = { .isLock = true, .canMove = false };
@@ -93,28 +93,33 @@ void EnemyBase::ChangeAction(const ENEMY_ACTION _nextAction)
 	(this->*actionFunc_[static_cast<int>(action_)].enter)();
 }
 
-void EnemyBase::SetAttackSkill(std::unique_ptr<EnemySkillBase> _skill)
+void EnemyBase::SetSkills(std::vector<std::unique_ptr<EnemySkillBase>> _skills)
 {
-	//既にスキルを使っている
-	if (skill_)return;
-
-	//保存
-	skill_ = std::move(_skill);
-
-	//開始
-	skill_->Enter(*this);
+	skills_ = std::move(_skills);
 }
 
-void EnemyBase::BreakAttackSkill(void)
+void EnemyBase::SetCurrentSkill(EnemySkillBase* _skill)
+{
+	//既にスキルを使っている
+	if (currentSkill_)return;
+
+	//保存
+	currentSkill_ = _skill;
+
+	//攻撃準備
+	ChangeAction(ENEMY_ACTION::ATTACK_READY);
+}
+
+void EnemyBase::BreakSkill(void)
 {
 	//ないならスキップ
-	if (!skill_)return;
+	if (!currentSkill_)return;
 
 	//強制終了
-	skill_->Exit(*this);
+	currentSkill_->Exit(*this);
 
 	//破棄
-	skill_.reset();
+	currentSkill_ = nullptr;
 }
 
 void EnemyBase::UpdateBrain(void)
@@ -145,7 +150,7 @@ void EnemyBase::ResetPos(void)
 	if(!group_) return;
 	
 	//グループ座標の取得
-	VECTOR groupPos = group_->GetPos();
+	VECTOR groupPos = group_->GetInitPos();
 	VECTOR leavePos = { LEAVE_GROUP_DIST, 0.0f, LEAVE_GROUP_DIST };
 	VECTOR randPos = Utility::GetRandomValue(VScale(leavePos, -1.0f), leavePos);
 
@@ -251,16 +256,26 @@ void EnemyBase::EnterAlert(void)
 
 void EnemyBase::EnterAttackReady(void)
 {
+	//スキルが入ってないなら強制的に待機に移行
+	if (!currentSkill_)ChangeAction(ENEMY_ACTION::STAY);
+
+	//準備入り
+	currentSkill_->ReadyEnter(*this);
 }
 
 void EnemyBase::EnterAttack(void)
 {
-	//攻撃処理
-	Attack();
+	//スキルが入ってないなら強制的に待機に移行
+	if (!currentSkill_)ChangeAction(ENEMY_ACTION::STAY);
+
+	//攻撃入り
+	currentSkill_->Enter(*this);
 }
 
 void EnemyBase::EnterReturn(void)
 {
+	//歩きアニメーションの再生
+	animController_->Play(L"Run", RUN_ANIM_SPEED);
 }
 
 void EnemyBase::UpdateStay(void)
@@ -284,24 +299,41 @@ void EnemyBase::UpdateAlert(void)
 
 void EnemyBase::UpdateAttackReady(void)
 {
-	//攻撃準備時間を超えたら攻撃状態に遷移
-	if (attackCnt_ > ATTACK_READY_TIME) ChangeAction(ENEMY_ACTION::ATTACK);
-	else attackCnt_ += SceneManager::GetInstance().GetDeltaTime();
+	//スキルが入ってないなら強制的に待機に移行
+	if (!currentSkill_)ChangeAction(ENEMY_ACTION::STAY);
+
+	//スキルごとの準備行動
+	if (currentSkill_->ReadyUpdate(*this))
+	{
+		//準備終了
+		currentSkill_->ReadyExit(*this);
+
+		//攻撃移行
+		ChangeAction(ENEMY_ACTION::ATTACK);
+	}
 }
 
 void EnemyBase::UpdateAttack(void)
 {
 	//スキルが入ってないなら強制的に待機に移行
-	if (!skill_)ChangeAction(ENEMY_ACTION::STAY);
+	if (!currentSkill_)ChangeAction(ENEMY_ACTION::STAY);
 
 	//スキルごとの行動
-	//skill_->Update(*this);
+	if (currentSkill_->Update(*this))
+	{
+		//攻撃終了
+		currentSkill_->Exit(*this);
+		currentSkill_ = nullptr;
+
+		//待機
+		ChangeAction(ENEMY_ACTION::STAY);
+	}
 }
 
 void EnemyBase::UpdateReturn(void)
 {
 	//グループ座標の取得
-	VECTOR groupPos = group_->GetPos();
+	VECTOR groupPos = group_->GetLeaderPos();
 
 	//グループ座標に向かう移動量の設定
 	movePow_ = Utility::GetMoveVec(pos_, groupPos, SPEED);
@@ -335,6 +367,10 @@ void EnemyBase::ExitAttack(void)
 }
 
 void EnemyBase::ExitReturn(void)
+{
+}
+
+void EnemyBase::Attack(void)
 {
 }
 
@@ -374,6 +410,12 @@ void EnemyBase::DisableHitCollider(void)
 	DisableColliderAtTag(Collider::COL_TAG::ENEMY);
 }
 
+void EnemyBase::SetAttackPos(const VECTOR& _localPos)
+{
+	//攻撃目標座標の設定
+	attackPos_ = VAdd(pos_, quaRot_.PosAxis(_localPos));
+}
+
 void EnemyBase::EnableAttack(void)
 {
 	//攻撃コライダの有効化
@@ -394,18 +436,6 @@ void EnemyBase::PlayAnim(const std::wstring& _animName, const float _speed)
 void EnemyBase::PlayNoBlendAnim(const std::wstring& _animName, const float _speed)
 {
 	animController_->NoBlendPlay(_animName, _speed);
-}
-
-void EnemyBase::Attack(void)
-{
-	//攻撃目標座標の設定
-	attackPos_ = VAdd(pos_, quaRot_.PosAxis(ATTACK_LOCAL_POS));
-
-	//攻撃コライダの有効化
-	EnableColliderAtTag(Collider::COL_TAG::ENEMY_ATTACK);
-
-	//攻撃アニメーションの再生
-	animController_->Play(L"Attack");
 }
 
 void EnemyBase::Death(void)

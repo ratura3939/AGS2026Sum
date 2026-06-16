@@ -3,7 +3,7 @@
 #include<vector>
 #include<memory>
 #include<functional>
-#include "EnemyDefine.h"
+#include "Info/EnemyDefine.h"
 
 class EnemyBase;
 
@@ -44,14 +44,17 @@ public:
 	//チャンク管理用の添え字の設定
 	void SetChunkIndex(const int _index) { chunkIndex_ = _index; }
 
+	//リーダー座標の取得
+	const VECTOR& GetLeaderPos(void)const;
+
+	//リーダーの設定
+	void SetLeader(const EnemyBase* _leader);
+
+	//初期座標の取得
+	const VECTOR& GetInitPos(void)const { return initPos_; }
+
 	//グループの移動量の取得
 	const VECTOR& GetMovePow(void)const { return movePow_; }
-
-	//グループ座標の取得
-	const VECTOR& GetPos(void)const { return pos_; }
-
-	//グループ座標の設定
-	void SetPos(const VECTOR& _pos) { pos_ = _pos; }
 
 	//グループの目標座標の取得
 	const VECTOR& GetGoalPos(void)const { return groupGoalPos_; }
@@ -85,6 +88,9 @@ private:
 	//攻撃を開始する距離
 	static constexpr float ATTACK_DISTANCE = 150.0f;
 
+	//速度
+	static constexpr float SPEED = 5.0f;
+
 	//命令の関数ポインタ
 	using Func = void(EnemyGroup::*)(void);
 
@@ -96,9 +102,6 @@ private:
 		Func exit = nullptr;	//命令抜けの処理
 	};
 
-	//移動速度
-	static constexpr float SPEED = 5.0f;
-
 	//行動切り替えの間隔
 	static constexpr float ACTION_INTERVAL = 2.0f;
 
@@ -109,9 +112,10 @@ private:
 	int chunkIndex_;
 
 	//全体関係
-	VECTOR pos_;			//グループ座標
-	VECTOR groupGoalPos_;	//グループの目標座標
-	VECTOR movePow_;		//グループの移動量
+	const EnemyBase* leader_;	//リーダー
+	VECTOR initPos_;			//初期座標
+	VECTOR groupGoalPos_;		//グループの目標座標
+	VECTOR movePow_;			//グループの移動量
 
 	//行動関係
 	float actionCnt_;		//行動切り替えのカウント
@@ -128,6 +132,9 @@ private:
 
 	//死亡した敵の削除
 	void DeleteEnemy(void);
+
+	//リーダーの再設定
+	void ResetLeader(void);
 
 	//ゴール地点に向かう移動量を設定
 	void MoveToGoal(void);

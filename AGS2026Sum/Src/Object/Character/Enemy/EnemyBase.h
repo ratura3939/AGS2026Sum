@@ -2,9 +2,9 @@
 #include <array>
 #include <string>
 #include "../CharacterBase.h"
-#include "EnemyDefine.h"
-#include "EnemyParameter.h"
-#include"EnemyBrain.h"
+#include "Info/EnemyDefine.h"
+#include "Info/EnemyParameter.h"
+#include"Brain/EnemyBrain.h"
 #include"EnemyOnHit.h"
 #include"EnemyGroup.h"
 
@@ -16,7 +16,7 @@ class EnemyBase : public CharacterBase
 public:
 
 	//敵がグループから離れられる距離
-	static constexpr float LEAVE_GROUP_DIST = 1000.0f;
+	static constexpr float LEAVE_GROUP_DIST = 300.0f;
 
 	//当たり判定
 	static constexpr float RADIUS = 30.0f;
@@ -25,7 +25,6 @@ public:
 	//攻撃距離
 	static constexpr float ATTACK_RADIUS = RADIUS + 15.0f;
 	static constexpr float ATTACK_BROUD_RADIUS = ATTACK_RADIUS + 15.0f;
-	static constexpr VECTOR ATTACK_LOCAL_POS = { 0.0f, 0.0f, -30.0f };
 
 	//攻撃持続時間
 	static constexpr float ATTACK_DURATION = 1.0f;
@@ -34,7 +33,7 @@ public:
 	EnemyBase(ENEMY_TYPE _type);
 
 	//デストラクタ
-	~EnemyBase(void);
+	~EnemyBase(void)override;
 
 	//グループとの初期化
 	void InitWithGroup(void);
@@ -63,11 +62,17 @@ public:
 	//行動遷移
 	void ChangeAction(const ENEMY_ACTION _nextAction);
 
+	//所持スキル取得
+	const std::vector<std::unique_ptr<EnemySkillBase>>& GetSkills(void) { return skills_; }
+
+	//所持スキル設定
+	void SetSkills(std::vector<std::unique_ptr<EnemySkillBase>> _skills);
+
 	//攻撃設定
-	void SetAttackSkill(std::unique_ptr<EnemySkillBase> _skill);
+	void SetCurrentSkill(EnemySkillBase* _skill);
 
 	//攻撃破棄
-	void BreakAttackSkill(void);
+	void BreakSkill(void);
 
 	//思考の更新
 	void UpdateBrain(void);
@@ -116,6 +121,9 @@ public:
 
 	//本体当たり判定の無効化
 	void DisableHitCollider(void);
+
+	//攻撃座標の設定
+	void SetAttackPos(const VECTOR& _localPos);
 
 	//攻撃の有効化
 	void EnableAttack(void);
@@ -186,11 +194,11 @@ protected:
 	std::array<ActionFunc, static_cast<int>(ENEMY_ACTION::MAX)> actionFunc_;	//行動ごとの処理
 	std::array<ActionInfo, static_cast<int>(ENEMY_ACTION::MAX)> actionInfo_;	//行動ごとの影響情報
 
-	//攻撃
-	std::unique_ptr<EnemySkillBase> skill_;
-
-	//パラメータ情報
-
+	//攻撃スキル
+	EnemySkillBase* currentSkill_;
+	
+	//所持スキル
+	std::vector<std::unique_ptr<EnemySkillBase>> skills_;
 
 	//グループの命令ごとの判断
 	EnemyBrain brain_;
@@ -237,7 +245,7 @@ protected:
 	void ExitAttack(void);
 	void ExitReturn(void);
 
-	//攻撃処理
+	//攻撃
 	void Attack(void)override;
 
 	//死亡処理

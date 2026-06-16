@@ -5,7 +5,6 @@
 
 EnemyGroup::EnemyGroup(void)
 	: chunkIndex_(-1)
-	, pos_(Utility::VECTOR_INIT)
 	, actionCnt_(0.0f)
 	, movePow_(Utility::VECTOR_ZERO)
 	, order_(GROUP_ORDER::NONE)
@@ -29,8 +28,8 @@ EnemyGroup::~EnemyGroup(void)
 
 void EnemyGroup::Init(void)
 {
-	//座標の初期化
-	pos_ = { 100.0f,0.0f,100.0f };
+	//初期座標保存
+	initPos_ = { 1000.0f,0.0f,1000.0f };
 
 	//生存判定の初期化
 	isActive_ = true;
@@ -61,7 +60,7 @@ void EnemyGroup::Draw(void)
 {
 	//デバッグ
 	DrawSphere3D(groupGoalPos_, 20, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), false);
-	DrawSphere3D(pos_, 20, 20, GetColor(255, 255, 0), GetColor(255, 255, 0), false);
+	DrawSphere3D(leader_->GetPos(), 20, 20, GetColor(255, 255, 0), GetColor(255, 255, 0), false);
 
 	//敵の描画
 	for (auto& enemy : enemys_)
@@ -72,6 +71,17 @@ void EnemyGroup::Draw(void)
 
 void EnemyGroup::Release(void)
 {
+}
+
+const VECTOR& EnemyGroup::GetLeaderPos(void)const
+{
+	return leader_->GetPos();
+}
+
+void EnemyGroup::SetLeader(const EnemyBase* _leader)
+{
+	//リーダー設定
+	leader_ = _leader;
 }
 
 void EnemyGroup::ChangeOrder(const GROUP_ORDER _nextOrder)
@@ -91,7 +101,10 @@ void EnemyGroup::ChangeOrder(const GROUP_ORDER _nextOrder)
 
 void EnemyGroup::ResetPos(void)
 {
-
+	for (auto& enemy : enemys_)
+	{
+		enemy->ResetPos();
+	}
 }
 
 void EnemyGroup::DeleteEnemy(void)
@@ -99,24 +112,38 @@ void EnemyGroup::DeleteEnemy(void)
 	//そもそも敵がいないなら何もしない
 	if (enemys_.empty()) return;
 
+	//リーダーの死亡判定
+	bool isDeadLeader = false;
+	if (!leader_ || !leader_->IsAlive())
+	{
+		//死んだ
+		isDeadLeader = true;
+		leader_ = nullptr;
+	}
+
 	//死亡した敵の削除
 	std::erase_if(enemys_, [this](EnemyBase* _enemy) {return !_enemy->IsAlive(); });
+
+	//リーダーの再設定
+	if (isDeadLeader)ResetLeader();
+}
+
+void EnemyGroup::ResetLeader(void)
+{
+	//先頭をリーダーに
+	leader_ = enemys_.front();
 }
 
 void EnemyGroup::MoveToGoal(void)
 {
 	//移動量の設定
-	movePow_ = Utility::GetMoveVec(pos_, groupGoalPos_, SPEED);
+	movePow_ = Utility::GetMoveVec(leader_->GetPos(), groupGoalPos_, SPEED);
 	movePow_.y = 0.0f;
 }
 
 void EnemyGroup::GroupMove(void)
 {
-	//ある程度近づいたならスキップ
-	if (Utility::SqrMagnitude(pos_, groupGoalPos_) < SPEED * SPEED)return;
-
-	//グループ座標の更新
-	pos_ = VAdd(pos_, movePow_);
+	//各敵で処理
 }
 
 void EnemyGroup::EnterStay(void)
