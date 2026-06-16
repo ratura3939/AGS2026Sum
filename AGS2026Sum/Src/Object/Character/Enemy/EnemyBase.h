@@ -125,6 +125,7 @@ public:
 
 	//アニメーションプレイ
 	void PlayAnim(const std::wstring& _animName, const float _speed = 1.0f);
+	void PlayNoBlendAnim(const std::wstring& _animName, const float _speed = 1.0f);
 
 protected:
 

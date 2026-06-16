@@ -391,6 +391,11 @@ void EnemyBase::PlayAnim(const std::wstring& _animName, const float _speed)
 	animController_->Play(_animName, _speed);
 }
 
+void EnemyBase::PlayNoBlendAnim(const std::wstring& _animName, const float _speed)
+{
+	animController_->NoBlendPlay(_animName, _speed);
+}
+
 void EnemyBase::Attack(void)
 {
 	//攻撃目標座標の設定

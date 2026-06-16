@@ -172,6 +172,8 @@ void AnimationController::ForcePlay(const std::wstring& _name, const float _spee
 
 void AnimationController::NoBlendPlay(const std::wstring& _name, const float _speed, const AnimationSoundInfo& _seInfo, const std::vector<NextAnimInfo> _next)
 {
+	MV1DetachAnim(modelId_, currentAnimAttachInfo_.attachNum);	//現在のものをデタッチ
+
 	//アニメーションを直で設定
 	SetAnimationPlayInfo(currentAnim_, animDatas_[_name], currentAnimAttachInfo_, _speed, _seInfo);	//再生情報の設定
 	isAnimLock_ = animDatas_[_name].mustPlayOnce;	//再生保障
@@ -182,6 +184,7 @@ void AnimationController::NoBlendPlay(const std::wstring& _name, const float _sp
 		MV1DetachAnim(modelId_, blendAnimAttachInfo_.attachNum);	//ブレンド中のものをデタッチ
 		blendAnim_ = ANIMATION_INFO_INIT;
 		blendAnimAttachInfo_ = ATTACH_INFO_INIT;
+		animBlendRate_ = BLEND_RATE_MIN;		//ブレンド率初期化
 	}
 
 	//割り込み前に設定されていたものを削除
