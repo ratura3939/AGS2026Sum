@@ -89,6 +89,7 @@ public:
 	/// </summary>
 	/// <param name="_name">登録名</param>
 	/// <param name="_speed">再生速度</param>
+	/// <param name="_seInfo">SE情報</param>
 	/// <param name="_next">連続して再生する物たち<最後以外にLOOPのものを入れないこと！！></param>
 	void Play(const std::wstring& _name, const float _speed = DEFAULT_SPEED, const AnimationSoundInfo& _seInfo = { SoundManager::SOUND_NAME::MAX, 0.0f, true }, const std::vector<NextAnimInfo> _next = {});
 
@@ -97,8 +98,18 @@ public:
 	/// </summary>
 	/// <param name="_name">登録名</param>
 	/// <param name="_speed">再生速度</param>
+	/// <param name="_seInfo">SE情報</param>
 	/// <param name="_next">連続して再生する物たち<最後以外にLOOPのものを入れないこと！！></param>
 	void ForcePlay(const std::wstring& _name, const float _speed = DEFAULT_SPEED, const AnimationSoundInfo& _seInfo = { SoundManager::SOUND_NAME::MAX, 0.0f, true }, const std::vector<NextAnimInfo> _next = {});
+
+	/// <summary>
+	/// ブレンドなしでの再生
+	/// </summary>
+	/// <param name="_name">登録名</param>
+	/// <param name="_speed">再生速度</param>
+	/// <param name="_seInfo">SE情報</param>
+	/// <param name="_next">連続して再生する物たち<最後以外にLOOPのものを入れないこと！！></param>
+	void NoBlendPlay(const std::wstring& _name, const float _speed = DEFAULT_SPEED, const AnimationSoundInfo& _seInfo = { SoundManager::SOUND_NAME::MAX, 0.0f, true }, const std::vector<NextAnimInfo> _next = {});
 
 	/// <summary>
 	/// 連続して再生するアニメーションを途中で追加する

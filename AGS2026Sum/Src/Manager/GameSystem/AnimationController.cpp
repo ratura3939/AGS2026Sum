@@ -156,8 +156,46 @@ void AnimationController::ForcePlay(const std::wstring& _name, const float _spee
 	}
 	SetAnimationPlayInfo(blendAnim_, animDatas_[_name], blendAnimAttachInfo_, _speed, _seInfo);	//新規のものをブレンド中のものに
 
-	//割り込み後に要らないものが再生されないように
+	//割り込み前に設定されていたものを削除
 	nextAnimList_.clear();
+
+	//次に再生されるアニメーションが設定されているとき(LOOPは末尾のみ許可)
+	if (!_next.empty()) {
+		for (auto& anim : _next) {
+			if (animDatas_[anim.name].type == PLAY_TYPE::LOOP && anim.name != _next.back().name) {
+				assert("順次再生の個所を見直してください。");
+			}
+		}
+		nextAnimList_ = _next;
+	}
+}
+
+void AnimationController::NoBlendPlay(const std::wstring& _name, const float _speed, const AnimationSoundInfo& _seInfo, const std::vector<NextAnimInfo> _next)
+{
+	//アニメーションを直で設定
+	SetAnimationPlayInfo(currentAnim_, animDatas_[_name], currentAnimAttachInfo_, _speed, _seInfo);	//再生情報の設定
+	isAnimLock_ = animDatas_[_name].mustPlayOnce;	//再生保障
+	SetFinishAndUpdateFunc();						//終了時と更新処理の設定
+
+	//ブレンドがあった場合削除
+	if (blendAnim_.data != -1) {
+		MV1DetachAnim(modelId_, blendAnimAttachInfo_.attachNum);	//ブレンド中のものをデタッチ
+		blendAnim_ = ANIMATION_INFO_INIT;
+		blendAnimAttachInfo_ = ATTACH_INFO_INIT;
+	}
+
+	//割り込み前に設定されていたものを削除
+	nextAnimList_.clear();
+
+	//次に再生されるアニメーションが設定されているとき(LOOPは末尾のみ許可)
+	if (!_next.empty()) {
+		for (auto& anim : _next) {
+			if (animDatas_[anim.name].type == PLAY_TYPE::LOOP && anim.name != _next.back().name) {
+				assert("順次再生の個所を見直してください。");
+			}
+		}
+		nextAnimList_ = _next;
+	}
 }
 
 void AnimationController::AddNextAnim(const std::wstring& _name, const float _speed, const AnimationSoundInfo& _seInfo)
