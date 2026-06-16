@@ -147,9 +147,6 @@ public:
 	void SetRootFrameIndex(const std::wstring& _frameName);	//モデルの親フレームの設定
 	void SetFixAnimationAxisInfo(const std::wstring _name, const bool _x, const bool _y, const bool _z);	//位置補正を行う軸の設定
 
-	//デバッグ用
-	void DrawNextAnimations(void);
-
 private:
 	//アニメーション更新処理
 	void UpdateNormalAnim(void);

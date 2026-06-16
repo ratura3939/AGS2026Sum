@@ -180,6 +180,7 @@ void AnimationController::NoBlendPlay(const std::wstring& _name, const float _sp
 	//ブレンドがあった場合削除
 	if (blendAnim_.data != -1) {
 		MV1DetachAnim(modelId_, blendAnimAttachInfo_.attachNum);	//ブレンド中のものをデタッチ
+		//ブレンド情報の初期化
 		blendAnim_ = ANIMATION_INFO_INIT;
 		blendAnimAttachInfo_ = ATTACH_INFO_INIT;
 	}
@@ -216,7 +217,7 @@ void AnimationController::AddNextAnim(const std::wstring& _name, const float _sp
 	nextInfo.speed = _speed;
 	nextInfo.seInfo = _seInfo;
 
-	nextAnimList_.push_back(nextInfo);
+	nextAnimList_.push_back(nextInfo);	//順次再生リストに挿入
 }
 
 void AnimationController::AddNextAnim(const std::vector<NextAnimInfo> _animations)
@@ -315,14 +316,6 @@ void AnimationController::SetRootFrameIndex(const std::wstring& _frameName)
 void AnimationController::SetFixAnimationAxisInfo(const std::wstring _name, const bool _x, const bool _y, const bool _z)
 {
 	fixAxisData_.at(_name) = { _x,_y,_z };
-}
-
-void AnimationController::DrawNextAnimations(void)
-{
-	int nextNum = nextAnimList_.size();
-	for (int i = 0; i < nextNum; i++) {
-		DrawFormatString(500, 0 + 30 * i, 0xff0000, L"NEXT ANIM %d : %s", i, nextAnimList_[i].name.c_str());
-	}
 }
 
 void AnimationController::UpdateNormalAnim(void)

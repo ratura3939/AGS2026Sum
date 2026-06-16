@@ -43,11 +43,6 @@ const float PlayerChara::GetCurrentAnimationProgressRate(void) const
 	return animController_->GetCurrentAnimationProgressRate();
 }
 
-void PlayerChara::DrawNextAnimations(void)
-{
-	animController_->DrawNextAnimations();
-}
-
 void PlayerChara::DoLoad(void)
 {
 	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::PLAYER_MDL);	//モデル取得
