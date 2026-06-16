@@ -67,8 +67,10 @@ private:
 	std::unique_ptr<PlayerAttack> attack_;		//攻撃
 	bool isEnableAttackInput_;	//攻撃入力を受け付ける状態か
 	bool isForcePlayAnim_;		//強制再生させるか(攻撃の初段のみ強制再生)
+	bool isNoBlendPlayAnim_;	//ブレンドなしでアニメーションを再生させるか
 
 	bool isSpecialAttackRedy_;	//特殊攻撃の準備ができているか
 	bool isEnableSpecial_;		//特殊攻撃の準備への状態遷移を許可するか
+	bool isEnableUltimet_;		//必殺技の発動を許可するか
 };
 

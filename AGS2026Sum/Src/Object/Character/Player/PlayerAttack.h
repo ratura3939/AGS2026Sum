@@ -44,17 +44,44 @@ public:
 	void HitCollider(std::weak_ptr<Collider> _col)override;
 
 	
-	const bool ReserveAttack(const ATTACK_TYPE& _type);	//攻撃の予約
-	const bool ReserveAttackSpecial(const ATTACK_TYPE& _type);	//攻撃の予約
+	/// <summary>
+	/// 通常攻撃の予約
+	/// </summary>
+	/// <param name="_type">攻撃種別</param>
+	/// <returns></returns>
+	const bool ReserveAttack(const ATTACK_TYPE& _type);
+
+	/// <summary>
+	/// 特殊攻撃の予約
+	/// </summary>
+	/// <param name="_type">攻撃種別</param>
+	/// <returns></returns>
+	const bool ReserveAttackSpecial(const ATTACK_TYPE& _type);	
+
+	/// <summary>
+	/// 必殺技の予約
+	/// </summary>
+	/// <param name=""></param>
+	/// <returns></returns>
+	const bool ReserveAttackUltimet(void);
+
 	void Attack(void);			//攻撃開始
 	void FinishAttack(void);	//攻撃終了処理
 
+	const AttackAnimationInfo GetCurrentAttackAnimInfo(void)const;	//現在の攻撃アニメーション情報の取得
 	const AttackAnimationInfo GetNextAttackAnimInfo(void)const;		//次の攻撃アニメーション情報の取得
 	const AttackSeInfo GetNextAttackSeInfo(void)const;				//次の攻撃のSEに関する情報の取得
 
 	const std::string& GetCurrentAttackKnockBackType(void)const;	//現在の攻撃のノックバックの種類の取得
 	
-	const bool IsAttacking(void)const;	//攻撃中か
+	const bool IsAttacking(void)const;		//攻撃中か
+	const bool IsEnableCollier(void)const;	//攻撃判定が有効であるか
+
+	/// <summary>
+	/// 攻撃の許可(アニメーションの再生進捗による)
+	/// </summary>
+	/// <param name="_animRate">アニメーションの再生進捗</param>
+	void TryEnableAttackCollider(const float _animRate);
 
 	//デバッグ用
 	void DrawDebug(void);
@@ -73,25 +100,27 @@ private:
 	void ResetCombo(void);					//コンボのリセット
 	void ResetComboRoute(void);				//コンボルートのリセット
 
-	const VECTOR& playerPos_;	//プレイヤーの座標参照
+	const VECTOR& playerPos_;			//プレイヤーの座標参照
 	const Quaternion& playerQuaRot_;	//プレイヤーの回転参照
 
-	std::unordered_map<std::string, AttackData> data_;			//攻撃データ
-	std::unordered_map<std::string, std::wstring> animNames_;	//攻撃アニメーション登録名
+	std::unordered_map<std::string, AttackData> data_;						//攻撃データ
+	std::unordered_map<std::string, std::wstring> animNames_;				//攻撃アニメーション登録名
 	std::unordered_map<std::string, ComboRouteInfo> comboRouteInfos_;		//コンボルート情報
-	std::unordered_map<std::string, SoundManager::SOUND_NAME> seNames_;	//攻撃効果音登録名
+	std::unordered_map<std::string, SoundManager::SOUND_NAME> seNames_;		//攻撃効果音登録名
 
-	AttackData currentData_;	//現在の攻撃データ
+	AttackData currentData_;		//現在の攻撃データ
 
 	std::string currentAttackName_;	//現在の攻撃アニメーション登録名
-	std::string nextAttackName_;		//次の攻撃アニメーション登録名
+	std::string nextAttackName_;	//次の攻撃アニメーション登録名
 
 	ATTACK_TYPE latestReserveType_;		//最新に予約された攻撃種別
 
-	bool comboReset_;	//コンボリセットフラグ
+	bool comboReset_;		//コンボリセットフラグ
 	int comboResetCounter_;	//コンボリセットカウンタ
 
 	std::string startAttackAnimName_;	//攻撃開始アニメーション登録名
+
+	bool isAttacking_;		//攻撃状態であるかの判定
 
 	int debugColor_;	//デバッグ用の色
 };

@@ -295,6 +295,22 @@ const float AnimationController::GetBlendAnimationProgressRate(void) const
 	return blendAnimAttachInfo_.counter / blendAnim_.total;
 }
 
+const float AnimationController::GetSpecifiedAnimationProgressRate(const std::wstring& _name) const
+{
+	//現状とブレンドに同一のものが入らない設計のためこのような構造にしている
+
+	//現状と同一なら
+	if (currentAnim_.name == _name) {
+		return GetCurrentAnimationProgressRate();	//現状の進捗を返す
+	}
+	//ブレンドと同一なら
+	else if (blendAnim_.name == _name) {
+		return GetBlendAnimationProgressRate();		//ブレンドの進捗を返す
+	}
+
+	return -1.0f;
+}
+
 const float AnimationController::GetAnimTotalTime(const std::wstring& _name) const
 {
 	return animDatas_.at(_name).total;

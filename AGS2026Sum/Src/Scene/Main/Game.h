@@ -59,7 +59,10 @@ public:
 	//スロー演出開始
 	void StartSlow(void);
 	//スロー終了
-	void EndSlow(void);		
+	void EndSlow(void);	
+
+	//カメラのゴール付近滞在時間
+	void SetCameraStayTimeAtAutoMove(const float _time) { cameraGoalStayTime_ = _time; }
 
 private:
 	//各初期化
@@ -156,6 +159,8 @@ private:
 	VECTOR cameraMoveGoalPos_[CAMERA_DIRECTION_NUM];	//目標位置
 	int cameraShakeCollTimeCnt_;	//画面揺れクールタイム
 	bool stayCameraShake_;			//画面揺れ待機フラグ true=待機
+	int cameraGoalStayTime_;		//カメラ自動移動時、ゴール付近でどれほど滞在するか
+	int cameraGoalStayCounter_;		//カメラ自動移動時、ゴール付近滞在カウンター
 #pragma endregion
 
 	bool prevInputP_;			//デバッグ用トリガ

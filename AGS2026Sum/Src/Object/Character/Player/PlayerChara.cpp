@@ -33,6 +33,11 @@ void PlayerChara::ForcePlayAnim(const std::wstring& _animName, const float _spee
 	animController_->ForcePlay(_animName, _speed, AnimationController::AnimationSoundInfo{ _seName, _seTiming, false });	//アニメーションの強制再生
 }
 
+void PlayerChara::NoBlendPlayAnim(const std::wstring& _animName, const float _speed, const SoundManager::SOUND_NAME _seName, const float _seTiming)
+{
+	animController_->NoBlendPlay(_animName, _speed, AnimationController::AnimationSoundInfo{ _seName, _seTiming, false });	//ブレンドなしの強制再生
+}
+
 void PlayerChara::GetAnimTotalTime(const std::wstring& _animName) const
 {
 	animController_->GetAnimTotalTime(_animName);	//アニメーションの総再生時間を取得
@@ -41,6 +46,16 @@ void PlayerChara::GetAnimTotalTime(const std::wstring& _animName) const
 const float PlayerChara::GetCurrentAnimationProgressRate(void) const
 {
 	return animController_->GetCurrentAnimationProgressRate();
+}
+
+const float PlayerChara::GetBlendAnimationProgressRate(void) const
+{
+	return animController_->GetBlendAnimationProgressRate();
+}
+
+const float PlayerChara::GetSpecifiedAnimationProgressRate(const std::wstring& _animName) const
+{
+	return animController_->GetSpecifiedAnimationProgressRate(_animName);
 }
 
 void PlayerChara::DoLoad(void)

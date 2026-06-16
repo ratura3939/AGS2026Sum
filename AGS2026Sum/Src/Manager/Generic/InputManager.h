@@ -30,6 +30,9 @@ public:
 		,ATTACK_NORMAL	//通常攻撃
 		,ATTACK_STRONG	//強攻撃
 		,ATTACK_SPECIAL	//特殊攻撃
+		,ATTACK_ULTIMET	//必殺技
+
+		,DEBUG_ULT_REDY	//必殺技準備（デバッグ用）
 
 		,ENTER			//決定
 		,CANCEL			//キャンセル

@@ -6,10 +6,14 @@
 #include "Camera.h"
 
 namespace {
-	const float LERP_SPEED = 0.1f;
-	const float LERP_MAX = 1.0f;
-	const float HALF_DISTANCE = 0.5f;
-	const float WALL_LERP_SPEED = 1.0f;
+	const float LERP_SPEED = 0.1f;			//補完速度
+	const float LERP_MAX = 1.0f;			//補完完了
+	const float HALF_DISTANCE = 0.5f;		//半分
+	const float WALL_LERP_SPEED = 1.0f;		//壁には補完は必要ない
+	const float ALLOW_NO_KERP_DIFF = 10.0f;	//補完が必要ないと感じる距離
+
+	const float LERP_STEP_FOUCUS_RESET = 0.8f;
+	const float LERP_STEP_AUTOMOVE = 0.1f;
 }
 
 Camera::Camera(void)
@@ -163,7 +167,7 @@ void Camera::SetBeforeDrawFollow(void)
 	//カメラ位置の更新(追従対象位置から相対座標を足す)
 	VECTOR gPos = VAdd(followPos, relativeCPos);
 
-	if (fabs(Utility::MagnitudeF(gPos) - Utility::MagnitudeF(pos_)) <= 10.0f) {
+	if (fabs(Utility::MagnitudeF(gPos) - Utility::MagnitudeF(pos_)) <= ALLOW_NO_KERP_DIFF) {
 		lerpStep_ = NO_LERP;
 	}
 	idealPos_ = gPos;
@@ -296,7 +300,7 @@ void Camera::SetBeforeDrawReset(void)
 	//pos_ = Utility::Lerp(start_.pos, goal_.pos, stepReset_);
 	pos_ = VAdd(followObject_.pos, rot_.PosAxis(RELATIVE_F2C_POS_FOLLOW));
 
-	focusPos_ = Utility::Lerp(focusPos_, goalFocusPos_, 0.8f);
+	focusPos_ = Utility::Lerp(focusPos_, goalFocusPos_, LERP_STEP_FOUCUS_RESET);
 
 	//VECTOR axY = { 0.0f,1.0f,0.0f };
 
@@ -314,7 +318,7 @@ void Camera::SetBeforeDrawAutoMove(void)
 {
 	//目標位置まで移動する
 	//終了の判定は呼び出した側で行う
-	pos_ = Utility::Lerp(pos_, goalDirecPos_, 0.01f);
+	pos_ = Utility::Lerp(pos_, goalDirecPos_, LERP_STEP_AUTOMOVE);
 
 	//カメラの上方向
 	cameraUp_ = rot_.GetUp();
@@ -473,6 +477,8 @@ void Camera::ChangeMode(MODE mode)
 		break;
 
 	case MODE::AUTO_MOVE:
+		angles_ = Utility::VECTOR_ZERO;
+		rot_ = Quaternion::Identity();
 		break;
 
 	case MODE::LOCKON:

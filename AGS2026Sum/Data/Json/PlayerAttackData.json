@@ -9,8 +9,11 @@
     },
     "animationSpeed": 2.5,
     "nextAttacks": [ "Punch_Second", "Kick_First" ],
-    "SETimingRate": 0.0,
-    "KnockBackType": "Stagger"
+    "colliderEnableTiming": 0.0,
+    "seTimingRate": 0.0,
+    "knockBackType": "Stagger",
+    "vibratePower": 50,
+    "vibrateTime": 200
   },
 
   "Punch_Second": {
@@ -23,8 +26,11 @@
     },
     "animationSpeed": 2.0,
     "nextAttacks": [ "Punch_Third", "Kick_Second" ],
-    "SETimingRate": 0.0,
-    "KnockBackType": "Launch"
+    "colliderEnableTiming": 0.0,
+    "seTimingRate": 0.0,
+    "knockBackType": "Launch",
+    "vibratePower": 100,
+    "vibrateTime": 300
   },
 
   "Punch_Third": {
@@ -37,8 +43,11 @@
     },
     "animationSpeed": 2.0,
     "nextAttacks": [ "", "Kick_Third" ],
-    "SETimingRate": 0.5,
-    "KnockBackType": "Slam"
+    "colliderEnableTiming": 0.4,
+    "seTimingRate": 0.5,
+    "knockBackType": "Slam",
+    "vibratePower": 200,
+    "vibrateTime": 400
   },
 
   "Kick_First": {
@@ -51,8 +60,11 @@
     },
     "animationSpeed": 1.5,
     "nextAttacks": [ "", "Kick_Second" ],
-    "SETimingRate": 0.6,
-    "KnockBackType": "PushBack"
+    "colliderEnableTiming": 0.2,
+    "seTimingRate": 0.6,
+    "knockBackType": "PushBack",
+    "vibratePower": 100,
+    "vibrateTime": 200
   },
 
   "Kick_Second": {
@@ -65,8 +77,11 @@
     },
     "animationSpeed": 3.0,
     "nextAttacks": [ "", "Kick_Third" ],
-    "SETimingRate": 0.35,
-    "KnockBackType": "Launch"
+    "colliderEnableTiming": 0.15,
+    "seTimingRate": 0.35,
+    "knockBackType": "Launch",
+    "vibratePower": 200,
+    "vibrateTime": 300
   },
 
   "Kick_Third": {
@@ -79,8 +94,11 @@
     },
     "animationSpeed": 2.5,
     "nextAttacks": [ "", "" ],
-    "SETimingRate": 0.0,
-    "KnockBackType": "BlowAway"
+    "colliderEnableTiming": 0.0,
+    "seTimingRate": 0.0,
+    "knockBackType": "BlowAway",
+    "vibratePower": 300,
+    "vibrateTime": 800
   },
 
   "Punch_Special": {
@@ -93,8 +111,11 @@
     },
     "animationSpeed": 2.0,
     "nextAttacks": [ "", "" ],
-    "SETimingRate": 0.0,
-    "KnockBackType": "BlowAway"
+    "colliderEnableTiming": 0.6,
+    "seTimingRate": 0.6,
+    "knockBackType": "BlowAway",
+    "vibratePower": 400,
+    "vibrateTime": 600
   },
 
   "Kick_Special": {
@@ -107,8 +128,11 @@
     },
     "animationSpeed": 2.0,
     "nextAttacks": [ "", "" ],
-    "SETimingRate": 0.0,
-    "KnockBackType": "BlowAway"
+    "colliderEnableTiming": 0.0,
+    "seTimingRate": 0.0,
+    "knockBackType": "BlowAway",
+    "vibratePower": 400,
+    "vibrateTime": 600
   },
 
   "Ultimet": {
@@ -119,10 +143,13 @@
       "y": 50.0,
       "z": 0.0
     },
-    "animationSpeed": 1.0,
+    "animationSpeed": 2.0,
     "nextAttacks": [ "", "" ],
-    "SETimingRate": 0.0,
-    "KnockBackType": "BlowAway"
+    "colliderEnableTiming": 0.5,
+    "seTimingRate": 0.5,
+    "knockBackType": "BlowAway",
+    "vibratePower": 600,
+    "vibrateTime": 1000
   },
 
   "Ultimet_Test": {
@@ -133,9 +160,12 @@
       "y": 50.0,
       "z": 0.0
     },
-    "animationSpeed": 1.0,
+    "animationSpeed": 2.0,
     "nextAttacks": [ "", "" ],
-    "SETimingRate": 0.0,
-    "KnockBackType": "BlowAway"
+    "colliderEnableTiming": 0.0,
+    "seTimingRate": 0.0,
+    "knockBackType": "BlowAway",
+    "vibratePower": 50,
+    "vibrateTime": 100
   }
 }

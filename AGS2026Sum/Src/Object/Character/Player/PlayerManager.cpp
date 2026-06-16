@@ -25,6 +25,9 @@ const std::wstring PlayerManager::ANIM_ULTIMET_TEST = L"UltimetTest";
 
 namespace {
 	const VECTOR FOCUS_RELATIVE = { 0.0f,0.0f,300.0f };
+	const VECTOR ULTIMET_RELATIVE = { 150.0f,250.0f,100.0f };
+
+	const float CAMERA_STY_TIME_ULTIMET = 60.0f;
 }
 
 PlayerManager::PlayerManager(Game& _gameScene)
@@ -33,8 +36,10 @@ PlayerManager::PlayerManager(Game& _gameScene)
 	,attack_(nullptr)
 	,isEnableAttackInput_(true)
 	,isForcePlayAnim_(false)
+	,isNoBlendPlayAnim_(false)
 	,isSpecialAttackRedy_(false)
 	,isEnableSpecial_(true)
+	,isEnableUltimet_(false)
 {
 	character_->Load();		//キャラクターの読み込み
 }
@@ -65,14 +70,24 @@ void PlayerManager::Update(void)
 	Camera& camera = SceneManager::GetInstance().GetCamera();
 	focusPos_ = VAdd(character_->GetPos(), camera.GetRot().PosAxis(FOCUS_RELATIVE));
 
+	//攻撃中だが攻撃のコライダーが未だ有効ではないとき
+	if (attack_->IsAttacking() && !attack_->IsEnableCollier()) {
+		std::wstring animName = attack_->GetCurrentAttackAnimInfo().name;					//攻撃中の名前を取得
+		float animProgressRate = character_->GetSpecifiedAnimationProgressRate(animName);	//進捗率を取得
+
+		attack_->TryEnableAttackCollider(animProgressRate);	//進捗を渡し、発生トライ
+	}
+
 	//アニメーションが終了していたら(攻撃関連のアニメーションに限り発生するもの)
 	if (character_->IsFinishAttackAnimation()) {
-
 		//攻撃予約関係
 		isEnableAttackInput_ = true;	//攻撃入力を受け付ける状態にする
 		isEnableSpecial_ = true;		//特殊準備を受け入れる
+		isEnableUltimet_ = false;
 
-		if (character_->IsStartNextAttackAnimation()) {
+		bool ret = character_->IsStartNextAttackAnimation();
+
+		if (ret) {
 			attack_->Attack();	//攻撃開始
 		}
 		else {
@@ -158,6 +173,11 @@ void PlayerManager::UserInput(void)
 #pragma region 攻撃
 	bool isAttackInput = false;
 
+	//必殺技中は入力を受け付けない
+	if (isEnableUltimet_) {
+		return;
+	}
+
 	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_NORMAL)) {
 		//特殊攻撃準備中の場合
 		if (isSpecialAttackRedy_) {
@@ -177,6 +197,26 @@ void PlayerManager::UserInput(void)
 		else if (isEnableAttackInput_) {
 			isAttackInput = Attack(PlayerAttack::ATTACK_TYPE::KICK);	//攻撃クラスに攻撃開始を伝え,結果を得る
 		}
+	}
+
+	//必殺技
+	//デバッグ用のボタンが押されていたら
+	if (/*ins.IsPressed(InputManager::INPUT_COMMAND::DEBUG_ULT_REDY) && */ins.IsTrigerrDown(InputManager::INPUT_COMMAND::CANCEL)) {
+		attack_->ReserveAttackUltimet();	//必殺技予約
+		isEnableUltimet_ = true;			//必殺技中
+		scene_.StartSlow();					//スロー演出
+		isNoBlendPlayAnim_ = true;
+
+		Camera& camera = SceneManager::GetInstance().GetCamera();
+
+		camera.ChangeMode(Camera::MODE::AUTO_MOVE);		//モード変更
+		scene_.SetCameraStayTimeAtAutoMove(CAMERA_STY_TIME_ULTIMET);	//ゲームシーンに溜め時間を渡す
+
+		VECTOR cameraGoalPos = VAdd(character_->GetPos(), character_->GetQua().PosAxis(ULTIMET_RELATIVE));	//目標位置
+		camera.SetGoalPos(cameraGoalPos);	//設定
+		camera.SetFocusPos(character_->GetPos());
+
+		isAttackInput = true;
 	}
 
 	//入力があったとき
@@ -221,6 +261,12 @@ void PlayerManager::SetAttackStateForCharacter(void)
 	auto seInfo = attack_->GetNextAttackSeInfo();	//SE情報取得
 
 	//アニメーションの再生
+	if (isNoBlendPlayAnim_) {
+		attack_->Attack();
+		character_->NoBlendPlayAnim(attackAnimInfo.name, attackAnimInfo.speed, seInfo.seName, seInfo.timing);
+		return;
+	}
+
 	if (isForcePlayAnim_) {
 		attack_->Attack();				//攻撃開始(コンボ始動のため即時発動)
 		character_->ForcePlayAnim(attackAnimInfo.name, attackAnimInfo.speed, seInfo.seName, seInfo.timing);	//攻撃アニメを強制再生する

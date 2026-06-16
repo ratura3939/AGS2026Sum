@@ -136,8 +136,9 @@ public:
 	void SetDefaultAnim(const std::wstring& _name);		//デフォルトアニメーションの設定
 
 	//現在のアニメーションの再生進行度合いを割合で取得
-	const float GetCurrentAnimationProgressRate(void)const;
-	const float GetBlendAnimationProgressRate(void)const;
+	const float GetCurrentAnimationProgressRate(void)const;							//現状のアニメーション
+	const float GetBlendAnimationProgressRate(void)const;							//ブレンドアニメーション
+	const float GetSpecifiedAnimationProgressRate(const std::wstring& _name)const;	//指定のアニメーション <param name="_name">登録名</param>
 
 	const bool IsFinishNormalAnim(void)const { return isFinishNormalAnim_; }	//今のアニメーションの再生が終了したかどうか
 	const bool IsStartNextAnim(void)const { return isStartNextAnim_; }			//次のアニメーションの再生が開始されたかどうか

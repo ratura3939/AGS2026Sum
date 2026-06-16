@@ -19,9 +19,12 @@ class PlayerChara :
 
         void PlayAnim(const std::wstring& _animName, const float _speed = 1.0f,const SoundManager::SOUND_NAME _seName = SoundManager::SOUND_NAME::MAX, const float _seTiming = 0.0f);		//アニメーション再生
 		void ForcePlayAnim(const std::wstring& _animName, const float _speed = 1.0f, const SoundManager::SOUND_NAME _seName = SoundManager::SOUND_NAME::MAX, const float _seTiming = 0.0f);	//アニメーション強制再生
+		void NoBlendPlayAnim(const std::wstring& _animName, const float _speed = 1.0f, const SoundManager::SOUND_NAME _seName = SoundManager::SOUND_NAME::MAX, const float _seTiming = 0.0f);	//アニメーション強制再生
 		void GetAnimTotalTime(const std::wstring& _animName)const;	//アニメーションの総再生時間を取得
 
 		const float GetCurrentAnimationProgressRate(void)const;	//現在のアニメーションの再生進行度を取得
+		const float GetBlendAnimationProgressRate(void)const;	//ブレンド中のアニメーションの再生進行度を取得
+		const float GetSpecifiedAnimationProgressRate(const std::wstring& _animName)const;	//指定のアニメーションの再生進行度を取得
 		const bool IsFinishAttackAnimation(void)const { return animController_->IsFinishNormalAnim(); }	//通常再生のアニメ（主に攻撃関連）が終了しているか
 		const bool IsStartNextAttackAnimation(void)const { return animController_->IsStartNextAnim(); }	//次のアニメ（主に攻撃関連）が開始しているか
 

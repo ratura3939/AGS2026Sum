@@ -73,6 +73,9 @@ Game::Game(void)
 
 	update_ = &Game::GameUpdate;
 	drawPostEffect_ = &Game::DrawScanLine;
+
+	cameraGoalStayCounter_ = 0;
+	cameraGoalStayTime_ = 0;
 }
 
 Game::~Game(void)
@@ -258,6 +261,23 @@ void Game::Update(void)
 
 	//更新
 	(this->*update_)();
+
+	//カメラ状態
+	float cameraPosToGoalDiff = Utility::MagnitudeF(VSub(camera.GetGoalPos(), camera.GetPos()));	//現在位置と目標位置までの距離
+
+	//一定の距離以内だったら
+	if (cameraPosToGoalDiff <= ALLOWABLE_DISTANCE) {
+		cameraGoalStayCounter_++;
+
+		//一定時間経過していたら
+		if (cameraGoalStayCounter_ >= cameraGoalStayTime_) {
+			//フォローに変化
+			camera.ChangeMode(Camera::MODE::FOLLOW);
+			camera.SetGoalFocusPos(player_->GetFocusPos());				//注視点
+			EndSlow();
+			cameraGoalStayCounter_ = 0;
+		}
+	}
 }
 
 void Game::GameUpdate(void)
