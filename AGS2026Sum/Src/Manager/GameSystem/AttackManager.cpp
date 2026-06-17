@@ -1,9 +1,9 @@
 #include"../../pch.h"
 #include"../Decoration/SoundManager.h"
-
+#include"../../Object/Character/Attack/AttackDataBase.h"
 #include "AttackManager.h"
 
-void AttackManager::AddAttackCollider(const ATTACK_NAME& _name, std::weak_ptr<Collider> _col, const float _power, const bool _friendFire, const float _totalTime, const float _start, const float _end)
+void AttackManager::AddAttackCollider(const std::wstring& _name, const std::weak_ptr<AttackDataBase> _data)
 {
 	auto& adress = *this;
 
@@ -14,168 +14,34 @@ void AttackManager::AddAttackCollider(const ATTACK_NAME& _name, std::weak_ptr<Co
 		return;
 	}
 
-	//UŒ‚—pƒRƒ‰ƒCƒ_[î•ñ‚ÌŠi”[
-	AttackInfo addInfo;
-	addInfo.collider = _col;
-	addInfo.power = _power;
-	addInfo.totalTime = _totalTime;
-	addInfo.startTime = _start;
-	addInfo.endTime = _end;
-	if(_end==0.0f){
-		addInfo.endTime = _totalTime;
-	}
-	addInfo.counter = 0.0f;
-	addInfo.isUsed = false;
-	addInfo.isAllert = false;
-
-	attackColliders_.emplace(_name, addInfo);
-
-	UpdateAttack_f addUpdate = &AttackManager::UpdatePreAttack;
-	updateAtk_.emplace(_name, addUpdate);
-
-	//FFİ’è
-	//ƒvƒŒƒCƒ„[–”‚Í“G‚Ì‚Ç‚¿‚ç‚©‚É“–‚½‚ç‚È‚¢‚æ‚¤‚É‚·‚é
-	//if (_friendFire) {
-	//	for (auto& colTags : _col.lock()->GetTags()) {
-	//		if(colTags==Collider::COL_TAG::PLAYER){
-	//			_col.lock()->AddHitTags(Collider::COL_TAG::PLAYER);
-	//			break;
-	//		}
-	//		else if (colTags == Collider::COL_TAG::ENEMY) {
-	//			_col.lock()->AddHitTags(Collider::COL_TAG::ENEMY);
-	//			break;
-	//		}
-	//	}
-	//}
+	attackColliders_.emplace(_name, _data);
 }
 
-void AttackManager::Attack(const ATTACK_NAME& _name, const SoundManager::SOUND_NAME& _sndName)
-{
-	//‚»‚à‚»‚àg—p‚µ‚½‚¢UŒ‚‚ª“o˜^‚³‚ê‚Ä‚¢‚È‚¢‚Æ‚«
-	if(!attackColliders_.contains(_name)){
-		//ƒGƒ‰[–h~
-		assert("“o˜^‚³‚ê‚Ä‚¢‚È‚¢UŒ‚‚ğ”­¶‚³‚¹‚æ‚¤‚Æ‚µ‚Ä‚¢‚Ü‚·");
-		return;
-	}
-
-	if (attackColliders_[_name].isUsed) {
-		//ƒGƒ‰[–h~
-		assert("‚·‚Å‚Ég—p’†‚ÌUŒ‚‚ğÄ“x”­¶‚³‚¹‚æ‚¤‚Æ‚µ‚Ä‚¢‚Ü‚·");
-		return;
-	}
-
-	//UŒ‚”­¶
-	attackColliders_[_name].collider.lock()->SetUseThis(true);
-	//UŒ‚€”õ‚Ìƒ^ƒOİ’è
-	//attackColliders_[_name].collider.lock()->AddTag(Collider::COL_TAG::PREATTACK);
-	attackColliders_[_name].isUsed = true;
-	attackColliders_[_name].counter = 0.0f;
-	attackColliders_[_name].isAllert = false;
-
-	//XVˆ—‚Ìİ’è
-	updateAtk_[_name] = &AttackManager::UpdatePreAttack;
-
-	//‰½‚©Ä¶‚·‚é•¨‚ª‚ ‚éê‡
-	if (_sndName != SoundManager::SOUND_NAME::MAX) {
-		//Œø‰Ê‰¹‚ÌÄ¶
-		SoundManager::GetInstance().Play(_sndName);
-	}
-}
-
-void AttackManager::DeleteAttackCollider(const ATTACK_NAME& _name)
-{
-	attackColliders_.erase(_name);
-	updateAtk_.erase(_name);
-}
-
-void AttackManager::DeleteCollider(const ATTACK_NAME& _name)
+void AttackManager::DeleteAttackCollider(const std::wstring& _name)
 {
 	attackColliders_.erase(_name);
 }
 
-bool AttackManager::Update(void)
+void AttackManager::DeleteCollider(const std::wstring& _name)
 {
-	//UŒ‚XVˆ—iUŒ‚”­¶Ò”•ªj
-	//master=first:UŒ‚”­¶Ò–¼ second:UŒ‚ƒf[ƒ^
-	for (auto& atk : attackColliders_) {
-		if (atk.second.isUsed) {
-			//ƒJƒEƒ“ƒ^‚Ì‘‰Á
-			atk.second.counter++;
-			auto atkCol = atk.second.collider.lock();
-			//ƒAƒNƒeƒBƒu‚ÈUŒ‚‚ÌXV
-			(this->*updateAtk_[atk.first])(atk.first, atk.second);
-		}
+	attackColliders_.erase(_name);
+}
+
+void AttackManager::UseAttackCollision(const std::wstring& _name)
+{
+	attackColliders_.at(_name).lock()->col.lock()->SetUseThis(false);
+}
+
+const std::weak_ptr<AttackDataBase> AttackManager::GetAttackData(const std::wstring& _name)
+{
+	//—v‘f‚ª‚ ‚é‚©‚Ç‚¤‚©
+	if (!attackColliders_.contains(_name))
+	{
+		//‚È‚¢‚Ì‚Å‹ó
+		assert(L"not exist attack");
+		return std::weak_ptr<AttackDataBase>();
 	}
-	return true;
-}
 
-const float AttackManager::GetTotalTime(const ATTACK_NAME& _name) const
-{
-	//—v‘f‚ª‚È‚¢‚Æ‚«
-	if (!attackColliders_.contains(_name)) {
-		return -1.0f;
-	}
-	return attackColliders_.at(_name).totalTime;
-}
-
-void AttackManager::UseAllertCollision(const ATTACK_NAME& _name)
-{
-	attackColliders_.at(_name).isAllert = true;
-}
-
-const bool AttackManager::IsAllert(const ATTACK_NAME& _name) const
-{
-	return attackColliders_.at(_name).isAllert;
-}
-
-void AttackManager::UseAttackCollision(const ATTACK_NAME& _name)
-{
-	attackColliders_.at(_name).collider.lock()->SetUseThis(false);
-	attackColliders_.at(_name).isUsed = false;
-}
-
-void AttackManager::DrawDebug(void)
-{
-	//int color = 0xff00ff;
-	//for (auto& master : activeAttacks_) {
-	//	for (auto& atkData : master.second) {
-	//		auto& info = attackInfoes_[atkData.first];
-	//		if (info.group == ATTACK_MASTER::ENEMY) {
-	//			if (info.counter < info.startAttack) {
-	//				color = 0x00ff00;
-	//			}
-	//			else if (info.counter >= info.endAttack) {
-	//				color = 0x0000ff;
-	//			}
-	//			else color = 0xff00ff;
-	//		}
-	//		//ƒfƒoƒbƒO—p‚Ì‹…‘Ì‚ğ•`‰æ
-	//		DrawSphere3D(atkData.second.attack.pos, info.scale, 8, color, color, false);
-	//	}
-	//}
-	
-}
-
-void AttackManager::UpdatePreAttack(const ATTACK_NAME& _name, AttackInfo& _info)
-{
-	if (_info.counter >= _info.startTime) {
-		//UŒ‚ŠJnˆ—
-		auto atkCol = _info.collider.lock();
-		//€”õó‘Ô¨UŒ‚ó‘Ô‚Ö
-		//atkCol->DeleteTag(Collider::COL_TAG::PREATTACK);
-		//atkCol->AddTag(Collider::COL_TAG::ATTACK);
-		updateAtk_[_name] = &AttackManager::UpdateAttack;
-	}
-}
-
-void AttackManager::UpdateAttack(const ATTACK_NAME& _name, AttackInfo& _info)
-{
-	if (_info.counter >= _info.endTime) {
-		//UŒ‚I—¹ˆ—
-		auto atkCol = _info.collider.lock();
-		atkCol->SetUseThis(false);
-		//atkCol->DeleteTag(Collider::COL_TAG::ATTACK);
-		_info.counter = 0.0f;
-		_info.isUsed = false;
-	}
+	//UŒ‚î•ñ‚ğ•Ô‚·
+	return attackColliders_[_name];
 }

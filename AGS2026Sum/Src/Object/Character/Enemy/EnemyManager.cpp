@@ -12,6 +12,7 @@
 
 EnemyManager::EnemyManager(const VECTOR& _pPos)
 	:playerPos_(_pPos)
+	,groupSpawnCnt_(0)
 {
 	//チャンク内の敵の管理用のリストにとりあえず初期確保数分の容量を確保しておく(確保・削除を減らすため)
 	chunkGroups_.reserve(INIT_CHUNK_GROUP_NUM);
@@ -104,6 +105,7 @@ void EnemyManager::CreateEnemyGroup(const int _createNum)
 {
 	//グループ
 	EnemyGroup* group = enemyGroupPool_->Spawn();
+	groupSpawnCnt_++;
 
 	//初期化
 	group->Init();
@@ -141,6 +143,7 @@ void EnemyManager::CreateMiddleBossGroup(const int _createNum)
 {
 	//グループ
 	EnemyGroup* group = enemyGroupPool_->Spawn();
+	groupSpawnCnt_++;
 
 	//初期化
 	group->Init();

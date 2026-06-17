@@ -83,6 +83,12 @@ private:
 	//プレイヤー座標
 	const VECTOR& playerPos_;
 
+	//グループ生成回数(攻撃用)
+	int groupSpawnCnt_;
+
+	//攻撃の情報
+	std::array<AttackDataBase>
+
 	//グループと敵の関連付け
 	void Grouping(EnemyGroup* _group, EnemyBase* _enemy);
 

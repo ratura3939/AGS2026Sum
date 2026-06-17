@@ -19,9 +19,12 @@ void EnemyNormalSkill::ReadyEnter(EnemyBase& _owner)
 
 const bool EnemyNormalSkill::ReadyUpdate(EnemyBase& _owner)
 {
+	//シーンマネージャー
+	auto& scnMng = SceneManager::GetInstance();
+
 	//準備が終わったらtrue
 	if (attackCnt_ > ATTACK_READY_TIME)return true;
-	else attackCnt_ += SceneManager::GetInstance().GetDeltaTime();
+	else attackCnt_ += scnMng.GetScaleUpdateSpeedRate(scnMng.GetDeltaTime());
 
 	return false;
 }
@@ -37,6 +40,9 @@ void EnemyNormalSkill::Enter(EnemyBase& _owner)
 	//攻撃コライダの有効化
 	_owner.EnableAttack();
 
+	//攻撃マネージャーに教える
+	
+
 	//攻撃座標設定
 	_owner.SetAttackPos(ATTACK_LOCAL_POS);
 
@@ -49,9 +55,12 @@ void EnemyNormalSkill::Enter(EnemyBase& _owner)
 
 const bool EnemyNormalSkill::Update(EnemyBase& _owner)
 {
+	//シーンマネージャー
+	auto& scnMng = SceneManager::GetInstance();
+
 	//攻撃が終わったらtrue
 	if (attackCnt_ > ATTACK_TIME)return true;
-	else attackCnt_ += SceneManager::GetInstance().GetDeltaTime();
+	else attackCnt_ += scnMng.GetScaleUpdateSpeedRate(scnMng.GetDeltaTime());
 
 	return false;
 }

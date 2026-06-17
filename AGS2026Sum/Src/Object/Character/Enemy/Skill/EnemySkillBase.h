@@ -1,6 +1,7 @@
 #pragma once
 
 class EnemyBase;
+class AttackDataBase;
 
 class EnemySkillBase
 {

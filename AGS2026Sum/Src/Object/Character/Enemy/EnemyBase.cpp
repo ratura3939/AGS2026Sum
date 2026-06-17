@@ -1,24 +1,24 @@
 #include "../../../pch.h"
 #include "../../../Manager/Generic/SceneManager.h"
 #include "../../../Manager/GameSystem/CollisionManager.h"
+#include "../../../Manager/GameSystem/AttackManager.h"
 #include "../../Common/Collider.h"
 #include "../../Common/Geometry/Sphere.h"
 #include "State/EnemyStateBase.h"
 #include "State/EnemyNormalState.h"
 #include "Skill/EnemySkillBase.h"
 #include "Brain/EnemyBrain.h"
+#include "OnHit/EnemyOnHit.h"
 #include "EnemyManager.h"
 #include "EnemyGroup.h"
 #include "EnemyBase.h"
 
-EnemyBase::EnemyBase(ENEMY_TYPE _type)
+EnemyBase::EnemyBase(const ENEMY_TYPE& _type)
 	: group_(nullptr)
 	, activeIndex_(-1)
 	, type_(_type)
 	, attackPos_(Utility::VECTOR_ZERO)
 	, attackCnt_(0.0f)
-	, brain_(*this)
-	, onHit_(*this)
 	, action_(ENEMY_ACTION::STAY)
 	, state_(nullptr)
 	, movePow_(Utility::VECTOR_ZERO)
@@ -60,7 +60,7 @@ void EnemyBase::Release(void)
 void EnemyBase::HitCollider(std::weak_ptr<Collider> _col)
 {
 	//当たり判定の処理
-	onHit_.HitCollider(_col);
+	onHit_->HitCollider(_col);
 }
 
 void EnemyBase::ChangeState(std::unique_ptr<EnemyStateBase> _nextState)
@@ -98,6 +98,12 @@ void EnemyBase::SetSkills(std::vector<std::unique_ptr<EnemySkillBase>> _skills)
 	skills_ = std::move(_skills);
 }
 
+void EnemyBase::SetAttackCollider(std::weak_ptr<AttackDataBase> _atkData)
+{
+	//TODO：攻撃マネージャーに自身の名前とスキルから持ってきたデータを伝える
+	//AttackManager::GetInstance().AddAttackCollider()
+}
+
 void EnemyBase::SetCurrentSkill(EnemySkillBase* _skill)
 {
 	//既にスキルを使っている
@@ -128,10 +134,10 @@ void EnemyBase::UpdateBrain(void)
 	if (!actionInfo_[static_cast<int>(action_)].isLock)
 	{
 		//優先度決定
-		brain_.DecidePriority();
+		brain_->DecidePriority();
 
 		//行動選択
-		brain_.ChoiceAction();
+		brain_->ChoiceAction();
 	}
 }
 
@@ -164,6 +170,12 @@ void EnemyBase::DoLoad(void)
 	//状態の初期化
 	state_ = std::make_unique<EnemyNormalState>();
 	state_->Enter(*this);
+
+	//思考の初期化
+	brain_ = std::make_unique<EnemyBrain>(*this);
+
+	//接触処理の初期化
+	onHit_ = std::make_unique<EnemyOnHit>(*this);
 }
 
 void EnemyBase::DoInit(void)
@@ -441,7 +453,7 @@ void EnemyBase::PlayNoBlendAnim(const std::wstring& _animName, const float _spee
 void EnemyBase::Death(void)
 {
 	//死亡アニメーションの再生
-	//animController_->Play(L"Death");
+	animController_->Play(L"BlowEnd");
 	
 	//グループから離れる
 	LeaveGroup();

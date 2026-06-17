@@ -4,12 +4,12 @@
 #include "../CharacterBase.h"
 #include "Info/EnemyDefine.h"
 #include "Info/EnemyParameter.h"
-#include"Brain/EnemyBrain.h"
-#include"EnemyOnHit.h"
 #include"EnemyGroup.h"
 
 class EnemyStateBase;
 class EnemySkillBase;
+class BrainBase;
+class EnemyOnHit;
  
 class EnemyBase : public CharacterBase
 {
@@ -30,10 +30,10 @@ public:
 	static constexpr float ATTACK_DURATION = 1.0f;
 
 	//コンストラクタ
-	EnemyBase(ENEMY_TYPE _type);
+	EnemyBase(const ENEMY_TYPE& _type);
 
 	//デストラクタ
-	~EnemyBase(void)override;
+	virtual~EnemyBase(void)override;
 
 	//グループとの初期化
 	void InitWithGroup(void);
@@ -67,6 +67,9 @@ public:
 
 	//所持スキル設定
 	void SetSkills(std::vector<std::unique_ptr<EnemySkillBase>> _skills);
+
+	//攻撃マネージャーにコライダを設定
+	void SetAttackCollider(std::weak_ptr<AttackDataBase> _atkData);
 
 	//攻撃設定
 	void SetCurrentSkill(EnemySkillBase* _skill);
@@ -201,13 +204,13 @@ protected:
 	std::vector<std::unique_ptr<EnemySkillBase>> skills_;
 
 	//グループの命令ごとの判断
-	EnemyBrain brain_;
+	std::unique_ptr<BrainBase> brain_;
 
 	//当たり判定の処理
-	EnemyOnHit onHit_;
+	std::unique_ptr<EnemyOnHit> onHit_;
 
 	//読み込み
-	void DoLoad(void)override;
+	virtual void DoLoad(void)override;
 
 	//初期化
 	void DoInit(void)override;

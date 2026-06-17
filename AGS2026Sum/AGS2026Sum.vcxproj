@@ -145,6 +145,9 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Common\OnHitBase.cpp" />
+    <ClCompile Include="Src\Object\Character\Enemy\Types\MiddleBoss.cpp" />
+    <ClCompile Include="Src\Object\Character\Enemy\Types\NormalEnemy.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\Skill\EnemySkillFactory.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\Brain\MiddleBossBrain.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\Brain\BrainBase.cpp" />
@@ -159,7 +162,7 @@
     <ClCompile Include="Src\Object\Character\Enemy\State\EnemyDamageState.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\State\EnemyNormalState.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\State\EnemyStateBase.cpp" />
-    <ClCompile Include="Src\Object\Character\Enemy\EnemyOnHit.cpp" />
+    <ClCompile Include="Src\Object\Character\Enemy\OnHit\EnemyOnHit.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\Brain\EnemyBrain.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\Pool\EnemyPool.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\EnemyGroup.cpp" />
@@ -210,6 +213,11 @@
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Character\Attack\AttackDataBase.h" />
+    <ClInclude Include="Src\Object\Character\Enemy\Skill\EnemyAttackData.h" />
+    <ClInclude Include="Src\Object\Common\OnHitBase.h" />
+    <ClInclude Include="Src\Object\Character\Enemy\Types\MiddleBoss.h" />
+    <ClInclude Include="Src\Object\Character\Enemy\Types\NormalEnemy.h" />
     <ClInclude Include="Src\Object\Character\Enemy\Skill\EnemySkillFactory.h" />
     <ClInclude Include="Src\Object\Character\Enemy\Brain\MiddleBossBrain.h" />
     <ClInclude Include="Src\Object\Character\Enemy\Brain\BrainBase.h" />
@@ -225,7 +233,7 @@
     <ClInclude Include="Src\Object\Character\Enemy\State\EnemyDamageState.h" />
     <ClInclude Include="Src\Object\Character\Enemy\State\EnemyNormalState.h" />
     <ClInclude Include="Src\Object\Character\Enemy\State\EnemyStateBase.h" />
-    <ClInclude Include="Src\Object\Character\Enemy\EnemyOnHit.h" />
+    <ClInclude Include="Src\Object\Character\Enemy\OnHit\EnemyOnHit.h" />
     <ClInclude Include="Src\Object\Character\Enemy\Info\EnemyDefine.h" />
     <ClInclude Include="Src\Object\Character\Enemy\Brain\EnemyBrain.h" />
     <ClInclude Include="Src\Object\Character\Enemy\Pool\EnemyPool.h" />
