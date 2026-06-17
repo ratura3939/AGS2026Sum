@@ -273,7 +273,7 @@ void Game::Update(void)
 		if (cameraGoalStayCounter_ >= cameraGoalStayTime_) {
 			//フォローに変化
 			camera.ChangeMode(Camera::MODE::FOLLOW);
-			camera.SetGoalFocusPos(player_->GetFocusPos());				//注視点
+			camera.SetFocusPos(player_->GetFocusPos());				//注視点
 			EndSlow();
 			cameraGoalStayCounter_ = 0;
 

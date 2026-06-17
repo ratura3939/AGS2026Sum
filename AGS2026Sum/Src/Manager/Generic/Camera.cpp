@@ -275,9 +275,7 @@ void Camera::SetBeforeDrawShake(void)
 
 void Camera::SetBeforeDrawReset(void)
 {
-	//angle‚ð‹tŽZ‚³‚¹‚é•û–@‚ðl‚¦‚é
-
-	stepReset_ += RESET_STEP;
+	stepReset_ += RESET_STEP;	//i’»XV
 	//I—¹ðŒ
 	if (stepReset_ >= RESET_TIME) {
 		ChangeMode(currentMode_);
@@ -293,15 +291,11 @@ void Camera::SetBeforeDrawReset(void)
 
 	//‹…–Ê•âŠÔ
 	rot_ = Quaternion::Slerp(start_.quaRot, goal_.quaRot, stepReset_);
-	//pos_ = Utility::Lerp(start_.pos, goal_.pos, stepReset_);
 	pos_ = VAdd(followObject_.pos, rot_.PosAxis(RELATIVE_F2C_POS_FOLLOW));
 
-	focusPos_ = Utility::Lerp(focusPos_, goalFocusPos_, LERP_STEP_FOUCUS_RESET);
+	//focusPos_ = Utility::Lerp(focusPos_, goalFocusPos_, LERP_STEP_FOUCUS_RESET);
 
-	//VECTOR axY = { 0.0f,1.0f,0.0f };
-
-	//rot_.ToAngleAxis(&angles_.y, &axY);
-
+	//angle‚Ì‹tŽZ
 	VECTOR currentEuler = rot_.ToEuler();
 	angles_.x = currentEuler.x;
 	angles_.y = currentEuler.y;
