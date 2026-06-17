@@ -3,6 +3,7 @@
 #include<vector>
 #include<unordered_map>
 #include"../Decoration/SoundManager.h"
+#include"../Decoration/EffectManager.h"
 
 class AnimationController
 {
@@ -27,8 +28,9 @@ public:
 	};
 
 	//アニメーションに合わせて再生するSEの情報
-	struct AnimationSoundInfo {
-		SoundManager::SOUND_NAME name;
+	struct AnimationDirectionInfo {
+		SoundManager::SOUND_NAME soundName;
+		EffectManager::EFFECT_NAME effectName;
 		float playTiming;	//再生するタイミング(アニメーションの再生時間に対する割合)
 		bool isPlayed;		//すでに再生したかどうか
 	};
@@ -42,7 +44,7 @@ public:
 		float total;		//総再生時間
 		bool mustPlayOnce;	//再生保障
 		bool isFixPosition;	//位置補正を行うか
-		AnimationSoundInfo seInfo;	//アニメーションに合わせて再生するSEの情報
+		AnimationDirectionInfo directionInfo;	//アニメーションに合わせて再生するSEの情報
 	};
 
 	//アタッチに関する情報
@@ -57,7 +59,7 @@ public:
 	struct NextAnimInfo {
 		std::wstring name;	//アニメーション名
 		float speed;		//再生速度
-		AnimationSoundInfo seInfo;	//アニメーションに合わせて再生するSEの情報
+		AnimationDirectionInfo directionInfo;	//アニメーションに合わせて再生するSEの情報
 	};
 
 	//補正を行う軸
@@ -69,6 +71,8 @@ public:
 
 	static constexpr float DEFAULT_SPEED = 1.0f;
 	static constexpr float DEFAULT_SPEED_RATE = 100.0f;
+
+	static constexpr AnimationDirectionInfo DIRECTION_INFO_INIT = { SoundManager::SOUND_NAME::MAX, EffectManager::EFFECT_NAME::MAX,0.0f, true };
 
 	AnimationController(int _model);
 	~AnimationController(void);
@@ -91,7 +95,7 @@ public:
 	/// <param name="_speed">再生速度</param>
 	/// <param name="_seInfo">SE情報</param>
 	/// <param name="_next">連続して再生する物たち<最後以外にLOOPのものを入れないこと！！></param>
-	void Play(const std::wstring& _name, const float _speed = DEFAULT_SPEED, const AnimationSoundInfo& _seInfo = { SoundManager::SOUND_NAME::MAX, 0.0f, true }, const std::vector<NextAnimInfo> _next = {});
+	void Play(const std::wstring& _name, const float _speed = DEFAULT_SPEED, const AnimationDirectionInfo& _seInfo = DIRECTION_INFO_INIT, const std::vector<NextAnimInfo> _next = {});
 
 	/// <summary>
 	/// 強制再生処理
@@ -100,7 +104,7 @@ public:
 	/// <param name="_speed">再生速度</param>
 	/// <param name="_seInfo">SE情報</param>
 	/// <param name="_next">連続して再生する物たち<最後以外にLOOPのものを入れないこと！！></param>
-	void ForcePlay(const std::wstring& _name, const float _speed = DEFAULT_SPEED, const AnimationSoundInfo& _seInfo = { SoundManager::SOUND_NAME::MAX, 0.0f, true }, const std::vector<NextAnimInfo> _next = {});
+	void ForcePlay(const std::wstring& _name, const float _speed = DEFAULT_SPEED, const AnimationDirectionInfo& _seInfo = DIRECTION_INFO_INIT, const std::vector<NextAnimInfo> _next = {});
 
 	/// <summary>
 	/// ブレンドなしでの再生
@@ -109,13 +113,13 @@ public:
 	/// <param name="_speed">再生速度</param>
 	/// <param name="_seInfo">SE情報</param>
 	/// <param name="_next">連続して再生する物たち<最後以外にLOOPのものを入れないこと！！></param>
-	void NoBlendPlay(const std::wstring& _name, const float _speed = DEFAULT_SPEED, const AnimationSoundInfo& _seInfo = { SoundManager::SOUND_NAME::MAX, 0.0f, true }, const std::vector<NextAnimInfo> _next = {});
+	void NoBlendPlay(const std::wstring& _name, const float _speed = DEFAULT_SPEED, const AnimationDirectionInfo& _seInfo = DIRECTION_INFO_INIT, const std::vector<NextAnimInfo> _next = {});
 
 	/// <summary>
 	/// 連続して再生するアニメーションを途中で追加する
 	/// </summary>
 	/// <param name="_name">追加するアニメーション名</param>
-	void AddNextAnim(const std::wstring& _name, const float _speed, const AnimationSoundInfo& _seInfo);
+	void AddNextAnim(const std::wstring& _name, const float _speed, const AnimationDirectionInfo& _seInfo);
 
 	/// <summary>
 	/// 連続して再生するアニメーションを途中で追加する
@@ -159,7 +163,7 @@ private:
 	void FinishAnimReturn(void);
 
 	//アニメーション再生情報の設定
-	void SetAnimationPlayInfo(AnimationInfo& _animInfo, const AnimationInfo& _sourceInfo, AttachInfo& _attachInfo, const float _animSpeed, const AnimationSoundInfo& _seInfo);
+	void SetAnimationPlayInfo(AnimationInfo& _animInfo, const AnimationInfo& _sourceInfo, AttachInfo& _attachInfo, const float _animSpeed, const AnimationDirectionInfo& _seInfo);
 
 	//アニメーション終了時と更新処理の設定
 	void SetFinishAndUpdateFunc(void);

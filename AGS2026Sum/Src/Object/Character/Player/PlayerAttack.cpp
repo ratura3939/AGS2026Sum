@@ -220,7 +220,15 @@ void PlayerAttack::LoadAttackSound(void)
 
 void PlayerAttack::LoadAttackEffect(void)
 {
+	EffectManager& efcM = EffectManager::GetInstance();
+	ResourceManager& resM = ResourceManager::GetInstance();
+	using EFC_NAME = EffectManager::EFFECT_NAME;
+	using SOURCE = ResourceManager::SRC;
 
+	efcM.Add(EFC_NAME::PLAYER_KICK_THIRD, resM.Load(SOURCE::PLAYER_KICK_THIRD_EFC).handleId_);
+	efcM.Add(EFC_NAME::PLAYER_PUNCH_THIRD, resM.Load(SOURCE::PLAYER_PUNCH_THIRD_EFC).handleId_);
+	efcM.Add(EFC_NAME::PLAYER_PUNCH_SPECIAL, resM.Load(SOURCE::PLAYER_PUNCH_SPECIAL_EFC).handleId_);
+	efcM.Add(EFC_NAME::PLAYER_ULTIMATE, resM.Load(SOURCE::PLAYER_ULTIMATE_EFC).handleId_);
 }
 
 void PlayerAttack::RegisterAttackData(void)
