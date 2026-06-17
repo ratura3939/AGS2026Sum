@@ -25,8 +25,8 @@ public:
 	static const std::wstring ANIM_FINSH_KICK;	//最終段キック（パンチ三回目後、強派生）
 	static const std::wstring ANIM_SPECIAL_PUNCH;	//特殊攻撃（パンチ派生）
 	static const std::wstring ANIM_SPECIAL_KICK;	//特殊攻撃（キック派生）
-	static const std::wstring ANIM_ULTIMET;			//必殺技
-	static const std::wstring ANIM_ULTIMET_TEST;	//必殺技（試し用）
+	static const std::wstring ANIM_ULTIMATE;			//必殺技
+	static const std::wstring ANIM_ULTIMATE_TEST;	//必殺技（試し用）
 #pragma endregion
 
 	PlayerManager(Game& _gameScene);
@@ -59,7 +59,7 @@ private:
 	void SetAttackStateForCharacter(void);	//攻撃に関する状態をキャラクターに反映
 	const bool Attack(PlayerAttack::ATTACK_TYPE _type);	//攻撃判定の設定処理(返り値　true=成功/false=失敗)
 	const bool AttackSpecial(PlayerAttack::ATTACK_TYPE _type);	//攻撃判定の設定処理(返り値　true=成功/false=失敗)
-	void SettingUltimetCamera(void);		//必殺技のカメラ設定
+	void SettingUltimateCamera(void);		//必殺技のカメラ設定
 
 	Game& scene_;	//ゲームクラス参照
 	VECTOR focusPos_;	//注視点
@@ -72,6 +72,6 @@ private:
 
 	bool isSpecialAttackRedy_;	//特殊攻撃の準備ができているか
 	bool isEnableSpecial_;		//特殊攻撃の準備への状態遷移を許可するか
-	bool isEnableUltimet_;		//必殺技の発動を許可するか
+	bool isEnableUltimate_;		//必殺技の発動を許可するか
 };
 

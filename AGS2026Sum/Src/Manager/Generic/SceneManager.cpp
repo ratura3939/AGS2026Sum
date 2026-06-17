@@ -235,17 +235,17 @@ void SceneManager::SwitchController(void)
 	}
 }
 
-void SceneManager::SetUpdateSpeedRate_(const float _percent)
+void SceneManager::SetUpdateSpeedRate(const float _percent)
 {
 	updateSpeedRate_ = _percent / 100.0f;
 }
 
-const float SceneManager::GetUpdateSpeedRate_(void) const
+const float SceneManager::GetUpdateSpeedRate(void) const
 {
 	return updateSpeedRate_;
 }
 
-const float SceneManager::GetUpdateSpeedRatePercent_(void) const
+const float SceneManager::GetUpdateSpeedRatePercent(void) const
 {
 	return updateSpeedRate_ * 100.0f;
 }

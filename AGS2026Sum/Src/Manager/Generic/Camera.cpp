@@ -275,9 +275,12 @@ void Camera::SetBeforeDrawShake(void)
 
 void Camera::SetBeforeDrawReset(void)
 {
-	stepReset_ += RESET_STEP;	//進捗更新
-	//終了条件
+	stepReset_ += RESET_STEP;
 	if (stepReset_ >= RESET_TIME) {
+		lerpStep_ = NO_LERP;
+		idealPos_ = pos_;
+		adjustedPos_ = pos_;
+
 		ChangeMode(currentMode_);
 		isReset_ = true;
 		angles_ = Utility::VECTOR_ZERO;
@@ -289,18 +292,20 @@ void Camera::SetBeforeDrawReset(void)
 		return;
 	}
 
-	//球面補間
+	// 球面補間
 	rot_ = Quaternion::Slerp(start_.quaRot, goal_.quaRot, stepReset_);
 	pos_ = VAdd(followObject_.pos, rot_.PosAxis(RELATIVE_F2C_POS_FOLLOW));
 
-	//focusPos_ = Utility::Lerp(focusPos_, goalFocusPos_, LERP_STEP_FOUCUS_RESET);
+	// 注視点を追従対象に追従させる（毎フレーム更新）
+	goalFocusPos_ = followObject_.pos;
+	focusPos_ = Utility::Lerp(focusPos_, goalFocusPos_, LERP_STEP_FOUCUS_RESET);
 
-	//angleの逆算
+	// angleの逆算
 	VECTOR currentEuler = rot_.ToEuler();
 	angles_.x = currentEuler.x;
 	angles_.y = currentEuler.y;
 
-	//カメラの上方向
+	// カメラの上方向
 	cameraUp_ = rot_.GetUp();
 }
 

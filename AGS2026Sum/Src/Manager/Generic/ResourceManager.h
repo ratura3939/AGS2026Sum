@@ -46,6 +46,12 @@ public:
 		//ステージ
 		,STAGE_MDL
 
+		//エフェクト
+		,PLAYER_PUNCH_THIRD_EFC		//パンチ三段目
+		,PLAYER_KICK_THIRD_EFC		//キック三段目
+		,PLAYER_PUNCH_SPECIAL_EFC	//パンチ特殊
+		,PLAYER_ULTIMATE_EFC		//必殺技エフェクト
+
 		//サウンド
 		//SE
 		,PUNCH_FIRST_PLAYER_SE		//パンチ初段

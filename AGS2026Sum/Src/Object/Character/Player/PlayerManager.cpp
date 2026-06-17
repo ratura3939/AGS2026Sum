@@ -20,15 +20,15 @@ const std::wstring PlayerManager::ANIM_HIGH_KICK = L"HighKick";
 const std::wstring PlayerManager::ANIM_FINSH_KICK = L"FinishKick";
 const std::wstring PlayerManager::ANIM_SPECIAL_PUNCH = L"SpecialPunch";
 const std::wstring PlayerManager::ANIM_SPECIAL_KICK = L"SpecialKick";
-const std::wstring PlayerManager::ANIM_ULTIMET = L"Ultimet";
-const std::wstring PlayerManager::ANIM_ULTIMET_TEST = L"UltimetTest";
+const std::wstring PlayerManager::ANIM_ULTIMATE = L"Ultimet";
+const std::wstring PlayerManager::ANIM_ULTIMATE_TEST = L"UltimetTest";
 
 namespace {
 	const VECTOR FOCUS_RELATIVE = { 0.0f,0.0f,300.0f };			//注視点の相対座標
 	const VECTOR ULTIMET_RELATIVE = { 100.0f,200.0f,40.0f };	//必殺技時の注視点からカメラの相対座標
 	const VECTOR HIGHT_HALF = { 0.0f,100.0f,0.0f };				//キャラクターの腰辺りの相対座標
 
-	const float CAMERA_STY_TIME_ULTIMET = 60.0f;
+	const float CAMERA_STY_TIME_ULTIMATE = 60.0f;
 }
 
 PlayerManager::PlayerManager(Game& _gameScene)
@@ -40,7 +40,7 @@ PlayerManager::PlayerManager(Game& _gameScene)
 	,isNoBlendPlayAnim_(false)
 	,isSpecialAttackRedy_(false)
 	,isEnableSpecial_(true)
-	,isEnableUltimet_(false)
+	,isEnableUltimate_(false)
 {
 	character_->Load();		//キャラクターの読み込み
 }
@@ -84,7 +84,7 @@ void PlayerManager::Update(void)
 		//攻撃予約関係
 		isEnableAttackInput_ = true;	//攻撃入力を受け付ける状態にする
 		isEnableSpecial_ = true;		//特殊準備を受け入れる
-		isEnableUltimet_ = false;
+		isEnableUltimate_ = false;
 
 		bool ret = character_->IsStartNextAttackAnimation();
 
@@ -175,7 +175,7 @@ void PlayerManager::UserInput(void)
 	bool isAttackInput = false;
 
 	//必殺技中は入力を受け付けない
-	if (isEnableUltimet_) {
+	if (isEnableUltimate_) {
 		return;
 	}
 
@@ -203,12 +203,12 @@ void PlayerManager::UserInput(void)
 	//必殺技
 	//デバッグ用のボタンが押されていたら
 	if (/*ins.IsPressed(InputManager::INPUT_COMMAND::DEBUG_ULT_REDY) && */ins.IsTrigerrDown(InputManager::INPUT_COMMAND::CANCEL)) {
-		attack_->ReserveAttackUltimet();	//必殺技予約
-		isEnableUltimet_ = true;			//必殺技中
+		attack_->ReserveAttackUltimate();	//必殺技予約
+		isEnableUltimate_ = true;			//必殺技中
 		scene_.StartSlow();					//スロー演出
 		isNoBlendPlayAnim_ = true;
 
-		SettingUltimetCamera();
+		SettingUltimateCamera();
 		isAttackInput = true;
 	}
 
@@ -305,12 +305,12 @@ const bool PlayerManager::AttackSpecial(PlayerAttack::ATTACK_TYPE _type)
 	return true;
 }
 
-void PlayerManager::SettingUltimetCamera(void)
+void PlayerManager::SettingUltimateCamera(void)
 {
 	Camera& camera = SceneManager::GetInstance().GetCamera();
 
 	camera.ChangeMode(Camera::MODE::AUTO_MOVE);		//モード変更
-	scene_.SetCameraStayTimeAtAutoMove(CAMERA_STY_TIME_ULTIMET);	//ゲームシーンに溜め時間を渡す
+	scene_.SetCameraStayTimeAtAutoMove(CAMERA_STY_TIME_ULTIMATE);	//ゲームシーンに溜め時間を渡す
 
 	VECTOR cameraGoalPos = VAdd(character_->GetPos(), character_->GetQua().PosAxis(ULTIMET_RELATIVE));	//目標位置
 	camera.SetGoalPos(cameraGoalPos);	//設定

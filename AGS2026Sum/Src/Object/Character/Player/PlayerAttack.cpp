@@ -14,8 +14,8 @@ namespace {
 	const std::string KICK_THIRD_KEY = "Kick_Third";
 	const std::string SPECIAL_PUNCH_KEY = "Punch_Special";
 	const std::string SPECIAL_KICK_KEY = "Kick_Special";
-	const std::string ULTIMET_KEY = "Ultimet";
-	const std::string ULTIMET_TEST_KEY = "Ultimet_Test";
+	const std::string ULTIMATE_KEY = "Ultimate";
+	const std::string ULTIMATE_TEST_KEY = "Ultimate_Test";
 
 	const int DEFAULT_COLOR = 0xffffff;
 	const int KICK_COLOR = 0x0000ff;
@@ -78,6 +78,7 @@ void PlayerAttack::DoInit(void)
 	MakeCollider(std::make_unique<Sphere>(pos_, pos_, currentData_.radius, currentData_.radius), Collider::COL_TAG::PLAYER_ATTACK, { Collider::COL_TAG::ENEMY });	//攻撃用のコライダ生成
 	LoadAttackData();
 	LoadAttackSound();
+	LoadAttackEffect();
 
 	colliders_[0]->SetUseThis(false);	//コライダの無効化
 }
@@ -169,43 +170,14 @@ void PlayerAttack::DrawComboRouteElement(const std::string& _attackKey, const VE
 
 void PlayerAttack::LoadAttackData(void)
 {
-	Resource res = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_ATTACK_DATA_JSON);
-
-	//登録
-	data_.emplace(PUNCH_FIRST_KEY,res.GetData<AttackData>(PUNCH_FIRST_KEY));	//パンチ初段
-	data_.emplace(PUNCH_SECOND_KEY,res.GetData<AttackData>(PUNCH_SECOND_KEY));	//パンチ二段
-	data_.emplace(PUNCH_THIRD_KEY,res.GetData<AttackData>(PUNCH_THIRD_KEY));	//パンチ最終段
-	data_.emplace(KICK_FIRST_KEY,res.GetData<AttackData>(KICK_FIRST_KEY));		//キック初段
-	data_.emplace(KICK_SECOND_KEY,res.GetData<AttackData>(KICK_SECOND_KEY));	//キック二段
-	data_.emplace(KICK_THIRD_KEY,res.GetData<AttackData>(KICK_THIRD_KEY));		//キック最終段
-	data_.emplace(SPECIAL_PUNCH_KEY,res.GetData<AttackData>(SPECIAL_PUNCH_KEY));//特殊攻撃(対横方向)
-	data_.emplace(SPECIAL_KICK_KEY,res.GetData<AttackData>(SPECIAL_KICK_KEY));	//特殊攻撃(対上方向)
-	data_.emplace(ULTIMET_KEY,res.GetData<AttackData>(ULTIMET_KEY));			//必殺技
-	data_.emplace(ULTIMET_TEST_KEY,res.GetData<AttackData>(ULTIMET_TEST_KEY));
+	//攻撃の詳細を登録
+	RegisterAttackData();	
 
 	//アニメーション名登録
-	animNames_.emplace(PUNCH_FIRST_KEY, PlayerManager::ANIM_FIRST_PUNCH);		//パンチ初段
-	animNames_.emplace(PUNCH_SECOND_KEY, PlayerManager::ANIM_SECOND_PUNCH);		//パンチ二段
-	animNames_.emplace(PUNCH_THIRD_KEY, PlayerManager::ANIM_THIRD_PUNCH);		//パンチ最終段
-	animNames_.emplace(KICK_FIRST_KEY, PlayerManager::ANIM_MIDDLE_KICK);		//キック初段
-	animNames_.emplace(KICK_SECOND_KEY, PlayerManager::ANIM_HIGH_KICK);			//キック二段
-	animNames_.emplace(KICK_THIRD_KEY, PlayerManager::ANIM_FINSH_KICK);			//キック最終段
-	animNames_.emplace(SPECIAL_PUNCH_KEY, PlayerManager::ANIM_SPECIAL_PUNCH);	//特殊攻撃(対横方向)
-	animNames_.emplace(SPECIAL_KICK_KEY, PlayerManager::ANIM_SPECIAL_KICK);		//特殊攻撃(対上方向)
-	animNames_.emplace(ULTIMET_KEY, PlayerManager::ANIM_ULTIMET);				//必殺技
-	animNames_.emplace(ULTIMET_TEST_KEY, PlayerManager::ANIM_ULTIMET_TEST);
-
+	RegisterAttackAnimData();
+	
 	//フラグ管理(コンボ履歴用)
-	comboRouteInfos_.emplace(PUNCH_FIRST_KEY, ComboRouteInfo{ ATTACK_TYPE::PUNCH,false,false });	//パンチ初段
-	comboRouteInfos_.emplace(PUNCH_SECOND_KEY, ComboRouteInfo{ ATTACK_TYPE::PUNCH,false,false });	//パンチ二段
-	comboRouteInfos_.emplace(PUNCH_THIRD_KEY, ComboRouteInfo{ ATTACK_TYPE::PUNCH,false,false });	//パンチ最終段
-	comboRouteInfos_.emplace(KICK_FIRST_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });		//キック初段
-	comboRouteInfos_.emplace(KICK_SECOND_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });		//キック二段
-	comboRouteInfos_.emplace(KICK_THIRD_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });		//キック最終段
-	comboRouteInfos_.emplace(SPECIAL_PUNCH_KEY, ComboRouteInfo{ ATTACK_TYPE::PUNCH,false,false });	//特殊攻撃(対横方向)
-	comboRouteInfos_.emplace(SPECIAL_KICK_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });	//特殊攻撃(対上方向)
-	comboRouteInfos_.emplace(ULTIMET_KEY, ComboRouteInfo{ ATTACK_TYPE::ULTIMATE,false,false });		//必殺技
-	comboRouteInfos_.emplace(ULTIMET_TEST_KEY, ComboRouteInfo{ ATTACK_TYPE::ULTIMATE,false,false });
+	RegisterComboData();
 
 	//コンボ始動は弱パンチから
 	currentData_ = data_[PUNCH_FIRST_KEY];
@@ -242,8 +214,58 @@ void PlayerAttack::LoadAttackSound(void)
 	//特殊攻撃および必殺技のSEは現在未定（入れたら上の読み込みにも追加するように）
 	seNames_.emplace(SPECIAL_PUNCH_KEY, SOUND_NAME::MAX);
 	seNames_.emplace(SPECIAL_KICK_KEY, SOUND_NAME::MAX);
-	seNames_.emplace(ULTIMET_KEY, SOUND_NAME::MAX);
-	seNames_.emplace(ULTIMET_TEST_KEY, SOUND_NAME::MAX);
+	seNames_.emplace(ULTIMATE_KEY, SOUND_NAME::MAX);
+	seNames_.emplace(ULTIMATE_TEST_KEY, SOUND_NAME::MAX);
+}
+
+void PlayerAttack::LoadAttackEffect(void)
+{
+
+}
+
+void PlayerAttack::RegisterAttackData(void)
+{
+	Resource res = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_ATTACK_DATA_JSON);
+
+	//登録
+	data_.emplace(PUNCH_FIRST_KEY, res.GetData<AttackData>(PUNCH_FIRST_KEY));	//パンチ初段
+	data_.emplace(PUNCH_SECOND_KEY, res.GetData<AttackData>(PUNCH_SECOND_KEY));	//パンチ二段
+	data_.emplace(PUNCH_THIRD_KEY, res.GetData<AttackData>(PUNCH_THIRD_KEY));	//パンチ最終段
+	data_.emplace(KICK_FIRST_KEY, res.GetData<AttackData>(KICK_FIRST_KEY));		//キック初段
+	data_.emplace(KICK_SECOND_KEY, res.GetData<AttackData>(KICK_SECOND_KEY));	//キック二段
+	data_.emplace(KICK_THIRD_KEY, res.GetData<AttackData>(KICK_THIRD_KEY));		//キック最終段
+	data_.emplace(SPECIAL_PUNCH_KEY, res.GetData<AttackData>(SPECIAL_PUNCH_KEY));//特殊攻撃(対横方向)
+	data_.emplace(SPECIAL_KICK_KEY, res.GetData<AttackData>(SPECIAL_KICK_KEY));	//特殊攻撃(対上方向)
+	data_.emplace(ULTIMATE_KEY, res.GetData<AttackData>(ULTIMATE_KEY));			//必殺技
+	data_.emplace(ULTIMATE_TEST_KEY, res.GetData<AttackData>(ULTIMATE_TEST_KEY));
+}
+
+void PlayerAttack::RegisterAttackAnimData(void)
+{
+	animNames_.emplace(PUNCH_FIRST_KEY, PlayerManager::ANIM_FIRST_PUNCH);		//パンチ初段
+	animNames_.emplace(PUNCH_SECOND_KEY, PlayerManager::ANIM_SECOND_PUNCH);		//パンチ二段
+	animNames_.emplace(PUNCH_THIRD_KEY, PlayerManager::ANIM_THIRD_PUNCH);		//パンチ最終段
+	animNames_.emplace(KICK_FIRST_KEY, PlayerManager::ANIM_MIDDLE_KICK);		//キック初段
+	animNames_.emplace(KICK_SECOND_KEY, PlayerManager::ANIM_HIGH_KICK);			//キック二段
+	animNames_.emplace(KICK_THIRD_KEY, PlayerManager::ANIM_FINSH_KICK);			//キック最終段
+	animNames_.emplace(SPECIAL_PUNCH_KEY, PlayerManager::ANIM_SPECIAL_PUNCH);	//特殊攻撃(対横方向)
+	animNames_.emplace(SPECIAL_KICK_KEY, PlayerManager::ANIM_SPECIAL_KICK);		//特殊攻撃(対上方向)
+	animNames_.emplace(ULTIMATE_KEY, PlayerManager::ANIM_ULTIMATE);				//必殺技
+	animNames_.emplace(ULTIMATE_TEST_KEY, PlayerManager::ANIM_ULTIMATE_TEST);
+}
+
+void PlayerAttack::RegisterComboData(void)
+{
+	comboRouteInfos_.emplace(PUNCH_FIRST_KEY, ComboRouteInfo{ ATTACK_TYPE::PUNCH,false,false });	//パンチ初段
+	comboRouteInfos_.emplace(PUNCH_SECOND_KEY, ComboRouteInfo{ ATTACK_TYPE::PUNCH,false,false });	//パンチ二段
+	comboRouteInfos_.emplace(PUNCH_THIRD_KEY, ComboRouteInfo{ ATTACK_TYPE::PUNCH,false,false });	//パンチ最終段
+	comboRouteInfos_.emplace(KICK_FIRST_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });		//キック初段
+	comboRouteInfos_.emplace(KICK_SECOND_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });		//キック二段
+	comboRouteInfos_.emplace(KICK_THIRD_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });		//キック最終段
+	comboRouteInfos_.emplace(SPECIAL_PUNCH_KEY, ComboRouteInfo{ ATTACK_TYPE::PUNCH,false,false });	//特殊攻撃(対横方向)
+	comboRouteInfos_.emplace(SPECIAL_KICK_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });	//特殊攻撃(対上方向)
+	comboRouteInfos_.emplace(ULTIMATE_KEY, ComboRouteInfo{ ATTACK_TYPE::ULTIMATE,false,false });		//必殺技
+	comboRouteInfos_.emplace(ULTIMATE_TEST_KEY, ComboRouteInfo{ ATTACK_TYPE::ULTIMATE,false,false });
 }
 
 void PlayerAttack::ApplyAttackColliderSettings(void)
@@ -344,9 +366,9 @@ const bool PlayerAttack::ReserveAttackSpecial(const ATTACK_TYPE& _type)
 	return true;
 }
 
-const bool PlayerAttack::ReserveAttackUltimet(void)
+const bool PlayerAttack::ReserveAttackUltimate(void)
 {
-	nextAttackName_ = ULTIMET_KEY;
+	nextAttackName_ = ULTIMATE_KEY;
 	return true;
 }
 

@@ -135,7 +135,7 @@
     "vibrateTime": 600
   },
 
-  "Ultimet": {
+  "Ultimate": {
     "radius": 500.0,
     "power": 200.0,
     "localPos": {
@@ -152,7 +152,7 @@
     "vibrateTime": 1000
   },
 
-  "Ultimet_Test": {
+  "Ultimate_Test": {
     "radius": 500.0,
     "power": 200.0,
     "localPos": {

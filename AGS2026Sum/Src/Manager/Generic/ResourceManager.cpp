@@ -156,6 +156,19 @@ void ResourceManager::ResourcePlayer(void)
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + L"Kick_Third_Test.mp3");
 	resourcesMap_.emplace(SRC::KICK_THIRD_PLAYER_SE, res);
 
+	//エフェクト
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"PunchThird.efkpkg");
+	resourcesMap_.emplace(SRC::PLAYER_PUNCH_THIRD_EFC, res);
+
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"KickThird.efkproj");
+	resourcesMap_.emplace(SRC::PLAYER_KICK_THIRD_EFC, res);
+
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"PunchSpecial.efkproj");
+	resourcesMap_.emplace(SRC::PLAYER_PUNCH_SPECIAL_EFC, res);
+
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"Ultimate.efkpkg");
+	resourcesMap_.emplace(SRC::PLAYER_ULTIMATE_EFC, res);
+
 	//JSON
 	res = Resource(Resource::TYPE::JSON, Application::PATH_JSON + L"PlayerAttackData.json");
 	resourcesMap_.emplace(SRC::PLAYER_ATTACK_DATA_JSON, res);

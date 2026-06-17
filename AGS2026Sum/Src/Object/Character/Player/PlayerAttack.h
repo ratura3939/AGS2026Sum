@@ -63,7 +63,7 @@ public:
 	/// </summary>
 	/// <param name=""></param>
 	/// <returns></returns>
-	const bool ReserveAttackUltimet(void);
+	const bool ReserveAttackUltimate(void);
 
 	void Attack(void);			//攻撃開始
 	void FinishAttack(void);	//攻撃終了処理
@@ -96,6 +96,12 @@ private:
 
 	void LoadAttackData(void);				//攻撃データの読み込み
 	void LoadAttackSound(void);				//効果音などの読み込み
+	void LoadAttackEffect(void);			//エフェクトの読み込み
+
+	void RegisterAttackData(void);			//攻撃情報の登録
+	void RegisterAttackAnimData(void);		//攻撃アニメーション情報の登録
+	void RegisterComboData(void);			//コンボ情報の登録
+
 	void ApplyAttackColliderSettings(void);	//コライダの設定
 	void ResetCombo(void);					//コンボのリセット
 	void ResetComboRoute(void);				//コンボルートのリセット

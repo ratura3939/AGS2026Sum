@@ -114,8 +114,8 @@ void PlayerChara::InitAnim(void)
 	animController_->Add(PlayerManager::ANIM_SPECIAL_PUNCH, resM.Load(SRC::PLAYER_SPECIAL_PUNCH_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL, true,true);
 	animController_->SetFixAnimationAxisInfo(PlayerManager::ANIM_SPECIAL_PUNCH, true, false, true);	//ジャンプ攻撃の移動補正
 	animController_->Add(PlayerManager::ANIM_SPECIAL_KICK, resM.Load(SRC::PLAYER_SPECIAL_KICK_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL, true);
-	animController_->Add(PlayerManager::ANIM_ULTIMET, resM.Load(SRC::PLAYER_ULTIMET_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL, true);
-	animController_->Add(PlayerManager::ANIM_ULTIMET_TEST, resM.Load(SRC::PLAYER_ULTIMET_TEST_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL, true);
+	animController_->Add(PlayerManager::ANIM_ULTIMATE, resM.Load(SRC::PLAYER_ULTIMET_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL, true);
+	animController_->Add(PlayerManager::ANIM_ULTIMATE_TEST, resM.Load(SRC::PLAYER_ULTIMET_TEST_ANIM).handleId_, ANIM_PLAY_TYPE::NORMAL, ANIM_SOURCE::EXTERNAL, true);
 
 	animController_->SetRootFrameIndex(ROOT_NAME);	//親ボーン名
 
@@ -128,7 +128,7 @@ void PlayerChara::Move(void)
 	VECTOR moveVec = inputDir_;
 	moveVec.y = 0.0f;	//Y軸方向の移動はなし
 
-	movedPos_ = VAdd(movedPos_, VScale(moveVec, moveSpeed_*SceneManager::GetInstance().GetUpdateSpeedRate_()));	//移動
+	movedPos_ = VAdd(movedPos_, VScale(moveVec, moveSpeed_*SceneManager::GetInstance().GetUpdateSpeedRate()));	//移動
 	isMove_ = false;
 }
 
