@@ -24,8 +24,9 @@ const std::wstring PlayerManager::ANIM_ULTIMET = L"Ultimet";
 const std::wstring PlayerManager::ANIM_ULTIMET_TEST = L"UltimetTest";
 
 namespace {
-	const VECTOR FOCUS_RELATIVE = { 0.0f,0.0f,300.0f };
-	const VECTOR ULTIMET_RELATIVE = { 150.0f,250.0f,100.0f };
+	const VECTOR FOCUS_RELATIVE = { 0.0f,0.0f,300.0f };			//注視点の相対座標
+	const VECTOR ULTIMET_RELATIVE = { 100.0f,200.0f,40.0f };	//必殺技時の注視点からカメラの相対座標
+	const VECTOR HIGHT_HALF = { 0.0f,100.0f,0.0f };				//キャラクターの腰辺りの相対座標
 
 	const float CAMERA_STY_TIME_ULTIMET = 60.0f;
 }
@@ -207,15 +208,7 @@ void PlayerManager::UserInput(void)
 		scene_.StartSlow();					//スロー演出
 		isNoBlendPlayAnim_ = true;
 
-		Camera& camera = SceneManager::GetInstance().GetCamera();
-
-		camera.ChangeMode(Camera::MODE::AUTO_MOVE);		//モード変更
-		scene_.SetCameraStayTimeAtAutoMove(CAMERA_STY_TIME_ULTIMET);	//ゲームシーンに溜め時間を渡す
-
-		VECTOR cameraGoalPos = VAdd(character_->GetPos(), character_->GetQua().PosAxis(ULTIMET_RELATIVE));	//目標位置
-		camera.SetGoalPos(cameraGoalPos);	//設定
-		camera.SetFocusPos(character_->GetPos());
-
+		SettingUltimetCamera();
 		isAttackInput = true;
 	}
 
@@ -310,4 +303,18 @@ const bool PlayerManager::AttackSpecial(PlayerAttack::ATTACK_TYPE _type)
 	scene_.EndSlow();
 
 	return true;
+}
+
+void PlayerManager::SettingUltimetCamera(void)
+{
+	Camera& camera = SceneManager::GetInstance().GetCamera();
+
+	camera.ChangeMode(Camera::MODE::AUTO_MOVE);		//モード変更
+	scene_.SetCameraStayTimeAtAutoMove(CAMERA_STY_TIME_ULTIMET);	//ゲームシーンに溜め時間を渡す
+
+	VECTOR cameraGoalPos = VAdd(character_->GetPos(), character_->GetQua().PosAxis(ULTIMET_RELATIVE));	//目標位置
+	camera.SetGoalPos(cameraGoalPos);	//設定
+
+	VECTOR cameraocusPos = VAdd(character_->GetPos(), HIGHT_HALF);	//カメラ注視点(キャラクターの半分ほどの高さ)
+	camera.SetFocusPos(cameraocusPos);
 }

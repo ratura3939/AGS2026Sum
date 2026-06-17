@@ -276,6 +276,8 @@ void Game::Update(void)
 			camera.SetGoalFocusPos(player_->GetFocusPos());				//íçéãì_
 			EndSlow();
 			cameraGoalStayCounter_ = 0;
+
+			camera.ChangeMode(Camera::MODE::RESET);
 		}
 	}
 }

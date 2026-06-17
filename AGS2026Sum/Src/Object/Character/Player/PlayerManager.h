@@ -59,6 +59,7 @@ private:
 	void SetAttackStateForCharacter(void);	//攻撃に関する状態をキャラクターに反映
 	const bool Attack(PlayerAttack::ATTACK_TYPE _type);	//攻撃判定の設定処理(返り値　true=成功/false=失敗)
 	const bool AttackSpecial(PlayerAttack::ATTACK_TYPE _type);	//攻撃判定の設定処理(返り値　true=成功/false=失敗)
+	void SettingUltimetCamera(void);		//必殺技のカメラ設定
 
 	Game& scene_;	//ゲームクラス参照
 	VECTOR focusPos_;	//注視点

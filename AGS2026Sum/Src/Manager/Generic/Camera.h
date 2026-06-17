@@ -32,9 +32,6 @@ public:
 	static constexpr float ROCK_DISTANCE_MIN = 500.0f;		//ロックオン時に最低限離れておく距離
 
 	static constexpr float ROCK_MAGNIFICATION_Y = 0.25f;	//ロックオン時のY座標調整用の倍率
-
-	static constexpr float MIRROR_MAGNIFICATION_Y = 0.1f;	//ミラー時のY座標調整用の倍率
-	static constexpr float MIRROR_MAGNIFICATION_Z = 1.25f;	//ミラー時のY座標調整用の倍率
 	
 	//カメラ移動関連の定数---------------------------------------------------------------------
 	
@@ -77,7 +74,6 @@ public:
 		LOCKON,			//ロックオン
 		RESET,			//カメラ位置リセット用
 		AUTO_MOVE,		//目標位置まで自動的に移動
-		MIRROR,			//特定の相対座標に対して対照的な動きをとる(対象の軸はfollowObj)
 	};
 
 	struct ForFollowInfo
@@ -108,7 +104,6 @@ public:
 	void SetBeforeDrawShake(void);			//カメラシェイク
 	void SetBeforeDrawReset(void);			//カメラリセット
 	void SetBeforeDrawAutoMove(void);		//カメラ自動移動
-	void SetBeforeDrawMirror(void);			//カメラ自動移動
 
 	//----------------------------------------
 	// 描画処理

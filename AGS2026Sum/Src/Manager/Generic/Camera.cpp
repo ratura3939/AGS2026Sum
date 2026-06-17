@@ -112,10 +112,6 @@ void Camera::SetBeforeDraw(void)
 	case MODE::AUTO_MOVE:
 		SetBeforeDrawAutoMove();
 		break;
-
-	case MODE::MIRROR:
-		SetBeforeDrawMirror();
-		break;
 	}
 
 	// FOLLOW・LOCKON・NONE時にレイキャストによるカメラ位置補正を適用
@@ -324,60 +320,6 @@ void Camera::SetBeforeDrawAutoMove(void)
 	cameraUp_ = rot_.GetUp();
 }
 
-void Camera::SetBeforeDrawMirror(void)
-{
-	Rotation();
-
-	//追従対象の位置
-	VECTOR followPos = followObject_.pos;
-	//追従対象の向き
-	Quaternion followRot = followObject_.quaRot;
-
-	//ロックオン対象と追従対象の離れている距離
-	VECTOR distance = VSub(lockPos_, followPos);
-
-	//離れる距離を数値化
-	float disMag = Utility::MagnitudeF(distance);
-
-	//最低限の値を下回っていたら
-	if (disMag <= ROCK_DISTANCE_MIN) {
-		//最低限の値を入れる
-		disMag = ROCK_DISTANCE_MIN;
-	}
-
-	//カメラ位置調整(カメラは後方位置に。Y方向は距離に応じて高さを変える。)
-	VECTOR relative = { 0.0f,disMag * MIRROR_MAGNIFICATION_Y,-disMag * MIRROR_MAGNIFICATION_Z };
-	//カメラの回転情報をもとに相対座標を回転させる
-	VECTOR relativeCPos = rot_.PosAxis(relative);
-
-	//初動時のみに発動する
-	//カメラの初期ゴールを計算結果で算出した場所にする
-	if (!isReset_) {
-		ChangeMode(MODE::RESET);
-		goal_.pos = VAdd(followObject_.pos, followObject_.quaRot.PosAxis(relative));
-		goal_.quaRot = followObject_.quaRot;
-		return;
-	}
-
-	//注視点の更新
-	//ロックオン中の注視点は追従対象とロックオン対象の中間地点にある。
-	goalFocusPos_ = VAdd(followPos, VScale(distance, 0.5f));
-	focusPos_ = Utility::Lerp(focusPos_, goalFocusPos_, 0.2f);
-
-	//カメラ位置の更新
-	prevGoalPos_ = lockOnGoalPos_;
-	lockOnGoalPos_ = VAdd(focusPos_, relativeCPos);
-
-	pos_ = Utility::Lerp(pos_, lockOnGoalPos_, lerpStep_);
-
-	//ある程度の高さは保つ
-	if (pos_.y < UNDER_LIMIT_Y)pos_.y = UNDER_LIMIT_Y;
-	if (pos_.y > HIGHT_LIMIT_Y)pos_.y = HIGHT_LIMIT_Y;
-
-	//カメラの上方向
-	cameraUp_ = rot_.GetUp();
-}
-
 void Camera::Draw(void)
 {
 }
@@ -482,9 +424,6 @@ void Camera::ChangeMode(MODE mode)
 		break;
 
 	case MODE::LOCKON:
-		break;
-
-	case MODE::MIRROR:
 		break;
 	}
 
