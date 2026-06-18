@@ -40,7 +40,8 @@ PlayerManager::PlayerManager(Game& _gameScene)
 	,isSpecialAttackRedy_(false)
 	,isEnableSpecial_(true)
 	,isEnableUltimate_(false)
-	,isPlayDirecAtCurrentAttack_(false)
+	,isPlaySoundAtCurrentAttack_(false)
+	,isPlayEffectAtCurrentAttack_(false)
 {
 	character_->Load();		//キャラクターの読み込み
 }
@@ -174,26 +175,22 @@ void PlayerManager::UpdateAnimationEvent(void)
 
 	//攻撃のSE・エフェクトの再生管理
 	if (attack_->IsAttacking()) {
-		const PlayerAttack::AttackDirectionInfo& currentAttackDirecInfo = attack_->GetNextAttackDirectionInfo();
+		const PlayerAttack::AttackDirectionInfo& currentAttackDirecInfo = attack_->GetNextAttackDirectionInfo();	//演出情報取得
+		std::wstring animName = attack_->GetCurrentAttackAnimInfo().name;					//攻撃中の名前を取得
+		float animProgressRate = character_->GetSpecifiedAnimationProgressRate(animName);	//進捗率を取得
 
-		//現在の攻撃の演出がすでに開始されている場合
-		if (isPlayDirecAtCurrentAttack_) {
-			//エフェクトの位置調整
-			//EffectManager::GetInstance().SyncEffect(character_->GetSpeciesName(), currentAttackDirecInfo.efcName, character_->GetPos(), character_->GetQua(), 1.0f)
+		//まだ効果音が再生されいない場合
+		if (!isPlaySoundAtCurrentAttack_) {
+			//再生を試みる
+			TryPlaySoundAtCurrentAttack(currentAttackDirecInfo, animProgressRate);
 		}
-		//開始していない場合
-		else {
-			std::wstring animName = attack_->GetCurrentAttackAnimInfo().name;					//攻撃中の名前を取得
-			float animProgressRate = character_->GetSpecifiedAnimationProgressRate(animName);	//進捗率を取得
 
-			if (animProgressRate >= currentAttackDirecInfo.timing) {
-				SoundManager::GetInstance().Play(currentAttackDirecInfo.seName);
-
-				Quaternion efcLocalQua = Quaternion::Euler(Utility::Deg2RadVec(currentAttackDirecInfo.efcLocalRot));
-				EffectManager::GetInstance().Play(character_->GetSpeciesName(), currentAttackDirecInfo.efcName, VAdd(character_->GetPos(), HIGHT_HALF), character_->GetQua().Mult(efcLocalQua), 30.0f, 1.0f);
-				isPlayDirecAtCurrentAttack_ = true;
-			}
+		//エフェクトの再生
+		if (!isPlayEffectAtCurrentAttack_) {
+			//再生を試みる
+			TryPlayEffectAtCurrentAttack(currentAttackDirecInfo, animProgressRate);
 		}
+
 	}
 }
 
@@ -273,7 +270,8 @@ void PlayerManager::UserInput(void)
 void PlayerManager::Attack(void)
 {
 	attack_->Attack();						//攻撃
-	isPlayDirecAtCurrentAttack_ = false;	//攻撃が切り替わるためフラグをfalseに
+	isPlaySoundAtCurrentAttack_ = false;	//攻撃が切り替わるためフラグをfalseに
+	isPlayEffectAtCurrentAttack_ = false;
 }
 
 void PlayerManager::SetAttackStateForCharacter(void)
@@ -353,4 +351,30 @@ void PlayerManager::SettingUltimateCamera(void)
 
 	VECTOR cameraocusPos = VAdd(character_->GetPos(), HIGHT_HALF);	//カメラ注視点(キャラクターの半分ほどの高さ)
 	camera.SetFocusPos(cameraocusPos);
+}
+
+void PlayerManager::TryPlaySoundAtCurrentAttack(const PlayerAttack::AttackDirectionInfo& _info, const float _animProgressRate)
+{
+	//進捗が一定以上なら
+	if (_animProgressRate >= _info.details.seTiming) {
+		SoundManager::GetInstance().Play(_info.seName);		//効果音の再生
+		isPlaySoundAtCurrentAttack_ = true;
+	}
+}
+
+void PlayerManager::TryPlayEffectAtCurrentAttack(const PlayerAttack::AttackDirectionInfo& _info, const float _animProgressRate)
+{
+	//進捗が一定以上なら
+	if (_animProgressRate >= _info.details.efcTiming) {
+		//再生開始に必要な情報生成
+		Quaternion efcLocalQua = Quaternion::Euler(Utility::Deg2RadVec(_info.details.efcLocalRot));	//回転情報
+		VECTOR efcPos = VAdd(character_->GetPos(), _info.details.efcLocalPos);						//発生位置
+
+		//発生
+		EffectManager::GetInstance().Play(character_->GetSpeciesName(), _info.efcName,
+			efcPos, character_->GetQua().Mult(efcLocalQua),
+			_info.details.efcScale, _info.details.efcSpeed);]
+
+		isPlayEffectAtCurrentAttack_ = true;
+	}
 }

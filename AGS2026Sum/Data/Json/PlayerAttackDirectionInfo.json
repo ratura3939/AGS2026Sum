@@ -145,7 +145,7 @@
     "efcLocalRot": {
       "x": 0.0,
       "y": 180.0,
-      "z": 0.0
+      "z": 50.0
     },
     "efcTimingRate": 0.0,
     "efcScale": 30.0,

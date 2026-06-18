@@ -72,6 +72,9 @@ private:
 	const bool ReserveAttackSpecial(PlayerAttack::ATTACK_TYPE _type);	//攻撃判定の設定処理(返り値　true=成功/false=失敗)
 	void SettingUltimateCamera(void);							//必殺技のカメラ設定
 
+	void TryPlaySoundAtCurrentAttack(const PlayerAttack::AttackDirectionInfo& _info,const float _animProgressRate);		//効果音再生トライ
+	void TryPlayEffectAtCurrentAttack(const PlayerAttack::AttackDirectionInfo& _info, const float _animProgressRate);	//エフェクト再生トライ
+
 	Game& scene_;	//ゲームクラス参照
 	VECTOR focusPos_;	//注視点
 
@@ -85,6 +88,7 @@ private:
 	bool isEnableSpecial_;		//特殊攻撃の準備への状態遷移を許可するか
 	bool isEnableUltimate_;		//必殺技の発動を許可するか
 
-	bool isPlayDirecAtCurrentAttack_;	//現在の攻撃の演出が完了したか
+	bool isPlaySoundAtCurrentAttack_;	//現在の攻撃の演出が完了したか
+	bool isPlayEffectAtCurrentAttack_;	//現在の攻撃のエフェクトの再生が完了したか
 };
 

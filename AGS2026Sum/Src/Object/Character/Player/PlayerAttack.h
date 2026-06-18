@@ -31,13 +31,13 @@ public:
 	struct AttackDirectionInfo {
 		SoundManager::SOUND_NAME seName;
 		EffectManager::EFFECT_NAME efcName;
-		AttackDirectionData info;
+		AttackDirectionData details;
 	};
 
 	static const int ATTACK_LEVEL_MAX = 3;				//攻撃レベルの最大値
 	static constexpr float ATTACK_CANCEL_RATE = 0.5f;	//攻撃キャンセル可能割合(アニメーションの進行度)
 
-	static constexpr AttackDirectionInfo INIT_ANIM_DIRECTION_INFO = { SoundManager::SOUND_NAME::MAX, EffectManager::EFFECT_NAME::MAX,AttackDirectionData };	//アニメーション演出初期化用
+	static constexpr AttackDirectionInfo INIT_ANIM_DIRECTION_INFO = { SoundManager::SOUND_NAME::MAX, EffectManager::EFFECT_NAME::MAX,{} };	//アニメーション演出初期化用
 
 	PlayerAttack(const VECTOR& _playerPos, const Quaternion& _playerQuaRot);
 	~PlayerAttack(void)override;
