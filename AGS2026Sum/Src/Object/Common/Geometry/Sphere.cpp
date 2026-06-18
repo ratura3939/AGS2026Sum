@@ -11,8 +11,8 @@
 //球
 //***************************************************
 
-Sphere::Sphere(const VECTOR& _pos, const VECTOR& _movedPos, const float _broudRadius, const float _radius)
-	: Geometry(_pos, _movedPos, Quaternion(), _broudRadius),
+Sphere::Sphere(const VECTOR& _pos, const VECTOR& _movedPos, const Quaternion& _rot, const float _broudRadius, const float _radius)
+	: Geometry(_pos, _movedPos, _rot, _broudRadius),
 	radius_(_radius)
 {
 	std::memset(&hitInfo_, 0, sizeof(hitInfo_));

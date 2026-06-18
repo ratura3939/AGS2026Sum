@@ -21,8 +21,11 @@ void EnemyOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 	//攻撃情報
 	const std::weak_ptr<AttackDataBase>& data = AttackManager::GetInstance().GetAttackData(_col);
 
+	//回転情報
+	const Quaternion quaRot = col->GetGeometry().GetColRot();
+
 	//吹っ飛び(相手の向いている方向)
-	VECTOR blowPow = VScale(col->GetGeometry().GetColRot().GetForward(), -BLOW_POWER);
+	VECTOR blowPow = VScale(quaRot.GetForward(), -BLOW_POWER);
 
 	//ダメージ状態
 	parent_.ChangeState(std::make_unique<EnemyDamageState>());

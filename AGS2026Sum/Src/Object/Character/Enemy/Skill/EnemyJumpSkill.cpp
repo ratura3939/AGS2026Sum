@@ -16,6 +16,9 @@ void EnemyJumpSkill::ReadyEnter(EnemyBase& _owner)
 {
 	//初期化
 	attackCnt_ = 0.0f;
+
+	//アニメーション
+	_owner.PlayAnim(L"Jump");
 }
 
 const bool EnemyJumpSkill::ReadyUpdate(EnemyBase& _owner)
@@ -50,9 +53,6 @@ void EnemyJumpSkill::Enter(EnemyBase& _owner)
 	//攻撃範囲設定
 	_owner.SetAttackRadius(RADIUS);
 
-	//アニメーション
-	_owner.PlayAnim(L"Jump");
-
 	//初期化
 	attackCnt_ = 0.0f;
 }
@@ -71,6 +71,12 @@ const bool EnemyJumpSkill::Update(EnemyBase& _owner)
 
 void EnemyJumpSkill::Exit(EnemyBase& _owner)
 {
+	//攻撃コライダの無効化
+	_owner.DisableAttack();
+
+	//攻撃マネージャーから破棄
+	_owner.RemoveAttackCollider();
+
 	//初期化
 	attackCnt_ = 0.0f;
 }

@@ -4,6 +4,7 @@
 #include "EnemySkillBase.h"
 #include "EnemyNormalSkill.h"
 #include "EnemyTackleSkill.h"
+#include "EnemyJumpSkill.h"
 #include "EnemySkillFactory.h"
 
 EnemySkillFactory::EnemySkillFactory(void)
@@ -11,6 +12,7 @@ EnemySkillFactory::EnemySkillFactory(void)
 	//スキル生成
 	createSkill_[L"NormalSkill"] = []()->std::unique_ptr<EnemySkillBase> {return std::make_unique<EnemyNormalSkill>();};
 	createSkill_[L"Tackle"] = []()->std::unique_ptr<EnemySkillBase> {return std::make_unique<EnemyTackleSkill>();};
+	createSkill_[L"Jump"] = []()->std::unique_ptr<EnemySkillBase> {return std::make_unique<EnemyJumpSkill>();};
 }
 
 EnemySkillFactory::~EnemySkillFactory(void)

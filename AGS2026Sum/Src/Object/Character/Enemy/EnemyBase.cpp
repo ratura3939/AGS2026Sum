@@ -193,11 +193,11 @@ void EnemyBase::DoInit(void)
 	DeleteAllColliders();
 
 	//当たり判定の生成
-	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, BROUD_RADIUS, RADIUS);
+	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, quaRot_, BROUD_RADIUS, RADIUS);
 	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY, { Collider::COL_TAG::PLAYER, Collider::COL_TAG::PLAYER_ATTACK ,Collider::COL_TAG::ENEMY });
 
 	//攻撃コライダ
-	geo = std::make_unique<Sphere>(attackPos_, attackPos_, ATTACK_BROUD_RADIUS, ATTACK_RADIUS);
+	geo = std::make_unique<Sphere>(attackPos_, attackPos_, quaRot_, ATTACK_BROUD_RADIUS, ATTACK_RADIUS);
 	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY_ATTACK, { Collider::COL_TAG::PLAYER });
 	DisableColliderAtTag(Collider::COL_TAG::ENEMY_ATTACK);
 }

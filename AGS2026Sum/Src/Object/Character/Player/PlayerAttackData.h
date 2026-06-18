@@ -1,13 +1,13 @@
 #pragma once
 #include<DxLib.h>
+#include"../Attack/AttackDataBase.h"
 #include"../../../Lib/nlohmann/json.hpp"
 
 static const int ATTACK_TYPE_NUM = 2;	//攻撃の種類の数
 
 //jsonから受け取る攻撃データ
-struct AttackData {
+struct AttackData  : public AttackDataBase{
 	float radius = -1.0f;		//大きさ
-	float power = -1.0f;		//攻撃力
 	VECTOR localPos = { -1.0f, -1.0f, -1.0f };   //ローカル座標
 	float animationSpeed = -1.0f;	//アニメーションの再生速度
 	std::array<std::string, ATTACK_TYPE_NUM>nextAttacks;	//次の攻撃(パンチorキックの最大２派生)
