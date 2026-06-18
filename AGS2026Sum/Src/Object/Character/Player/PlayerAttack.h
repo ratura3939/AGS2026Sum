@@ -1,7 +1,9 @@
 #pragma once
 #include "../../Common/ActorBase.h"
 #include"../../../Manager/Decoration/SoundManager.h"
-#include "PlayerAttackData.h"
+#include"../../../Manager/Decoration/EffectManager.h"
+#include "ToJson/PlayerAttackData.h"
+#include "ToJson/PlayerAttackDirectionData.h"
 
 class PlayerAttack :
     public ActorBase
@@ -26,13 +28,16 @@ public:
 		bool isDrawed;		//描画したか
 	};
 
-	struct AttackSeInfo {
+	struct AttackDirectionInfo {
 		SoundManager::SOUND_NAME seName;
-		float timing;
+		EffectManager::EFFECT_NAME efcName;
+		AttackDirectionData info;
 	};
 
 	static const int ATTACK_LEVEL_MAX = 3;				//攻撃レベルの最大値
 	static constexpr float ATTACK_CANCEL_RATE = 0.5f;	//攻撃キャンセル可能割合(アニメーションの進行度)
+
+	static constexpr AttackDirectionInfo INIT_ANIM_DIRECTION_INFO = { SoundManager::SOUND_NAME::MAX, EffectManager::EFFECT_NAME::MAX,AttackDirectionData };	//アニメーション演出初期化用
 
 	PlayerAttack(const VECTOR& _playerPos, const Quaternion& _playerQuaRot);
 	~PlayerAttack(void)override;
@@ -70,7 +75,7 @@ public:
 
 	const AttackAnimationInfo GetCurrentAttackAnimInfo(void)const;	//現在の攻撃アニメーション情報の取得
 	const AttackAnimationInfo GetNextAttackAnimInfo(void)const;		//次の攻撃アニメーション情報の取得
-	const AttackSeInfo GetNextAttackSeInfo(void)const;				//次の攻撃のSEに関する情報の取得
+	const AttackDirectionInfo& GetNextAttackDirectionInfo(void)const;//次の攻撃のSE/エフェクトに関する情報の取得
 
 	const std::string& GetCurrentAttackKnockBackType(void)const;	//現在の攻撃のノックバックの種類の取得
 	
@@ -95,6 +100,7 @@ private:
 	void DrawComboRouteElement(const std::string& _attackKey, const VECTOR& _pos);	//コンボルートの要素の描画
 
 	void LoadAttackData(void);				//攻撃データの読み込み
+	void LoadAttackDirectionData(void);		//演出関連情報の読み込み
 	void LoadAttackSound(void);				//効果音などの読み込み
 	void LoadAttackEffect(void);			//エフェクトの読み込み
 
@@ -112,7 +118,7 @@ private:
 	std::unordered_map<std::string, AttackData> data_;						//攻撃データ
 	std::unordered_map<std::string, std::wstring> animNames_;				//攻撃アニメーション登録名
 	std::unordered_map<std::string, ComboRouteInfo> comboRouteInfos_;		//コンボルート情報
-	std::unordered_map<std::string, SoundManager::SOUND_NAME> seNames_;		//攻撃効果音登録名
+	std::unordered_map<std::string, AttackDirectionInfo> directionNames_;		//攻撃効果音登録名
 
 	AttackData currentData_;		//現在の攻撃データ
 

@@ -63,6 +63,7 @@ public:
 
 		//JSON
 		,PLAYER_ATTACK_DATA_JSON	//プレイヤー攻撃データ
+		,PLAYER_ATTACK_DIRECTION_DATA_JSON	//攻撃演出
 		,NORMAL_ENEMY_PARAMETER		//雑魚敵パラメーター
 		,MIDDLE_BOSS_PARAMETER		//中ボスパラメーター
 

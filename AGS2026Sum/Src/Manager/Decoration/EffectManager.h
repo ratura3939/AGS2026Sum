@@ -44,7 +44,7 @@ public:
 	/// <param name="_qua">角度</param>
 	/// <param name="_size">大きさ</param>
 	/// <param name="_sound">効果音</param>
-	void Play(const std::string& _master, const EFFECT_NAME& _name,
+	void Play(const std::wstring& _master, const EFFECT_NAME& _name,
 		const VECTOR& _pos, const Quaternion& _qua, const float& _size, const float& _speed = 1.0f,
 		const SoundManager::SOUND_NAME& _sndName = SoundManager::SOUND_NAME::MAX);
 
@@ -52,7 +52,7 @@ public:
 	/// エフェクトの再生停止
 	/// </summary>
 	/// <param name="_efc">エフェクト登録名</param>
-	void Stop(const std::string& _master,const EFFECT_NAME& _name);
+	void Stop(const std::wstring& _master,const EFFECT_NAME& _name);
 
 	/// <summary>
 	/// エフェクトの各パラメータ同期
@@ -61,7 +61,7 @@ public:
 	/// <param name="_pos">位置情報</param>
 	/// <param name="_qua">回転情報</param>
 	/// <param name="_size">大きさ</param>
-	void SyncEffect(const std::string& _master,const EFFECT_NAME& _name, const VECTOR& _pos, const Quaternion& _qua, const float& _size,const float& _speed,const int _idx);
+	void SyncEffect(const std::wstring& _master,const EFFECT_NAME& _name, const VECTOR& _pos, const Quaternion& _qua, const float& _size,const float& _speed,const int _idx);
 
 
 	//更新処理
@@ -74,14 +74,14 @@ public:
 	void Destroy(void);
 
 	//エフェクトが再生中かどうか
-	const bool IsEffectPlay(const std::string& _master, const EFFECT_NAME& _name);
+	const bool IsEffectPlay(const std::wstring& _master, const EFFECT_NAME& _name);
 private:
 	//インスタンス用
 	static EffectManager* instance_;
 
 	//エフェクトデータ格納用
 	std::unordered_map<EFFECT_NAME,int> effectRes_;	//初期データ
-	std::map<std::string,std::map<EFFECT_NAME,std::vector<int>>> effectPlay_;//再生データ
+	std::map<std::wstring,std::map<EFFECT_NAME,std::vector<int>>> effectPlay_;//再生データ
 
 	//コンストラクタ＆デストラクタ
 	EffectManager(void);

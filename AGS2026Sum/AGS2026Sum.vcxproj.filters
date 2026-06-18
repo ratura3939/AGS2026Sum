@@ -347,7 +347,7 @@
     <ClInclude Include="Src\Object\Character\Enemy\State\EnemyDeathState.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Character\Player\PlayerAttackData.h">
+    <ClInclude Include="Src\Object\Character\Player\ToJson\PlayerAttackData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Object\Character\Enemy\State\EnemyKnockDownState.h">
@@ -372,6 +372,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Object\Stage\StageManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Object\Character\Player\ToJson\PlayerAttackDirectionData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

@@ -157,21 +157,24 @@ void ResourceManager::ResourcePlayer(void)
 	resourcesMap_.emplace(SRC::KICK_THIRD_PLAYER_SE, res);
 
 	//エフェクト
-	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"PunchThird.efkpkg");
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"PunchThird.efk");
 	resourcesMap_.emplace(SRC::PLAYER_PUNCH_THIRD_EFC, res);
 
-	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"KickThird.efkproj");
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"KickThird.efk");
 	resourcesMap_.emplace(SRC::PLAYER_KICK_THIRD_EFC, res);
 
-	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"PunchSpecial.efkproj");
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"PunchSpecial.efk");
 	resourcesMap_.emplace(SRC::PLAYER_PUNCH_SPECIAL_EFC, res);
 
-	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"Ultimate.efkpkg");
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"Ultimate.efk");
 	resourcesMap_.emplace(SRC::PLAYER_ULTIMATE_EFC, res);
 
 	//JSON
 	res = Resource(Resource::TYPE::JSON, Application::PATH_JSON + L"PlayerAttackData.json");
 	resourcesMap_.emplace(SRC::PLAYER_ATTACK_DATA_JSON, res);
+
+	res = Resource(Resource::TYPE::JSON, Application::PATH_JSON + L"PlayerAttackDirectionInfo.json");
+	resourcesMap_.emplace(SRC::PLAYER_ATTACK_DIRECTION_DATA_JSON, res);
 }
 
 void ResourceManager::ResourceEnemy(void)

@@ -54,6 +54,7 @@ public:
 	static double Deg2RadD(double deg);
 	static float Deg2RadF(float deg);
 	static int Deg2RadI(int deg);
+	static VECTOR Deg2RadVec(VECTOR _degs);
 
 	// 0`360“x‚Ì”ÍˆÍ‚Éû‚ß‚é
 	static double DegIn360(double deg);

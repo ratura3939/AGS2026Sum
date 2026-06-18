@@ -77,8 +77,22 @@ void PlayerAttack::DoInit(void)
 {
 	MakeCollider(std::make_unique<Sphere>(pos_, pos_, currentData_.radius, currentData_.radius), Collider::COL_TAG::PLAYER_ATTACK, { Collider::COL_TAG::ENEMY });	//攻撃用のコライダ生成
 	LoadAttackData();
-	LoadAttackSound();
-	LoadAttackEffect();
+
+	//各種演出用の空を生成
+	directionNames_.emplace(PUNCH_FIRST_KEY, INIT_ANIM_DIRECTION_INFO);	//パンチ初段
+	directionNames_.emplace(PUNCH_SECOND_KEY, INIT_ANIM_DIRECTION_INFO);	//パンチ二段
+	directionNames_.emplace(PUNCH_THIRD_KEY, INIT_ANIM_DIRECTION_INFO);	//パンチ最終段
+	directionNames_.emplace(KICK_FIRST_KEY, INIT_ANIM_DIRECTION_INFO);		//キック初段
+	directionNames_.emplace(KICK_SECOND_KEY, INIT_ANIM_DIRECTION_INFO);	//キック二段
+	directionNames_.emplace(KICK_THIRD_KEY, INIT_ANIM_DIRECTION_INFO);		//キック最終段
+	directionNames_.emplace(SPECIAL_PUNCH_KEY, INIT_ANIM_DIRECTION_INFO);
+	directionNames_.emplace(SPECIAL_KICK_KEY, INIT_ANIM_DIRECTION_INFO);
+	directionNames_.emplace(ULTIMATE_KEY, INIT_ANIM_DIRECTION_INFO);
+	directionNames_.emplace(ULTIMATE_TEST_KEY, INIT_ANIM_DIRECTION_INFO);
+
+	LoadAttackSound();			//SE
+	LoadAttackEffect();			//Effect
+	LoadAttackDirectionData();	//Timing
 
 	colliders_[0]->SetUseThis(false);	//コライダの無効化
 }
@@ -205,17 +219,16 @@ void PlayerAttack::LoadAttackSound(void)
 	sndM.Add(SOUND_TYPE::SE, SOUND_NAME::KICK_THIRD_PLAYER_SE, resM.Load(SOURCE::KICK_THIRD_PLAYER_SE).handleId_);		//キック最終段
 
 	//SE連携
-	seNames_.emplace(PUNCH_FIRST_KEY, SOUND_NAME::PUNCH_FIRST_PLAYER_SE);	//パンチ初段
-	seNames_.emplace(PUNCH_SECOND_KEY, SOUND_NAME::PUNCH_SECOND_PLAYER_SE);	//パンチ二段
-	seNames_.emplace(PUNCH_THIRD_KEY, SOUND_NAME::PUNCH_THIRD_PLAYER_SE);	//パンチ最終段
-	seNames_.emplace(KICK_FIRST_KEY, SOUND_NAME::KICK_FIRST_PLAYER_SE);		//キック初段
-	seNames_.emplace(KICK_SECOND_KEY, SOUND_NAME::KICK_SECOND_PLAYER_SE);	//キック二段
-	seNames_.emplace(KICK_THIRD_KEY, SOUND_NAME::KICK_THIRD_PLAYER_SE);		//キック最終段
-	//特殊攻撃および必殺技のSEは現在未定（入れたら上の読み込みにも追加するように）
-	seNames_.emplace(SPECIAL_PUNCH_KEY, SOUND_NAME::MAX);
-	seNames_.emplace(SPECIAL_KICK_KEY, SOUND_NAME::MAX);
-	seNames_.emplace(ULTIMATE_KEY, SOUND_NAME::MAX);
-	seNames_.emplace(ULTIMATE_TEST_KEY, SOUND_NAME::MAX);
+	directionNames_.at(PUNCH_FIRST_KEY).seName = SOUND_NAME::PUNCH_FIRST_PLAYER_SE;	//パンチ初段
+	directionNames_.at(PUNCH_SECOND_KEY).seName = SOUND_NAME::PUNCH_SECOND_PLAYER_SE;//パンチ二段
+	directionNames_.at(PUNCH_THIRD_KEY).seName = SOUND_NAME::PUNCH_THIRD_PLAYER_SE;	//パンチ最終段
+	directionNames_.at(KICK_FIRST_KEY).seName = SOUND_NAME::KICK_FIRST_PLAYER_SE;	//キック初段
+	directionNames_.at(KICK_SECOND_KEY).seName = SOUND_NAME::KICK_SECOND_PLAYER_SE;	//キック二段
+	directionNames_.at(KICK_THIRD_KEY).seName = SOUND_NAME::KICK_THIRD_PLAYER_SE;	//キック最終段
+	directionNames_.at(SPECIAL_PUNCH_KEY).seName = SOUND_NAME::MAX;	//パンチ特殊
+	directionNames_.at(SPECIAL_KICK_KEY).seName = SOUND_NAME::MAX;	//キック特殊
+	directionNames_.at(ULTIMATE_KEY).seName = SOUND_NAME::MAX;		//必殺技
+	directionNames_.at(ULTIMATE_TEST_KEY).seName = SOUND_NAME::MAX;	//必殺技テスト
 }
 
 void PlayerAttack::LoadAttackEffect(void)
@@ -229,6 +242,17 @@ void PlayerAttack::LoadAttackEffect(void)
 	efcM.Add(EFC_NAME::PLAYER_PUNCH_THIRD, resM.Load(SOURCE::PLAYER_PUNCH_THIRD_EFC).handleId_);
 	efcM.Add(EFC_NAME::PLAYER_PUNCH_SPECIAL, resM.Load(SOURCE::PLAYER_PUNCH_SPECIAL_EFC).handleId_);
 	efcM.Add(EFC_NAME::PLAYER_ULTIMATE, resM.Load(SOURCE::PLAYER_ULTIMATE_EFC).handleId_);
+
+	directionNames_.at(PUNCH_FIRST_KEY).efcName = EFC_NAME::MAX;	//パンチ初段
+	directionNames_.at(PUNCH_SECOND_KEY).efcName = EFC_NAME::MAX;	//パンチ二段
+	directionNames_.at(PUNCH_THIRD_KEY).efcName = EFC_NAME::PLAYER_PUNCH_THIRD;	//パンチ最終段
+	directionNames_.at(KICK_FIRST_KEY).efcName = EFC_NAME::MAX;		//キック初段
+	directionNames_.at(KICK_SECOND_KEY).efcName = EFC_NAME::MAX;	//キック二段
+	directionNames_.at(KICK_THIRD_KEY).efcName = EFC_NAME::PLAYER_KICK_THIRD;		//キック最終段
+	directionNames_.at(SPECIAL_PUNCH_KEY).efcName = EFC_NAME::PLAYER_PUNCH_SPECIAL;	//パンチ特殊
+	directionNames_.at(SPECIAL_KICK_KEY).efcName = EFC_NAME::MAX;	//キック特殊
+	directionNames_.at(ULTIMATE_KEY).efcName = EFC_NAME::PLAYER_ULTIMATE;		//必殺技
+	directionNames_.at(ULTIMATE_TEST_KEY).efcName = EFC_NAME::MAX;	//必殺技テスト
 }
 
 void PlayerAttack::RegisterAttackData(void)
@@ -274,6 +298,21 @@ void PlayerAttack::RegisterComboData(void)
 	comboRouteInfos_.emplace(SPECIAL_KICK_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });	//特殊攻撃(対上方向)
 	comboRouteInfos_.emplace(ULTIMATE_KEY, ComboRouteInfo{ ATTACK_TYPE::ULTIMATE,false,false });		//必殺技
 	comboRouteInfos_.emplace(ULTIMATE_TEST_KEY, ComboRouteInfo{ ATTACK_TYPE::ULTIMATE,false,false });
+}
+
+void PlayerAttack::LoadAttackDirectionData(void)
+{
+	Resource res = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_ATTACK_DATA_JSON);
+	directionNames_.at(PUNCH_FIRST_KEY).timing = data_.at(PUNCH_FIRST_KEY).seTiming;	//パンチ初段
+	directionNames_.at(PUNCH_SECOND_KEY).timing = data_.at(PUNCH_SECOND_KEY).seTiming;	//パンチ二段
+	directionNames_.at(PUNCH_THIRD_KEY).timing = data_.at(PUNCH_THIRD_KEY).seTiming;	//パンチ最終段
+	directionNames_.at(KICK_FIRST_KEY).timing = data_.at(KICK_FIRST_KEY).seTiming;		//キック初段
+	directionNames_.at(KICK_SECOND_KEY).timing = data_.at(KICK_SECOND_KEY).seTiming;	//キック二段
+	directionNames_.at(KICK_THIRD_KEY).timing = data_.at(KICK_THIRD_KEY).seTiming;		//キック最終段
+	directionNames_.at(SPECIAL_PUNCH_KEY).timing = data_.at(SPECIAL_PUNCH_KEY).seTiming;//パンチ特殊
+	directionNames_.at(SPECIAL_KICK_KEY).timing = data_.at(SPECIAL_KICK_KEY).seTiming;	//キック特殊
+	directionNames_.at(ULTIMATE_KEY).timing = data_.at(ULTIMATE_KEY).seTiming;			//必殺技
+	directionNames_.at(ULTIMATE_TEST_KEY).timing = data_.at(ULTIMATE_TEST_KEY).seTiming;//必殺技テスト
 }
 
 void PlayerAttack::ApplyAttackColliderSettings(void)
@@ -430,18 +469,12 @@ const PlayerAttack::AttackAnimationInfo PlayerAttack::GetNextAttackAnimInfo(void
 	return	ret;
 }
 
-const PlayerAttack::AttackSeInfo PlayerAttack::GetNextAttackSeInfo(void) const
+const PlayerAttack::AttackDirectionInfo& PlayerAttack::GetNextAttackDirectionInfo(void) const
 {
 	if (nextAttackName_ == "") {
-		return AttackSeInfo();	//攻撃なし
+		return AttackDirectionInfo();	//攻撃なし
 	}
-	AttackSeInfo ret;
-
-	//使用するSEと発生タイミングを格納
-	ret.seName = seNames_.at(nextAttackName_);
-	ret.timing = data_.at(nextAttackName_).seTiming;
-
-	return ret;
+	return directionNames_.at(currentAttackName_);
 }
 
 const std::string& PlayerAttack::GetCurrentAttackKnockBackType(void) const

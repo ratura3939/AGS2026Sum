@@ -1,6 +1,5 @@
 #pragma once
 #include "../CharacterBase.h"
-#include"../../../Manager/Decoration/SoundManager.h"
 
 class PlayerChara :
     public CharacterBase
@@ -17,9 +16,9 @@ class PlayerChara :
 
 		void SetIsAttack(const bool _isAttack) { isAttack_ = _isAttack; }	//攻撃状態の設定
 
-        void PlayAnim(const std::wstring& _animName, const float _speed = 1.0f,const SoundManager::SOUND_NAME _seName = SoundManager::SOUND_NAME::MAX, const float _seTiming = 0.0f);		//アニメーション再生
-		void ForcePlayAnim(const std::wstring& _animName, const float _speed = 1.0f, const SoundManager::SOUND_NAME _seName = SoundManager::SOUND_NAME::MAX, const float _seTiming = 0.0f);	//アニメーション強制再生
-		void NoBlendPlayAnim(const std::wstring& _animName, const float _speed = 1.0f, const SoundManager::SOUND_NAME _seName = SoundManager::SOUND_NAME::MAX, const float _seTiming = 0.0f);	//アニメーション強制再生
+        void PlayAnim(const std::wstring& _animName, const float _speed = 1.0f);		//アニメーション再生
+		void ForcePlayAnim(const std::wstring& _animName, const float _speed = 1.0f);	//アニメーション強制再生
+		void NoBlendPlayAnim(const std::wstring& _animName, const float _speed = 1.0f);	//アニメーション強制再生
 		void GetAnimTotalTime(const std::wstring& _animName)const;	//アニメーションの総再生時間を取得
 
 		const float GetCurrentAnimationProgressRate(void)const;	//現在のアニメーションの再生進行度を取得

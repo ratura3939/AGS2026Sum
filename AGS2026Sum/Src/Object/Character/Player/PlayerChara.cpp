@@ -23,19 +23,19 @@ PlayerChara::~PlayerChara(void)
 {
 }
 
-void PlayerChara::PlayAnim(const std::wstring& _animName, const float _speed, const SoundManager::SOUND_NAME _seName, const float _seTiming)
+void PlayerChara::PlayAnim(const std::wstring& _animName, const float _speed)
 {
-	animController_->Play(_animName, _speed, AnimationController::AnimationDirectionInfo{ _seName, _seTiming, false });	//アニメーションの新規再生
+	animController_->Play(_animName, _speed);	//アニメーションの新規再生
 }
 
-void PlayerChara::ForcePlayAnim(const std::wstring& _animName, const float _speed, const SoundManager::SOUND_NAME _seName, const float _seTiming)
+void PlayerChara::ForcePlayAnim(const std::wstring& _animName, const float _speed)
 {
-	animController_->ForcePlay(_animName, _speed, AnimationController::AnimationDirectionInfo{ _seName, _seTiming, false });	//アニメーションの強制再生
+	animController_->ForcePlay(_animName, _speed);	//アニメーションの強制再生
 }
 
-void PlayerChara::NoBlendPlayAnim(const std::wstring& _animName, const float _speed, const SoundManager::SOUND_NAME _seName, const float _seTiming)
+void PlayerChara::NoBlendPlayAnim(const std::wstring& _animName, const float _speed)
 {
-	animController_->NoBlendPlay(_animName, _speed, AnimationController::AnimationDirectionInfo{ _seName, _seTiming, false });	//ブレンドなしの強制再生
+	animController_->NoBlendPlay(_animName, _speed);	//ブレンドなしの強制再生
 }
 
 void PlayerChara::GetAnimTotalTime(const std::wstring& _animName) const

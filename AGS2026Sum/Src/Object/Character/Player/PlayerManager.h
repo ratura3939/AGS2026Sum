@@ -5,6 +5,8 @@
 #include"../../../Common/Quaternion.h"
 #include"PlayerAttack.h"
 #include"../CharacterBase.h"
+#include"../../../Manager/Decoration/EffectManager.h"
+#include"../../../Manager/Decoration/SoundManager.h"
 
 class Game;
 class EnemyManager;
@@ -13,6 +15,12 @@ class PlayerChara;
 class PlayerManager
 {
 public:
+	struct AnimationEvent {
+		SoundManager::SOUND_NAME seName;	//効果音
+		EffectManager::EFFECT_NAME efcName;	//エフェクト
+		float timing;						//タイミング
+	};
+
 #pragma region アニメーション登録名
 	static const std::wstring ANIM_IDLE;		//待機
 	static const std::wstring ANIM_RUN;			//移動
@@ -55,11 +63,14 @@ public:
 	void SetIsSpecialRedy(const bool _flag) { isSpecialAttackRedy_ = _flag; }
 
 private:
+	void UpdateAnimationEvent(void);		//アニメーション経過によるイベント
 	void UserInput(void);					//入力受付
+
+	void Attack(void);		//攻撃処理
 	void SetAttackStateForCharacter(void);	//攻撃に関する状態をキャラクターに反映
-	const bool Attack(PlayerAttack::ATTACK_TYPE _type);	//攻撃判定の設定処理(返り値　true=成功/false=失敗)
-	const bool AttackSpecial(PlayerAttack::ATTACK_TYPE _type);	//攻撃判定の設定処理(返り値　true=成功/false=失敗)
-	void SettingUltimateCamera(void);		//必殺技のカメラ設定
+	const bool ReserveAttack(PlayerAttack::ATTACK_TYPE _type);			//攻撃判定の設定処理(返り値　true=成功/false=失敗)
+	const bool ReserveAttackSpecial(PlayerAttack::ATTACK_TYPE _type);	//攻撃判定の設定処理(返り値　true=成功/false=失敗)
+	void SettingUltimateCamera(void);							//必殺技のカメラ設定
 
 	Game& scene_;	//ゲームクラス参照
 	VECTOR focusPos_;	//注視点
@@ -73,5 +84,7 @@ private:
 	bool isSpecialAttackRedy_;	//特殊攻撃の準備ができているか
 	bool isEnableSpecial_;		//特殊攻撃の準備への状態遷移を許可するか
 	bool isEnableUltimate_;		//必殺技の発動を許可するか
+
+	bool isPlayDirecAtCurrentAttack_;	//現在の攻撃の演出が完了したか
 };
 

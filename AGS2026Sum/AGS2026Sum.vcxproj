@@ -225,7 +225,7 @@
     <ClInclude Include="Src\Object\Character\Enemy\EnemyPool.h" />
     <ClInclude Include="Src\Object\Character\Enemy\EnemyGroup.h" />
     <ClInclude Include="Src\Object\Character\Enemy\EnemyBase.h" />
-    <ClInclude Include="Src\Object\Character\Player\PlayerAttackData.h" />
+    <ClInclude Include="Src\Object\Character\Player\ToJson\PlayerAttackData.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerChara.h" />
     <ClInclude Include="Src\Object\Character\CharacterBase.h" />
     <ClInclude Include="Src\Application.h" />
@@ -250,6 +250,7 @@
     <ClInclude Include="Src\Manager\Generic\Resource.h" />
     <ClInclude Include="Src\Manager\Generic\ResourceManager.h" />
     <ClInclude Include="Src\Manager\Generic\SceneManager.h" />
+    <ClInclude Include="Src\Object\Character\Player\ToJson\PlayerAttackDirectionData.h" />
     <ClInclude Include="Src\Object\Common\ActorBase.h" />
     <ClInclude Include="Src\Object\Common\Collider.h" />
     <ClInclude Include="Src\Object\Common\Geometry\Capsule.h" />

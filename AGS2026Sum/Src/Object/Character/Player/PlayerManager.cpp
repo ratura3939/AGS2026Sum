@@ -2,7 +2,6 @@
 #include"../../../Manager/Generic/InputManager.h"
 #include"../../../Manager/Generic/SceneManager.h"
 #include"../../../Manager/Generic/Camera.h"
-#include"../../../Manager/Decoration/SoundManager.h"
 #include"../../../Manager/GameSystem/AttackManager.h"
 #include"../../../Scene/Main/Game.h"
 #include"PlayerChara.h"
@@ -41,6 +40,7 @@ PlayerManager::PlayerManager(Game& _gameScene)
 	,isSpecialAttackRedy_(false)
 	,isEnableSpecial_(true)
 	,isEnableUltimate_(false)
+	,isPlayDirecAtCurrentAttack_(false)
 {
 	character_->Load();		//キャラクターの読み込み
 }
@@ -79,24 +79,7 @@ void PlayerManager::Update(void)
 		attack_->TryEnableAttackCollider(animProgressRate);	//進捗を渡し、発生トライ
 	}
 
-	//アニメーションが終了していたら(攻撃関連のアニメーションに限り発生するもの)
-	if (character_->IsFinishAttackAnimation()) {
-		//攻撃予約関係
-		isEnableAttackInput_ = true;	//攻撃入力を受け付ける状態にする
-		isEnableSpecial_ = true;		//特殊準備を受け入れる
-		isEnableUltimate_ = false;
-
-		bool ret = character_->IsStartNextAttackAnimation();
-
-		if (ret) {
-			attack_->Attack();	//攻撃開始
-		}
-		else {
-			//コンボの終了
-			attack_->FinishAttack();	//攻撃終了処理
-			character_->SetIsAttack(false);	//そうでないときは攻撃状態を解除する
-		}
-	}
+	UpdateAnimationEvent();		//アニメーションと連動した処理
 }
 
 void PlayerManager::Draw(void)
@@ -167,6 +150,53 @@ void PlayerManager::SetAnimSpeedPercent(const float _percent)
 	character_->SetAnimationSpeedPercent(_percent);
 }
 
+void PlayerManager::UpdateAnimationEvent(void)
+{
+	//アニメーションが終了していたら(攻撃関連のアニメーションに限り発生するもの)
+	if (character_->IsFinishAttackAnimation()) {
+		//攻撃予約関係
+		isEnableAttackInput_ = true;	//攻撃入力を受け付ける状態にする
+		isEnableSpecial_ = true;		//特殊準備を受け入れる
+		isEnableUltimate_ = false;
+
+		bool ret = character_->IsStartNextAttackAnimation();
+
+		if (ret) {
+			Attack();
+		}
+		else {
+			//コンボの終了
+			attack_->FinishAttack();	//攻撃終了処理
+			character_->SetIsAttack(false);	//そうでないときは攻撃状態を解除する
+			EffectManager::GetInstance().Stop(character_->GetSpeciesName(), attack_->GetNextAttackDirectionInfo().efcName);
+		}
+	}
+
+	//攻撃のSE・エフェクトの再生管理
+	if (attack_->IsAttacking()) {
+		const PlayerAttack::AttackDirectionInfo& currentAttackDirecInfo = attack_->GetNextAttackDirectionInfo();
+
+		//現在の攻撃の演出がすでに開始されている場合
+		if (isPlayDirecAtCurrentAttack_) {
+			//エフェクトの位置調整
+			//EffectManager::GetInstance().SyncEffect(character_->GetSpeciesName(), currentAttackDirecInfo.efcName, character_->GetPos(), character_->GetQua(), 1.0f)
+		}
+		//開始していない場合
+		else {
+			std::wstring animName = attack_->GetCurrentAttackAnimInfo().name;					//攻撃中の名前を取得
+			float animProgressRate = character_->GetSpecifiedAnimationProgressRate(animName);	//進捗率を取得
+
+			if (animProgressRate >= currentAttackDirecInfo.timing) {
+				SoundManager::GetInstance().Play(currentAttackDirecInfo.seName);
+
+				Quaternion efcLocalQua = Quaternion::Euler(Utility::Deg2RadVec(currentAttackDirecInfo.efcLocalRot));
+				EffectManager::GetInstance().Play(character_->GetSpeciesName(), currentAttackDirecInfo.efcName, VAdd(character_->GetPos(), HIGHT_HALF), character_->GetQua().Mult(efcLocalQua), 30.0f, 1.0f);
+				isPlayDirecAtCurrentAttack_ = true;
+			}
+		}
+	}
+}
+
 void PlayerManager::UserInput(void)
 {
 	InputManager& ins = InputManager::GetInstance();
@@ -182,21 +212,21 @@ void PlayerManager::UserInput(void)
 	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_NORMAL)) {
 		//特殊攻撃準備中の場合
 		if (isSpecialAttackRedy_) {
-			isAttackInput = AttackSpecial(PlayerAttack::ATTACK_TYPE::PUNCH);	//攻撃クラスに特殊攻撃開始を伝え,結果を得る
+			isAttackInput = ReserveAttackSpecial(PlayerAttack::ATTACK_TYPE::PUNCH);	//攻撃クラスに特殊攻撃開始を伝え,結果を得る
 		}
 		//通常時、攻撃を受け付ける状態の場合
 		else if (isEnableAttackInput_) {
-			isAttackInput = Attack(PlayerAttack::ATTACK_TYPE::PUNCH);	//攻撃クラスに攻撃開始を伝え,結果を得る
+			isAttackInput = ReserveAttack(PlayerAttack::ATTACK_TYPE::PUNCH);	//攻撃クラスに攻撃開始を伝え,結果を得る
 		}
 	}
 	else if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_STRONG)) {
 		//特殊攻撃準備中の場合
 		if (isSpecialAttackRedy_&& isEnableSpecial_) {
-			isAttackInput = AttackSpecial(PlayerAttack::ATTACK_TYPE::KICK);	//攻撃クラスに特殊攻撃開始を伝え,結果を得る
+			isAttackInput = ReserveAttackSpecial(PlayerAttack::ATTACK_TYPE::KICK);	//攻撃クラスに特殊攻撃開始を伝え,結果を得る
 		}
 		//通常時、攻撃を受け付ける状態の場合
 		else if (isEnableAttackInput_) {
-			isAttackInput = Attack(PlayerAttack::ATTACK_TYPE::KICK);	//攻撃クラスに攻撃開始を伝え,結果を得る
+			isAttackInput = ReserveAttack(PlayerAttack::ATTACK_TYPE::KICK);	//攻撃クラスに攻撃開始を伝え,結果を得る
 		}
 	}
 
@@ -240,6 +270,12 @@ void PlayerManager::UserInput(void)
 
 }
 
+void PlayerManager::Attack(void)
+{
+	attack_->Attack();						//攻撃
+	isPlayDirecAtCurrentAttack_ = false;	//攻撃が切り替わるためフラグをfalseに
+}
+
 void PlayerManager::SetAttackStateForCharacter(void)
 {
 	auto attackAnimInfo = attack_->GetNextAttackAnimInfo();	//再生するアニメーション名取得
@@ -251,25 +287,25 @@ void PlayerManager::SetAttackStateForCharacter(void)
 
 	character_->SetIsAttack(true);	//攻撃中は攻撃状態にする
 
-	auto seInfo = attack_->GetNextAttackSeInfo();	//SE情報取得
+	auto seInfo = attack_->GetNextAttackDirectionInfo();	//SE情報取得
 
 	//アニメーションの再生
 	if (isNoBlendPlayAnim_) {
-		attack_->Attack();
-		character_->NoBlendPlayAnim(attackAnimInfo.name, attackAnimInfo.speed, seInfo.seName, seInfo.timing);
+		Attack();
+		character_->NoBlendPlayAnim(attackAnimInfo.name, attackAnimInfo.speed);
 		return;
 	}
 
 	if (isForcePlayAnim_) {
-		attack_->Attack();				//攻撃開始(コンボ始動のため即時発動)
-		character_->ForcePlayAnim(attackAnimInfo.name, attackAnimInfo.speed, seInfo.seName, seInfo.timing);	//攻撃アニメを強制再生する
+		Attack();		//攻撃開始(コンボ始動のため即時発動)				
+		character_->ForcePlayAnim(attackAnimInfo.name, attackAnimInfo.speed);	//攻撃アニメを強制再生する
 	}
 	else {
-		character_->PlayAnim(attackAnimInfo.name, attackAnimInfo.speed, seInfo.seName, seInfo.timing);	//攻撃アニメを再生する
+		character_->PlayAnim(attackAnimInfo.name, attackAnimInfo.speed);	//攻撃アニメを再生する
 	}
 }
 
-const bool PlayerManager::Attack(PlayerAttack::ATTACK_TYPE _type)
+const bool PlayerManager::ReserveAttack(PlayerAttack::ATTACK_TYPE _type)
 {
 	bool isSuccess = false;	//処理成功フラグ
 	isForcePlayAnim_ = false;
@@ -293,7 +329,7 @@ const bool PlayerManager::Attack(PlayerAttack::ATTACK_TYPE _type)
 	return isSuccess;
 }
 
-const bool PlayerManager::AttackSpecial(PlayerAttack::ATTACK_TYPE _type)
+const bool PlayerManager::ReserveAttackSpecial(PlayerAttack::ATTACK_TYPE _type)
 {
 	attack_->ReserveAttackSpecial(_type);
 	isForcePlayAnim_ = true;

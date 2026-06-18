@@ -51,6 +51,11 @@ int Utility::Deg2RadI(int deg)
     return deg * Round(DX_PI_F / 180.0f);
 }
 
+VECTOR Utility::Deg2RadVec(VECTOR _degs)
+{
+    return VECTOR(_degs.x * (DX_PI_F / 180.0f), _degs.y * (DX_PI_F / 180.0f), _degs.z * (DX_PI_F / 180.0f));
+}
+
 double Utility::DegIn360(double deg)
 {
     deg = fmod(deg, 360.0);
