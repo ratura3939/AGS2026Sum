@@ -45,10 +45,7 @@ public:
 	void SetChunkIndex(const int _index) { chunkIndex_ = _index; }
 
 	//リーダー座標の取得
-	const VECTOR& GetLeaderPos(void)const;
-
-	//リーダーの設定
-	void SetLeader(const EnemyBase* _leader);
+	const VECTOR& GetGroupPos(void)const;
 
 	//初期座標の取得
 	const VECTOR& GetInitPos(void)const { return initPos_; }
@@ -112,7 +109,7 @@ private:
 	int chunkIndex_;
 
 	//全体関係
-	const EnemyBase* leader_;	//リーダー
+	VECTOR pos_;				//リーダー
 	VECTOR initPos_;			//初期座標
 	VECTOR groupGoalPos_;		//グループの目標座標
 	VECTOR movePow_;			//グループの移動量
@@ -132,9 +129,6 @@ private:
 
 	//死亡した敵の削除
 	void DeleteEnemy(void);
-
-	//リーダーの再設定
-	void ResetLeader(void);
 
 	//ゴール地点に向かう移動量を設定
 	void MoveToGoal(void);

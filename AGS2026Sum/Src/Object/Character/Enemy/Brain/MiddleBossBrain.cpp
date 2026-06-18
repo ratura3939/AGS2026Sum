@@ -30,7 +30,7 @@ void MiddleBossBrain::DecidePriority(void)
 	int order = static_cast<int>(group->GetOrder());
 
 	//グループから一定距離以上離れているならグループに戻る行動を優先する
-	if (Utility::SqrMagnitude(parent_.GetPos(), group->GetLeaderPos()) > EnemyBase::LEAVE_GROUP_DIST * EnemyBase::LEAVE_GROUP_DIST)
+	if (Utility::SqrMagnitude(parent_.GetPos(), group->GetGroupPos()) > EnemyBase::LEAVE_GROUP_DIST * EnemyBase::LEAVE_GROUP_DIST)
 	{
 		//グループに戻る行動を優先する
 		actionPriority_[static_cast<int>(ENEMY_ACTION::RETURN_GROUP)] = PRIORITY;

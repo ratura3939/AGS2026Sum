@@ -73,6 +73,16 @@ const VECTOR& ActorBase::GetPos(void) const
 	return pos_;
 }
 
+void ActorBase::SetMovedPos(const VECTOR& _movedPos)
+{
+	movedPos_ = _movedPos;
+}
+
+const VECTOR& ActorBase::GetMovedPos(void)const
+{
+	return movedPos_;
+}
+
 void ActorBase::SetLocalPos(const VECTOR& _localPos)
 {
 	localPos_ = _localPos;
@@ -116,6 +126,11 @@ const VECTOR& ActorBase::GetDown(void) const
 const VECTOR& ActorBase::GetDir(const VECTOR& _vec) const
 {
 	return quaRot_.PosAxis(_vec);
+}
+
+const std::vector<std::shared_ptr<Collider>>& ActorBase::GetColliders(void)
+{
+	return colliders_;
 }
 
 const float ActorBase::GetPower(void) const

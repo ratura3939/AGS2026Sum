@@ -56,7 +56,7 @@ void ChunkManager::DebugDraw(void) const
 void ChunkManager::AddEnemyGroup(EnemyGroup* _enemyGroup)
 {
 	//敵の座標からセルの座標を求める
-	int index = GetChunkIndex(_enemyGroup->GetLeaderPos());
+	int index = GetChunkIndex(_enemyGroup->GetGroupPos());
 
 	//チャンクに登録
 	chunkEnemyMap_[index].push_back(_enemyGroup);
@@ -81,7 +81,7 @@ void ChunkManager::MoveEnemyGroup(EnemyGroup* _enemyGroup)
 	int oldIndex = _enemyGroup->GetChunkIndex();
 
 	//新しい座標からセルの座標を求める
-	int newIndex = GetChunkIndex(_enemyGroup->GetLeaderPos());
+	int newIndex = GetChunkIndex(_enemyGroup->GetGroupPos());
 
 	//セルが変わっていない場合は何もしない
 	if (oldIndex == newIndex) return;
