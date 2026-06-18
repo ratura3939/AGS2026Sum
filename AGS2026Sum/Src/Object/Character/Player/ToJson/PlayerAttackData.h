@@ -18,12 +18,6 @@ struct AttackData {
 	int vibrateTime = 0;		//振動の長さ
 };
 
-inline void from_json(const nlohmann::json& _data, VECTOR& _vec) {
-	_data.at("x").get_to(_vec.x);
-	_data.at("y").get_to(_vec.y);
-	_data.at("z").get_to(_vec.z);
-}
-
 inline void from_json(const nlohmann::json& _data, AttackData& _attackData) {
 	_data.at("radius").get_to(_attackData.radius);
 	_data.at("power").get_to(_attackData.power);

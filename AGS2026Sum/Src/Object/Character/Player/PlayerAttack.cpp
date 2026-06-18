@@ -303,16 +303,16 @@ void PlayerAttack::RegisterComboData(void)
 void PlayerAttack::LoadAttackDirectionData(void)
 {
 	Resource res = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_ATTACK_DIRECTION_DATA_JSON);
-	directionNames_.at(PUNCH_FIRST_KEY).details = res.GetData<AttackDirectionData>(PUNCH_FIRST_KEY);	//パンチ初段
-	directionNames_.at(PUNCH_SECOND_KEY).details = res.GetData<AttackDirectionData>(PUNCH_SECOND_KEY);	//パンチ二段
-	directionNames_.at(PUNCH_THIRD_KEY).details = res.GetData<AttackDirectionData>(PUNCH_THIRD_KEY);	//パンチ最終段
-	directionNames_.at(KICK_FIRST_KEY).details = res.GetData<AttackDirectionData>(KICK_FIRST_KEY);		//キック初段
-	directionNames_.at(KICK_SECOND_KEY).details = res.GetData<AttackDirectionData>(KICK_SECOND_KEY);	//キック二段
-	directionNames_.at(KICK_THIRD_KEY).details = res.GetData<AttackDirectionData>(KICK_THIRD_KEY);		//キック最終段
-	directionNames_.at(SPECIAL_PUNCH_KEY).details = res.GetData<AttackDirectionData>(SPECIAL_PUNCH_KEY);//パンチ特殊
-	directionNames_.at(SPECIAL_KICK_KEY).details = res.GetData<AttackDirectionData>(SPECIAL_KICK_KEY);	//キック特殊
-	directionNames_.at(ULTIMATE_KEY).details = res.GetData<AttackDirectionData>(ULTIMATE_KEY);			//必殺技
-	directionNames_.at(ULTIMATE_TEST_KEY).details = res.GetData<AttackDirectionData>(ULTIMATE_TEST_KEY);//必殺技テスト
+	directionNames_.at(PUNCH_FIRST_KEY).detail = res.GetData<AttackDirectionData>(PUNCH_FIRST_KEY);	//パンチ初段
+	directionNames_.at(PUNCH_SECOND_KEY).detail = res.GetData<AttackDirectionData>(PUNCH_SECOND_KEY);	//パンチ二段
+	directionNames_.at(PUNCH_THIRD_KEY).detail = res.GetData<AttackDirectionData>(PUNCH_THIRD_KEY);	//パンチ最終段
+	directionNames_.at(KICK_FIRST_KEY).detail = res.GetData<AttackDirectionData>(KICK_FIRST_KEY);		//キック初段
+	directionNames_.at(KICK_SECOND_KEY).detail = res.GetData<AttackDirectionData>(KICK_SECOND_KEY);	//キック二段
+	directionNames_.at(KICK_THIRD_KEY).detail = res.GetData<AttackDirectionData>(KICK_THIRD_KEY);		//キック最終段
+	directionNames_.at(SPECIAL_PUNCH_KEY).detail = res.GetData<AttackDirectionData>(SPECIAL_PUNCH_KEY);//パンチ特殊
+	directionNames_.at(SPECIAL_KICK_KEY).detail = res.GetData<AttackDirectionData>(SPECIAL_KICK_KEY);	//キック特殊
+	directionNames_.at(ULTIMATE_KEY).detail = res.GetData<AttackDirectionData>(ULTIMATE_KEY);			//必殺技
+	directionNames_.at(ULTIMATE_TEST_KEY).detail = res.GetData<AttackDirectionData>(ULTIMATE_TEST_KEY);//必殺技テスト
 }
 
 void PlayerAttack::ApplyAttackColliderSettings(void)

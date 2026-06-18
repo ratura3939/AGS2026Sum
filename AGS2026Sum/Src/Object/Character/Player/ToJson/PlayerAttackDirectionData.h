@@ -12,12 +12,6 @@ struct AttackDirectionData {
 	VECTOR efcLocalRot = { -1.0f, -1.0f, -1.0f };		//ローカル回転
 };
 
-inline void from_json(const nlohmann::json& _data, VECTOR& _vec) {
-	_data.at("x").get_to(_vec.x);
-	_data.at("y").get_to(_vec.y);
-	_data.at("z").get_to(_vec.z);
-}
-
 inline void from_json(const nlohmann::json& _data, AttackDirectionData& _attackDirectionData) {
 	_data.at("seTimingRate").get_to(_attackDirectionData.seTiming);
 	_data.at("efcTimingRate").get_to(_attackDirectionData.efcTiming);

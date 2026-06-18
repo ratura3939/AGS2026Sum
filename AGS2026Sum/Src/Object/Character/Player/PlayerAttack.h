@@ -31,7 +31,7 @@ public:
 	struct AttackDirectionInfo {
 		SoundManager::SOUND_NAME seName;
 		EffectManager::EFFECT_NAME efcName;
-		AttackDirectionData details;
+		AttackDirectionData detail;
 	};
 
 	static const int ATTACK_LEVEL_MAX = 3;				//攻撃レベルの最大値

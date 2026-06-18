@@ -356,7 +356,7 @@ void PlayerManager::SettingUltimateCamera(void)
 void PlayerManager::TryPlaySoundAtCurrentAttack(const PlayerAttack::AttackDirectionInfo& _info, const float _animProgressRate)
 {
 	//進捗が一定以上なら
-	if (_animProgressRate >= _info.details.seTiming) {
+	if (_animProgressRate >= _info.detail.seTiming) {
 		SoundManager::GetInstance().Play(_info.seName);		//効果音の再生
 		isPlaySoundAtCurrentAttack_ = true;
 	}
@@ -365,15 +365,15 @@ void PlayerManager::TryPlaySoundAtCurrentAttack(const PlayerAttack::AttackDirect
 void PlayerManager::TryPlayEffectAtCurrentAttack(const PlayerAttack::AttackDirectionInfo& _info, const float _animProgressRate)
 {
 	//進捗が一定以上なら
-	if (_animProgressRate >= _info.details.efcTiming) {
+	if (_animProgressRate >= _info.detail.efcTiming) {
 		//再生開始に必要な情報生成
-		Quaternion efcLocalQua = Quaternion::Euler(Utility::Deg2RadVec(_info.details.efcLocalRot));	//回転情報
-		VECTOR efcPos = VAdd(character_->GetPos(), _info.details.efcLocalPos);						//発生位置
+		Quaternion efcLocalQua = Quaternion::Euler(Utility::Deg2RadVec(_info.detail.efcLocalRot));	//回転情報
+		VECTOR efcPos = VAdd(character_->GetPos(), _info.detail.efcLocalPos);						//発生位置
 
 		//発生
 		EffectManager::GetInstance().Play(character_->GetSpeciesName(), _info.efcName,
 			efcPos, character_->GetQua().Mult(efcLocalQua),
-			_info.details.efcScale, _info.details.efcSpeed);]
+			_info.detail.efcScale, _info.detail.efcSpeed);
 
 		isPlayEffectAtCurrentAttack_ = true;
 	}

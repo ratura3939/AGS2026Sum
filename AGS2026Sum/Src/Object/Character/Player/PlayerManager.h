@@ -16,25 +16,25 @@ class PlayerManager
 {
 public:
 	struct AnimationEvent {
-		SoundManager::SOUND_NAME seName;	//Œø‰Ê‰¹
-		EffectManager::EFFECT_NAME efcName;	//ƒGƒtƒFƒNƒg
-		float timing;						//ƒ^ƒCƒ~ƒ“ƒO
+		SoundManager::SOUND_NAME seName;	//åŠ¹æœéŸ³
+		EffectManager::EFFECT_NAME efcName;	//ã‚¨ãƒ•ã‚§ã‚¯ãƒˆ
+		float timing;						//ã‚¿ã‚¤ãƒŸãƒ³ã‚°
 	};
 
-#pragma region ƒAƒjƒ[ƒVƒ‡ƒ““o˜^–¼
-	static const std::wstring ANIM_IDLE;		//‘Ò‹@
-	static const std::wstring ANIM_RUN;			//ˆÚ“®
-	static const std::wstring ANIM_DAMAGE;		//ƒ_ƒ[ƒW
-	static const std::wstring ANIM_FIRST_PUNCH;	//‰‰ñƒpƒ“ƒ`
-	static const std::wstring ANIM_SECOND_PUNCH;//“ñ‰ñ–Úƒpƒ“ƒ`
-	static const std::wstring ANIM_THIRD_PUNCH;	//O‰ñ–Úƒpƒ“ƒ`
-	static const std::wstring ANIM_MIDDLE_KICK;	//’†’iƒLƒbƒN(“ñ’i–Ú‚ğ‹­”h¶)
-	static const std::wstring ANIM_HIGH_KICK;	//ã’iƒLƒbƒN(O’i–Ú‚ğ‹­”h¶)
-	static const std::wstring ANIM_FINSH_KICK;	//ÅI’iƒLƒbƒNiƒpƒ“ƒ`O‰ñ–ÚŒãA‹­”h¶j
-	static const std::wstring ANIM_SPECIAL_PUNCH;	//“ÁêUŒ‚iƒpƒ“ƒ`”h¶j
-	static const std::wstring ANIM_SPECIAL_KICK;	//“ÁêUŒ‚iƒLƒbƒN”h¶j
-	static const std::wstring ANIM_ULTIMATE;			//•KE‹Z
-	static const std::wstring ANIM_ULTIMATE_TEST;	//•KE‹Zi‚µ—pj
+#pragma region ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ç™»éŒ²å
+	static const std::wstring ANIM_IDLE;		//å¾…æ©Ÿ
+	static const std::wstring ANIM_RUN;			//ç§»å‹•
+	static const std::wstring ANIM_DAMAGE;		//ãƒ€ãƒ¡ãƒ¼ã‚¸
+	static const std::wstring ANIM_FIRST_PUNCH;	//åˆå›ãƒ‘ãƒ³ãƒ
+	static const std::wstring ANIM_SECOND_PUNCH;//äºŒå›ç›®ãƒ‘ãƒ³ãƒ
+	static const std::wstring ANIM_THIRD_PUNCH;	//ä¸‰å›ç›®ãƒ‘ãƒ³ãƒ
+	static const std::wstring ANIM_MIDDLE_KICK;	//ä¸­æ®µã‚­ãƒƒã‚¯(äºŒæ®µç›®ã‚’å¼·æ´¾ç”Ÿ)
+	static const std::wstring ANIM_HIGH_KICK;	//ä¸Šæ®µã‚­ãƒƒã‚¯(ä¸‰æ®µç›®ã‚’å¼·æ´¾ç”Ÿ)
+	static const std::wstring ANIM_FINSH_KICK;	//æœ€çµ‚æ®µã‚­ãƒƒã‚¯ï¼ˆãƒ‘ãƒ³ãƒä¸‰å›ç›®å¾Œã€å¼·æ´¾ç”Ÿï¼‰
+	static const std::wstring ANIM_SPECIAL_PUNCH;	//ç‰¹æ®Šæ”»æ’ƒï¼ˆãƒ‘ãƒ³ãƒæ´¾ç”Ÿï¼‰
+	static const std::wstring ANIM_SPECIAL_KICK;	//ç‰¹æ®Šæ”»æ’ƒï¼ˆã‚­ãƒƒã‚¯æ´¾ç”Ÿï¼‰
+	static const std::wstring ANIM_ULTIMATE;			//å¿…æ®ºæŠ€
+	static const std::wstring ANIM_ULTIMATE_TEST;	//å¿…æ®ºæŠ€ï¼ˆè©¦ã—ç”¨ï¼‰
 #pragma endregion
 
 	PlayerManager(Game& _gameScene);
@@ -45,50 +45,50 @@ public:
 	void Draw(void);
 	void Release(void);
 
-	//ˆÊ’uE‰ñ“]æ“¾
-	const VECTOR& GetPos(void)const;		//À•W
-	const VECTOR& GetFocusPos(void);		//’‹“_
-	const Quaternion& GetQua(void);			//‰ñ“]
-	//const VECTOR& GetFocusPoint(void);	//’‹“_
+	//ä½ç½®ãƒ»å›è»¢å–å¾—
+	const VECTOR& GetPos(void)const;		//åº§æ¨™
+	const VECTOR& GetFocusPos(void);		//æ³¨è¦–ç‚¹
+	const Quaternion& GetQua(void);			//å›è»¢
+	//const VECTOR& GetFocusPoint(void);	//æ³¨è¦–ç‚¹
 
 	//const bool IsAlive(void)const;
 
-	//Œ»İ‚ÌUŒ‚‚Ì‚Á”ò‚Ñ•ûæ“¾
+	//ç¾åœ¨ã®æ”»æ’ƒã®å¹ã£é£›ã³æ–¹å–å¾—
 	const CharacterBase::KNOCKBACK_TYPE GetCurrentKnockBackType(void)const;
 
-	//ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌXV‘¬“xİ’è
+	//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®æ›´æ–°é€Ÿåº¦è¨­å®š
 	void SetAnimSpeedPercent(const float _percent);
 
-	//“ÁêUŒ‚€”õƒtƒ‰ƒOİ’è
+	//ç‰¹æ®Šæ”»æ’ƒæº–å‚™ãƒ•ãƒ©ã‚°è¨­å®š
 	void SetIsSpecialRedy(const bool _flag) { isSpecialAttackRedy_ = _flag; }
 
 private:
-	void UpdateAnimationEvent(void);		//ƒAƒjƒ[ƒVƒ‡ƒ“Œo‰ß‚É‚æ‚éƒCƒxƒ“ƒg
-	void UserInput(void);					//“ü—Íó•t
+	void UpdateAnimationEvent(void);		//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³çµŒéã«ã‚ˆã‚‹ã‚¤ãƒ™ãƒ³ãƒˆ
+	void UserInput(void);					//å…¥åŠ›å—ä»˜
 
-	void Attack(void);		//UŒ‚ˆ—
-	void SetAttackStateForCharacter(void);	//UŒ‚‚ÉŠÖ‚·‚éó‘Ô‚ğƒLƒƒƒ‰ƒNƒ^[‚É”½‰f
-	const bool ReserveAttack(PlayerAttack::ATTACK_TYPE _type);			//UŒ‚”»’è‚Ìİ’èˆ—(•Ô‚è’l@true=¬Œ÷/false=¸”s)
-	const bool ReserveAttackSpecial(PlayerAttack::ATTACK_TYPE _type);	//UŒ‚”»’è‚Ìİ’èˆ—(•Ô‚è’l@true=¬Œ÷/false=¸”s)
-	void SettingUltimateCamera(void);							//•KE‹Z‚ÌƒJƒƒ‰İ’è
+	void Attack(void);		//æ”»æ’ƒå‡¦ç†
+	void SetAttackStateForCharacter(void);	//æ”»æ’ƒã«é–¢ã™ã‚‹çŠ¶æ…‹ã‚’ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã«åæ˜ 
+	const bool ReserveAttack(PlayerAttack::ATTACK_TYPE _type);			//æ”»æ’ƒåˆ¤å®šã®è¨­å®šå‡¦ç†(è¿”ã‚Šå€¤ã€€true=æˆåŠŸ/false=å¤±æ•—)
+	const bool ReserveAttackSpecial(PlayerAttack::ATTACK_TYPE _type);	//æ”»æ’ƒåˆ¤å®šã®è¨­å®šå‡¦ç†(è¿”ã‚Šå€¤ã€€true=æˆåŠŸ/false=å¤±æ•—)
+	void SettingUltimateCamera(void);							//å¿…æ®ºæŠ€ã®ã‚«ãƒ¡ãƒ©è¨­å®š
 
-	void TryPlaySoundAtCurrentAttack(const PlayerAttack::AttackDirectionInfo& _info,const float _animProgressRate);		//Œø‰Ê‰¹Ä¶ƒgƒ‰ƒC
-	void TryPlayEffectAtCurrentAttack(const PlayerAttack::AttackDirectionInfo& _info, const float _animProgressRate);	//ƒGƒtƒFƒNƒgÄ¶ƒgƒ‰ƒC
+	void TryPlaySoundAtCurrentAttack(const PlayerAttack::AttackDirectionInfo& _info,const float _animProgressRate);		//åŠ¹æœéŸ³å†ç”Ÿãƒˆãƒ©ã‚¤
+	void TryPlayEffectAtCurrentAttack(const PlayerAttack::AttackDirectionInfo& _info, const float _animProgressRate);	//ã‚¨ãƒ•ã‚§ã‚¯ãƒˆå†ç”Ÿãƒˆãƒ©ã‚¤
 
-	Game& scene_;	//ƒQ[ƒ€ƒNƒ‰ƒXQÆ
-	VECTOR focusPos_;	//’‹“_
+	Game& scene_;	//ã‚²ãƒ¼ãƒ ã‚¯ãƒ©ã‚¹å‚ç…§
+	VECTOR focusPos_;	//æ³¨è¦–ç‚¹
 
-	std::shared_ptr<PlayerChara> character_;	//ƒLƒƒƒ‰ƒNƒ^[
-	std::unique_ptr<PlayerAttack> attack_;		//UŒ‚
-	bool isEnableAttackInput_;	//UŒ‚“ü—Í‚ğó‚¯•t‚¯‚éó‘Ô‚©
-	bool isForcePlayAnim_;		//‹­§Ä¶‚³‚¹‚é‚©(UŒ‚‚Ì‰’i‚Ì‚İ‹­§Ä¶)
-	bool isNoBlendPlayAnim_;	//ƒuƒŒƒ“ƒh‚È‚µ‚ÅƒAƒjƒ[ƒVƒ‡ƒ“‚ğÄ¶‚³‚¹‚é‚©
+	std::shared_ptr<PlayerChara> character_;	//ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼
+	std::unique_ptr<PlayerAttack> attack_;		//æ”»æ’ƒ
+	bool isEnableAttackInput_;	//æ”»æ’ƒå…¥åŠ›ã‚’å—ã‘ä»˜ã‘ã‚‹çŠ¶æ…‹ã‹
+	bool isForcePlayAnim_;		//å¼·åˆ¶å†ç”Ÿã•ã›ã‚‹ã‹(æ”»æ’ƒã®åˆæ®µã®ã¿å¼·åˆ¶å†ç”Ÿ)
+	bool isNoBlendPlayAnim_;	//ãƒ–ãƒ¬ãƒ³ãƒ‰ãªã—ã§ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’å†ç”Ÿã•ã›ã‚‹ã‹
 
-	bool isSpecialAttackRedy_;	//“ÁêUŒ‚‚Ì€”õ‚ª‚Å‚«‚Ä‚¢‚é‚©
-	bool isEnableSpecial_;		//“ÁêUŒ‚‚Ì€”õ‚Ö‚Ìó‘Ô‘JˆÚ‚ğ‹–‰Â‚·‚é‚©
-	bool isEnableUltimate_;		//•KE‹Z‚Ì”­“®‚ğ‹–‰Â‚·‚é‚©
+	bool isSpecialAttackRedy_;	//ç‰¹æ®Šæ”»æ’ƒã®æº–å‚™ãŒã§ãã¦ã„ã‚‹ã‹
+	bool isEnableSpecial_;		//ç‰¹æ®Šæ”»æ’ƒã®æº–å‚™ã¸ã®çŠ¶æ…‹é·ç§»ã‚’è¨±å¯ã™ã‚‹ã‹
+	bool isEnableUltimate_;		//å¿…æ®ºæŠ€ã®ç™ºå‹•ã‚’è¨±å¯ã™ã‚‹ã‹
 
-	bool isPlaySoundAtCurrentAttack_;	//Œ»İ‚ÌUŒ‚‚Ì‰‰o‚ªŠ®—¹‚µ‚½‚©
-	bool isPlayEffectAtCurrentAttack_;	//Œ»İ‚ÌUŒ‚‚ÌƒGƒtƒFƒNƒg‚ÌÄ¶‚ªŠ®—¹‚µ‚½‚©
+	bool isPlaySoundAtCurrentAttack_;	//ç¾åœ¨ã®æ”»æ’ƒã®æ¼”å‡ºãŒå®Œäº†ã—ãŸã‹
+	bool isPlayEffectAtCurrentAttack_;	//ç¾åœ¨ã®æ”»æ’ƒã®ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®å†ç”ŸãŒå®Œäº†ã—ãŸã‹
 };
 
