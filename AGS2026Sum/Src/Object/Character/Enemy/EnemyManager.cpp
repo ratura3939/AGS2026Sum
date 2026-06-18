@@ -104,11 +104,8 @@ void EnemyManager::Release(void)
 void EnemyManager::CreateEnemyGroup(const int _createNum)
 {
 	//グループ
-	EnemyGroup* group = enemyGroupPool_->Spawn();
+	EnemyGroup* group = enemyGroupPool_->Spawn(VGet(1000.0f,0.0f,1000.0f));
 	groupSpawnCnt_++;
-
-	//初期化
-	group->Init();
 
 	//グループの初期座標(デバッグ)
 	static VECTOR pos = { 0.0f, 0.0f, 0.0f };
@@ -142,11 +139,8 @@ void EnemyManager::CreateEnemyGroup(const int _createNum)
 void EnemyManager::CreateMiddleBossGroup(const int _createNum)
 {
 	//グループ
-	EnemyGroup* group = enemyGroupPool_->Spawn();
+	EnemyGroup* group = enemyGroupPool_->Spawn(VGet(1000.0f, 0.0f, 1000.0f));
 	groupSpawnCnt_++;
-
-	//初期化
-	group->Init();
 
 	//グループの初期座標(デバッグ)
 	static VECTOR pos = { 0.0f, 0.0f, 0.0f };

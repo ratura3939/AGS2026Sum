@@ -26,7 +26,7 @@ EnemyGroup::~EnemyGroup(void)
 	}
 }
 
-void EnemyGroup::Init(void)
+void EnemyGroup::Init(const VECTOR& _initPos)
 {
 	//初期座標保存
 	initPos_ = { 1000.0f,0.0f,1000.0f };

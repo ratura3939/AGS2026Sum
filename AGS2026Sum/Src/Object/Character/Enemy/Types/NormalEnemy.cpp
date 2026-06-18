@@ -1,6 +1,6 @@
 #include "../../../../pch.h"
 #include "../Brain/EnemyBrain.h"
-#include "../EnemyOnHit.h"
+#include "../OnHit/EnemyOnHit.h"
 #include "NormalEnemy.h"
 
 NormalEnemy::NormalEnemy(void)

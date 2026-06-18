@@ -13,9 +13,6 @@ struct AttackDataBase
 		, JUMP		//ジャンプ
 	};
 
-	//所持コライダ
-	std::weak_ptr<Collider> col;
-
 	//威力
 	float power;
 

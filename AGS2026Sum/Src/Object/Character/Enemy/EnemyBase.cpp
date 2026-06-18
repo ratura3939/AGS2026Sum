@@ -98,10 +98,16 @@ void EnemyBase::SetSkills(std::vector<std::unique_ptr<EnemySkillBase>> _skills)
 	skills_ = std::move(_skills);
 }
 
-void EnemyBase::SetAttackCollider(std::weak_ptr<AttackDataBase> _atkData)
+void EnemyBase::SetAttackCollider(const AttackManager::ATTACK_TYPE& _name)const
 {
-	//TODO：攻撃マネージャーに自身の名前とスキルから持ってきたデータを伝える
-	//AttackManager::GetInstance().AddAttackCollider()
+	//攻撃マネージャーに自身の名前とスキルから持ってきたデータを伝える
+	AttackManager::GetInstance().AddAttackCollider(_name, colliders_[1]);
+}
+
+void EnemyBase::RemoveAttackCollider(void) const
+{
+	//攻撃マネージャーに自身の名前とスキルから持ってきたデータを伝える
+	AttackManager::GetInstance().DeleteAttackCollider(colliders_[1]);
 }
 
 void EnemyBase::SetCurrentSkill(EnemySkillBase* _skill)
@@ -426,6 +432,12 @@ void EnemyBase::SetAttackPos(const VECTOR& _localPos)
 {
 	//攻撃目標座標の設定
 	attackPos_ = VAdd(pos_, quaRot_.PosAxis(_localPos));
+}
+
+void EnemyBase::SetAttackRadius(const float _radius)
+{
+	//半径変更
+	colliders_[1]->GetGeometry<Sphere>()->SetRadius(_radius);
 }
 
 void EnemyBase::EnableAttack(void)

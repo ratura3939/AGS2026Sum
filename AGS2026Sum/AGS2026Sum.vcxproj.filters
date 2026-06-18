@@ -204,6 +204,9 @@
     <ClCompile Include="Src\Object\Common\OnHitBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Object\Character\Enemy\Skill\EnemyTackleSkill.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Common\Fader.h">
@@ -413,7 +416,10 @@
     <ClInclude Include="Src\Object\Character\Attack\AttackDataBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Character\Enemy\Skill\EnemyAttackData.h">
+    <ClInclude Include="Src\Object\Character\Enemy\Skill\EnemySkillsData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Object\Character\Enemy\Skill\EnemyTackleSkill.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

@@ -145,6 +145,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Character\Enemy\Skill\EnemyTackleSkill.cpp" />
     <ClCompile Include="Src\Object\Common\OnHitBase.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\Types\MiddleBoss.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\Types\NormalEnemy.cpp" />
@@ -213,8 +214,9 @@
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Character\Enemy\Skill\EnemyTackleSkill.h" />
     <ClInclude Include="Src\Object\Character\Attack\AttackDataBase.h" />
-    <ClInclude Include="Src\Object\Character\Enemy\Skill\EnemyAttackData.h" />
+    <ClInclude Include="Src\Object\Character\Enemy\Skill\EnemySkillsData.h" />
     <ClInclude Include="Src\Object\Common\OnHitBase.h" />
     <ClInclude Include="Src\Object\Character\Enemy\Types\MiddleBoss.h" />
     <ClInclude Include="Src\Object\Character\Enemy\Types\NormalEnemy.h" />

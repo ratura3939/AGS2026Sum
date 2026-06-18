@@ -68,16 +68,6 @@ void CollisionManager::UpdateColliders(void)
 	DeleteCollider();
 }
 
-void CollisionManager::UseAllert(const AttackManager::ATTACK_NAME& _atkName)
-{
-	//atkMng_.lock()->UseAllertCollision(_atkName);
-}
-
-void CollisionManager::UseAttack(const AttackManager::ATTACK_NAME& _atkName)
-{
-	//atkMng_.lock()->UseAttackCollision(_atkName);
-}
-
 void CollisionManager::CollisionGeometry(std::weak_ptr<Collider> _col1, std::weak_ptr<Collider> _col2)
 {
 	//タイプの確認(双方)

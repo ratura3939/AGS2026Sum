@@ -34,14 +34,16 @@ public:
 		,PLAYER_ULTIMET_TEST_ANIM	//必殺技(テスト用)
 
 		//敵
-		, ENEMY_IDLE_ANIM						//待機
-		, ENEMY_WALK_ANIM						//歩く
-		, ENEMY_RUN_ANIM						//走る
-		, ENEMY_ATTACK_ANIM						//攻撃
-		, ENEMY_BLOW_FIRST_HALF_ANIM			//吹っ飛び前半
-		, ENEMY_BLOW_SECOND_HALF_ANIM			//吹っ飛び後半
-		, ENEMY_BLOW_END_ANIM					//吹っ飛び終了
-		, ENEMY_DEATH_ANIM						//死亡
+		, ENEMY_IDLE_ANIM				//待機
+		, ENEMY_WALK_ANIM				//歩く
+		, ENEMY_RUN_ANIM				//走る
+		, ENEMY_ATTACK_ANIM				//攻撃
+		, ENEMY_TACKLE_ANIM				//突進
+		, ENEMY_JUMP_ANIM				//ジャンプ
+		, ENEMY_BLOW_FIRST_HALF_ANIM	//吹っ飛び前半
+		, ENEMY_BLOW_SECOND_HALF_ANIM	//吹っ飛び後半
+		, ENEMY_BLOW_END_ANIM			//吹っ飛び終了
+		, ENEMY_DEATH_ANIM				//死亡
 
 		//ステージ
 		,STAGE_MDL
@@ -59,6 +61,7 @@ public:
 		,PLAYER_ATTACK_DATA_JSON	//プレイヤー攻撃データ
 		,NORMAL_ENEMY_PARAMETER		//雑魚敵パラメーター
 		,MIDDLE_BOSS_PARAMETER		//中ボスパラメーター
+		,ENEMY_SKILLS_DATA			//敵スキルのデータ
 
 		,MAX
 	};

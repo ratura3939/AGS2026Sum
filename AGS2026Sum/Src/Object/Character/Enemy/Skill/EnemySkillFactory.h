@@ -1,5 +1,6 @@
 #pragma once
 #include<unordered_map>
+#include"EnemySkillsData.h"
 
 class EnemyManager;
 class EnemySkillBase;

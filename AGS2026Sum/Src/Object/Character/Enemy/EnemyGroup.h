@@ -18,7 +18,7 @@ public:
 	~EnemyGroup(void);
 
 	//初期化
-	void Init(void);
+	void Init(const VECTOR& _initPos);
 
 	//更新
 	void Update(void);

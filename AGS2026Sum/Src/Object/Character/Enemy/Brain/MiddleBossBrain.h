@@ -18,6 +18,9 @@ public:
 	//優先度決定
 	void DecidePriority(void)override;
 
+	//攻撃スキル選択
+	void ChoiceAttackSkill(void)override;
+
 private:
 
 	//関数ポインタ

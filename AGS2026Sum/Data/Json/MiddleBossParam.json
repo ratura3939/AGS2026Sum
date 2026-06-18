@@ -45,6 +45,14 @@
         "y": false,
         "z": true
       }
+    },
+    "Tackle": {
+      "isLoop": true,
+      "isLock": false
+    },
+    "Jump": {
+      "isLoop": true,
+      "isLock": false
     }
   },
   "skill": [

@@ -1,6 +1,7 @@
 #pragma once
 #include <array>
 #include <string>
+#include "../../../Manager/GameSystem/AttackManager.h"
 #include "../CharacterBase.h"
 #include "Info/EnemyDefine.h"
 #include "Info/EnemyParameter.h"
@@ -69,7 +70,10 @@ public:
 	void SetSkills(std::vector<std::unique_ptr<EnemySkillBase>> _skills);
 
 	//攻撃マネージャーにコライダを設定
-	void SetAttackCollider(std::weak_ptr<AttackDataBase> _atkData);
+	void SetAttackCollider(const AttackManager::ATTACK_TYPE& _name)const;
+
+	//攻撃マネージャーからコライダを破棄
+	void RemoveAttackCollider(void)const;
 
 	//攻撃設定
 	void SetCurrentSkill(EnemySkillBase* _skill);
@@ -127,6 +131,9 @@ public:
 
 	//攻撃座標の設定
 	void SetAttackPos(const VECTOR& _localPos);
+
+	//攻撃範囲の設定
+	void SetAttackRadius(const float _radius);
 
 	//攻撃の有効化
 	void EnableAttack(void);

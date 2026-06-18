@@ -11,7 +11,6 @@ class EnemyPool;
 class EnemyGroup;
 class EnemyGroupPool;
 class Game;
-class AttackManager;
 class AnimationController;
 
 class EnemyManager
@@ -85,9 +84,6 @@ private:
 
 	//グループ生成回数(攻撃用)
 	int groupSpawnCnt_;
-
-	//攻撃の情報
-	std::array<AttackDataBase>
 
 	//グループと敵の関連付け
 	void Grouping(EnemyGroup* _group, EnemyBase* _enemy);

@@ -2,23 +2,23 @@
 #include "../../../../Manager/Generic/SceneManager.h"
 #include "../../../../Manager/GameSystem/AttackManager.h"
 #include "../EnemyBase.h"
-#include "EnemyNormalSkill.h"
+#include "EnemyTackleSkill.h"
 
-EnemyNormalSkill::EnemyNormalSkill(void)
+EnemyTackleSkill::EnemyTackleSkill(void)
 {
 }
 
-EnemyNormalSkill::~EnemyNormalSkill(void)
+EnemyTackleSkill::~EnemyTackleSkill(void)
 {
 }
 
-void EnemyNormalSkill::ReadyEnter(EnemyBase& _owner)
+void EnemyTackleSkill::ReadyEnter(EnemyBase& _owner)
 {
 	//初期化
 	attackCnt_ = 0.0f;
 }
 
-const bool EnemyNormalSkill::ReadyUpdate(EnemyBase& _owner)
+const bool EnemyTackleSkill::ReadyUpdate(EnemyBase& _owner)
 {
 	//シーンマネージャー
 	auto& scnMng = SceneManager::GetInstance();
@@ -30,13 +30,13 @@ const bool EnemyNormalSkill::ReadyUpdate(EnemyBase& _owner)
 	return false;
 }
 
-void EnemyNormalSkill::ReadyExit(EnemyBase& _owner)
+void EnemyTackleSkill::ReadyExit(EnemyBase& _owner)
 {
 	//初期化
 	attackCnt_ = 0.0f;
 }
 
-void EnemyNormalSkill::Enter(EnemyBase& _owner)
+void EnemyTackleSkill::Enter(EnemyBase& _owner)
 {
 	//攻撃コライダの有効化
 	_owner.EnableAttack();
@@ -51,13 +51,13 @@ void EnemyNormalSkill::Enter(EnemyBase& _owner)
 	_owner.SetAttackRadius(RADIUS);
 
 	//アニメーション
-	_owner.PlayAnim(L"Attack");
+	_owner.PlayNoBlendAnim(L"Tackle", TACKLE_SPEED);
 
 	//初期化
 	attackCnt_ = 0.0f;
 }
 
-const bool EnemyNormalSkill::Update(EnemyBase& _owner)
+const bool EnemyTackleSkill::Update(EnemyBase& _owner)
 {
 	//シーンマネージャー
 	auto& scnMng = SceneManager::GetInstance();
@@ -69,7 +69,7 @@ const bool EnemyNormalSkill::Update(EnemyBase& _owner)
 	return false;
 }
 
-void EnemyNormalSkill::Exit(EnemyBase& _owner)
+void EnemyTackleSkill::Exit(EnemyBase& _owner)
 {
 	//攻撃コライダの無効化
 	_owner.DisableAttack();

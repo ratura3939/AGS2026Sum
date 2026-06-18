@@ -1,0 +1,14 @@
+{
+  "NormalSkill": {
+    "power": 2.0,
+    "element": "Normal"
+  },
+  "Tackle": {
+    "power": 5.0,
+    "element": "Tackle"
+  },
+  "Jump": {
+    "power": 7.0,
+    "element": "Jump"
+  }
+}

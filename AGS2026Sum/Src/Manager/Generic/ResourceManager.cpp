@@ -188,6 +188,14 @@ void ResourceManager::ResourceEnemy(void)
 	res = Resource(Resource::TYPE::MODEL, animPath + L"Attack.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_ATTACK_ANIM, res);
 
+	//突進
+	res = Resource(Resource::TYPE::MODEL, animPath + L"Tackle.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_TACKLE_ANIM, res);
+
+	//ジャンプ
+	res = Resource(Resource::TYPE::MODEL, animPath + L"Jumping.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_JUMP_ANIM, res);
+
 	//吹っ飛び前半
 	res = Resource(Resource::TYPE::MODEL, animPath + L"BlowFirstHalf.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_BLOW_FIRST_HALF_ANIM, res);
@@ -207,6 +215,10 @@ void ResourceManager::ResourceEnemy(void)
 	//パラメーター
 	res = Resource(Resource::TYPE::JSON, Application::PATH_JSON + L"NormalEnemyParam.json");
 	resourcesMap_.emplace(SRC::NORMAL_ENEMY_PARAMETER, res);
+
+	//スキル情報
+	res = Resource(Resource::TYPE::JSON, Application::PATH_JSON + L"EnemySkillsData.json");
+	resourcesMap_.emplace(SRC::ENEMY_SKILLS_DATA, res);
 }
 
 void ResourceManager::ResourceBoss(void)

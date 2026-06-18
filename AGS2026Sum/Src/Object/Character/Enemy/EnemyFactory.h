@@ -34,6 +34,12 @@ private:
 	//敵のパラメータ情報
 	std::array<EnemyParameter, static_cast<int>(ENEMY_TYPE::MAX)> parameters_;
 
+	//敵生成用関数ポインタ
+	using CreateFunc = std::unique_ptr<EnemyBase>(*)(void);
+
+	//敵生成
+	std::array<CreateFunc, static_cast<int>(ENEMY_TYPE::MAX)>create_;
+
 	//モデル等のロード
 	void LoadModelAndAnimation(EnemyBase& _enemy, const ENEMY_TYPE& _type);
 

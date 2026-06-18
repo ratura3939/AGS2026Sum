@@ -2,10 +2,12 @@
 #include "../Info/EnemyDefine.h"
 #include "../State/EnemyNormalState.h"
 #include "../Brain/MiddleBossBrain.h"
+#include "../OnHit/EnemyOnHit.h"
 #include "MiddleBoss.h"
 
 MiddleBoss::MiddleBoss(void)
 	: EnemyBase(ENEMY_TYPE::MIDDLE_BOSS)
+	, guardBreakPoint_(GUARD_BREAK_POINT_MAX)
 {
 }
 

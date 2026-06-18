@@ -1,15 +1,16 @@
 #include "../../../../pch.h"
+#include "../../../../Manager/Generic/ResourceManager.h"
+#include "../../Attack/AttackDataBase.h"
 #include "EnemySkillBase.h"
 #include "EnemyNormalSkill.h"
+#include "EnemyTackleSkill.h"
 #include "EnemySkillFactory.h"
 
 EnemySkillFactory::EnemySkillFactory(void)
 {
 	//スキル生成
-	createSkill_ =
-	{
-		{L"NormalSkill", []()->std::unique_ptr<EnemySkillBase> {return std::make_unique<EnemyNormalSkill>();}}
-	};
+	createSkill_[L"NormalSkill"] = []()->std::unique_ptr<EnemySkillBase> {return std::make_unique<EnemyNormalSkill>();};
+	createSkill_[L"Tackle"] = []()->std::unique_ptr<EnemySkillBase> {return std::make_unique<EnemyTackleSkill>();};
 }
 
 EnemySkillFactory::~EnemySkillFactory(void)

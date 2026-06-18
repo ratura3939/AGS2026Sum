@@ -3,6 +3,8 @@
 #include "../../../Manager/Generic/ResourceManager.h"
 #include "../../../Manager/GameSystem/AnimationController.h"
 #include "Skill/EnemySkillBase.h"
+#include "Types/NormalEnemy.h"
+#include "Types/MiddleBoss.h"
 #include "EnemyManager.h"
 #include "EnemyBase.h"
 #include "EnemyFactory.h"
@@ -39,13 +41,17 @@ namespace
 			{L"Attack", ResourceManager::SRC::ENEMY_ATTACK_ANIM},
 			{L"BlowFirstHalf", ResourceManager::SRC::ENEMY_BLOW_FIRST_HALF_ANIM},
 			{L"BlowSecondHalf", ResourceManager::SRC::ENEMY_BLOW_SECOND_HALF_ANIM},
-			{L"BlowEnd", ResourceManager::SRC::ENEMY_BLOW_END_ANIM}
+			{L"BlowEnd", ResourceManager::SRC::ENEMY_BLOW_END_ANIM},
+			{L"Tackle", ResourceManager::SRC::ENEMY_TACKLE_ANIM},
+			{L"Jump", ResourceManager::SRC::ENEMY_JUMP_ANIM}
 		}
 	};
 }
 
 EnemyFactory::EnemyFactory(void)
 {
+	create_[static_cast<int>(ENEMY_TYPE::NORMAL)] = []()->std::unique_ptr<EnemyBase> {return std::make_unique<NormalEnemy>();};
+	create_[static_cast<int>(ENEMY_TYPE::MIDDLE_BOSS)] = []()->std::unique_ptr<EnemyBase> {return std::make_unique<MiddleBoss>();};
 }
 
 EnemyFactory::~EnemyFactory(void)
@@ -65,7 +71,7 @@ void EnemyFactory::Load(void)
 std::unique_ptr<EnemyBase> EnemyFactory::CreateNewEnemy(const ENEMY_TYPE& _type)
 {
 	//敵の生成
-	std::unique_ptr<EnemyBase> enemy = std::make_unique<EnemyBase>(_type);
+	std::unique_ptr<EnemyBase> enemy = create_[static_cast<int>(_type)]();
 
 	//ロード
 	enemy->Load();
