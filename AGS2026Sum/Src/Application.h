@@ -51,6 +51,9 @@ public:
 	// 解放成功／失敗の判定
 	bool IsReleaseFail(void) const;
 
+	//ゲームの終了
+	void EndGame(void);
+
 	//スクリーンサイズ取得
 	const int GetWindowWidth(void) { return width_; }
 	const int GetWindowHeight(void) { return height_; }
@@ -72,6 +75,8 @@ private:
 
 	int width_;
 	int height_;
+
+	bool isLoop_;	//処理を行い続けるか
 
 	// デフォルトコンストラクタをprivateにして、
 	// 外部から生成できない様にする

@@ -5,15 +5,12 @@
 class PixelMaterial;
 class PixelRenderer;
 
-
-class Title : public SceneBase
+class GameClear :	public SceneBase
 {
-
 public:
-	static constexpr int BUTTON_TYPE_NUM = 2;
 
-	Title(void);
-	~Title(void);
+	GameClear(void);
+	~GameClear(void)override;
 
 	void Init(void) override;
 	void InitUI(void);
@@ -26,12 +23,7 @@ private:
 	void InitSound(void)override;
 	void InitEffect(void)override;
 
-	void ResetUIDirectionParam(void);
-
-#pragma region shader関連
 	std::unique_ptr<PixelMaterial>material_;
 	std::unique_ptr<PixelRenderer>render_;
-#pragma endregion
-
-	bool isSelectGameEnd_;	//終了ボタンを選択しているか
 };
+

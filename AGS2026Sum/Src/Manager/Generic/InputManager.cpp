@@ -389,7 +389,8 @@ InputManager::MoveInput InputManager::GetMoveInput(bool _isDistinguish)
 
 InputManager::InputManager(void)
 {
-	centerMousePos_ = { Application::SCREEN_SIZE_X / 2,Application::SCREEN_SIZE_Y / 2 };
+	auto& app = Application::GetInstance();
+	centerMousePos_ = { app.GetWindowWidth() / 2,app.GetWindowHeight() / 2 };
 	mousePos_ = centerMousePos_;
 	mouseState_ = -1;
 }

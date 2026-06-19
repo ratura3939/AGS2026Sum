@@ -97,7 +97,7 @@ void Application::Run(void)
 	auto& sceneManager = SceneManager::GetInstance();
 
 	// ゲームループ
-	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
+	while (isLoop_)
 	{
 
 		Sleep(1);	//システムに処理を返す
@@ -116,7 +116,6 @@ void Application::Run(void)
 		ScreenFlip();
 
 	}
-
 }
 
 void Application::Destroy(void)
@@ -148,8 +147,14 @@ bool Application::IsReleaseFail(void) const
 	return isReleaseFail_;
 }
 
+void Application::EndGame(void)
+{
+	isLoop_ = false;
+}
+
 Application::Application(void)
 {
 	isInitFail_ = false;
 	isReleaseFail_ = false;
+	isLoop_ = true;
 }

@@ -89,11 +89,13 @@ void Fader::Draw(void)
 		return;
 	case STATE::FADE_OUT:
 	case STATE::FADE_IN:
+		auto& app = Application::GetInstance();
+
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)alpha_);
 		DrawBox(
 			0, 0,
-			Application::SCREEN_SIZE_X,
-			Application::SCREEN_SIZE_Y,
+			app.GetWindowWidth(),
+			app.GetWindowHeight(),
 			0x000000, true);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		break;

@@ -1,6 +1,5 @@
 #include"../../pch.h"
 #include"../../Application.h"
-#include"../../Utility/Utility.h"
 #include"../../Manager/Generic/ResourceManager.h"
 #include"../../Manager/Generic/SceneManager.h"
 #include"../../Manager/Generic/InputManager.h"
@@ -16,70 +15,22 @@
 
 //ローカル定数
 namespace {
-#pragma region UI登録名
-	std::string UI_EXIT_STR = "exit";
-	std::string UI_ALLOW_STR = "allow";
-	std::string UI_LOGO_STR = "Logo";
-	std::string UI_SHADOWLOGO_STR = "shadowLogo";
-	std::string UI_START_STR = "startBtn";
-	std::string UI_CLICK_STR = "click";
-#pragma endregion
-	
-#pragma region 画像調整用
-	//タイトルロゴ	
-	const float LOGO_ALL_DIFF = 450.0f;			//位置調整
-	const float LOGO__ALL_MARGIN_Y = 200.0f;	//上方の隙間調整
-	const float LOGO_NOMAL_EXTEND = 0.8f;		//拡大率
-	const float LOGO_SHADOW_EXTEND = 0.4f;		//拡大率(影絵)
-	const float LOGO_SHADOW_MARGIN_X = 40.0f;	//拡大率(影絵)
+	const float BUTTON_ALPHA_ACC = 8.0f;	//ボタンのα値の加速度
+	const float BUTTON_ALPHA_MAX = 255.0f;	//α最大値
+	const float BUTTON_ALPHA_MIN = 100.0f;	//α最小値
+	const float BUTTON_SCALE = 0.7f;		//大きさ
 
-	//スタートボタン
-	const float START_BTN_MARGIN_Y = 50.0f;		//位置調整
-	const float START_BTN_EXTEND_MAX = 0.7f;	//拡大率(上限)
-	const float START_BTN_EXTEND_MIN = 0.55f;	//拡大率(下限)
-	const float START_BTN_EXTEND_ACC = 0.01f;	//拡大率(加算)
-
-	//「決定してください」
-	const float ENTER_STR_EXTEND = 0.2f;		//拡大率
-#pragma endregion
-
-#pragma region コントローラー選択時
-	//コントローラーアイコン
-	const int DEVICE_SIZE = 300;			//サイズ(正方形)
-
-	//矢印
-	const int ALLOW_ICON_SIZE_X = 199;	//Xサイズ
-	const int ALLOW_ICON_SIZE_Y = 288;	//Yサイズ
-	//矢印の演出
-	const float JUMP_POW_MAX = 0;	//動き幅(上限)
-	const float JUMP_POW_MIN = -60;	//動き幅(下限)
-	const float JUMP_ACC = -5;		//矢印動き用
-
-	//Exit
-	const int EXIT_ICON_SIZE_X = 180;		//Xサイズ
-	const int EXIT_ICON_SIZE_Y = 243;		//Yサイズ
-	const float EXIT_EXTEND_MAX = 1.5f;		//拡大率(上限)
-	const float EXIT_EXTEND_MIN = 0.6f;		//拡大率(下限)
-	const float EXIT_EXTEND_ACC = 0.05f;	//拡大率(加算)
-
-	//隙間調整用
-	const int MARGIN_SIZE = 30;			//隙間の大きさ
-	const float EXTEND_IMG = 1.5f;		//画像拡大率
-#pragma endregion
+	const VECTOR BUTTON_START_RELATIVE_CENTER = { 0.0f,100.0f,0.0f };
+	const VECTOR BUTTON_END_RELATIVE_CENTER = { 0.0f,200.0f,0.0f };
 }
 
 Title::Title(void)
+	:isSelectGameEnd_(false)
 {
-	isSelectDevice_ = false;
-	selectDevice_[static_cast<int>(DEVICE::KEY)] = true;
-	selectDevice_[static_cast<int>(DEVICE::PAD)] = false;
-	selectExit_ = false;
-	postEffectScreen_ = -1;
 }
 
 Title::~Title(void)
 {
-	DeleteGraph(postEffectScreen_);
 }
 
 void Title::Init(void)
@@ -91,30 +42,16 @@ void Title::Init(void)
 	//コントローラー両対応
 	SceneManager::GetInstance().SetController(SceneManager::CNTL::NONE);
 
-	// タイトルロゴ
-	//deviceImgs_[static_cast<int>(DEVICE::KEY)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::KEYBOARD_IMG).handleId_;
-	//deviceImgs_[static_cast<int>(DEVICE::PAD)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::PAD_IMG).handleId_;
-
 	//UI初期化
 	InitUI();
 
-	update_ = &Title::NomalUpdate;
-
 	//レンダーとマテリアル(背景の引き伸ばし用)
-	//material_ = std::make_unique<PixelMaterial>("NomalTexPS.cso", 0);
-	//material_->AddTextureBuf(rsM.Load(ResourceManager::SRC::TITLE_BACK_BTN).handleId_);
+	material_ = std::make_unique<PixelMaterial>(L"NomalTexPS.cso", 0);
+	material_->AddTextureBuf(rsM.Load(ResourceManager::SRC::TITLE_BACK_IMG).handleId_);
 
-	//render_ = std::make_unique<PixelRenderer>(*material_);
-	//render_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
-
-	//postMaterial_ = std::make_unique<PixelMaterial>("Toji.cso", 1);
-	//postMaterial_->AddConstBuf(FLOAT4(0.0f, 0.0f, 0.0f, 0.0f)); //時間用
-	//postMaterial_->AddTextureBuf(SceneManager::GetInstance().GetMainScreen());
-	//step_ = 0.0f;
-	//postRenderer_ = std::make_unique<PixelRenderer>(*postMaterial_);
-	//postRenderer_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
-
-	//postEffectScreen_ = MakeScreen(Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
+	render_ = std::make_unique<PixelRenderer>(*material_);
+	auto& app = Application::GetInstance();
+	render_->MakeSquereVertex({ 0,0 }, { app.GetWindowWidth(), app.GetWindowHeight() });
 
 	//音関係初期化
 	InitSound();
@@ -127,10 +64,28 @@ void Title::Init(void)
 void Title::InitUI(void)
 {
 	UIManager2d& uiM = UIManager2d::GetInstance();
-	ResourceManager& rsM = ResourceManager::GetInstance();
+	ResourceManager& resM = ResourceManager::GetInstance();
+
+	using SOURCE = ResourceManager::SRC;
+
 	using UI_DIREC = UIManager2d::UI_DIRECTION_2D;
 	using UI_GROUP = UIManager2d::UI_DIRECTION_GROUP;
 	using UI_DIMENSION = UIManager2d::UI_DRAW_DIMENSION;
+	using UI_NAME = UIManager2d::UI_NAME;
+
+	//画面中央取得
+	auto& app = Application::GetInstance();
+	const VECTOR screenCenter = { static_cast<float>(app.GetWindowWidth() / 2),static_cast<float>(app.GetWindowHeight() / 2),0.0f };
+
+	//スタートボタン設定
+	uiM.Add(UI_NAME::START_BUTTON, resM.Load(SOURCE::START_BUTTON_IMG).handleId_, UI_DIREC::FLASHING, UI_DIMENSION::DIMENSION_2);	//登録
+	uiM.SetUIInfo(UI_NAME::START_BUTTON, VAdd(screenCenter, BUTTON_START_RELATIVE_CENTER), BUTTON_SCALE);							//基礎設定
+	uiM.SetUIDirectionPram(UI_NAME::START_BUTTON, UI_GROUP::GRADUALLY, BUTTON_ALPHA_ACC, BUTTON_ALPHA_MAX, BUTTON_ALPHA_MIN);		//演出設定
+
+	//スタートボタン設定
+	uiM.Add(UI_NAME::END_BUTTON, resM.Load(SOURCE::END_BUTTON_IMG).handleId_, UI_DIREC::FLASHING, UI_DIMENSION::DIMENSION_2);	//登録
+	uiM.SetUIInfo(UI_NAME::END_BUTTON, VAdd(screenCenter, BUTTON_END_RELATIVE_CENTER), BUTTON_SCALE);							//基礎設定
+	uiM.SetUIDirectionPram(UI_NAME::END_BUTTON, UI_GROUP::GRADUALLY, BUTTON_ALPHA_ACC, BUTTON_ALPHA_MAX, BUTTON_ALPHA_MIN);		//演出設定
 }
 
 void Title::InitSound(void)
@@ -149,10 +104,49 @@ void Title::InitEffect(void)
 {
 }
 
+void Title::ResetUIDirectionParam(void)
+{
+	UIManager2d& uiM = UIManager2d::GetInstance();
+	using UI_GROUP = UIManager2d::UI_DIRECTION_GROUP;
+	using UI_NAME = UIManager2d::UI_NAME;
+
+	uiM.SetAlpha(UI_NAME::START_BUTTON, BUTTON_ALPHA_MAX);
+	uiM.SetAlpha(UI_NAME::END_BUTTON, BUTTON_ALPHA_MAX);
+}
+
 void Title::Update(void)
 {
+	// シーン遷移
+	InputManager& ins = InputManager::GetInstance();
+	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ENTER))
+	{
+		if (isSelectGameEnd_) {
+			Application::GetInstance().EndGame();
+			return;	//ゲーム終了
+		}
 
-	(this->*update_)();
+		//シーン遷移
+		SceneManager::GetInstance().ChangeScene(std::make_shared<Game>());
+	}
+
+	//ボタン選択
+	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::UP) && isSelectGameEnd_) {
+		isSelectGameEnd_ = false;
+		ResetUIDirectionParam();
+	}
+	else if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::DOWN) && !isSelectGameEnd_) {
+		isSelectGameEnd_ = true;
+		ResetUIDirectionParam();
+	}
+
+	//UI更新
+	UIManager2d::UI_NAME directionButton = UIManager2d::UI_NAME::START_BUTTON;
+	if (isSelectGameEnd_) {
+		directionButton = UIManager2d::UI_NAME::END_BUTTON;
+	}
+
+	//動きのあるUIの更新
+	UIManager2d::GetInstance().Update(directionButton);
 	
 }
 
@@ -161,25 +155,10 @@ void Title::Draw(void)
 	auto& uiM = UIManager2d::GetInstance();
 
 	//背景描画
-	//render_->Draw();
+	render_->Draw();
 
-	DrawString(10, 10, L"TitleScene", 0xffffff);
-
-	//コントローラ選択中
-	if (isSelectDevice_) {
-		//重ねてデバイスの描画
-		DrawDevice();
-	}
-
-	// ポストエフェクト
-	//step_ += SceneManager::GetInstance().GetDeltaTime();
-	//SetDrawScreen(postEffectScreen_);
-	//ClearDrawScreen();
-	//postMaterial_->SetTextureBuf(0, SceneManager::GetInstance().GetMainScreen());
-	//postMaterial_->SetConstBuf(0, FLOAT4(step_, 1.0f, 0.0f, 0.0f));
-	//postRenderer_->Draw();
-	//SetDrawScreen(SceneManager::GetInstance().GetMainScreen());
-	//DrawGraph(0,0,postEffectScreen_, true);
+	uiM.Draw(UIManager2d::UI_NAME::START_BUTTON);
+	uiM.Draw(UIManager2d::UI_NAME::END_BUTTON);
 }
 
 void Title::Release(void)
@@ -188,144 +167,4 @@ void Title::Release(void)
 
 void Title::Reset(void)
 {
-}
-
-void Title::NomalUpdate(void)
-{
-	// シーン遷移
-	InputManager& ins = InputManager::GetInstance();
-	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ENTER))
-	{
-		//コントローラー選択へ
-		isSelectDevice_ = true;
-		//update_ = &Title::SelectDeviceUpdate;
-		SceneManager::GetInstance().ChangeScene(std::make_shared<Game>());
-	}
-	//動きのあるUIの更新
-	//UIManager2d::GetInstance().Update(UI_START_STR);
-}
-
-void Title::SelectDeviceUpdate(void)
-{
-	// シーン遷移
-	InputManager& ins = InputManager::GetInstance();
-	UIManager2d& uiM = UIManager2d::GetInstance();
-
-	using COMMAND = InputManager::INPUT_COMMAND;
-
-	//決定
-	if (ins.IsTrigerrDown(COMMAND::ENTER))
-	{
-		//「戻る」なら
-		if (selectExit_) {
-			//タイトルへ戻る
-			isSelectDevice_ = false;
-			update_ = &Title::NomalUpdate;
-		}
-		else {
-			//ここを通るときは必ずどちらか選択されているとき
-		
-			SoundManager& sndM = SoundManager::GetInstance();
-			SceneManager& scM = SceneManager::GetInstance();
-
-			//キーボードが選択されていたら
-			if (selectDevice_[static_cast<int>(DEVICE::KEY)]) {
-				//キーボード操作に設定
-				scM.SetController(SceneManager::CNTL::KEY);
-			}
-			else {
-				//PAD操作に設定
-				scM.SetController(SceneManager::CNTL::PAD);
-			}
-
-			//シーン遷移
-			/*sndM.Stop("NomalBgm");
-			sndM.Play("Enter");*/
-			scM.ChangeScene(std::make_shared<Game>());
-		}
-	}
-
-	//選択関係
-	if (ins.IsTrigerrDown(COMMAND::RIGHT)) {
-		//カーソルをパッドに
-		SetSelectDevice(DEVICE::PAD);
-	}
-	else if(ins.IsTrigerrDown(COMMAND::LEFT)) {
-		//カーソルをキーに
-		SetSelectDevice(DEVICE::KEY);
-	}
-	else if (ins.IsTrigerrDown(COMMAND::DOWN)) {
-		//カーソルを「戻る」に
-		SetSelectDevice(DEVICE::MAX);
-	}
-
-	//上入力は「戻るアイコン」にカーソルがあるときしか判定しない
-	if(ins.IsTrigerrDown(COMMAND::UP) && selectExit_) {
-		SetSelectDevice(DEVICE::KEY);
-	}
-}
-
-void Title::SetSelectDevice(const DEVICE _device)
-{
-	//KEYかPADのとき
-	if (_device != DEVICE::MAX) {
-		int selectDeviceIdx = static_cast<int>(_device);	//選択しているもの(配列の指数用)
-		int notSelectDeviceIdx = fabs(selectDeviceIdx - 1);	//選択していないもの(配列の指数用)/要素が二つのみなので必ず0・１が出力されるように
-
-		//設定
-		selectDevice_[selectDeviceIdx] = true;
-		selectDevice_[notSelectDeviceIdx] = false;
-
-		//UI位置設定
-		//UIManager2d::GetInstance().SetPos(UI_ALLOW_STR, allowPos_[selectDeviceIdx]);
-
-		//「戻る」ではない
-		selectExit_ = false;
-	}
-	else {
-		//全解除
-		selectDevice_[static_cast<int>(DEVICE::KEY)] = false;
-		selectDevice_[static_cast<int>(DEVICE::PAD)] = false;
-
-		//「戻る」である
-		selectExit_ = true;
-	}
-	//カーソル移動音
-	//SoundManager::GetInstance().Play("Cursur");
-	
-}
-
-
-void Title::DrawDevice(void)
-{
-	UIManager2d& uiM = UIManager2d::GetInstance();
-
-	int screenHX = Application::SCREEN_SIZE_X / 2;
-	int screenHY = Application::SCREEN_SIZE_Y / 2;
-
-	//うっすら背景黒くする
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 180);
-	DrawBox(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, 0x000000, true);
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
-	//高さは中央統一
-	int drawX = 0, drawY = 0;
-	drawY = screenHY;
-
-	//キーボード
-	drawX = screenHX - (DEVICE_SIZE * EXTEND_IMG / 2) - (MARGIN_SIZE * EXTEND_IMG);
-	DrawRotaGraph(drawX, drawY, EXTEND_IMG, 0.0f, deviceImgs_[static_cast<int>(DEVICE::KEY)], true);
-
-	//PAD
-	drawX = screenHX + (DEVICE_SIZE * EXTEND_IMG / 2) + (MARGIN_SIZE * EXTEND_IMG);
-	DrawRotaGraph(drawX, drawY, EXTEND_IMG, 0.0f, deviceImgs_[static_cast<int>(DEVICE::PAD)], true);
-
-	//「戻る」が選ばれていないとき
-	//if (!selectExit_) {
-	//	//矢印の描画
-	//	uiM.Draw(UI_ALLOW_STR);
-	//}
-
-	////戻るアイコン
-	//uiM.Draw(UI_EXIT_STR);
 }

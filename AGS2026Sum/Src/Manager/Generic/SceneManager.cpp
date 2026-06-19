@@ -10,6 +10,10 @@
 #include "Camera.h"
 #include "SceneManager.h"
 
+
+#include "../../Scene/Main/GameOver.h"
+#include "../../Scene/Main/GameClear.h"
+
 SceneManager* SceneManager::instance_ = nullptr;
 
 void SceneManager::CreateInstance()

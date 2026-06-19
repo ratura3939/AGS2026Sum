@@ -145,6 +145,8 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Scene\Main\GameClear.cpp" />
+    <ClCompile Include="Src\Scene\Main\GameOver.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\EnemyFactory.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\Skill\EnemyNormalSkill.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\Skill\EnemySkillBase.cpp" />
@@ -207,6 +209,8 @@
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Scene\Main\GameClear.h" />
+    <ClInclude Include="Src\Scene\Main\GameOver.h" />
     <ClInclude Include="Src\Object\Character\Enemy\EnemyFactory.h" />
     <ClInclude Include="Src\Object\Character\Enemy\EnemyParameter.h" />
     <ClInclude Include="Src\Object\Character\Enemy\Skill\EnemyNormalSkill.h" />

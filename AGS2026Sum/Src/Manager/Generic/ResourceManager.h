@@ -17,6 +17,13 @@ public:
 		,ENEMY_MDL			//敵
 		,MIDDLE_BOSS_MDL	//ボス
 
+		//画像
+		,TITLE_BACK_IMG			//タイトル画面
+		,GAME_CLEAR_BACK_IMG	//ゲームクリア画面
+		,GAME_OVER_BACK_IMG		//ゲームオーバー画面
+		,START_BUTTON_IMG		//スタートボタン
+		,END_BUTTON_IMG			//終了ボタン
+
 		//アニメーション
 		//プレイヤー
 		,PLAYER_IDLE_ANIM			//待機
@@ -62,6 +69,7 @@ public:
 		,KICK_THIRD_PLAYER_SE		//キック最終段
 
 		//JSON
+		,TITLE_UI_INFO_JSON			//タイトルUI
 		,PLAYER_ATTACK_DATA_JSON	//プレイヤー攻撃データ
 		,PLAYER_ATTACK_DIRECTION_DATA_JSON	//攻撃演出
 		,NORMAL_ENEMY_PARAMETER		//雑魚敵パラメーター

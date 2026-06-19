@@ -46,7 +46,8 @@ void PauseScene::Init(void)
 	using UI_GROUP = UIManager2d::UI_DIRECTION_GROUP;
 	using UI_DIMENSION = UIManager2d::UI_DRAW_DIMENSION;
 
-	VECTOR screenSize = { static_cast<float>(Application::SCREEN_SIZE_X),static_cast<float>(Application::SCREEN_SIZE_Y),0.0f };
+	auto& app = Application::GetInstance();
+	VECTOR screenSize = { static_cast<float>(app.GetWindowWidth()),static_cast<float>(app.GetWindowHeight()),0.0f };
 	
 	//演出初期化
 	InitSound();
@@ -138,7 +139,8 @@ void PauseScene::Draw(void)
 
 	//追加シーンなのでうっすらと背景であるゲームシーンを映るようにする。
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 / 2);
-	DrawBox(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, 0x000000, true);
+	auto& app = Application::GetInstance();
+	DrawBox(0, 0, app.GetWindowWidth(), app.GetWindowHeight(), 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 

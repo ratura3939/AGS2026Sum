@@ -48,8 +48,20 @@ void ResourceManager::InitTitle(void)
 	Resource res;
 
 	// タイトル
-	//res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "TitleLogo.png");
-	//resourcesMap_.emplace(SRC::TITLE_LOGO, res);
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + L"Title.png");
+	resourcesMap_.emplace(SRC::TITLE_BACK_IMG, res);
+
+	// スタートボタン
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + L"StartButton.png");
+	resourcesMap_.emplace(SRC::START_BUTTON_IMG, res);
+
+	// 終了
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + L"EndButton.png");
+	resourcesMap_.emplace(SRC::END_BUTTON_IMG, res);
+
+	//UIインフォ(α②終了後、UIの情報管理について考える)
+	res = Resource(Resource::TYPE::JSON, Application::PATH_JSON + L"SceneParam/TitleUIDirectionInfo.json");
+	resourcesMap_.emplace(SRC::TITLE_UI_INFO_JSON, res);
 }
 
 void ResourceManager::InitGame(void)
@@ -69,11 +81,17 @@ void ResourceManager::InitGame(void)
 void ResourceManager::InitClear(void)
 {
 	Resource res;	
+
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + L"GameClear.png");
+	resourcesMap_.emplace(SRC::GAME_CLEAR_BACK_IMG, res);
 }
 
 void ResourceManager::InitGameOver(void)
 {
 	Resource res;
+
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + L"GameOver.png");
+	resourcesMap_.emplace(SRC::GAME_OVER_BACK_IMG, res);
 }
 
 void ResourceManager::InitPause(void)

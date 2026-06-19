@@ -10,7 +10,8 @@ class UIManager2d
 public:
 	//UI登録名
 	enum class UI_NAME {
-		TITLE_LOGO	//タイトルロゴ
+		START_BUTTON	//スタートボタン
+		,END_BUTTON		//終了ボタン
 		,MAX
 	};
 
