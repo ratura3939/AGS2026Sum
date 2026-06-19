@@ -52,16 +52,16 @@ void ResourceManager::InitTitle(void)
 	resourcesMap_.emplace(SRC::TITLE_BACK_IMG, res);
 
 	// スタートボタン
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + L"StartButton.png");
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"StartButton.png");
 	resourcesMap_.emplace(SRC::START_BUTTON_IMG, res);
 
 	// 終了
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + L"EndButton.png");
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"EndButton.png");
 	resourcesMap_.emplace(SRC::END_BUTTON_IMG, res);
 
 	//UIインフォ(α②終了後、UIの情報管理について考える)
-	res = Resource(Resource::TYPE::JSON, Application::PATH_JSON + L"SceneParam/TitleUIDirectionInfo.json");
-	resourcesMap_.emplace(SRC::TITLE_UI_INFO_JSON, res);
+	//res = Resource(Resource::TYPE::JSON, Application::PATH_JSON + L"SceneParam/TitleUIDirectionInfo.json");
+	//resourcesMap_.emplace(SRC::TITLE_UI_INFO_JSON, res);
 }
 
 void ResourceManager::InitGame(void)

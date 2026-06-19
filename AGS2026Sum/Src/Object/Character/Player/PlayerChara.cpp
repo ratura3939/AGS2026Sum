@@ -8,6 +8,7 @@
 namespace {
 	const float MOVE_SPEED = 15.0f;	//移動速度
 	const std::wstring ROOT_NAME = L"mixamorig8:Hips";
+	const int HP_MAX = 50;	//体力最大
 }
 
 PlayerChara::PlayerChara(void)
@@ -17,6 +18,7 @@ PlayerChara::PlayerChara(void)
 	,moveSpeed_(MOVE_SPEED)
 	,afterMoveRad_(0.0f)
 {
+	hp_ = HP_MAX;
 }
 
 PlayerChara::~PlayerChara(void)
@@ -136,11 +138,28 @@ void PlayerChara::Attack(void)
 {
 }
 
+void PlayerChara::DrawHP(void)
+{
+	const int boxStart_X = 20;
+	const int boxStart_Y = 500;
+	const int boxEnd_Y = 520;
+	const int boxXDiff = 300;
+
+	const int GLAY = 0x999999;
+	const int RED = 0xff0000;
+	const int GREEN = 0x00ff00;
+
+	DrawBox(boxStart_X, boxStart_Y, boxStart_X + (boxXDiff * HP_MAX / HP_MAX), boxEnd_Y, GLAY, true);
+	DrawBox(boxStart_X, boxStart_Y, boxStart_X + (boxXDiff * hp_ / HP_MAX), boxEnd_Y, GREEN, true);
+}
+
 void PlayerChara::Draw(void)
 {
 	const VECTOR& cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
 	DrawFormatString(10, 30, 0xffffff, L"PlayerPos: %f, %f, %f,\nInputDir: %f, %f, %f\nCameraPos: %f, %f, %f", pos_.x, pos_.y, pos_.z, inputDir_.x, inputDir_.y, inputDir_.z, cameraPos.x, cameraPos.y, cameraPos.z);
 	MV1DrawModel(modelId_);
+
+	DrawHP();
 }
 
 void PlayerChara::Release(void)

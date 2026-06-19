@@ -36,6 +36,8 @@ class PlayerChara :
 		void Move(void)override;			//移動処理
 		void Attack(void)override;			//攻撃処理
 
+		void DrawHP(void);		//ｈｐ描画(α②用の一次的な関数)
+
         VECTOR inputDir_;       //移動入力方向
         float afterMoveRad_;    //最終的なキャラクター角度
 		float moveSpeed_;       //移動速度
