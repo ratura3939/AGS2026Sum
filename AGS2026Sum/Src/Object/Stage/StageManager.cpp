@@ -5,7 +5,7 @@
 #include "StageManager.h"
 
 namespace {
-	const VECTOR INIT_POS = { 0.0f,0.0f,0.0f };
+	const VECTOR INIT_POS = { -2000.0f,0.0f,-1000.0f };
 	const int VS_BUFF_NUM = 1;
 	const int PS_BUFF_NUM = 0;
 
@@ -13,6 +13,8 @@ namespace {
 	const float SCALING_Y = 1.0f;
 
 	const FLOAT4 SCALING_UV = { SCALING_X,SCALING_Y,0.0f,0.0f };
+
+	const VECTOR INIT_SCALE_FOR_TEST = { 3.0f,3.0f,3.0f };
 }
 
 StageManager::StageManager(void)
@@ -45,6 +47,8 @@ void StageManager::DoInit(void)
 
 	material_ = std::make_unique<ModelMaterial>(L"UVScalingVS.cso", VS_BUFF_NUM, L"StdModelPS.cso", PS_BUFF_NUM);
 	material_->AddConstBufVS(SCALING_UV);
+
+	scl_ = INIT_SCALE_FOR_TEST;
 
 	renderer_ = std::make_unique<ModelRenderer>(modelId_, *material_);
 }
