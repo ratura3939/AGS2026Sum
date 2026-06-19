@@ -107,6 +107,14 @@ void EffectManager::Update(void)
 
 void EffectManager::Release(void)
 {
+	for (auto& efcs : effectPlay_) {
+		for (auto& playDatas : efcs.second) {
+			for (auto& data : playDatas.second) {
+				StopEffekseer3DEffect(data);
+			}
+		}
+	}
+
 	//配列内の要素を全て消去
 	//元々のデータはリソースマネージャが持っているのでおｋ。
 	effectRes_.clear();
