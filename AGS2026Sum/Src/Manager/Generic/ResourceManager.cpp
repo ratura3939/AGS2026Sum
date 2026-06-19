@@ -84,6 +84,14 @@ void ResourceManager::InitClear(void)
 
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + L"GameClear.png");
 	resourcesMap_.emplace(SRC::GAME_CLEAR_BACK_IMG, res);
+
+	// 終了
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"EndButton.png");
+	resourcesMap_.emplace(SRC::END_BUTTON_IMG, res);
+
+	// タイトルに戻る
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"BackTitleButton.png");
+	resourcesMap_.emplace(SRC::BACK_TITLE_IMG, res);
 }
 
 void ResourceManager::InitGameOver(void)
@@ -92,6 +100,14 @@ void ResourceManager::InitGameOver(void)
 
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + L"GameOver.png");
 	resourcesMap_.emplace(SRC::GAME_OVER_BACK_IMG, res);
+
+	// 終了
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"EndButton.png");
+	resourcesMap_.emplace(SRC::END_BUTTON_IMG, res);
+
+	// タイトルに戻る
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"BackTitleButton.png");
+	resourcesMap_.emplace(SRC::BACK_TITLE_IMG, res);
 }
 
 void ResourceManager::InitPause(void)

@@ -23,7 +23,11 @@ private:
 	void InitSound(void)override;
 	void InitEffect(void)override;
 
+	void ResetUIDirectionParam(void);
+
 	std::unique_ptr<PixelMaterial>material_;
 	std::unique_ptr<PixelRenderer>render_;
+
+	bool isSelectEndGame_;
 };
 
