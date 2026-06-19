@@ -23,6 +23,8 @@ public:
 		,GAME_OVER_BACK_IMG		//ゲームオーバー画面
 		,START_BUTTON_IMG		//スタートボタン
 		,END_BUTTON_IMG			//終了ボタン
+		,BACK_TITLE_IMG			//タイトルに戻る
+		,BACK_GAME_IMG			//ゲームに戻る
 
 		//アニメーション
 		//プレイヤー

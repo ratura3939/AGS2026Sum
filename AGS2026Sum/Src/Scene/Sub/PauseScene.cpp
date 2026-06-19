@@ -7,29 +7,23 @@
 #include"../../Manager/Decoration/UIManager2d.h"
 #include"../../Scene/Main/Title.h"
 #include"../../Utility/Utility.h"
+
 #include "PauseScene.h"
 
 //ローカル定数
 namespace {
-#pragma region 画像調整用
-	const float BTN_SIZE = 256.0f;			//元画像大きさ
-	const float BTN_DRAW_SIZE = 0.6f;		//ボタン(ゲームに戻る・タイトルに戻る)を描画するときの大きさ倍率
-	const float BIG_BTN_DRAW_SIZE = 0.5f;	//ボタン(操作方法・操作切り替え)を描画するときの大きさ倍率
+	const float BUTTON_ALPHA_ACC = 8.0f;	//ボタンのα値の加速度
+	const float BUTTON_ALPHA_MAX = 255.0f;	//α最大値
+	const float BUTTON_ALPHA_MIN = 100.0f;	//α最小値
+	const float BUTTON_SCALE = 0.7f;		//大きさ
 
-	const float ARRW_DIFF_X = -300.0f;		//矢印の中央描画位置からの差分（X軸）
-	const float ARROW_LOCAL_ROT = -270.0f;	//矢印の画像回転用
-	const float ARROW_ACC = -3.0f;			//矢印の移動量
-	const float ARROW_MOVE_MAX = 0;			//移動量(上限)
-	const float ARROW_MOVE_MIN = -60;		//移動量(下限)
-#pragma endregion
-
-	const int MENU_LIST_NONE_DIFFER = 1;	//列挙にNONEが入っているのでそれの差分用
+	const VECTOR BUTTON_TOGAME_RELATIVE_CENTER = { 0.0f,-100.0f,0.0f };
+	const VECTOR BUTTON_TOTITLE_RELATIVE_CENTER = { 0.0f,100.0f,0.0f };
 }
 
 PauseScene::PauseScene(void)
+	:isSelectBackTitle_(false)
 {
-	drawBtnList_ = {};
-	selectIdx_ = 0;
 }
 
 PauseScene::~PauseScene(void)
@@ -52,6 +46,35 @@ void PauseScene::Init(void)
 	//演出初期化
 	InitSound();
 	InitEffect();
+
+	InitUI();
+}
+
+void PauseScene::InitUI(void)
+{
+	UIManager2d& uiM = UIManager2d::GetInstance();
+	ResourceManager& resM = ResourceManager::GetInstance();
+
+	using SOURCE = ResourceManager::SRC;
+
+	using UI_DIREC = UIManager2d::UI_DIRECTION_2D;
+	using UI_GROUP = UIManager2d::UI_DIRECTION_GROUP;
+	using UI_DIMENSION = UIManager2d::UI_DRAW_DIMENSION;
+	using UI_NAME = UIManager2d::UI_NAME;
+
+	//画面中央取得
+	auto& app = Application::GetInstance();
+	const VECTOR screenCenter = { static_cast<float>(app.GetWindowWidth() / 2),static_cast<float>(app.GetWindowHeight() / 2),0.0f };
+
+	//ゲームに戻るボタン設定
+	uiM.Add(UI_NAME::BACK_GAME_BUTTON, resM.Load(SOURCE::BACK_GAME_IMG).handleId_, UI_DIREC::FLASHING, UI_DIMENSION::DIMENSION_2);	//登録
+	uiM.SetUIInfo(UI_NAME::BACK_GAME_BUTTON, VAdd(screenCenter, BUTTON_TOGAME_RELATIVE_CENTER), 0.4f);							//基礎設定
+	uiM.SetUIDirectionPram(UI_NAME::BACK_GAME_BUTTON, UI_GROUP::GRADUALLY, BUTTON_ALPHA_ACC, BUTTON_ALPHA_MAX, BUTTON_ALPHA_MIN);		//演出設定
+
+	//対等に戻るボタン設定
+	uiM.Add(UI_NAME::BACK_TITLE_BUTTON, resM.Load(SOURCE::BACK_TITLE_IMG).handleId_, UI_DIREC::FLASHING, UI_DIMENSION::DIMENSION_2);	//登録
+	uiM.SetUIInfo(UI_NAME::BACK_TITLE_BUTTON, VAdd(screenCenter, BUTTON_TOTITLE_RELATIVE_CENTER), BUTTON_SCALE);							//基礎設定
+	uiM.SetUIDirectionPram(UI_NAME::BACK_TITLE_BUTTON, UI_GROUP::GRADUALLY, BUTTON_ALPHA_ACC, BUTTON_ALPHA_MAX, BUTTON_ALPHA_MIN);		//演出設定
 }
 
 void PauseScene::InitSound(void)
@@ -68,69 +91,54 @@ void PauseScene::Update(void)
 {
 	//入力受付
 	InputUser();
-
-	//UI更新
-	//UIManager2d::GetInstance().Update(RIGHT_ARROW);
 }
 
 void PauseScene::InputUser(void)
 {
 	SceneManager& scM = SceneManager::GetInstance();
-	InputManager& inpM = InputManager::GetInstance();
+	InputManager& ins = InputManager::GetInstance();
 
 	using COMMAND = InputManager::INPUT_COMMAND;
 
-	//ポーズボタンを押されたら
-	if (inpM.IsTrigerrDown(COMMAND::PAUSE)) {
-		//シーン移動(1つ前のシーン＝ゲームシーンに戻る)
-		scM.PopScene();
-	}
-
-	//決定入力
-	if (inpM.IsTrigerrDown(COMMAND::ENTER,false)) {
-
-		//矢印位置から処理を選択
-		switch (static_cast<MENU_ITEM>(selectIdx_ + MENU_LIST_NONE_DIFFER)) {
-		case MENU_ITEM::BACK_GAME:
-			//シーンをポップ
-			scM.PopScene();
-			break;
-
-		case MENU_ITEM::CONFIG:
-			//操作方法シーンの追加
-			//scM.PushScene(std::make_shared<KeyConfigScene>());
-			break;
-
-		case MENU_ITEM::SWITCH_CNTL:
-			//操作切り換えシーンの追加
-			//scM.PushScene(std::make_shared<SwitchControllerScene>());
-			break;
-
-		case MENU_ITEM::BACK_TITLE:
-			//タイトルシーンに変更
-			scM.ChangeScene(std::make_shared<Title>());
-			break;
+	if (ins.IsTrigerrDown(COMMAND::ENTER))
+	{
+		if (isSelectBackTitle_) {
+			//シーン遷移
+			SceneManager::GetInstance().ChangeScene(std::make_shared<Title>());
+			return;
 		}
+
+		//ポップして前のシーンに戻る
+		SceneManager::GetInstance().PopScene();
 	}
 
-	//上入力
-	if (inpM.IsTrigerrDown(COMMAND::UP,false)) {
-		//Idxの減少。範囲外にならないよう調整
-		selectIdx_--;
-		selectIdx_ = (selectIdx_ + drawBtnList_.size()) % drawBtnList_.size();
-
-		//矢印の描画位置設定
-		//UIManager2d::GetInstance().SetPos(RIGHT_ARROW, GetDrawPosOfArrow());
+	//ボタン選択
+	if (ins.IsTrigerrDown(COMMAND::UP) && isSelectBackTitle_) {
+		isSelectBackTitle_ = false;
+		ResetUIDirectionParam();
 	}
-	//下入力
-	else if (inpM.IsTrigerrDown(COMMAND::DOWN,false)) {
-		//Idxの増加。範囲外にならないよう調整
-		selectIdx_++;
-		selectIdx_ = selectIdx_ % drawBtnList_.size();
-
-		//矢印の描画位置設定
-		//UIManager2d::GetInstance().SetPos(RIGHT_ARROW, GetDrawPosOfArrow());
+	else if (ins.IsTrigerrDown(COMMAND::DOWN) && !isSelectBackTitle_) {
+		isSelectBackTitle_ = true;
+		ResetUIDirectionParam();
 	}
+
+	//UI更新
+	UIManager2d::UI_NAME directionButton = UIManager2d::UI_NAME::BACK_GAME_BUTTON;
+	if (isSelectBackTitle_) {
+		directionButton = UIManager2d::UI_NAME::BACK_TITLE_BUTTON;
+	}
+
+	//動きのあるUIの更新
+	UIManager2d::GetInstance().Update(directionButton);
+}
+
+void PauseScene::ResetUIDirectionParam(void)
+{
+	UIManager2d& uiM = UIManager2d::GetInstance();
+	using UI_NAME = UIManager2d::UI_NAME;
+
+	uiM.SetAlpha(UI_NAME::BACK_GAME_BUTTON, BUTTON_ALPHA_MAX);
+	uiM.SetAlpha(UI_NAME::BACK_TITLE_BUTTON, BUTTON_ALPHA_MAX);
 }
 
 void PauseScene::Draw(void)
@@ -142,6 +150,9 @@ void PauseScene::Draw(void)
 	auto& app = Application::GetInstance();
 	DrawBox(0, 0, app.GetWindowWidth(), app.GetWindowHeight(), 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+	uiM.Draw(UIManager2d::UI_NAME::BACK_GAME_BUTTON);
+	uiM.Draw(UIManager2d::UI_NAME::BACK_TITLE_BUTTON);
 }
 
 void PauseScene::Release(void)
@@ -155,15 +166,4 @@ void PauseScene::Reset(void)
 	SoundManager& sndM = SoundManager::GetInstance();
 	sndM.AdjustVolume(SoundManager::TYPE::BGM, 0);	//前シーンで流れているBGMの音量を０に
 	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FIXED_POINT);
-}
-
-const VECTOR PauseScene::GetDrawPosOfArrow(void) const
-{
-	////選択されているボタンの位置
-	//VECTOR arrowPos = UIManager2d::GetInstance().GetDrawPos(drawBtnList_[selectIdx_]);
-	////描画位置はボタンの左側(差分を足す)
-	//arrowPos.x += ARRW_DIFF_X;
-	//return arrowPos;
-
-	return Utility::VECTOR_ONE;
 }

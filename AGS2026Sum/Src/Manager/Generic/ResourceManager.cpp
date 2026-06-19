@@ -97,6 +97,14 @@ void ResourceManager::InitGameOver(void)
 void ResourceManager::InitPause(void)
 {
 	Resource res;
+
+	// タイトルに戻る
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"BackTitleButton.png");
+	resourcesMap_.emplace(SRC::BACK_TITLE_IMG, res);
+
+	// ゲームに戻る
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"BackGameButton.png");
+	resourcesMap_.emplace(SRC::BACK_GAME_IMG, res);
 }
 
 void ResourceManager::ResourcePlayer(void)

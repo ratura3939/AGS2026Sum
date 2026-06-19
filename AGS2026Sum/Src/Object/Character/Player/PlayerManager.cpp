@@ -4,6 +4,7 @@
 #include"../../../Manager/Generic/Camera.h"
 #include"../../../Manager/GameSystem/AttackManager.h"
 #include"../../../Scene/Main/Game.h"
+#include"../../../Scene/Sub/PauseScene.h"
 #include"PlayerChara.h"
 #include "PlayerAttack.h"
 #include "PlayerManager.h"
@@ -197,6 +198,12 @@ void PlayerManager::UpdateAnimationEvent(void)
 void PlayerManager::UserInput(void)
 {
 	InputManager& ins = InputManager::GetInstance();
+
+	//ポーズシーン
+	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::PAUSE)) {
+		//シーン追加(一つ次へ)
+		SceneManager::GetInstance().PushScene(std::make_shared<PauseScene>());
+	}
 
 #pragma region 攻撃
 	bool isAttackInput = false;

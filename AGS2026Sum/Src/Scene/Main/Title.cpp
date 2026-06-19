@@ -107,7 +107,6 @@ void Title::InitEffect(void)
 void Title::ResetUIDirectionParam(void)
 {
 	UIManager2d& uiM = UIManager2d::GetInstance();
-	using UI_GROUP = UIManager2d::UI_DIRECTION_GROUP;
 	using UI_NAME = UIManager2d::UI_NAME;
 
 	uiM.SetAlpha(UI_NAME::START_BUTTON, BUTTON_ALPHA_MAX);

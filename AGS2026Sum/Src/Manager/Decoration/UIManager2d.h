@@ -12,6 +12,8 @@ public:
 	enum class UI_NAME {
 		START_BUTTON	//スタートボタン
 		,END_BUTTON		//終了ボタン
+		,BACK_TITLE_BUTTON	//タイトルに戻る
+		,BACK_GAME_BUTTON	//ゲームに戻る
 		,MAX
 	};
 

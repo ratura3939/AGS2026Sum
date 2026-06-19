@@ -8,10 +8,7 @@ class PixelRenderer;
 
 class Title : public SceneBase
 {
-
 public:
-	static constexpr int BUTTON_TYPE_NUM = 2;
-
 	Title(void);
 	~Title(void);
 
