@@ -1,15 +1,15 @@
 #pragma once
 #include "EnemySkillBase.h"
 
-class EnemyNormalSkill : public EnemySkillBase
+class EnemyJumpSkill : public EnemySkillBase
 {
 public:
 
 	//コンストラクタ
-	EnemyNormalSkill(void);
+	EnemyJumpSkill(void);
 
 	//デストラクタ
-	~EnemyNormalSkill(void)override;
+	~EnemyJumpSkill(void)override;
 
 	//準備開始
 	void ReadyEnter(EnemyBase& _owner)override;
@@ -32,13 +32,13 @@ public:
 private:
 
 	//攻撃時間
-	static constexpr float ATTACK_READY_TIME = 1.0f;
-	static constexpr float ATTACK_TIME = 2.0f;
+	static constexpr float ATTACK_READY_TIME = 3.0f;
+	static constexpr float ATTACK_TIME = 0.7f;
 
 	//攻撃の相対座標
-	static constexpr VECTOR ATTACK_LOCAL_POS = { 0.0f, 0.0f, -30.0f };
+	static constexpr VECTOR ATTACK_LOCAL_POS = { 0.0f, 0.0f, 0.0f };
 
 	//攻撃の半径
-	static constexpr float RADIUS = 100.0f;
+	static constexpr float RADIUS = 1000.0f;
 };
 

@@ -1,8 +1,6 @@
 #include"../../pch.h"
 #include"../../Utility/Utility.h"
-#include"../../../Manager/Generic/ResourceManager.h"
 #include"../../../Manager/GameSystem/ChunkManager.h"
-#include"Info/EnemyParameter.h"
 #include"Info/EnemyDefine.h"
 #include"Pool/EnemyGroupPool.h"
 #include"Pool/EnemyPool.h"
@@ -12,7 +10,6 @@
 
 EnemyManager::EnemyManager(const VECTOR& _pPos)
 	:playerPos_(_pPos)
-	,groupSpawnCnt_(0)
 {
 	//チャンク内の敵の管理用のリストにとりあえず初期確保数分の容量を確保しておく(確保・削除を減らすため)
 	chunkGroups_.reserve(INIT_CHUNK_GROUP_NUM);
@@ -105,7 +102,6 @@ void EnemyManager::CreateEnemyGroup(const int _createNum)
 {
 	//グループ
 	EnemyGroup* group = enemyGroupPool_->Spawn(VGet(1000.0f,0.0f,1000.0f));
-	groupSpawnCnt_++;
 
 	//グループの初期座標(デバッグ)
 	static VECTOR pos = { 0.0f, 0.0f, 0.0f };
@@ -126,9 +122,6 @@ void EnemyManager::CreateEnemyGroup(const int _createNum)
 		enemy->InitWithGroup();
 	}
 
-	//リーダー設定
-	group->SetLeader(enemy);
-
 	//座標リセット
 	group->ResetPos();
 
@@ -140,7 +133,6 @@ void EnemyManager::CreateMiddleBossGroup(const int _createNum)
 {
 	//グループ
 	EnemyGroup* group = enemyGroupPool_->Spawn(VGet(1000.0f, 0.0f, 1000.0f));
-	groupSpawnCnt_++;
 
 	//グループの初期座標(デバッグ)
 	static VECTOR pos = { 0.0f, 0.0f, 0.0f };
@@ -152,7 +144,6 @@ void EnemyManager::CreateMiddleBossGroup(const int _createNum)
 
 	//中ボス
 	enemy = enemyPool_->Spawn(ENEMY_TYPE::MIDDLE_BOSS);
-	group->SetLeader(enemy);
 
 	//グループのチャンク管理用の添え字を設定
 	ChunkManager::GetInstance().AddEnemyGroup(group);
@@ -279,7 +270,7 @@ void EnemyManager::DecideOrderByDistance(void)
 		if (group->IsEmpty())continue;
 
 		//プレイヤーからの距離を取得
-		float sqrDist = Utility::SqrMagnitude(group->GetLeaderPos(), playerPos_);
+		float sqrDist = Utility::SqrMagnitude(group->GetGroupPos(), playerPos_);
 
 		//プレイヤーから一定距離以上離れているグループは無視する
 		if (sqrDist < PLAYER_ATTACK_RADIUS * PLAYER_ATTACK_RADIUS)

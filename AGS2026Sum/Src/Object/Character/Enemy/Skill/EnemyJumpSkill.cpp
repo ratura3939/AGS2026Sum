@@ -2,23 +2,26 @@
 #include "../../../../Manager/Generic/SceneManager.h"
 #include "../../../../Manager/GameSystem/AttackManager.h"
 #include "../EnemyBase.h"
-#include "EnemyTackleSkill.h"
+#include "EnemyJumpSkill.h"
 
-EnemyTackleSkill::EnemyTackleSkill(void)
+EnemyJumpSkill::EnemyJumpSkill(void)
 {
 }
 
-EnemyTackleSkill::~EnemyTackleSkill(void)
+EnemyJumpSkill::~EnemyJumpSkill(void)
 {
 }
 
-void EnemyTackleSkill::ReadyEnter(EnemyBase& _owner)
+void EnemyJumpSkill::ReadyEnter(EnemyBase& _owner)
 {
 	//初期化
 	attackCnt_ = 0.0f;
+
+	//アニメーション
+	_owner.PlayAnim(L"Jump");
 }
 
-const bool EnemyTackleSkill::ReadyUpdate(EnemyBase& _owner)
+const bool EnemyJumpSkill::ReadyUpdate(EnemyBase& _owner)
 {
 	//シーンマネージャー
 	auto& scnMng = SceneManager::GetInstance();
@@ -30,19 +33,19 @@ const bool EnemyTackleSkill::ReadyUpdate(EnemyBase& _owner)
 	return false;
 }
 
-void EnemyTackleSkill::ReadyExit(EnemyBase& _owner)
+void EnemyJumpSkill::ReadyExit(EnemyBase& _owner)
 {
 	//初期化
 	attackCnt_ = 0.0f;
 }
 
-void EnemyTackleSkill::Enter(EnemyBase& _owner)
+void EnemyJumpSkill::Enter(EnemyBase& _owner)
 {
 	//攻撃コライダの有効化
 	_owner.EnableAttack();
 
 	//攻撃マネージャーに教える
-	_owner.SetAttackCollider(AttackManager::ATTACK_TYPE::E_TACKLE);
+	_owner.SetAttackCollider(AttackManager::ATTACK_TYPE::E_JUMP);
 
 	//攻撃座標設定
 	_owner.SetAttackPos(ATTACK_LOCAL_POS);
@@ -50,45 +53,23 @@ void EnemyTackleSkill::Enter(EnemyBase& _owner)
 	//攻撃範囲設定
 	_owner.SetAttackRadius(RADIUS);
 
-	//アニメーション
-	_owner.PlayNoBlendAnim(L"Tackle", TACKLE_ANIM_SPEED);
-
-	//移動速度設定
-	_owner.SetSpeed(TACKLE_SPEED);
-
-	//初回のみの移動量更新
-	_owner.UpdateMovePow();
-
 	//初期化
 	attackCnt_ = 0.0f;
 }
 
-const bool EnemyTackleSkill::Update(EnemyBase& _owner)
+const bool EnemyJumpSkill::Update(EnemyBase& _owner)
 {
 	//シーンマネージャー
 	auto& scnMng = SceneManager::GetInstance();
 
-	//攻撃が終わったらtrue
-	if (attackCnt_ > ATTACK_TIME)
-	{
-		return true;
-	}
-	else
-	{
-		//カウンタ更新
-		attackCnt_ += scnMng.GetScaleUpdateSpeedRate(scnMng.GetDeltaTime());
-
-		//移動
-		_owner.Move();
-
-		//攻撃座標も動かす
-		_owner.SetAttackPos(ATTACK_LOCAL_POS);
-	}
+	//準備が終わったらtrue
+	if (attackCnt_ > ATTACK_READY_TIME)return true;
+	else attackCnt_ += scnMng.GetScaleUpdateSpeedRate(scnMng.GetDeltaTime());
 
 	return false;
 }
 
-void EnemyTackleSkill::Exit(EnemyBase& _owner)
+void EnemyJumpSkill::Exit(EnemyBase& _owner)
 {
 	//攻撃コライダの無効化
 	_owner.DisableAttack();

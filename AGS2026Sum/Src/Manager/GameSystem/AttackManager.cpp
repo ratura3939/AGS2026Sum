@@ -119,6 +119,12 @@ const std::weak_ptr<AttackDataBase> AttackManager::GetAttackData(const std::weak
 	return attackDatas_[static_cast<int>(colliderAttackTypeList_[atkColPtr].name)];
 }
 
+void AttackManager::SetAttackData(const ATTACK_TYPE& _name, std::shared_ptr<AttackDataBase> _data)
+{
+	//UŒ‚î•ñ‚ğã‘‚«
+	attackDatas_[static_cast<int>(_name)] = _data;
+}
+
 AttackManager::AttackManager(void)
 {
 }

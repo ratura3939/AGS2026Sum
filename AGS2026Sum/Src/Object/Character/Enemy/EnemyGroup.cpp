@@ -6,7 +6,10 @@
 EnemyGroup::EnemyGroup(void)
 	: chunkIndex_(-1)
 	, actionCnt_(0.0f)
-	, movePow_(Utility::VECTOR_ZERO)
+	, pos_(Utility::VECTOR_INIT)
+	, initPos_(Utility::VECTOR_INIT)
+	, groupGoalPos_(Utility::VECTOR_INIT)
+	, movePow_(Utility::VECTOR_INIT)
 	, order_(GROUP_ORDER::NONE)
 	, isActive_(false)
 {
@@ -19,7 +22,7 @@ EnemyGroup::EnemyGroup(void)
 
 EnemyGroup::~EnemyGroup(void)
 {
-	//TODO:敵にグループ崩壊を伝える
+	//敵にグループ崩壊を伝える
 	for(EnemyBase* enemy : enemys_)
 	{
 		enemy->LeaveGroup();
@@ -29,7 +32,8 @@ EnemyGroup::~EnemyGroup(void)
 void EnemyGroup::Init(const VECTOR& _initPos)
 {
 	//初期座標保存
-	initPos_ = { 1000.0f,0.0f,1000.0f };
+	initPos_ = _initPos;
+	pos_ = initPos_;
 
 	//生存判定の初期化
 	isActive_ = true;
@@ -60,7 +64,7 @@ void EnemyGroup::Draw(void)
 {
 	//デバッグ
 	DrawSphere3D(groupGoalPos_, 20, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), false);
-	DrawSphere3D(leader_->GetPos(), 20, 20, GetColor(255, 255, 0), GetColor(255, 255, 0), false);
+	DrawSphere3D(pos_, 20, 20, GetColor(255, 255, 0), GetColor(255, 255, 0), false);
 
 	//敵の描画
 	for (auto& enemy : enemys_)
@@ -73,15 +77,9 @@ void EnemyGroup::Release(void)
 {
 }
 
-const VECTOR& EnemyGroup::GetLeaderPos(void)const
+const VECTOR& EnemyGroup::GetGroupPos(void)const
 {
-	return leader_->GetPos();
-}
-
-void EnemyGroup::SetLeader(const EnemyBase* _leader)
-{
-	//リーダー設定
-	leader_ = _leader;
+	return pos_;
 }
 
 void EnemyGroup::ChangeOrder(const GROUP_ORDER _nextOrder)
@@ -112,38 +110,21 @@ void EnemyGroup::DeleteEnemy(void)
 	//そもそも敵がいないなら何もしない
 	if (enemys_.empty()) return;
 
-	//リーダーの死亡判定
-	bool isDeadLeader = false;
-	if (!leader_ || !leader_->IsAlive())
-	{
-		//死んだ
-		isDeadLeader = true;
-		leader_ = nullptr;
-	}
-
 	//死亡した敵の削除
 	std::erase_if(enemys_, [this](EnemyBase* _enemy) {return !_enemy->IsAlive(); });
-
-	//リーダーの再設定
-	if (isDeadLeader)ResetLeader();
-}
-
-void EnemyGroup::ResetLeader(void)
-{
-	//先頭をリーダーに
-	leader_ = enemys_.front();
 }
 
 void EnemyGroup::MoveToGoal(void)
 {
 	//移動量の設定
-	movePow_ = Utility::GetMoveVec(leader_->GetPos(), groupGoalPos_, SPEED);
+	movePow_ = Utility::GetMoveVec(pos_, groupGoalPos_, SPEED);
 	movePow_.y = 0.0f;
 }
 
 void EnemyGroup::GroupMove(void)
 {
-	//各敵で処理
+	//グループ座標の移動
+	pos_ = VAdd(pos_, movePow_);
 }
 
 void EnemyGroup::EnterStay(void)

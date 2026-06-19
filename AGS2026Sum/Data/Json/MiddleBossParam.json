@@ -57,7 +57,7 @@
   },
   "skill": [
     "NormalSkill",
-    "AirAttack",
+    "Jump",
     "Tackle"
   ]
 }

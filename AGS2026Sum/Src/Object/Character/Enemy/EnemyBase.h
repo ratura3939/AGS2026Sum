@@ -49,7 +49,7 @@ public:
 	void SetAnim(std::unique_ptr<AnimationController> _anim);
 
 	//描画
-	void Draw(void)override;
+	virtual void Draw(void)override;
 
 	//解放
 	void Release(void)override;
@@ -120,6 +120,12 @@ public:
 	//移動処理
 	void Move(void)override;
 
+	//速度設定
+	void SetSpeed(const float _speed) { speed_ = _speed; }
+
+	//移動量を更新
+	void UpdateMovePow(void);
+
 	//バック移動
 	void BackMove(void);
 
@@ -128,6 +134,9 @@ public:
 
 	//本体当たり判定の無効化
 	void DisableHitCollider(void);
+
+	//本体当たり判定の半径
+	const float GetHitRadius(void);
 
 	//攻撃座標の設定
 	void SetAttackPos(const VECTOR& _localPos);
@@ -169,8 +178,9 @@ protected:
 	};
 
 	//速度
-	static constexpr float SPEED = 2.0f;				//移動速度
-	static constexpr float RUN_SPEED = SPEED * 2.0f;	//走り速度
+	static constexpr float ALERT_SPEED = 4.0f;					//警戒時速度
+	static constexpr float WALK_SPEED = ALERT_SPEED * 2.0f;		//通常移動速度
+	static constexpr float RETURN_SPEED = ALERT_SPEED * 3.0f;	//通常移動速度
 
 	//アニメーション
 	static constexpr float RUN_ANIM_SPEED = 2.0f;		//走り速度
@@ -180,6 +190,9 @@ protected:
 
 	//自身の生存判定用番号
 	int activeIndex_;
+
+	//体力
+	float hpMax_;
 
 	//敵のタイプ
 	const ENEMY_TYPE type_;
@@ -195,6 +208,12 @@ protected:
 
 	//個人の移動量
 	VECTOR movePow_;
+
+	//目標地点
+	VECTOR goalPos_;
+
+	//移動速度
+	float speed_;
 
 	//状態
 	std::unique_ptr<EnemyStateBase> state_;
@@ -220,7 +239,7 @@ protected:
 	virtual void DoLoad(void)override;
 
 	//初期化
-	void DoInit(void)override;
+	virtual void DoInit(void)override;
 
 	//更新
 	void DoUpdate(void)override;

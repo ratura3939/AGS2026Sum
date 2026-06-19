@@ -199,11 +199,11 @@ void EnemyBase::DoInit(void)
 	DeleteAllColliders();
 
 	//当たり判定の生成
-	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, BROUD_RADIUS, RADIUS);
-	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY, { Collider::COL_TAG::PLAYER, Collider::COL_TAG::PLAYER_ATTACK });
+	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, quaRot_, BROUD_RADIUS, RADIUS);
+	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY, { Collider::COL_TAG::PLAYER, Collider::COL_TAG::PLAYER_ATTACK ,Collider::COL_TAG::ENEMY });
 
 	//攻撃コライダ
-	geo = std::make_unique<Sphere>(attackPos_, attackPos_, ATTACK_BROUD_RADIUS, ATTACK_RADIUS);
+	geo = std::make_unique<Sphere>(attackPos_, attackPos_, quaRot_, ATTACK_BROUD_RADIUS, ATTACK_RADIUS);
 	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY_ATTACK, { Collider::COL_TAG::PLAYER });
 	DisableColliderAtTag(Collider::COL_TAG::ENEMY_ATTACK);
 }
@@ -221,6 +221,7 @@ void EnemyBase::InitRunTimeParameter(const EnemyParameter& _param)
 {
 	//体力の初期化
 	hp_ = _param.initHp;
+	hpMax_ = _param.initHp;
 }
 
 void EnemyBase::SetModel(const int _modelId)
@@ -264,18 +265,27 @@ void EnemyBase::EnterStay(void)
 {
 	//待機アニメーションの再生
 	animController_->Play(L"Idle");
+
+	//速度設定
+	speed_ = 0.0f;
 }
 
 void EnemyBase::EnterMove(void)
 {
 	//歩きアニメーションの再生
 	animController_->Play(L"Run", RUN_ANIM_SPEED);
+
+	//速度設定
+	speed_ = WALK_SPEED;
 }
 
 void EnemyBase::EnterAlert(void)
 {
 	//待機アニメーションの再生
 	animController_->Play(L"Walk");
+
+	//速度設定
+	speed_ = ALERT_SPEED;
 }
 
 void EnemyBase::EnterAttackReady(void)
@@ -300,6 +310,9 @@ void EnemyBase::EnterReturn(void)
 {
 	//歩きアニメーションの再生
 	animController_->Play(L"Run", RUN_ANIM_SPEED);
+
+	//速度設定
+	speed_ = RETURN_SPEED;
 }
 
 void EnemyBase::UpdateStay(void)
@@ -308,23 +321,29 @@ void EnemyBase::UpdateStay(void)
 
 void EnemyBase::UpdateMove(void)
 {
-	//グループと一体で動く
-	movePow_ = group_->GetMovePow();
+	//グループの目標地点に直接向かう
+	goalPos_ = group_->GetGoalPos();
+
+	//移動量の更新
+	UpdateMovePow();
 }
 
 void EnemyBase::UpdateAlert(void)
 {
 	//グループの目標地点に直接向かう
-	VECTOR goalPos = group_->GetGoalPos();
-	
-	//目標地点に向かう移動量の設定
-	movePow_ = Utility::GetMoveVec(pos_, goalPos, RUN_SPEED);
+	goalPos_ = group_->GetGoalPos();
+
+	//移動量の更新
+	UpdateMovePow();
 }
 
 void EnemyBase::UpdateAttackReady(void)
 {
 	//スキルが入ってないなら強制的に待機に移行
 	if (!currentSkill_)ChangeAction(ENEMY_ACTION::STAY);
+
+	//目標地点を更新
+	goalPos_ = group_->GetGoalPos();
 
 	//スキルごとの準備行動
 	if (currentSkill_->ReadyUpdate(*this))
@@ -356,11 +375,11 @@ void EnemyBase::UpdateAttack(void)
 
 void EnemyBase::UpdateReturn(void)
 {
-	//グループ座標の取得
-	VECTOR groupPos = group_->GetLeaderPos();
+	//グループ座標を目標地点に設定
+	goalPos_ = group_->GetGroupPos();
 
-	//グループ座標に向かう移動量の設定
-	movePow_ = Utility::GetMoveVec(pos_, groupPos, SPEED);
+	//移動量の更新
+	UpdateMovePow();
 }
 
 void EnemyBase::ExitStay(void)
@@ -410,6 +429,12 @@ void EnemyBase::Move(void)
 	movedPos_ = movedPos;
 }
 
+void EnemyBase::UpdateMovePow(void)
+{
+	//目標地点に向かう移動量の設定
+	movePow_ = Utility::GetMoveVec(pos_, goalPos_, speed_);
+}
+
 void EnemyBase::BackMove(void)
 {
 	//移動後座標の更新
@@ -432,6 +457,11 @@ void EnemyBase::DisableHitCollider(void)
 {
 	//当たり判定の無効化
 	DisableColliderAtTag(Collider::COL_TAG::ENEMY);
+}
+
+const float EnemyBase::GetHitRadius(void)
+{
+	return colliders_[0]->GetGeometry<Sphere>()->GetRadius();
 }
 
 void EnemyBase::SetAttackPos(const VECTOR& _localPos)

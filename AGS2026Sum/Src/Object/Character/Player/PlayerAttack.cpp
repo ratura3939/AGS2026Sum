@@ -1,5 +1,6 @@
 #include "../../../pch.h"
 #include"../../../Manager/Generic/ResourceManager.h"
+#include"../../../Manager/GameSystem/AttackManager.h"
 #include"../../Common/Geometry/Sphere.h"
 #include"PlayerManager.h"
 #include "PlayerAttack.h"
@@ -63,11 +64,12 @@ void PlayerAttack::DoLoad(void)
 
 void PlayerAttack::DoInit(void)
 {
-	MakeCollider(std::make_unique<Sphere>(pos_, pos_, currentData_.radius, currentData_.radius), Collider::COL_TAG::PLAYER_ATTACK, { Collider::COL_TAG::ENEMY });	//攻撃用のコライダ生成
+	MakeCollider(std::make_unique<Sphere>(pos_, pos_, quaRot_, currentData_.radius, currentData_.radius), Collider::COL_TAG::PLAYER_ATTACK, { Collider::COL_TAG::ENEMY });	//攻撃用のコライダ生成
 	LoadAttackData();
 	LoadAttackSound();
 
 	colliders_[0]->SetUseThis(false);	//コライダの無効化
+	AttackManager::GetInstance().AddAttackCollider(AttackManager::ATTACK_TYPE::P_ATTACK, colliders_[0]);	//攻撃マネージャーに登録
 }
 
 void PlayerAttack::DoUpdate(void)
@@ -240,6 +242,9 @@ void PlayerAttack::ApplyAttackColliderSettings(void)
 		attackSphere->SetRadius(currentData_.radius);		//半径変更
 		attackSphere->SetBroudRadius(currentData_.radius);	//前判定用半径変更
 	}
+
+	std::shared_ptr<AttackData> data = std::make_shared<AttackData>(currentData_);
+	AttackManager::GetInstance().SetAttackData(AttackManager::ATTACK_TYPE::P_ATTACK, data);
 }
 
 void PlayerAttack::ResetCombo(void)

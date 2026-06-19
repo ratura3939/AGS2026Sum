@@ -82,9 +82,6 @@ private:
 	//プレイヤー座標
 	const VECTOR& playerPos_;
 
-	//グループ生成回数(攻撃用)
-	int groupSpawnCnt_;
-
 	//グループと敵の関連付け
 	void Grouping(EnemyGroup* _group, EnemyBase* _enemy);
 

@@ -21,7 +21,7 @@ public:
 	//攻撃の種類
 	enum class ATTACK_TYPE
 	{
-		P_PUNCH		//プレイヤーパンチ
+		P_ATTACK	//プレイヤー攻撃
 		, E_NORMAL	//敵通常
 		, E_TACKLE	//敵突進
 		, E_JUMP	//敵ジャンプ
@@ -65,6 +65,13 @@ public:
 	/// <param name="_hitCol">当たった本体のコライダ</param>
 	/// <returns>攻撃情報</returns>
 	const std::weak_ptr<AttackDataBase> GetAttackData(const std::weak_ptr<Collider>& _atkCol, const std::weak_ptr<Collider>& _hitCol);
+
+	/// <summary>
+	/// 攻撃データを設定
+	/// </summary>
+	/// <param name="_name">設定したい攻撃の名前</param>
+	/// <param name="_data">設定する攻撃情報</param>
+	void SetAttackData(const ATTACK_TYPE& _name, std::shared_ptr<AttackDataBase> _data);
 
 private:
 
