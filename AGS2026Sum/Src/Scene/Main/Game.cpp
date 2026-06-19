@@ -18,6 +18,8 @@
 #include"../../Renderer/PixelRenderer.h"
 #include"../../Application.h"
 #include "Title.h"
+#include "GameClear.h"
+#include "GameOver.h"
 #include "Game.h"
 
 //ƒ[ƒJƒ‹’è”
@@ -253,7 +255,11 @@ void Game::Update(void)
 	//}
 	if(enemy_->GetActiveEnemyNum() <= 0)
 	{
-		SceneManager::GetInstance().ChangeScene(std::make_shared<Title>());
+		SceneManager::GetInstance().ChangeScene(std::make_shared<GameClear>());
+	}
+	if (!player_->IsAlive())
+	{
+		SceneManager::GetInstance().ChangeScene(std::make_shared<GameOver>());
 	}
 
 #pragma endregion

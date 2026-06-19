@@ -51,7 +51,7 @@ public:
 	const Quaternion& GetQua(void);			//回転
 	//const VECTOR& GetFocusPoint(void);	//注視点
 
-	//const bool IsAlive(void)const;
+	const bool IsAlive(void)const;
 
 	//現在の攻撃の吹っ飛び方取得
 	const CharacterBase::KNOCKBACK_TYPE GetCurrentKnockBackType(void)const;

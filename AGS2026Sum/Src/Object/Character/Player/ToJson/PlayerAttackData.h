@@ -1,7 +1,7 @@
 #pragma once
 #include<DxLib.h>
-#include"../Attack/AttackDataBase.h"
-#include"../../../Lib/nlohmann/json.hpp"
+#include"../../Attack/AttackDataBase.h"
+#include"../../../../Lib/nlohmann/json.hpp"
 
 static const int ATTACK_TYPE_NUM = 2;	//攻撃の種類の数
 

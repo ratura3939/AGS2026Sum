@@ -117,6 +117,11 @@ const Quaternion& PlayerManager::GetQua(void)
 	return character_->GetQua();
 }
 
+const bool PlayerManager::IsAlive(void) const
+{
+	return character_->IsAlive();
+}
+
 const CharacterBase::KNOCKBACK_TYPE PlayerManager::GetCurrentKnockBackType(void) const
 {
 	const std::string knockBackTypeString = attack_->GetCurrentAttackKnockBackType();	//攻撃クラスから現在の攻撃の吹っ飛び方の文字列を取得

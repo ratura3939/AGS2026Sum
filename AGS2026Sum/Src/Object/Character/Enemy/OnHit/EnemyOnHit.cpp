@@ -2,7 +2,7 @@
 #include"../../../../Manager/Generic/SceneManager.h"
 #include"../../../../Manager/GameSystem/AttackManager.h"
 #include "../EnemyBase.h"
-#include "../../Player/PlayerAttackData.h"
+#include "../../Player/ToJson/PlayerAttackData.h"
 #include "../State/EnemyDamageState.h"
 #include "EnemyOnHit.h"
 
