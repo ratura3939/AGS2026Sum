@@ -33,7 +33,7 @@ void AttackManager::AddAttackCollider(const ATTACK_TYPE& _name, const std::weak_
 	}
 
 	//登録
-	colliderAttackTypeList_.emplace(addCol.get(), _name);
+	colliderAttackTypeList_[addCol.get()].name = _name;
 }
 
 void AttackManager::DeleteAttackCollider(const std::weak_ptr<Collider>& _col)
@@ -46,23 +46,77 @@ void AttackManager::DeleteAttackCollider(const std::weak_ptr<Collider>& _col)
 	colliderAttackTypeList_.erase(deleteCol.get());
 }
 
-const std::weak_ptr<AttackDataBase> AttackManager::GetAttackData(const std::weak_ptr<Collider>& _col)
+void AttackManager::ResetTargetColList(const std::weak_ptr<Collider>& _col)
 {
-	//取得したいコライダのポインタ
-	auto getCol = _col.lock();
-	if (!getCol)return{};
+	//攻撃コライダ
+	auto col = _col.lock();
+	if (!col)return;
 
 	//含まれているかを探す
-	auto find = colliderAttackTypeList_.find(getCol.get());
-	if (find == colliderAttackTypeList_.end())
+	auto colPtr = col.get();
+	if (IsRegisterCollider(_col))
 	{
 		//見つからなかった
+		assert(!"選択されたコライダは登録されていません");
+		return;
+	}
+
+	//リセット
+	colliderAttackTypeList_[colPtr].targetCol.clear();
+}
+
+const bool AttackManager::IsCanHit(const std::weak_ptr<Collider>& _atkCol, const std::weak_ptr<Collider>& _hitCol)
+{
+	//コライダのポインタ
+	auto atkCol = _atkCol.lock();
+	auto hitCol = _hitCol.lock();
+	if (!atkCol || !hitCol)return false;
+
+	//含まれているかを探す
+	auto atkColPtr = atkCol.get();
+	if (IsRegisterCollider(_atkCol))
+	{
+		//見つからなかった
+		assert(!"選択されたコライダは登録されていません");
+		return false;
+	}
+
+	//単体ヒット　かつ　既に攻撃済みリストに当たったコライダが登録されているかを調べる
+	auto hitColPtr = hitCol.get();
+	if (!attackDatas_[static_cast<int>(colliderAttackTypeList_[atkColPtr].name)]->isMultiHit
+		&& colliderAttackTypeList_[atkColPtr].targetCol.find(hitColPtr) == colliderAttackTypeList_[atkColPtr].targetCol.end())
+	{
+		//当たらない
+		return false;
+	}
+
+	//当たる
+	return true;
+}
+
+const std::weak_ptr<AttackDataBase> AttackManager::GetAttackData(const std::weak_ptr<Collider>& _atkCol, const std::weak_ptr<Collider>& _hitCol)
+{
+	//コライダのポインタ
+	auto atkCol = _atkCol.lock();
+	auto hitCol = _hitCol.lock();
+	if (!atkCol || !hitCol)return {};
+
+	//ポインタ変換
+	auto atkColPtr = atkCol.get();
+
+	//含まれているか
+	if(!IsRegisterCollider(_atkCol))
+	{ 
 		assert(!"選択されたコライダは登録されていません");
 		return {};
 	}
 
-	//見つかったので攻撃情報を返す
-	return attackDatas_[static_cast<int>(find->second)];
+	//見つかったので攻撃済みリストに当たった側を保存する
+	auto hitColPtr = hitCol.get();
+	colliderAttackTypeList_[atkColPtr].targetCol.insert(hitColPtr);
+
+	//攻撃情報を返す
+	return attackDatas_[static_cast<int>(colliderAttackTypeList_[atkColPtr].name)];
 }
 
 AttackManager::AttackManager(void)
@@ -78,4 +132,19 @@ void AttackManager::Destroy(void)
 	//全削除
 	colliderAttackTypeList_.clear();
 	attackDatas_.fill(nullptr);
+}
+
+const bool AttackManager::IsRegisterCollider(const std::weak_ptr<Collider>& _col)
+{
+	//含まれているかを探す
+	auto colPtr = _col.lock().get();
+	auto find = colliderAttackTypeList_.find(colPtr);
+	if (find == colliderAttackTypeList_.end())
+	{
+		//見つからなかった
+		return false;
+	}
+
+	//見つかった
+	return true;
 }

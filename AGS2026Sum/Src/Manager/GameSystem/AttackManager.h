@@ -1,5 +1,6 @@
 #pragma once
 #include<string>
+#include<unordered_set>
 #include<memory>
 #include<vector>
 #include<array>
@@ -44,13 +45,35 @@ public:
 	void DeleteAttackCollider(const std::weak_ptr<Collider>& _col);
 
 	/// <summary>
+	/// 攻撃コライダの当たったリストを削除する
+	/// </summary>
+	/// <param name="_col">攻撃コライダ</param>
+	void ResetTargetColList(const std::weak_ptr<Collider>& _col);
+
+	/// <summary>
+	/// 攻撃が当たるか
+	/// </summary>
+	/// <param name="_atkCol">当たった攻撃のコライダ</param>
+	/// <param name="_hitCol">当たった本体のコライダ</param>
+	/// <returns>true:当たる</returns>
+	const bool IsCanHit(const std::weak_ptr<Collider>& _atkCol, const std::weak_ptr<Collider>& _hitCol);
+
+	/// <summary>
 	/// 攻撃情報を取得
 	/// </summary>
-	/// <param name="_col">情報を取得してきたいコライダ</param>
+	/// <param name="_atkCol">当たった攻撃のコライダ</param>
+	/// <param name="_hitCol">当たった本体のコライダ</param>
 	/// <returns>攻撃情報</returns>
-	const std::weak_ptr<AttackDataBase> GetAttackData(const std::weak_ptr<Collider>& _col);
+	const std::weak_ptr<AttackDataBase> GetAttackData(const std::weak_ptr<Collider>& _atkCol, const std::weak_ptr<Collider>& _hitCol);
 
 private:
+
+	//攻撃ヒット情報
+	struct AttackRuntime
+	{
+		ATTACK_TYPE name;							//攻撃の種類
+		std::unordered_set<Collider*> targetCol;	//あてられた側のコライダ
+	};
 
 	//コンストラクタ
 	AttackManager(void);
@@ -61,7 +84,10 @@ private:
 	//削除
 	void Destroy(void)override;
 
-	std::unordered_map<Collider*, ATTACK_TYPE> colliderAttackTypeList_;								//攻撃判定用コライダーリスト
+	//攻撃コライダが登録されているか
+	const bool IsRegisterCollider(const std::weak_ptr<Collider>& _col);
+
+	std::unordered_map<Collider*, AttackRuntime> colliderAttackTypeList_;							//攻撃判定用コライダーリスト
 	std::array<std::shared_ptr<AttackDataBase>, static_cast<int>(ATTACK_TYPE::MAX)> attackDatas_;	//各攻撃の情報リスト
 };
 

@@ -16,6 +16,12 @@ struct AttackDataBase
 	//威力
 	float power;
 
+	//連続ヒットするか
+	bool isMultiHit;
+
+	//連続ヒット間隔
+	float hitInterval;
+
 	//攻撃属性
 	ATTACK_ELEMENT element;
 };

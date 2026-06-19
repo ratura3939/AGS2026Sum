@@ -100,13 +100,19 @@ void EnemyBase::SetSkills(std::vector<std::unique_ptr<EnemySkillBase>> _skills)
 
 void EnemyBase::SetAttackCollider(const AttackManager::ATTACK_TYPE& _name)const
 {
+	//攻撃マネージャー
+	auto& atkMng = AttackManager::GetInstance();
+
 	//攻撃マネージャーに自身の名前とスキルから持ってきたデータを伝える
-	AttackManager::GetInstance().AddAttackCollider(_name, colliders_[1]);
+	atkMng.AddAttackCollider(_name, colliders_[1]);
+
+	//攻撃のヒット情報をリセット
+	atkMng.ResetTargetColList(colliders_[1]);
 }
 
 void EnemyBase::RemoveAttackCollider(void) const
 {
-	//攻撃マネージャーに自身の名前とスキルから持ってきたデータを伝える
+	//攻撃マネージャーから攻撃コライダを破棄
 	AttackManager::GetInstance().DeleteAttackCollider(colliders_[1]);
 }
 
