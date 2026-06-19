@@ -34,7 +34,7 @@
   },
 
   "Punch_Third": {
-    "seTimingRate": 0.0,
+    "seTimingRate": 0.5,
     "efcLocalPos": {
       "x": 0.0,
       "y": 0.0,
@@ -45,13 +45,13 @@
       "y": 180.0,
       "z": 0.0
     },
-    "efcTimingRate": 0.0,
+    "efcTimingRate": 0.5,
     "efcScale": 50.0,
     "efcSpeed": 3.0
   },
 
   "Kick_First": {
-    "seTimingRate": 0.0,
+    "seTimingRate": 0.3,
     "efcLocalPos": {
       "x": 0.0,
       "y": 0.0,
@@ -68,7 +68,7 @@
   },
 
   "Kick_Second": {
-    "seTimingRate": 0.0,
+    "seTimingRate": 0.2,
     "efcLocalPos": {
       "x": 0.0,
       "y": 0.0,
@@ -102,7 +102,7 @@
   },
 
   "Punch_Special": {
-    "seTimingRate": 0.0,
+    "seTimingRate": 0.5,
     "efcLocalPos": {
       "x": 0.0,
       "y": 0.0,
@@ -113,8 +113,8 @@
       "y": 180.0,
       "z": 0.0
     },
-    "efcTimingRate": 0.0,
-    "efcScale": 50.0,
+    "efcTimingRate": 0.5,
+    "efcScale": 100.0,
     "efcSpeed": 2.0
   },
 
