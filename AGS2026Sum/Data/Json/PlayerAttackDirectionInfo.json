@@ -139,8 +139,8 @@
     "seTimingRate": 0.0,
     "efcLocalPos": {
       "x": 0.0,
-      "y": 0.0,
-      "z": 0.0
+      "y": 80.0,
+      "z": 30.0
     },
     "efcLocalRot": {
       "x": 0.0,
