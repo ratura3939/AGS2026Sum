@@ -1,25 +1,22 @@
 #pragma once
-#include"../../../Common/OnHitBase.h"
+#include "../../Common/OnHitBase.h"
 
-class EnemyBase;
+class PlayerChara;
 
-class EnemyOnHit : public OnHitBase
+class PlayerOnHit : public OnHitBase
 {
 public:
 
 	//コンストラクタ
-	EnemyOnHit(EnemyBase& _parent);
+	PlayerOnHit(PlayerChara& _parent);
 
 	//デストラクタ
-	~EnemyOnHit(void)override;
+	~PlayerOnHit(void)override;
 
 private:
 
-	//吹っ飛び速度
-	static constexpr float BLOW_POWER = 5.0f;
-
 	//親
-	EnemyBase& parent_;
+	PlayerChara& parent_;
 
 	//カウンタ
 	float cnt_;
@@ -33,3 +30,4 @@ private:
 	void HitEnemy(const std::weak_ptr<Collider> _col)override;
 	void HitEnemyAttack(const std::weak_ptr<Collider> _col)override;
 };
+

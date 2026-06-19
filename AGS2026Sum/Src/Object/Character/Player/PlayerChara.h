@@ -1,6 +1,7 @@
 #pragma once
 #include "../CharacterBase.h"
 #include"../../../Manager/Decoration/SoundManager.h"
+#include "PlayerOnHit.h"
 
 class PlayerChara :
     public CharacterBase
@@ -43,5 +44,6 @@ class PlayerChara :
 		bool isMove_;           //移動しているか
 		bool isAttack_;         //攻撃しているか  
 		std::wstring useAnim_;  //現在のアニメーション
+		PlayerOnHit onHit_;		//当たり判定用
 };
 

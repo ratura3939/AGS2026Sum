@@ -1,11 +1,14 @@
 #include "../../../../pch.h"
+#include"../../../../Manager/Generic/SceneManager.h"
 #include"../../../../Manager/GameSystem/AttackManager.h"
 #include "../EnemyBase.h"
+#include "../../Player/PlayerAttackData.h"
 #include "../State/EnemyDamageState.h"
 #include "EnemyOnHit.h"
 
 EnemyOnHit::EnemyOnHit(EnemyBase& _parent)
 	: parent_(_parent)
+	, cnt_(0.0f)
 {
 }
 
@@ -15,23 +18,56 @@ EnemyOnHit::~EnemyOnHit(void)
 
 void EnemyOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 {
+	//攻撃マネージャー
+	auto& atkMng = AttackManager::GetInstance();
+
 	//ヒット者
 	const auto& col = _col.lock();
 
+	//自身のコライダ
+	const auto& myCol = parent_.GetColliders()[0];
+
+	//本体にあたってないので無視
+	if (!myCol->IsHit())return;
+
+	//当たれるか
+	if (!atkMng.IsCanHit(col, myCol)) return;
+
 	//攻撃情報
-	const std::weak_ptr<AttackDataBase>& data = AttackManager::GetInstance().GetAttackData(_col);
+	const auto& atkData = atkMng.GetAttackData(_col, myCol).lock();
+	auto data = dynamic_pointer_cast<AttackData>(atkData);
+
+	//攻撃間隔
+	if (data->hitInterval < cnt_ && data->isMultiHit)
+	{
+		//カウンタ
+		auto& scnMng = SceneManager::GetInstance();
+		cnt_ += scnMng.GetScaleUpdateSpeedRate(scnMng.GetDeltaTime());
+		return;
+	}
+
+	//ここからヒット処理
+
+	//現在スキルの破棄
+	parent_.RemoveCurrentSkill();
+
+	//リセット
+	cnt_ = 0.0f;
 
 	//回転情報
 	const Quaternion quaRot = col->GetGeometry().GetColRot();
 
 	//吹っ飛び(相手の向いている方向)
-	VECTOR blowPow = VScale(quaRot.GetForward(), -BLOW_POWER);
+	VECTOR blowPow = VScale(quaRot.GetForward(), BLOW_POWER);
+
+	//吹っ飛びの移動量を与える
+	parent_.SetMovePow(blowPow);
 
 	//ダメージ状態
 	parent_.ChangeState(std::make_unique<EnemyDamageState>());
 
 	//ダメージ処理
-	parent_.Damage(data.lock()->power);
+	parent_.Damage(data->power);
 }
 
 void EnemyOnHit::HitPlayer(const std::weak_ptr<Collider> _col)

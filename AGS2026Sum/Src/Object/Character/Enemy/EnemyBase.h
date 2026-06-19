@@ -75,8 +75,11 @@ public:
 	//攻撃マネージャーからコライダを破棄
 	void RemoveAttackCollider(void)const;
 
-	//攻撃設定
+	//現在の攻撃設定
 	void SetCurrentSkill(EnemySkillBase* _skill);
+
+	//現在の攻撃の破棄
+	void RemoveCurrentSkill(void);
 
 	//攻撃破棄
 	void BreakSkill(void);

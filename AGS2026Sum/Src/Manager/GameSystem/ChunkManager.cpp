@@ -20,14 +20,20 @@ int ChunkManager::GetChunkIndex(const VECTOR& _pos) const
 	//座標からセルの座標を求める
 	int cellX = static_cast<int>(std::floor(_pos.x / CELL_SIZE));
 	int cellZ = static_cast<int>(std::floor(_pos.z / CELL_SIZE));
+
+	// 範囲内に丸める
+	cellX = std::clamp(cellX, 0, CHUNK_X - 1);
+	cellZ = std::clamp(cellZ, 0, CHUNK_Z - 1);
+
+	//配列番号化
 	int index = cellX + cellZ * CHUNK_X;
 
 	//セルがチャンクの範囲外ならエラー値を返す
-	if (cellX < 0 || cellX >= CHUNK_X || cellZ < 0 || cellZ >= CHUNK_Z)
-	{
-		assert(!"Out of Chunk");
-		return -1;	//エラー
-	}
+	//if (cellX < 0 || cellX >= CHUNK_X || cellZ < 0 || cellZ >= CHUNK_Z)
+	//{
+	//	assert(!"Out of Chunk");
+	//	return -1;	//エラー
+	//}
 
 	return index;
 }

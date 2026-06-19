@@ -69,6 +69,6 @@ void MiddleBoss::Draw(void)
 	DrawBox(healthPos.x - HP_WINDOW, healthPos.y - HP_WINDOW, healthWH.x + HP_WINDOW, healthWH.y + HP_WINDOW, 0x0, true);
 	if (hp_ > 0.0f)
 	{
-		DrawBox(healthPos.x, healthPos.y, healthWH.x * (hp_ / hpMax_), healthWH.y, 0xff0000, true);
+		DrawBox(healthPos.x, healthPos.y, healthPos.x + HP_WIDTH * (hp_ / hpMax_), healthPos.y + HP_HEIGHT, 0xff0000, true);
 	}
 }

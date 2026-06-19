@@ -25,7 +25,7 @@ void AttackManager::AddAttackCollider(const ATTACK_TYPE& _name, const std::weak_
 	auto addCol = _col.lock();
 	if (!addCol)return;
 
-	if (colliderAttackTypeList_.contains(addCol.get()))
+	if (IsRegisterCollider(_col))
 	{
 		//ƒGƒ‰[–h~
 		assert(!"‚·‚Å‚É“o˜^‚µ‚Ä‚¢‚é‚à‚Ì‚ğÄ“o˜^‚µ‚æ‚¤‚Æ‚µ‚Ä‚¢‚Ü‚·");
@@ -54,10 +54,9 @@ void AttackManager::ResetTargetColList(const std::weak_ptr<Collider>& _col)
 
 	//ŠÜ‚Ü‚ê‚Ä‚¢‚é‚©‚ğ’T‚·
 	auto colPtr = col.get();
-	if (IsRegisterCollider(_col))
+	if (!IsRegisterCollider(_col))
 	{
 		//Œ©‚Â‚©‚ç‚È‚©‚Á‚½
-		assert(!"‘I‘ğ‚³‚ê‚½ƒRƒ‰ƒCƒ_‚Í“o˜^‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ");
 		return;
 	}
 
@@ -74,7 +73,7 @@ const bool AttackManager::IsCanHit(const std::weak_ptr<Collider>& _atkCol, const
 
 	//ŠÜ‚Ü‚ê‚Ä‚¢‚é‚©‚ğ’T‚·
 	auto atkColPtr = atkCol.get();
-	if (IsRegisterCollider(_atkCol))
+	if (!IsRegisterCollider(_atkCol))
 	{
 		//Œ©‚Â‚©‚ç‚È‚©‚Á‚½
 		assert(!"‘I‘ğ‚³‚ê‚½ƒRƒ‰ƒCƒ_‚Í“o˜^‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ");
@@ -83,8 +82,9 @@ const bool AttackManager::IsCanHit(const std::weak_ptr<Collider>& _atkCol, const
 
 	//’P‘Ìƒqƒbƒg@‚©‚Â@Šù‚ÉUŒ‚Ï‚İƒŠƒXƒg‚É“–‚½‚Á‚½ƒRƒ‰ƒCƒ_‚ª“o˜^‚³‚ê‚Ä‚¢‚é‚©‚ğ’²‚×‚é
 	auto hitColPtr = hitCol.get();
-	if (!attackDatas_[static_cast<int>(colliderAttackTypeList_[atkColPtr].name)]->isMultiHit
-		&& colliderAttackTypeList_[atkColPtr].targetCol.find(hitColPtr) == colliderAttackTypeList_[atkColPtr].targetCol.end())
+	bool isMultiHit = attackDatas_[static_cast<int>(colliderAttackTypeList_[atkColPtr].name)]->isMultiHit;
+	bool isRegist = colliderAttackTypeList_[atkColPtr].targetCol.contains(hitColPtr);
+	if (!isMultiHit && isRegist)
 	{
 		//“–‚½‚ç‚È‚¢
 		return false;
@@ -144,8 +144,7 @@ const bool AttackManager::IsRegisterCollider(const std::weak_ptr<Collider>& _col
 {
 	//ŠÜ‚Ü‚ê‚Ä‚¢‚é‚©‚ğ’T‚·
 	auto colPtr = _col.lock().get();
-	auto find = colliderAttackTypeList_.find(colPtr);
-	if (find == colliderAttackTypeList_.end())
+	if (!colliderAttackTypeList_.contains(colPtr))
 	{
 		//Œ©‚Â‚©‚ç‚È‚©‚Á‚½
 		return false;

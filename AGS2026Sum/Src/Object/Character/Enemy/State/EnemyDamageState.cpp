@@ -25,7 +25,7 @@ void EnemyDamageState::Enter(EnemyBase& _enemy)
 	_enemy.Update();
 
 	//当たり判定の無効化
-	_enemy.DisableHitCollider();
+	//_enemy.DisableHitCollider();
 
 	//攻撃の無効化
 	_enemy.DisableAttack();

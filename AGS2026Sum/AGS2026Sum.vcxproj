@@ -145,6 +145,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Character\Player\PlayerOnHit.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\Skill\EnemyJumpSkill.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\Skill\EnemyTackleSkill.cpp" />
     <ClCompile Include="Src\Object\Common\OnHitBase.cpp" />
@@ -215,6 +216,7 @@
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Character\Player\PlayerOnHit.h" />
     <ClInclude Include="Src\Object\Character\Enemy\Skill\EnemyJumpSkill.h" />
     <ClInclude Include="Src\Object\Character\Enemy\Skill\EnemyTackleSkill.h" />
     <ClInclude Include="Src\Object\Character\Attack\AttackDataBase.h" />

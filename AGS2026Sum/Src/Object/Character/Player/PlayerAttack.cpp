@@ -77,6 +77,7 @@ void PlayerAttack::DoUpdate(void)
 	if (IsAttacking()) {
 		//攻撃中は座標を更新
 		pos_ = VAdd(playerPos_, playerQuaRot_.PosAxis(currentData_.localPos));	//プレイヤーの座標にローカル座標を加算して攻撃の座標とする
+		quaRot_ = playerQuaRot_;												//敵にベクトルを与えるためにプレイヤー本体の回転をコピー
 	}
 	//攻撃していないとき
 	else {
@@ -243,8 +244,12 @@ void PlayerAttack::ApplyAttackColliderSettings(void)
 		attackSphere->SetBroudRadius(currentData_.radius);	//前判定用半径変更
 	}
 
-	std::shared_ptr<AttackData> data = std::make_shared<AttackData>(currentData_);
-	AttackManager::GetInstance().SetAttackData(AttackManager::ATTACK_TYPE::P_ATTACK, data);
+	//攻撃マネージャー
+	auto& atkMng = AttackManager::GetInstance();
+
+	std::shared_ptr<AttackData> data = std::make_shared<AttackData>(currentData_);	//データをポインタ化
+	atkMng.SetAttackData(AttackManager::ATTACK_TYPE::P_ATTACK, data);				//データを渡す
+	atkMng.ResetTargetColList(colliders_[0]);
 }
 
 void PlayerAttack::ResetCombo(void)

@@ -128,6 +128,11 @@ void EnemyBase::SetCurrentSkill(EnemySkillBase* _skill)
 	ChangeAction(ENEMY_ACTION::ATTACK_READY);
 }
 
+void EnemyBase::RemoveCurrentSkill(void)
+{
+	currentSkill_ = nullptr;
+}
+
 void EnemyBase::BreakSkill(void)
 {
 	//ないならスキップ
@@ -461,7 +466,7 @@ void EnemyBase::DisableHitCollider(void)
 
 const float EnemyBase::GetHitRadius(void)
 {
-	return colliders_[0]->GetGeometry<Sphere>()->GetRadius();
+	return colliders_[0]->GetGeometry().GetBroudRadius();
 }
 
 void EnemyBase::SetAttackPos(const VECTOR& _localPos)

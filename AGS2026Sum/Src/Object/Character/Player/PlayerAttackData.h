@@ -24,7 +24,9 @@ inline void from_json(const nlohmann::json& _data, VECTOR& _vec) {
 inline void from_json(const nlohmann::json& _data, AttackData& _attackData) {
 	_data.at("radius").get_to(_attackData.radius);
 	_data.at("power").get_to(_attackData.power);
-	
+	_data.at("isMultiHit").get_to(_attackData.isMultiHit);
+	if (_data.contains("hitInterval"))_data.at("hitInterval").get_to(_attackData.hitInterval);
+
 	if (_data.contains("localPos")) {
 		_data.value("localPos", nlohmann::json::object()).at("x").get_to(_attackData.localPos.x);
 		_data.value("localPos", nlohmann::json::object()).at("y").get_to(_attackData.localPos.y);
