@@ -3,14 +3,14 @@
 #include<vector>
 #include<DxLib.h>
 #include"../../Common/Quaternion.h"
-#include"EnemyDefine.h"
+#include"Info/EnemyDefine.h"
+#include"Info/EnemyParameter.h"
 
 class EnemyBase;
 class EnemyPool;
 class EnemyGroup;
 class EnemyGroupPool;
 class Game;
-class AttackManager;
 class AnimationController;
 
 class EnemyManager

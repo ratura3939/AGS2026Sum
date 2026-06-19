@@ -1,5 +1,5 @@
 #pragma once
-#include"../EnemyDefine.h"
+#include"../Info/EnemyDefine.h"
 
 class EnemyBase;
 

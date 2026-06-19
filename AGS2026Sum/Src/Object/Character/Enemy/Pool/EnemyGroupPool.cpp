@@ -1,4 +1,4 @@
-#include "../../../pch.h"
+#include "../../../../pch.h"
 #include "EnemyGroupPool.h"
 
 EnemyGroupPool::EnemyGroupPool(void)
@@ -24,7 +24,7 @@ void EnemyGroupPool::Release(void)
 	allEnemyGroups_.clear();
 }
 
-EnemyGroup* EnemyGroupPool::Spawn(void)
+EnemyGroup* EnemyGroupPool::Spawn(const VECTOR& _initPos)
 {
 	//生成済みの敵グループでもう死んでいるものがいるならそれを再利用する
 	if(!inactiveEnemyGroups_.empty())
@@ -33,7 +33,7 @@ EnemyGroup* EnemyGroupPool::Spawn(void)
 		EnemyGroup* enemyGroup = inactiveEnemyGroups_.back();
 
 		//再初期化
-		enemyGroup->Init();
+		enemyGroup->Init(_initPos);
 
 		//生存リストの末尾に追加するのでその添え字を設定
 		enemyGroup->SetActiveIndex(activeEnemyGroups_.size());
@@ -52,7 +52,7 @@ EnemyGroup* EnemyGroupPool::Spawn(void)
 	std::unique_ptr<EnemyGroup> enemyGroup = std::make_unique<EnemyGroup>();
 
 	//初期化
-	enemyGroup->Init();
+	enemyGroup->Init(_initPos);
 
 	//生成した敵グループの添え字を設定
 	enemyGroup->SetActiveIndex(activeEnemyGroups_.size());

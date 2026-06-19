@@ -1,6 +1,6 @@
-#include "../../../pch.h"
-#include"EnemyManager.h"
-#include "EnemyBase.h"
+#include "../../../../pch.h"
+#include "../EnemyManager.h"
+#include "../EnemyBase.h"
 #include "EnemyPool.h"
 
 EnemyPool::EnemyPool(void)
@@ -13,7 +13,6 @@ EnemyPool::~EnemyPool(void)
 
 void EnemyPool::Load(void)
 {
-	//ファクトリーのロード
 	factory_.Load();
 }
 

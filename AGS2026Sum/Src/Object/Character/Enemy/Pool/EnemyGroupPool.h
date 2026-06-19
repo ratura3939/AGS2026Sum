@@ -1,6 +1,6 @@
 #pragma once
 #include<vector>
-#include"EnemyGroup.h"
+#include"../EnemyGroup.h"
 
 class EnemyGroupPool
 {
@@ -21,8 +21,9 @@ public:
 	/// <summary>
 	/// 敵グループの生成
 	/// </summary>
+	/// <param name="_initPos">グループの初期座標</param>
 	/// <returns>参照用のポインタを返す</returns>
-	EnemyGroup* Spawn(void);
+	EnemyGroup* Spawn(const VECTOR& _initPos);
 
 	/// <summary>
 	/// 敵グループの削除

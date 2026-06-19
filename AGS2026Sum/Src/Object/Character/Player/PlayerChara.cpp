@@ -2,6 +2,7 @@
 #include"../../../Manager/Generic/SceneManager.h"
 #include"../../../Manager/Generic/Camera.h"
 #include"../../../Manager/Generic/ResourceManager.h"	
+#include"../../Common/Geometry/Sphere.h"
 #include"PlayerManager.h"
 #include "PlayerChara.h"
 
@@ -9,6 +10,8 @@ namespace {
 	const float MOVE_SPEED = 15.0f;	//移動速度
 	const std::wstring ROOT_NAME = L"mixamorig8:Hips";
 	const int HP_MAX = 50;	//体力最大
+	const float RADIUS = 30.0f;
+	const float BROUD_RADIUS = RADIUS + 15.0f;
 }
 
 PlayerChara::PlayerChara(void)
@@ -17,6 +20,7 @@ PlayerChara::PlayerChara(void)
 	,isAttack_(false)
 	,moveSpeed_(MOVE_SPEED)
 	,afterMoveRad_(0.0f)
+	,onHit_(*this)
 {
 	hp_ = HP_MAX;
 }
@@ -63,6 +67,10 @@ const float PlayerChara::GetSpecifiedAnimationProgressRate(const std::wstring& _
 void PlayerChara::DoLoad(void)
 {
 	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::PLAYER_MDL);	//モデル取得
+
+	//当たり判定の生成
+	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, quaRot_, BROUD_RADIUS, RADIUS);
+	MakeCollider(std::move(geo), Collider::COL_TAG::PLAYER, { Collider::COL_TAG::ENEMY,Collider::COL_TAG::ENEMY_ATTACK });
 }
 
 void PlayerChara::DoInit(void)
@@ -168,6 +176,8 @@ void PlayerChara::Release(void)
 
 void PlayerChara::HitCollider(std::weak_ptr<Collider> _col)
 {
+	//当たり判定
+	onHit_.HitCollider(_col);
 }
 
 void PlayerChara::InputMoveVec(const VECTOR& _inputVec)

@@ -1,12 +1,10 @@
 #include"../../pch.h"
 #include"../../Utility/Utility.h"
-#include"../../../Manager/Generic/ResourceManager.h"
 #include"../../../Manager/GameSystem/ChunkManager.h"
-#include"EnemyParameter.h"
-#include"EnemyDefine.h"
+#include"Info/EnemyDefine.h"
+#include"Pool/EnemyGroupPool.h"
+#include"Pool/EnemyPool.h"
 #include"EnemyGroup.h"
-#include"EnemyGroupPool.h"
-#include"EnemyPool.h"
 #include"EnemyBase.h"
 #include "EnemyManager.h"
 
@@ -103,18 +101,12 @@ void EnemyManager::Release(void)
 void EnemyManager::CreateEnemyGroup(const int _createNum)
 {
 	//グループ
-	EnemyGroup* group = enemyGroupPool_->Spawn();
-
-	//初期化
-	group->Init();
+	EnemyGroup* group = enemyGroupPool_->Spawn(VGet(1000.0f,0.0f,1000.0f));
 
 	//グループの初期座標(デバッグ)
 	static VECTOR pos = { 0.0f, 0.0f, 0.0f };
 	//group->SetPos(pos);
 	//pos = VAdd(pos, { 1000.0f, 0.0f, 1000.0f });
-
-	//グループのチャンク管理用の添え字を設定
-	ChunkManager::GetInstance().AddEnemyGroup(group);
 
 	//敵の参照用ポインタ
 	EnemyBase* enemy = nullptr;
@@ -129,23 +121,23 @@ void EnemyManager::CreateEnemyGroup(const int _createNum)
 		Grouping(group, enemy);
 		enemy->InitWithGroup();
 	}
+
+	//座標リセット
+	group->ResetPos();
+
+	//グループのチャンク管理用の添え字を設定
+	ChunkManager::GetInstance().AddEnemyGroup(group);
 }
 
 void EnemyManager::CreateMiddleBossGroup(const int _createNum)
 {
 	//グループ
-	EnemyGroup* group = enemyGroupPool_->Spawn();
-
-	//初期化
-	group->Init();
+	EnemyGroup* group = enemyGroupPool_->Spawn(VGet(1000.0f, 0.0f, 1000.0f));
 
 	//グループの初期座標(デバッグ)
 	static VECTOR pos = { 0.0f, 0.0f, 0.0f };
 	//group->SetPos(pos);
 	//pos = VAdd(pos, { 1000.0f, 0.0f, 1000.0f });
-
-	//グループのチャンク管理用の添え字を設定
-	ChunkManager::GetInstance().AddEnemyGroup(group);
 
 	//敵の参照用ポインタ
 	EnemyBase* enemy = nullptr;
@@ -153,6 +145,9 @@ void EnemyManager::CreateMiddleBossGroup(const int _createNum)
 	//中ボス
 	enemy = enemyPool_->Spawn(ENEMY_TYPE::MIDDLE_BOSS);
 
+	//グループのチャンク管理用の添え字を設定
+	ChunkManager::GetInstance().AddEnemyGroup(group);
+
 	//指定分、敵を生成する
 	for (int i = 0; i < _createNum; i++)
 	{
@@ -163,6 +158,9 @@ void EnemyManager::CreateMiddleBossGroup(const int _createNum)
 		Grouping(group, enemy);
 		enemy->InitWithGroup();
 	}
+
+	//座標リセット
+	group->ResetPos();
 }
 
 const int EnemyManager::GetActiveEnemyNum(void) const
@@ -272,7 +270,7 @@ void EnemyManager::DecideOrderByDistance(void)
 		if (group->IsEmpty())continue;
 
 		//プレイヤーからの距離を取得
-		float sqrDist = Utility::SqrMagnitude(group->GetPos(), playerPos_);
+		float sqrDist = Utility::SqrMagnitude(group->GetGroupPos(), playerPos_);
 
 		//プレイヤーから一定距離以上離れているグループは無視する
 		if (sqrDist < PLAYER_ATTACK_RADIUS * PLAYER_ATTACK_RADIUS)

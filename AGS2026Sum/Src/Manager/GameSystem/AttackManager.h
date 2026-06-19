@@ -1,92 +1,100 @@
 #pragma once
 #include<string>
+#include<unordered_set>
 #include<memory>
 #include<vector>
-#include<unordered_map>
-#include<map>
+#include<array>
 #include<DxLib.h>
+#include"../../Common/Singleton.h"
 #include"../../Common/Quaternion.h"
 #include"../../Object/Common/Collider.h"
+#include"../../Object/Character/Attack/AttackDataBase.h"
 #include"../Decoration/SoundManager.h"
 
-class Arrow;
-
-class AttackManager
+class AttackManager : public Singleton<AttackManager>
 {
+	//シングルトン化のため共有化
+	friend class Singleton<AttackManager>;
+
 public:
-	enum class ATTACK_NAME {
-		P_SLASH		//斬攻撃（プレイヤー）
+
+	//攻撃の種類
+	enum class ATTACK_TYPE
+	{
+		P_ATTACK	//プレイヤー攻撃
+		, E_NORMAL	//敵通常
+		, E_TACKLE	//敵突進
+		, E_JUMP	//敵ジャンプ
 		, MAX
 	};
 
-	//ジャストガード猶予
-	static constexpr float GRACE_JUST_GUARD = 20.0f;
-
-	struct AttackInfo {
-		std::weak_ptr<Collider> collider; //攻撃判定用コライダー
-		float power;		//攻撃力
-		float totalTime;	//総再生時間
-		float startTime;	//判定開始時間
-		float endTime;		//判定終了時間
-		float counter;		//カウンター
-		bool isUsed;		//使用中かどうか
-		bool isAllert;		//警告を行ったか
-	};
+	//外部読み込み
+	void Load(void)override;
 
 	/// <summary>
 	/// 攻撃用コライダーの登録
 	/// </summary>
-	/// <param name="_name">登録名</param>
-	/// <param name="_col">コライダー</param>
-	/// <param name="_friendFire">FFありかどうか</param>
-	/// <param name="_totalTime">総所要時間</param>
-	/// <param name="_start">判定開始(常時判定するならば入れる必要なし)</param>
-	/// <param name="_end">判定終了(常時判定するならば入れる必要なし)</param>
-	void AddAttackCollider(const ATTACK_NAME& _name, std::weak_ptr<Collider> _col,const float _power, const bool _friendFire,
-		const float _totalTime, const float _start = 0.0f, const float _end = 0.0f);
+	/// <param name="_name">攻撃データ名</param>
+	/// <param name="_col">攻撃用コライダ</param>
+	void AddAttackCollider(const ATTACK_TYPE& _name, const std::weak_ptr<Collider>& _col);
 
 	/// <summary>
-	/// 攻撃情報削除
+	/// コライダリストから削除
 	/// </summary>
-	/// <param name="_name"></param>
-	void DeleteAttackCollider(const ATTACK_NAME& _name);
-
-	void DeleteCollider(const ATTACK_NAME& _name);
+	/// <param name="_col">削除するコライダ</param>
+	void DeleteAttackCollider(const std::weak_ptr<Collider>& _col);
 
 	/// <summary>
-	/// 発生
+	/// 攻撃コライダの当たったリストを削除する
 	/// </summary>
-	/// <param name="_name">登録名</param>
-	/// <param name="_sndName">再生する効果音</param>
-	void Attack(const ATTACK_NAME& _name, const SoundManager::SOUND_NAME& _sndName = SoundManager::SOUND_NAME::MAX);
-
-	bool Update(void);
+	/// <param name="_col">攻撃コライダ</param>
+	void ResetTargetColList(const std::weak_ptr<Collider>& _col);
 
 	/// <summary>
-	/// 総モーション時間取得
+	/// 攻撃が当たるか
 	/// </summary>
-	/// <param name="_name">登録名</param>
-	/// <returns>時間</returns>
-	const float GetTotalTime(const ATTACK_NAME& _name)const;
+	/// <param name="_atkCol">当たった攻撃のコライダ</param>
+	/// <param name="_hitCol">当たった本体のコライダ</param>
+	/// <returns>true:当たる</returns>
+	const bool IsCanHit(const std::weak_ptr<Collider>& _atkCol, const std::weak_ptr<Collider>& _hitCol);
 
-	//警告を使用
-	void UseAllertCollision(const ATTACK_NAME& _name);
+	/// <summary>
+	/// 攻撃情報を取得
+	/// </summary>
+	/// <param name="_atkCol">当たった攻撃のコライダ</param>
+	/// <param name="_hitCol">当たった本体のコライダ</param>
+	/// <returns>攻撃情報</returns>
+	const std::weak_ptr<AttackDataBase> GetAttackData(const std::weak_ptr<Collider>& _atkCol, const std::weak_ptr<Collider>& _hitCol);
 
-	//警告を行ったか取得
-	const bool IsAllert(const ATTACK_NAME& _name)const;
-
-	//攻撃の判定が使用されたとき
-	void UseAttackCollision(const ATTACK_NAME& _name);
-
-	void DrawDebug(void);
+	/// <summary>
+	/// 攻撃データを設定
+	/// </summary>
+	/// <param name="_name">設定したい攻撃の名前</param>
+	/// <param name="_data">設定する攻撃情報</param>
+	void SetAttackData(const ATTACK_TYPE& _name, std::shared_ptr<AttackDataBase> _data);
 
 private:
-	void UpdatePreAttack(const ATTACK_NAME& _name, AttackInfo& _info);
-	void UpdateAttack(const ATTACK_NAME& _name, AttackInfo& _info);
 
-	using UpdateAttack_f = void(AttackManager::*)(const ATTACK_NAME& _name, AttackInfo&);
-	std::unordered_map<ATTACK_NAME, UpdateAttack_f> updateAtk_;
+	//攻撃ヒット情報
+	struct AttackRuntime
+	{
+		ATTACK_TYPE name;							//攻撃の種類
+		std::unordered_set<Collider*> targetCol;	//あてられた側のコライダ
+	};
 
-	std::unordered_map<ATTACK_NAME, AttackInfo> attackColliders_; //攻撃判定用コライダー
+	//コンストラクタ
+	AttackManager(void);
+
+	//デストラクタ
+	~AttackManager(void)override;
+
+	//削除
+	void Destroy(void)override;
+
+	//攻撃コライダが登録されているか
+	const bool IsRegisterCollider(const std::weak_ptr<Collider>& _col);
+
+	std::unordered_map<Collider*, AttackRuntime> colliderAttackTypeList_;							//攻撃判定用コライダーリスト
+	std::array<std::shared_ptr<AttackDataBase>, static_cast<int>(ATTACK_TYPE::MAX)> attackDatas_;	//各攻撃の情報リスト
 };
 

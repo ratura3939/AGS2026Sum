@@ -20,14 +20,20 @@ int ChunkManager::GetChunkIndex(const VECTOR& _pos) const
 	//座標からセルの座標を求める
 	int cellX = static_cast<int>(std::floor(_pos.x / CELL_SIZE));
 	int cellZ = static_cast<int>(std::floor(_pos.z / CELL_SIZE));
+
+	// 範囲内に丸める
+	cellX = std::clamp(cellX, 0, CHUNK_X - 1);
+	cellZ = std::clamp(cellZ, 0, CHUNK_Z - 1);
+
+	//配列番号化
 	int index = cellX + cellZ * CHUNK_X;
 
-	//セルがチャンクの範囲外ならエラーを返す
-	if (cellX < 0 || cellX >= CHUNK_X || cellZ < 0 || cellZ >= CHUNK_Z)
-	{
-		assert(!"Out of Chunk");
-		return -1;	//エラー
-	}
+	//セルがチャンクの範囲外ならエラー値を返す
+	//if (cellX < 0 || cellX >= CHUNK_X || cellZ < 0 || cellZ >= CHUNK_Z)
+	//{
+	//	assert(!"Out of Chunk");
+	//	return -1;	//エラー
+	//}
 
 	return index;
 }
@@ -56,7 +62,7 @@ void ChunkManager::DebugDraw(void) const
 void ChunkManager::AddEnemyGroup(EnemyGroup* _enemyGroup)
 {
 	//敵の座標からセルの座標を求める
-	int index = GetChunkIndex(_enemyGroup->GetPos());
+	int index = GetChunkIndex(_enemyGroup->GetGroupPos());
 
 	//チャンクに登録
 	chunkEnemyMap_[index].push_back(_enemyGroup);
@@ -81,7 +87,7 @@ void ChunkManager::MoveEnemyGroup(EnemyGroup* _enemyGroup)
 	int oldIndex = _enemyGroup->GetChunkIndex();
 
 	//新しい座標からセルの座標を求める
-	int newIndex = GetChunkIndex(_enemyGroup->GetPos());
+	int newIndex = GetChunkIndex(_enemyGroup->GetGroupPos());
 
 	//セルが変わっていない場合は何もしない
 	if (oldIndex == newIndex) return;

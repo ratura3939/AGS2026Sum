@@ -30,6 +30,10 @@ public:
 	const VECTOR& GetPos(void)const;
 
 	//移動後の位置設定
+	void SetMovedPos(const VECTOR& _movedPos);
+	const VECTOR& GetMovedPos(void)const;
+
+	//移動後の位置設定
 	void SetLocalPos(const VECTOR& _localPos);
 	const VECTOR& GetLocalPos(void)const;
 
@@ -44,6 +48,8 @@ public:
 	// 対象方向を取得
 	const VECTOR& GetDir(const VECTOR& _vec) const;
 
+	//所持コライダ
+	const std::vector<std::shared_ptr<Collider>>& GetColliders(void);
 	//衝突後の処理
 	virtual void HitCollider(std::weak_ptr<Collider> _col) = 0;
 	//攻撃力の取得

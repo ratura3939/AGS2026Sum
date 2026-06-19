@@ -105,7 +105,6 @@ private:
 #pragma region インスタンス
 	std::unique_ptr<PlayerManager>player_;			//プレイヤー
 	std::unique_ptr<EnemyManager>enemy_;			//敵
-	std::shared_ptr<AttackManager>atkMng_;			//攻撃関連
 	std::unique_ptr<StageManager>stage_;			//ステージ
 #pragma endregion
 

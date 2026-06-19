@@ -93,6 +93,9 @@ void Game::Init(void)
 	update_ = &Game::GameUpdate;
 
 	//生成
+
+	//攻撃マネージャー
+	AttackManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::GAME_END);
 	
 	//チャンク管理
 	ChunkManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::GAME_END);
@@ -100,10 +103,6 @@ void Game::Init(void)
 	//ステージ
 	stage_ = std::make_unique<StageManager>();
 	stage_->Init();
-
-	//攻撃
-	atkMng_ = std::make_shared<AttackManager>();
-	CollisionManager::GetInstance().SetAttackManager(atkMng_);
 
 	//プレイヤー
 	player_ = std::make_unique<PlayerManager>(*this);
@@ -319,9 +318,6 @@ void Game::GameUpdate(void)
 	if (isEnemyUpdate_) {
 		enemy_->Update();
 	}
-
-	//攻撃
-	atkMng_->Update();
 
 	CollisionManager::GetInstance().UpdateColliders();
 
@@ -604,6 +600,7 @@ void Game::Release(void)
 	sndM.Stop(SoundManager::SOUND_NAME::GAME_NORMAL_BGM);	//今まで流していたものを停止\
 	CollisionManager::GetInstance().DeleteAllCollider();
 	ChunkManager::GetInstance().DestroyInstance();
+	AttackManager::GetInstance().DestroyInstance();
 }
 
 void Game::Reset(void)

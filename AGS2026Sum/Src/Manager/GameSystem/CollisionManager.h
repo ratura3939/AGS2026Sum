@@ -22,14 +22,7 @@ public:
 	//すべてのコライダーの衝突判定
 	void UpdateColliders(void);
 
-	//攻撃マネージャとの連携
-	void SetAttackManager(const std::weak_ptr<AttackManager>& _atkMng) { atkMng_ = _atkMng; }
-	void UseAllert(const AttackManager::ATTACK_NAME& _atkName);
-	void UseAttack(const AttackManager::ATTACK_NAME& _atkName);
-
 private:
-
-	std::weak_ptr<AttackManager> atkMng_;
 
 	CollisionManager(void);
 	~CollisionManager(void)override;

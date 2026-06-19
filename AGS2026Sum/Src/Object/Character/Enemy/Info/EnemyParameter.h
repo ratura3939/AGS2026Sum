@@ -1,5 +1,5 @@
 #pragma once
-#include"../../../Lib/nlohmann/json.hpp"
+#include"../../../../Lib/nlohmann/json.hpp"
 #include<DxLib.h>
 #include<vector>
 #include<string>
@@ -43,6 +43,9 @@ struct EnemyParameter
 
 	//アニメーション
 	std::unordered_map<std::string, AnimParameter> animParam;
+
+	//攻撃の種類
+	std::vector<std::string> skillName;
 };
 
 inline void from_json(const nlohmann::json& _data, EnemyParameter& _param) 
@@ -86,6 +89,18 @@ inline void from_json(const nlohmann::json& _data, EnemyParameter& _param)
 
 			//格納
 			_param.animParam.emplace(animName,animParam);
+		}
+	}
+
+	//攻撃名
+	if (_data.contains("skill"))
+	{
+		//スキル配列
+		const auto& skillJson = _data.at("skill");
+
+		for (const auto& skillName : skillJson)
+		{
+			_param.skillName.push_back(skillName);
 		}
 	}
 }

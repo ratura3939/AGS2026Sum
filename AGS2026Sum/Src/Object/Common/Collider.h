@@ -28,7 +28,7 @@ public:
 	void OnHit(std::weak_ptr<Collider> _col);
 
 	//タイプの取得
-	const COL_TAG& GetTags(void)const { return tag_; }
+	const COL_TAG& GetTag(void)const { return tag_; }
 	const std::set<COL_TAG>& GetHitTags(void)const { return hitTags_; }
 
 	//タグの追加

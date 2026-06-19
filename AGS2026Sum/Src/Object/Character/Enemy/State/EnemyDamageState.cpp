@@ -25,7 +25,7 @@ void EnemyDamageState::Enter(EnemyBase& _enemy)
 	_enemy.Update();
 
 	//当たり判定の無効化
-	_enemy.DisableHitCollider();
+	//_enemy.DisableHitCollider();
 
 	//攻撃の無効化
 	_enemy.DisableAttack();
@@ -33,9 +33,12 @@ void EnemyDamageState::Enter(EnemyBase& _enemy)
 
 void EnemyDamageState::Update(EnemyBase& _enemy)
 {
+	//シーンマネージャー
+	auto& scnMng = SceneManager::GetInstance();
+
 	//移動時間が一定以上ならノックダウン状態に遷移
 	if (damageMoveTime_ > DAMAGE_MOVE_TIME_MAX) _enemy.ChangeState(std::make_unique<EnemyKnockDownState>());
-	else damageMoveTime_ += SceneManager::GetInstance().GetDeltaTime();
+	else damageMoveTime_ += scnMng.GetScaleUpdateSpeedRate(scnMng.GetDeltaTime());
 
 	//移動更新
 	_enemy.BackMove();

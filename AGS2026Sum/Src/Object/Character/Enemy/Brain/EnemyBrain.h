@@ -1,10 +1,11 @@
 #pragma once
 #include <unordered_map>
-#include "EnemyDefine.h"
+#include "../Info/EnemyDefine.h"
+#include "BrainBase.h"
 
 class EnemyBase;
 
-class EnemyBrain
+class EnemyBrain : public BrainBase
 {
 public:
 
@@ -12,27 +13,20 @@ public:
 	EnemyBrain(EnemyBase& _parent);
 
 	//デストラクタ
-	~EnemyBrain(void);
+	~EnemyBrain(void)override;
 
 	//優先度決定
-	void DecidePriority(void);
+	void DecidePriority(void)override;
 
-	//優先度で行動選択
-	void ChoiceAction(void);
+	//攻撃スキル選択
+	void ChoiceAttackSkill(void)override;
 
 private:
-
-	//行動優先度係数
-	static constexpr int PRIORITY = 1;
-
-	//親
-	EnemyBase& parent_;
 
 	//関数ポインタ
 	using Func = void(EnemyBrain::*)(void);
 
-	//敵の行動優先度(値が高いほど優先する)
-	std::array<int, static_cast<int>(ENEMY_ACTION::MAX)> actionPriority_;
+	//優先度決め
 	std::array<Func, static_cast<int>(GROUP_ORDER::MAX)> orderPriority_;
 
 	//グループの命令ごとの行動優先度の設定

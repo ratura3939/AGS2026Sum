@@ -5,9 +5,11 @@
 
 EnemyGroup::EnemyGroup(void)
 	: chunkIndex_(-1)
-	, pos_(Utility::VECTOR_INIT)
 	, actionCnt_(0.0f)
-	, movePow_(Utility::VECTOR_ZERO)
+	, pos_(Utility::VECTOR_INIT)
+	, initPos_(Utility::VECTOR_INIT)
+	, groupGoalPos_(Utility::VECTOR_INIT)
+	, movePow_(Utility::VECTOR_INIT)
 	, order_(GROUP_ORDER::NONE)
 	, isActive_(false)
 {
@@ -20,17 +22,18 @@ EnemyGroup::EnemyGroup(void)
 
 EnemyGroup::~EnemyGroup(void)
 {
-	//TODO:敵にグループ崩壊を伝える
+	//敵にグループ崩壊を伝える
 	for(EnemyBase* enemy : enemys_)
 	{
 		enemy->LeaveGroup();
 	}
 }
 
-void EnemyGroup::Init(void)
+void EnemyGroup::Init(const VECTOR& _initPos)
 {
-	//座標の初期化
-	pos_ = { 100.0f,0.0f,100.0f };
+	//初期座標保存
+	initPos_ = _initPos;
+	pos_ = initPos_;
 
 	//生存判定の初期化
 	isActive_ = true;
@@ -74,6 +77,11 @@ void EnemyGroup::Release(void)
 {
 }
 
+const VECTOR& EnemyGroup::GetGroupPos(void)const
+{
+	return pos_;
+}
+
 void EnemyGroup::ChangeOrder(const GROUP_ORDER _nextOrder)
 {
 	//すでにその状態なら何もしない
@@ -91,7 +99,10 @@ void EnemyGroup::ChangeOrder(const GROUP_ORDER _nextOrder)
 
 void EnemyGroup::ResetPos(void)
 {
-
+	for (auto& enemy : enemys_)
+	{
+		enemy->ResetPos();
+	}
 }
 
 void EnemyGroup::DeleteEnemy(void)
@@ -112,10 +123,7 @@ void EnemyGroup::MoveToGoal(void)
 
 void EnemyGroup::GroupMove(void)
 {
-	//ある程度近づいたならスキップ
-	if (Utility::SqrMagnitude(pos_, groupGoalPos_) < SPEED * SPEED)return;
-
-	//グループ座標の更新
+	//グループ座標の移動
 	pos_ = VAdd(pos_, movePow_);
 }
 

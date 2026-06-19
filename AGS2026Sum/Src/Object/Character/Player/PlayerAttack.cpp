@@ -1,5 +1,6 @@
 #include "../../../pch.h"
 #include"../../../Manager/Generic/ResourceManager.h"
+#include"../../../Manager/GameSystem/AttackManager.h"
 #include"../../Common/Geometry/Sphere.h"
 #include"PlayerManager.h"
 #include "PlayerAttack.h"
@@ -75,7 +76,7 @@ void PlayerAttack::DoLoad(void)
 
 void PlayerAttack::DoInit(void)
 {
-	MakeCollider(std::make_unique<Sphere>(pos_, pos_, currentData_.radius, currentData_.radius), Collider::COL_TAG::PLAYER_ATTACK, { Collider::COL_TAG::ENEMY });	//攻撃用のコライダ生成
+	MakeCollider(std::make_unique<Sphere>(pos_, pos_, quaRot_, currentData_.radius, currentData_.radius), Collider::COL_TAG::PLAYER_ATTACK, { Collider::COL_TAG::ENEMY });	//攻撃用のコライダ生成
 	LoadAttackData();
 
 	//各種演出用の空を生成
@@ -95,6 +96,7 @@ void PlayerAttack::DoInit(void)
 	LoadAttackDirectionData();	//Timing
 
 	colliders_[0]->SetUseThis(false);	//コライダの無効化
+	AttackManager::GetInstance().AddAttackCollider(AttackManager::ATTACK_TYPE::P_ATTACK, colliders_[0]);	//攻撃マネージャーに登録
 }
 
 void PlayerAttack::DoUpdate(void)
@@ -102,6 +104,7 @@ void PlayerAttack::DoUpdate(void)
 	if (IsAttacking()) {
 		//攻撃中は座標を更新
 		pos_ = VAdd(playerPos_, playerQuaRot_.PosAxis(currentData_.localPos));	//プレイヤーの座標にローカル座標を加算して攻撃の座標とする
+		quaRot_ = playerQuaRot_;												//敵にベクトルを与えるためにプレイヤー本体の回転をコピー
 	}
 	//攻撃していないとき
 	else {
@@ -325,6 +328,13 @@ void PlayerAttack::ApplyAttackColliderSettings(void)
 		attackSphere->SetRadius(currentData_.radius);		//半径変更
 		attackSphere->SetBroudRadius(currentData_.radius);	//前判定用半径変更
 	}
+
+	//攻撃マネージャー
+	auto& atkMng = AttackManager::GetInstance();
+
+	std::shared_ptr<AttackData> data = std::make_shared<AttackData>(currentData_);	//データをポインタ化
+	atkMng.SetAttackData(AttackManager::ATTACK_TYPE::P_ATTACK, data);				//データを渡す
+	atkMng.ResetTargetColList(colliders_[0]);
 }
 
 void PlayerAttack::ResetCombo(void)

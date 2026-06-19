@@ -1,181 +1,155 @@
 #include"../../pch.h"
 #include"../Decoration/SoundManager.h"
-
+#include"../Generic/ResourceManager.h"
+#include"../../Object/Character/Attack/AttackDataBase.h"
+#include"../../Object/Character/Enemy/Skill/EnemySkillsData.h"
 #include "AttackManager.h"
 
-void AttackManager::AddAttackCollider(const ATTACK_NAME& _name, std::weak_ptr<Collider> _col, const float _power, const bool _friendFire, const float _totalTime, const float _start, const float _end)
+void AttackManager::Load(void)
 {
-	auto& adress = *this;
+	//リソース
+	auto& res = ResourceManager::GetInstance();
 
-	//既に要素があるとき
-	if(attackColliders_.contains(_name)){
+	//敵情報
+	EnemySkillDatas enemyData = res.Load(ResourceManager::SRC::ENEMY_SKILLS_DATA).GetData<EnemySkillDatas>();
+
+	//格納
+	attackDatas_[static_cast<int>(ATTACK_TYPE::E_NORMAL)] = enemyData.skillsData["NormalSkill"];
+	attackDatas_[static_cast<int>(ATTACK_TYPE::E_TACKLE)] = enemyData.skillsData["Tackle"];
+	attackDatas_[static_cast<int>(ATTACK_TYPE::E_JUMP)] = enemyData.skillsData["Jump"];
+}
+
+void AttackManager::AddAttackCollider(const ATTACK_TYPE& _name, const std::weak_ptr<Collider>& _col)
+{
+	//登録コライダのポインタ
+	auto addCol = _col.lock();
+	if (!addCol)return;
+
+	if (IsRegisterCollider(_col))
+	{
 		//エラー防止
-		assert("すでに登録しているものを再登録しようとしています");
+		assert(!"すでに登録しているものを再登録しようとしています");
 		return;
 	}
 
-	//攻撃用コライダー情報の格納
-	AttackInfo addInfo;
-	addInfo.collider = _col;
-	addInfo.power = _power;
-	addInfo.totalTime = _totalTime;
-	addInfo.startTime = _start;
-	addInfo.endTime = _end;
-	if(_end==0.0f){
-		addInfo.endTime = _totalTime;
-	}
-	addInfo.counter = 0.0f;
-	addInfo.isUsed = false;
-	addInfo.isAllert = false;
-
-	attackColliders_.emplace(_name, addInfo);
-
-	UpdateAttack_f addUpdate = &AttackManager::UpdatePreAttack;
-	updateAtk_.emplace(_name, addUpdate);
-
-	//FF設定
-	//プレイヤー又は敵のどちらかに当たらないようにする
-	//if (_friendFire) {
-	//	for (auto& colTags : _col.lock()->GetTags()) {
-	//		if(colTags==Collider::COL_TAG::PLAYER){
-	//			_col.lock()->AddHitTags(Collider::COL_TAG::PLAYER);
-	//			break;
-	//		}
-	//		else if (colTags == Collider::COL_TAG::ENEMY) {
-	//			_col.lock()->AddHitTags(Collider::COL_TAG::ENEMY);
-	//			break;
-	//		}
-	//	}
-	//}
+	//登録
+	colliderAttackTypeList_[addCol.get()].name = _name;
 }
 
-void AttackManager::Attack(const ATTACK_NAME& _name, const SoundManager::SOUND_NAME& _sndName)
+void AttackManager::DeleteAttackCollider(const std::weak_ptr<Collider>& _col)
 {
-	//そもそも使用したい攻撃が登録されていないとき
-	if(!attackColliders_.contains(_name)){
-		//エラー防止
-		assert("登録されていない攻撃を発生させようとしています");
+	//削除コライダ
+	auto deleteCol = _col.lock();
+	if (!deleteCol)return;
+
+	//一致したものを消す
+	colliderAttackTypeList_.erase(deleteCol.get());
+}
+
+void AttackManager::ResetTargetColList(const std::weak_ptr<Collider>& _col)
+{
+	//攻撃コライダ
+	auto col = _col.lock();
+	if (!col)return;
+
+	//含まれているかを探す
+	auto colPtr = col.get();
+	if (!IsRegisterCollider(_col))
+	{
+		//見つからなかった
 		return;
 	}
 
-	if (attackColliders_[_name].isUsed) {
-		//エラー防止
-		assert("すでに使用中の攻撃を再度発生させようとしています");
-		return;
-	}
-
-	//攻撃発生
-	attackColliders_[_name].collider.lock()->SetUseThis(true);
-	//攻撃準備のタグ設定
-	//attackColliders_[_name].collider.lock()->AddTag(Collider::COL_TAG::PREATTACK);
-	attackColliders_[_name].isUsed = true;
-	attackColliders_[_name].counter = 0.0f;
-	attackColliders_[_name].isAllert = false;
-
-	//更新処理の設定
-	updateAtk_[_name] = &AttackManager::UpdatePreAttack;
-
-	//何か再生する物がある場合
-	if (_sndName != SoundManager::SOUND_NAME::MAX) {
-		//効果音の再生
-		SoundManager::GetInstance().Play(_sndName);
-	}
+	//リセット
+	colliderAttackTypeList_[colPtr].targetCol.clear();
 }
 
-void AttackManager::DeleteAttackCollider(const ATTACK_NAME& _name)
+const bool AttackManager::IsCanHit(const std::weak_ptr<Collider>& _atkCol, const std::weak_ptr<Collider>& _hitCol)
 {
-	attackColliders_.erase(_name);
-	updateAtk_.erase(_name);
-}
+	//コライダのポインタ
+	auto atkCol = _atkCol.lock();
+	auto hitCol = _hitCol.lock();
+	if (!atkCol || !hitCol)return false;
 
-void AttackManager::DeleteCollider(const ATTACK_NAME& _name)
-{
-	attackColliders_.erase(_name);
-}
-
-bool AttackManager::Update(void)
-{
-	//攻撃更新処理（攻撃発生者数分）
-	//master=first:攻撃発生者名 second:攻撃データ
-	for (auto& atk : attackColliders_) {
-		if (atk.second.isUsed) {
-			//カウンタの増加
-			atk.second.counter++;
-			auto atkCol = atk.second.collider.lock();
-			//アクティブな攻撃の更新
-			(this->*updateAtk_[atk.first])(atk.first, atk.second);
-		}
+	//含まれているかを探す
+	auto atkColPtr = atkCol.get();
+	if (!IsRegisterCollider(_atkCol))
+	{
+		//見つからなかった
+		assert(!"選択されたコライダは登録されていません");
+		return false;
 	}
+
+	//単体ヒット　かつ　既に攻撃済みリストに当たったコライダが登録されているかを調べる
+	auto hitColPtr = hitCol.get();
+	bool isMultiHit = attackDatas_[static_cast<int>(colliderAttackTypeList_[atkColPtr].name)]->isMultiHit;
+	bool isRegist = colliderAttackTypeList_[atkColPtr].targetCol.contains(hitColPtr);
+	if (!isMultiHit && isRegist)
+	{
+		//当たらない
+		return false;
+	}
+
+	//当たる
 	return true;
 }
 
-const float AttackManager::GetTotalTime(const ATTACK_NAME& _name) const
+const std::weak_ptr<AttackDataBase> AttackManager::GetAttackData(const std::weak_ptr<Collider>& _atkCol, const std::weak_ptr<Collider>& _hitCol)
 {
-	//要素がないとき
-	if (!attackColliders_.contains(_name)) {
-		return -1.0f;
+	//コライダのポインタ
+	auto atkCol = _atkCol.lock();
+	auto hitCol = _hitCol.lock();
+	if (!atkCol || !hitCol)return {};
+
+	//ポインタ変換
+	auto atkColPtr = atkCol.get();
+
+	//含まれているか
+	if(!IsRegisterCollider(_atkCol))
+	{ 
+		assert(!"選択されたコライダは登録されていません");
+		return {};
 	}
-	return attackColliders_.at(_name).totalTime;
+
+	//見つかったので攻撃済みリストに当たった側を保存する
+	auto hitColPtr = hitCol.get();
+	colliderAttackTypeList_[atkColPtr].targetCol.insert(hitColPtr);
+
+	//攻撃情報を返す
+	return attackDatas_[static_cast<int>(colliderAttackTypeList_[atkColPtr].name)];
 }
 
-void AttackManager::UseAllertCollision(const ATTACK_NAME& _name)
+void AttackManager::SetAttackData(const ATTACK_TYPE& _name, std::shared_ptr<AttackDataBase> _data)
 {
-	attackColliders_.at(_name).isAllert = true;
+	//攻撃情報を上書き
+	attackDatas_[static_cast<int>(_name)] = _data;
 }
 
-const bool AttackManager::IsAllert(const ATTACK_NAME& _name) const
+AttackManager::AttackManager(void)
 {
-	return attackColliders_.at(_name).isAllert;
 }
 
-void AttackManager::UseAttackCollision(const ATTACK_NAME& _name)
+AttackManager::~AttackManager(void)
 {
-	attackColliders_.at(_name).collider.lock()->SetUseThis(false);
-	attackColliders_.at(_name).isUsed = false;
 }
 
-void AttackManager::DrawDebug(void)
+void AttackManager::Destroy(void)
 {
-	//int color = 0xff00ff;
-	//for (auto& master : activeAttacks_) {
-	//	for (auto& atkData : master.second) {
-	//		auto& info = attackInfoes_[atkData.first];
-	//		if (info.group == ATTACK_MASTER::ENEMY) {
-	//			if (info.counter < info.startAttack) {
-	//				color = 0x00ff00;
-	//			}
-	//			else if (info.counter >= info.endAttack) {
-	//				color = 0x0000ff;
-	//			}
-	//			else color = 0xff00ff;
-	//		}
-	//		//デバッグ用の球体を描画
-	//		DrawSphere3D(atkData.second.attack.pos, info.scale, 8, color, color, false);
-	//	}
-	//}
-	
+	//全削除
+	colliderAttackTypeList_.clear();
+	attackDatas_.fill(nullptr);
 }
 
-void AttackManager::UpdatePreAttack(const ATTACK_NAME& _name, AttackInfo& _info)
+const bool AttackManager::IsRegisterCollider(const std::weak_ptr<Collider>& _col)
 {
-	if (_info.counter >= _info.startTime) {
-		//攻撃開始処理
-		auto atkCol = _info.collider.lock();
-		//準備状態→攻撃状態へ
-		//atkCol->DeleteTag(Collider::COL_TAG::PREATTACK);
-		//atkCol->AddTag(Collider::COL_TAG::ATTACK);
-		updateAtk_[_name] = &AttackManager::UpdateAttack;
+	//含まれているかを探す
+	auto colPtr = _col.lock().get();
+	if (!colliderAttackTypeList_.contains(colPtr))
+	{
+		//見つからなかった
+		return false;
 	}
-}
 
-void AttackManager::UpdateAttack(const ATTACK_NAME& _name, AttackInfo& _info)
-{
-	if (_info.counter >= _info.endTime) {
-		//攻撃終了処理
-		auto atkCol = _info.collider.lock();
-		atkCol->SetUseThis(false);
-		//atkCol->DeleteTag(Collider::COL_TAG::ATTACK);
-		_info.counter = 0.0f;
-		_info.isUsed = false;
-	}
+	//見つかった
+	return true;
 }
