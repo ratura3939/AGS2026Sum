@@ -97,7 +97,7 @@ void Application::Run(void)
 	auto& sceneManager = SceneManager::GetInstance();
 
 	// ゲームループ
-	while (isLoop_)
+	while (isLoop_ && ProcessMessage() == 0)
 	{
 
 		Sleep(1);	//システムに処理を返す
