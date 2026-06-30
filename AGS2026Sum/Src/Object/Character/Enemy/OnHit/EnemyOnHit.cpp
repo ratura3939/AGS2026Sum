@@ -1,15 +1,25 @@
 #include "../../../../pch.h"
 #include"../../../../Manager/Generic/SceneManager.h"
 #include"../../../../Manager/GameSystem/AttackManager.h"
-#include "../EnemyBase.h"
 #include "../../Player/ToJson/PlayerAttackData.h"
-#include "../State/EnemyDamageState.h"
+#include "../State/EnemyStaggerState.h"
+#include "../State/EnemyLaunchState.h"
+#include "../State/EnemySlamState.h"
+#include "../State/EnemyPushBackState.h"
+#include "../State/EnemyBlowAwayState.h"
+#include "../EnemyBase.h"
 #include "EnemyOnHit.h"
 
 EnemyOnHit::EnemyOnHit(EnemyBase& _parent)
 	: parent_(_parent)
 	, cnt_(0.0f)
 {
+	//状態生成関数
+	createState_.emplace("Stagger", &EnemyOnHit::CreateStagger);
+	createState_.emplace("Launch", &EnemyOnHit::CreateLaunch);
+	createState_.emplace("Slam", &EnemyOnHit::CreateSlam);
+	createState_.emplace("PushBack", &EnemyOnHit::CreatePushBack);
+	createState_.emplace("BlowAway", &EnemyOnHit::CreateBlowAway);
 }
 
 EnemyOnHit::~EnemyOnHit(void)
@@ -58,13 +68,11 @@ void EnemyOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 	const Quaternion quaRot = col->GetGeometry().GetColRot();
 
 	//吹っ飛び(相手の向いている方向)
-	VECTOR blowPow = VScale(quaRot.GetForward(), BLOW_POWER);
-
-	//吹っ飛びの移動量を与える
-	parent_.SetMovePow(blowPow);
+	VECTOR blowPow = quaRot.GetForward();
 
 	//ダメージ状態
-	parent_.ChangeState(std::make_unique<EnemyDamageState>());
+	std::string knockback = data->knockBackType;
+	parent_.ChangeState((this->*createState_[knockback])(blowPow));
 
 	//ダメージ処理
 	parent_.Damage(data->power);
@@ -117,4 +125,29 @@ void EnemyOnHit::HitEnemy(const std::weak_ptr<Collider> _col)
 
 void EnemyOnHit::HitEnemyAttack(const std::weak_ptr<Collider> _col)
 {
+}
+
+std::unique_ptr<EnemyStateBase> EnemyOnHit::CreateStagger(const VECTOR& _vec)
+{
+	return std::make_unique<EnemyStaggerState>(_vec);
+}
+
+std::unique_ptr<EnemyStateBase> EnemyOnHit::CreateLaunch(const VECTOR& _vec)
+{
+	return std::make_unique<EnemyLaunchState>(_vec);
+}
+
+std::unique_ptr<EnemyStateBase> EnemyOnHit::CreateSlam(const VECTOR& _vec)
+{
+	return std::make_unique<EnemySlamState>(_vec);
+}
+
+std::unique_ptr<EnemyStateBase> EnemyOnHit::CreatePushBack(const VECTOR& _vec)
+{
+	return std::make_unique<EnemyPushBackState>(_vec);
+}
+
+std::unique_ptr<EnemyStateBase> EnemyOnHit::CreateBlowAway(const VECTOR& _vec)
+{
+	return std::make_unique<EnemyBlowAwayState>(_vec);
 }

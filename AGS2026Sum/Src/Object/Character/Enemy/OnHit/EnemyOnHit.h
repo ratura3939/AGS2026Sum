@@ -2,6 +2,7 @@
 #include"../../../Common/OnHitBase.h"
 
 class EnemyBase;
+class EnemyStateBase;
 
 class EnemyOnHit : public OnHitBase
 {
@@ -15,14 +16,15 @@ public:
 
 private:
 
-	//吹っ飛び速度
-	static constexpr float BLOW_POWER = 5.0f;
-
 	//親
 	EnemyBase& parent_;
 
 	//カウンタ
 	float cnt_;
+
+	//状態変化関数ポインタ
+	using Func = std::unique_ptr<EnemyStateBase>(EnemyOnHit::*)(const VECTOR& _vec);
+	std::unordered_map<std::string, Func> createState_;
 
 	//ダメージ計算
 	void CalcDamage(const std::weak_ptr<Collider> _col);
@@ -32,4 +34,11 @@ private:
 	void HitPlayerAttack(const std::weak_ptr<Collider> _col)override;
 	void HitEnemy(const std::weak_ptr<Collider> _col)override;
 	void HitEnemyAttack(const std::weak_ptr<Collider> _col)override;
+
+	//状態生成関数
+	std::unique_ptr<EnemyStateBase> CreateStagger(const VECTOR& _vec);
+	std::unique_ptr<EnemyStateBase> CreateLaunch(const VECTOR& _vec);
+	std::unique_ptr<EnemyStateBase> CreateSlam(const VECTOR& _vec);
+	std::unique_ptr<EnemyStateBase> CreatePushBack(const VECTOR& _vec);
+	std::unique_ptr<EnemyStateBase> CreateBlowAway(const VECTOR& _vec);
 };

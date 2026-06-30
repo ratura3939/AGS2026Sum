@@ -49,6 +49,9 @@ public:
 		, ENEMY_ATTACK_ANIM				//攻撃
 		, ENEMY_TACKLE_ANIM				//突進
 		, ENEMY_JUMP_ANIM				//ジャンプ
+		, ENEMY_STAGGER_ANIM			//よろけ
+		, ENEMY_LAUNCH_ANIM				//打ち上げ
+		, ENEMY_LAUNCH_DOWN_ANIM		//打ち上げ倒れ
 		, ENEMY_BLOW_FIRST_HALF_ANIM	//吹っ飛び前半
 		, ENEMY_BLOW_SECOND_HALF_ANIM	//吹っ飛び後半
 		, ENEMY_BLOW_END_ANIM			//吹っ飛び終了

@@ -35,7 +35,11 @@ enum class ENEMY_ACTION
 enum class ENEMY_STATE
 {
 	NORMAL				//通常
-	, DAMAGE			//ダメージ
+	, STAGGER			//よろけ
+	, LAUNTH			//打ち上げ
+	, SLAM				//叩きつけ
+	, PUSH_BACK			//小吹っ飛び
+	, BLOW_AWAY			//大吹っ飛び
 	, STUN				//スタン
 	, KNOCK_DOWN		//ダウン
 	, DEATH				//死亡

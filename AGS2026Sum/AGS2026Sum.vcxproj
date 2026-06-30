@@ -145,6 +145,11 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Character\Enemy\State\EnemyBlowAwayState.cpp" />
+    <ClCompile Include="Src\Object\Character\Enemy\State\EnemyPushBackState.cpp" />
+    <ClCompile Include="Src\Object\Character\Enemy\State\EnemyLaunchState.cpp" />
+    <ClCompile Include="Src\Object\Character\Enemy\State\EnemySlamState.cpp" />
+    <ClCompile Include="Src\Object\Character\Enemy\State\EnemyStaggerState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerOnHit.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\Skill\EnemyJumpSkill.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\Skill\EnemyTackleSkill.cpp" />
@@ -218,6 +223,11 @@
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Character\Enemy\State\EnemyBlowAwayState.h" />
+    <ClInclude Include="Src\Object\Character\Enemy\State\EnemyPushBackState.h" />
+    <ClInclude Include="Src\Object\Character\Enemy\State\EnemyLaunchState.h" />
+    <ClInclude Include="Src\Object\Character\Enemy\State\EnemySlamState.h" />
+    <ClInclude Include="Src\Object\Character\Enemy\State\EnemyStaggerState.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerOnHit.h" />
     <ClInclude Include="Src\Object\Character\Enemy\Skill\EnemyJumpSkill.h" />
     <ClInclude Include="Src\Object\Character\Enemy\Skill\EnemyTackleSkill.h" />

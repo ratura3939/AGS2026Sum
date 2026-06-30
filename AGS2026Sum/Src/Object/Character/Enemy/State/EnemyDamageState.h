@@ -6,30 +6,30 @@ class EnemyDamageState : public EnemyStateBase
 public:
 
 	//コンストラクタ
-	EnemyDamageState(void);
+	EnemyDamageState(const VECTOR& _vec);
 
 	//デストラクタ
-	~EnemyDamageState(void)override;
+	virtual ~EnemyDamageState(void)override;
 	
 	//状態の開始
-	void Enter(EnemyBase& _enemy)override;
+	virtual void Enter(EnemyBase& _enemy)override = 0;
 	
 	//状態の更新
-	void Update(EnemyBase& _enemy)override;
+	virtual void Update(EnemyBase& _enemy)override = 0;
 	
 	//状態の終了
-	void Exit(EnemyBase& _enemy)override;
+	virtual void Exit(EnemyBase& _enemy)override = 0;
 	
 	//状態IDの取得
-	const ENEMY_STATE GetStateId(void)const override { return ENEMY_STATE::DAMAGE; }
+	virtual const ENEMY_STATE GetStateId(void)const override = 0;
 
-private:
+protected:
 
 	//移動時間の最大値
 	static constexpr float DAMAGE_MOVE_TIME_MAX = 1.5f;
 
-	//ダメージアニメーションの速度
-	static constexpr float BLOW_SPEED = 3.0f;
+	//移動方向
+	VECTOR moveVec_;
 
 	//ダメージを受けたときの移動時間
 	float damageMoveTime_;
