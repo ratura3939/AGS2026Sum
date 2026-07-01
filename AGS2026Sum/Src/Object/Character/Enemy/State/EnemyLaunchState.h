@@ -26,7 +26,7 @@ public:
 private:
 
 	//ダメージアニメーションの速度
-	static constexpr float ANIM_SPEED = 2.0f;
+	static constexpr float ANIM_SPEED = 1.0f;
 
 	//吹っ飛び速度
 	static constexpr float SPEED = 1.0f;

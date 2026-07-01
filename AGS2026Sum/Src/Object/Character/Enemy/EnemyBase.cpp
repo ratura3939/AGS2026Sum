@@ -480,7 +480,9 @@ void EnemyBase::SetAttackPos(const VECTOR& _localPos)
 void EnemyBase::SetAttackRadius(const float _radius)
 {
 	//半径変更
-	colliders_[1]->GetGeometry<Sphere>()->SetRadius(_radius);
+	auto sphere = colliders_[1]->GetGeometry<Sphere>();
+	sphere->SetRadius(_radius);
+	sphere->SetBroudRadius(_radius);
 }
 
 void EnemyBase::EnableAttack(void)

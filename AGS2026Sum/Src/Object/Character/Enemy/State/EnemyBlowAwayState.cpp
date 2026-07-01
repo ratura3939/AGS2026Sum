@@ -26,9 +26,6 @@ void EnemyBlowAwayState::Enter(EnemyBase& _enemy)
 
 	//移動更新
 	_enemy.Update();
-
-	//通常状態
-	_enemy.ChangeAction(ENEMY_ACTION::STAY);
 }
 
 void EnemyBlowAwayState::Update(EnemyBase& _enemy)

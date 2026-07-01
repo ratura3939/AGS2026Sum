@@ -19,16 +19,13 @@ void EnemySlamState::Enter(EnemyBase& _enemy)
 	damageMoveTime_ = 0.0f;
 
 	//ダメージアニメーション
-	_enemy.PlayAnim(L"BlowEnd", ANIM_SPEED);
+	_enemy.PlayNoBlendAnim(L"BlowEnd", ANIM_SPEED);
 
 	//移動量更新
 	_enemy.SetMovePow(VScale(moveVec_, SPEED));
 
 	//移動更新
 	_enemy.Update();
-
-	//通常状態
-	_enemy.ChangeAction(ENEMY_ACTION::STAY);
 }
 
 void EnemySlamState::Update(EnemyBase& _enemy)

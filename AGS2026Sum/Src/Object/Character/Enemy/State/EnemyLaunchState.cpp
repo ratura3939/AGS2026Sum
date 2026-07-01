@@ -19,16 +19,13 @@ void EnemyLaunchState::Enter(EnemyBase& _enemy)
 	damageMoveTime_ = 0.0f;
 
 	//ダメージアニメーション
-	_enemy.PlayAnim(L"Launch", ANIM_SPEED);
+	_enemy.PlayNoBlendAnim(L"Launch", ANIM_SPEED);
 
 	//移動量更新
 	_enemy.SetMovePow(VScale(moveVec_, SPEED));
 
 	//移動更新
 	_enemy.Update();
-
-	//通常状態
-	_enemy.ChangeAction(ENEMY_ACTION::STAY);
 }
 
 void EnemyLaunchState::Update(EnemyBase& _enemy)
@@ -41,11 +38,11 @@ void EnemyLaunchState::Update(EnemyBase& _enemy)
 	else damageMoveTime_ += scnMng.GetScaleUpdateSpeedRate(scnMng.GetDeltaTime());
 
 	//移動方向に後ろを向きながら移動
-	_enemy.BackMove();
+	_enemy.Move();
 }
 
 void EnemyLaunchState::Exit(EnemyBase& _enemy)
 {
 	//ダメージアニメーション
-	_enemy.PlayAnim(L"BlowEnd", ANIM_SPEED);
+	_enemy.PlayAnim(L"LaunchDown", ANIM_SPEED);
 }

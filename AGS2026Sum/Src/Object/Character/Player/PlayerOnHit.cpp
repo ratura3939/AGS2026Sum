@@ -36,7 +36,7 @@ void PlayerOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 	const auto& atkData = atkMng.GetAttackData(_col, myCol).lock();
 
 	//攻撃間隔
-	if (atkData->hitInterval < cnt_ && atkData->isMultiHit)
+	if (atkData->hitInterval > cnt_ && atkData->isMultiHit)
 	{
 		//カウンタ
 		auto& scnMng = SceneManager::GetInstance();

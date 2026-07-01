@@ -19,16 +19,13 @@ void EnemyStaggerState::Enter(EnemyBase& _enemy)
 	damageMoveTime_ = 0.0f;
 
 	//ダメージアニメーション
-	_enemy.PlayAnim(L"Stagger", ANIM_SPEED);
+	_enemy.PlayNoBlendAnim(L"Stagger", ANIM_SPEED);
 
 	//移動量更新
 	_enemy.SetMovePow(VScale(moveVec_, SPEED));
 
 	//移動更新
 	_enemy.Update();
-
-	//通常状態
-	_enemy.ChangeAction(ENEMY_ACTION::STAY);
 }
 
 void EnemyStaggerState::Update(EnemyBase& _enemy)
@@ -39,9 +36,6 @@ void EnemyStaggerState::Update(EnemyBase& _enemy)
 	//移動時間が一定以上ならノックダウン状態に遷移
 	if (damageMoveTime_ > DAMAGE_MOVE_TIME_MAX) _enemy.ChangeState(std::make_unique<EnemyNormalState>());
 	else damageMoveTime_ += scnMng.GetScaleUpdateSpeedRate(scnMng.GetDeltaTime());
-
-	//移動方向に後ろを向きながら移動
-	//_enemy.BackMove();
 }
 
 void EnemyStaggerState::Exit(EnemyBase& _enemy)

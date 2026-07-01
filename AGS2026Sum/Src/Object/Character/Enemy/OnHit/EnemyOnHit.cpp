@@ -12,7 +12,7 @@
 
 EnemyOnHit::EnemyOnHit(EnemyBase& _parent)
 	: parent_(_parent)
-	, cnt_(0.0f)
+	, cnt_(INT_MAX)
 {
 	//状態生成関数
 	createState_.emplace("Stagger", &EnemyOnHit::CreateStagger);
@@ -48,7 +48,7 @@ void EnemyOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 	auto data = dynamic_pointer_cast<AttackData>(atkData);
 
 	//攻撃間隔
-	if (data->hitInterval < cnt_ && data->isMultiHit)
+	if (data->hitInterval > cnt_ && data->isMultiHit)
 	{
 		//カウンタ
 		auto& scnMng = SceneManager::GetInstance();
@@ -60,6 +60,12 @@ void EnemyOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 
 	//現在スキルの破棄
 	parent_.RemoveCurrentSkill();
+
+	//攻撃コライダの登録削除
+	parent_.RemoveAttackCollider();
+
+	//通常状態
+	parent_.ChangeAction(ENEMY_ACTION::STAY);
 
 	//リセット
 	cnt_ = 0.0f;
@@ -98,6 +104,8 @@ void EnemyOnHit::HitEnemy(const std::weak_ptr<Collider> _col)
 
 	//相手側の接触情報
 	const auto& result = geo.GetHitResult();
+
+	if (parent_.GetColliders()[0].get() < hitCol.get())return;
 
 	//自分の法線方向なので相手側の逆
 	VECTOR myNormal = VScale(result.normal, -1.0f);
