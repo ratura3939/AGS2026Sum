@@ -146,6 +146,8 @@ public:
 	/// <returns></returns>
 	MoveInput GetMoveInput(bool _isDistinguish = true);
 
+	void DebugDraw(void);
+
 private:
 	//ƒL[‘Î‰‰Šú‰»
 	void ResetInput(void);

@@ -52,7 +52,7 @@ void InputManager::Update(void)
 	GetMousePoint(&mousePos_.x, &mousePos_.y);
 
 	//パッド
-	int padstate = GetJoypadInputState(DX_INPUT_KEY_PAD1);
+	int padstate = GetJoypadInputState(DX_INPUT_PAD1);
 
 	//アナログ
 	XINPUT_STATE xinputState = {};
@@ -385,6 +385,10 @@ InputManager::MoveInput InputManager::GetMoveInput(bool _isDistinguish)
 	}
 
 	return result;
+}
+
+void InputManager::DebugDraw(void)
+{
 }
 
 InputManager::InputManager(void)
