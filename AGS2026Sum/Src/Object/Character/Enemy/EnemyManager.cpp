@@ -171,6 +171,14 @@ const int EnemyManager::GetActiveEnemyNum(void) const
 	return static_cast<int>(enemyPool_->GetActiveEnemys().size());
 }
 
+void EnemyManager::SetAnimSpeedPercent(const float _percent)
+{
+	for (auto& enemy : enemyPool_->GetActiveEnemys())
+	{
+		enemy->SetAnimationSpeedPercent(_percent);
+	}
+}
+
 void EnemyManager::Grouping(EnemyGroup* _group, EnemyBase* _enemy)
 {
 	//グループに所属させる

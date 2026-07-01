@@ -50,6 +50,9 @@ public:
 	//生存中の敵の数を取得
 	const int GetActiveEnemyNum(void)const;
 
+	//アニメーション速度の全体の割合設定
+	void SetAnimSpeedPercent(const float _percent);
+
 private:
 
 	//プレイヤーを狙うときの距離半径

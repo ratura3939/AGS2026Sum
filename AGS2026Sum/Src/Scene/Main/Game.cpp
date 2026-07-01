@@ -689,7 +689,7 @@ void Game::StartSlow(void)
 	//更新スピードを50％に設定
 	scM.SetUpdateSpeedRate(SLOW_SPEED_PERCENT);
 	//敵もそれに対応
-	//enemy_->SetAnimSpeedRate(scM.GetUpdateSpeedRatePercent_());
+	enemy_->SetAnimSpeedPercent(scM.GetUpdateSpeedRatePercent());
 
 	//プレイヤーのアニメーションも調整
 	player_->SetAnimSpeedPercent(scM.GetUpdateSpeedRatePercent());
@@ -707,7 +707,7 @@ void Game::EndSlow(void)
 	//ChangeActionDirec(ACTION_DIRECTION::NOMAL);
 	//更新処理を100％にもどす
 	scM.SetUpdateSpeedRate(NORMAL_SPEED_PERCENT);
-	//enemy_->SetAnimSpeedRate(scM.GetUpdateSpeedRatePercent_());
+	enemy_->SetAnimSpeedPercent(scM.GetUpdateSpeedRatePercent());
 	player_->SetAnimSpeedPercent(scM.GetUpdateSpeedRatePercent());
 	player_->SetIsSpecialRedy(false);
 }

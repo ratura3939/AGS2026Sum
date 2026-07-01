@@ -424,8 +424,10 @@ void EnemyBase::Attack(void)
 
 void EnemyBase::Move(void)
 {
+	VECTOR movePow = VScale(movePow_, SceneManager::GetInstance().GetUpdateSpeedRate());
+
 	//移動後座標の更新
-	VECTOR movedPos = VAdd(movedPos_, movePow_);
+	VECTOR movedPos = VAdd(movedPos_, movePow);
 
 	//回転の更新
 	quaRot_ = quaRot_.LookRotation(Utility::GetMoveVec(movedPos, movedPos_));
