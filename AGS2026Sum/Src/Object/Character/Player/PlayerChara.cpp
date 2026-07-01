@@ -7,7 +7,7 @@
 #include "PlayerChara.h"
 
 namespace {
-	const float MOVE_SPEED = 15.0f;	//移動速度
+	const float MOVE_SPEED = 25.0f;	//移動速度
 	const std::wstring ROOT_NAME = L"mixamorig8:Hips";
 	const int HP_MAX = 50;	//体力最大
 	const float RADIUS = 30.0f;
