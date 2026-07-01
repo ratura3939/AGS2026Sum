@@ -3,6 +3,8 @@
 #include"../../../Manager/Generic/Camera.h"
 #include"../../../Manager/Generic/ResourceManager.h"	
 #include"../../Common/Geometry/Sphere.h"
+#include"../../../Renderer/ModelMaterial.h"
+#include"../../../Renderer/ModelRenderer.h"
 #include"PlayerManager.h"
 #include "PlayerChara.h"
 
