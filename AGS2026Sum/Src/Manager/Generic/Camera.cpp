@@ -12,8 +12,8 @@ namespace {
 	const float WALL_LERP_SPEED = 1.0f;		//壁には補完は必要ない
 	const float ALLOW_NO_KERP_DIFF = 10.0f;	//補完が必要ないと感じる距離
 
-	const float LERP_STEP_FOUCUS_RESET = 0.8f;
-	const float LERP_STEP_AUTOMOVE = 0.1f;
+	const float LERP_STEP_FOUCUS_RESET = 0.8f;	//カメラリセット時の補完スピード
+	const float LERP_STEP_AUTOMOVE = 0.1f;		//カメラ自動移動時の補完スピード;
 }
 
 Camera::Camera(void)
