@@ -105,7 +105,8 @@ void EnemyOnHit::HitEnemy(const std::weak_ptr<Collider> _col)
 	//相手側の接触情報
 	const auto& result = geo.GetHitResult();
 
-	if (parent_.GetColliders()[0].get() < hitCol.get())return;
+	//自分のコライダの方が優先度が低い場合は無視して、多重に押し戻さないようにする
+	if (parent_.GetColliders()[0].get() > hitCol.get())return;
 
 	//自分の法線方向なので相手側の逆
 	VECTOR myNormal = VScale(result.normal, -1.0f);
