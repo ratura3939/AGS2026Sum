@@ -352,6 +352,16 @@ void Camera::SetRotSpeed(const VECTOR& _speed)
 	rotSpeed_ = _speed;
 }
 
+const VECTOR& Camera::GetCameraRay(void) const
+{
+	return VSub(followObject_.pos, pos_);
+}
+
+const VECTOR& Camera::GetCameraRayNormalised(void) const
+{
+	return Utility::VNormalize(VSub(followObject_.pos, pos_));
+}
+
 void Camera::ChangeMode(MODE mode)
 {
 

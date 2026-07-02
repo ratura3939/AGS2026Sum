@@ -4,7 +4,8 @@
 
 // IN
 #include "../Common/Vertex/VertexInputType.hlsli"
-#define VERTEX_INPUT DX_MV1_VERTEX_TYPE_8FRAME
+//#define VERTEX_INPUT DX_MV1_VERTEX_TYPE_8FRAME
+#define VERTEX_INPUT DX_MV1_VERTEX_TYPE_NMAP_8FRAME 
 
 #define L_W_MAT g_localWorldMatrix.lwMatrix
 
@@ -63,8 +64,6 @@ VS_OUTPUT main(VS_INPUT VSInput)
 	// float3 → float4
 	lLocalPosition.xyz = VSInput.pos;
 	lLocalPosition.w = 1.0f;
-
-	//lLocalPosition.xyz += (VSInput.norm * 2.0f);
 
 	// ローカル座標をワールド座標に変換
 	lWorldPosition.w = 1.0f;

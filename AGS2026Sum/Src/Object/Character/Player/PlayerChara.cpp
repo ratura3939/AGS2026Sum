@@ -14,6 +14,12 @@ namespace {
 	const int HP_MAX = 50;	//体力最大
 	const float RADIUS = 30.0f;
 	const float BROUD_RADIUS = RADIUS + 15.0f;
+
+	//シェーダ関連(後でキャラクターに共通化するかも？)
+	const int VS_SKIN_BUFF_SIZE = 0;	//頂点シェーダの定数バッファの数
+	const int PS_SKIN_BUFF_SIZE = 2;	//ピクセルシェーダの定数バッファの数
+
+	const int PS_CAMERA_RAY_BUFF_NUM = 1;	//バッファ番号
 }
 
 PlayerChara::PlayerChara(void)
@@ -69,6 +75,13 @@ const float PlayerChara::GetSpecifiedAnimationProgressRate(const std::wstring& _
 void PlayerChara::DoLoad(void)
 {
 	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::PLAYER_MDL);	//モデル取得
+
+	modelMaterial_ = std::make_unique<ModelMaterial>(L"SkinVS.cso", VS_SKIN_BUFF_SIZE,L"OutLinePS.cso", PS_SKIN_BUFF_SIZE);	//モデルマテリアル生成
+	modelMaterial_->AddConstBufPS(FLOAT4{ 0.0f, 0.0f, 0.0f, 1.0f });	//アウトラインの色
+
+	VECTOR cameraRay = SceneManager::GetInstance().GetCamera().GetCameraRayNormalised();
+	modelMaterial_->AddConstBufPS(FLOAT4{ cameraRay.x,cameraRay.y,cameraRay.z, 0.0f });	//カメラ方向
+	modelRenderer_ = std::make_unique<ModelRenderer>(modelId_, *modelMaterial_);	//モデルレンダラー生成
 
 	//当たり判定の生成
 	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, quaRot_, BROUD_RADIUS, RADIUS);
@@ -167,7 +180,13 @@ void PlayerChara::Draw(void)
 {
 	const VECTOR& cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
 	DrawFormatString(10, 30, 0xffffff, L"PlayerPos: %f, %f, %f,\nInputDir: %f, %f, %f\nCameraPos: %f, %f, %f", pos_.x, pos_.y, pos_.z, inputDir_.x, inputDir_.y, inputDir_.z, cameraPos.x, cameraPos.y, cameraPos.z);
-	MV1DrawModel(modelId_);
+
+	//カメラの方向をシェーダに渡す
+	VECTOR cameraRay = SceneManager::GetInstance().GetCamera().GetPos();
+	modelMaterial_->SetConstBufPS(PS_CAMERA_RAY_BUFF_NUM, FLOAT4{ cameraRay.x,cameraRay.y,cameraRay.z, 0.0f });
+
+	//描画
+	modelRenderer_->Draw();
 
 	DrawHP();
 }
