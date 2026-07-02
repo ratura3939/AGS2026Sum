@@ -36,7 +36,7 @@ void EnemyLaunchState::Update(EnemyBase& _enemy)
 	VECTOR gravityPow = _enemy.GetGravityPow();
 
 	//地面に着地したらノックダウン状態に遷移
-	if (_enemy.GetPos().y < 0.0f && gravityPow.y < 0.0f)
+	if (_enemy.GetPos().y <= 0.0f && gravityPow.y <= 0.0f)
 	{
 		_enemy.ChangeState(std::make_unique<EnemyKnockDownState>());
 		return;

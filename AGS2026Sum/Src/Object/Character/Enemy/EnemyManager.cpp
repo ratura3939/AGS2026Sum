@@ -32,7 +32,7 @@ void EnemyManager::Load(void)
 
 void EnemyManager::Init(void)
 {
-	const int ENEMY_GROUP_NUM = 20;
+	const int ENEMY_GROUP_NUM = 0;
 	const int MIDDLE_BOSS_GROUP_NUM = 1;
 
 	//敵の生成(デバッグ)

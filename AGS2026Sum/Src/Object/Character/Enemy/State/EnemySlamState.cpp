@@ -19,7 +19,7 @@ void EnemySlamState::Enter(EnemyBase& _enemy)
 	damageMoveTime_ = 0.0f;
 
 	//ダメージアニメーション
-	_enemy.PlayNoBlendAnim(L"BlowEnd", ANIM_SPEED);
+	_enemy.PlayAnim(L"BlowSecondHalf", ANIM_SPEED);
 
 	//移動量更新
 	_enemy.SetMovePow(VScale(moveVec_, SPEED));
@@ -35,7 +35,14 @@ void EnemySlamState::Update(EnemyBase& _enemy)
 
 	//移動時間が一定以上ならノックダウン状態に遷移
 	if (damageMoveTime_ > DAMAGE_MOVE_TIME_MAX) _enemy.ChangeState(std::make_unique<EnemyKnockDownState>());
-	else damageMoveTime_ += scnMng.GetScaleUpdateSpeedRate(scnMng.GetDeltaTime());
+	else
+	{
+		//移動時間の更新
+		damageMoveTime_ += scnMng.GetScaleUpdateSpeedRate(scnMng.GetDeltaTime());
+
+		//アニメーションが終了していたら終了アニメーションに遷移
+		_enemy.PlayNoBlendAnimIsFinish(L"BlowEnd", ANIM_SPEED);
+	}
 
 	//移動方向に後ろを向きながら移動
 	_enemy.BackMove();
@@ -43,4 +50,6 @@ void EnemySlamState::Update(EnemyBase& _enemy)
 
 void EnemySlamState::Exit(EnemyBase& _enemy)
 {
+	//ダメージアニメーション
+	_enemy.PlayAnim(L"BlowEnd", ANIM_SPEED);
 }
