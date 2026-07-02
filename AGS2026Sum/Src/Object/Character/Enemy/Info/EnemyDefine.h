@@ -12,8 +12,7 @@ enum class ENEMY_TYPE
 //グループごとの状態
 enum class GROUP_ORDER
 {
-	NONE = -1			//なし
-	, STAY				//待機
+	STAY				//待機
 	, MOVE				//移動
 	, ALERT				//警戒
 	, MAX

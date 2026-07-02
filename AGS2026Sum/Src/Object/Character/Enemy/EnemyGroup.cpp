@@ -10,14 +10,13 @@ EnemyGroup::EnemyGroup(void)
 	, initPos_(Utility::VECTOR_INIT)
 	, groupGoalPos_(Utility::VECTOR_INIT)
 	, movePow_(Utility::VECTOR_INIT)
-	, order_(GROUP_ORDER::NONE)
+	, order_(GROUP_ORDER::STAY)
 	, isActive_(false)
 {
 	//状態ごとの処理の設定
-	orderFunc_[GROUP_ORDER::NONE] = {};
-	orderFunc_[GROUP_ORDER::STAY] = { &EnemyGroup::EnterStay, &EnemyGroup::UpdateStay, &EnemyGroup::ExitStay };
-	orderFunc_[GROUP_ORDER::MOVE] = { &EnemyGroup::EnterMove, &EnemyGroup::UpdateMove, &EnemyGroup::ExitMove };
-	orderFunc_[GROUP_ORDER::ALERT] = { &EnemyGroup::EnterAlert, &EnemyGroup::UpdateAlert, &EnemyGroup::ExitAlert };
+	orderFunc_[static_cast<int>(GROUP_ORDER::STAY)] = { &EnemyGroup::EnterStay, &EnemyGroup::UpdateStay, &EnemyGroup::ExitStay };
+	orderFunc_[static_cast<int>(GROUP_ORDER::MOVE)] = { &EnemyGroup::EnterMove, &EnemyGroup::UpdateMove, &EnemyGroup::ExitMove };
+	orderFunc_[static_cast<int>(GROUP_ORDER::ALERT)] = { &EnemyGroup::EnterAlert, &EnemyGroup::UpdateAlert, &EnemyGroup::ExitAlert };
 }
 
 EnemyGroup::~EnemyGroup(void)
@@ -48,7 +47,7 @@ void EnemyGroup::Init(const VECTOR& _initPos)
 void EnemyGroup::Update(void)
 {
 	//状態ごとの更新
-	(this->*orderFunc_[order_].update)();
+	(this->*orderFunc_[static_cast<int>(order_)].update)();
 
 	//敵の更新
 	for (auto& enemy : enemys_)
@@ -85,16 +84,16 @@ const VECTOR& EnemyGroup::GetGroupPos(void)const
 void EnemyGroup::ChangeOrder(const GROUP_ORDER _nextOrder)
 {
 	//すでにその状態なら何もしない
-	if (order_ == _nextOrder || _nextOrder == GROUP_ORDER::NONE) return;
+	if (order_ == _nextOrder) return;
 
 	//状態抜けの処理
-	if(orderFunc_[order_].exit)(this->*orderFunc_[order_].exit)();
+	if(orderFunc_[static_cast<int>(order_)].exit != nullptr)(this->*orderFunc_[static_cast<int>(order_)].exit)();
 
 	//状態の変更
 	order_ = _nextOrder;
 
 	//状態遷移時の処理
-	(this->*orderFunc_[order_].enter)();
+	(this->*orderFunc_[static_cast<int>(order_)].enter)();
 }
 
 void EnemyGroup::ResetPos(void)
@@ -107,11 +106,34 @@ void EnemyGroup::ResetPos(void)
 
 void EnemyGroup::DeleteEnemy(void)
 {
-	//そもそも敵がいないなら何もしない
+	//敵がいるか
 	if (enemys_.empty()) return;
 
 	//死亡した敵の削除
 	std::erase_if(enemys_, [this](EnemyBase* _enemy) {return !_enemy->IsAlive(); });
+
+	//グループ解散の判定
+	Disband();
+}
+
+void EnemyGroup::Disband(void)
+{
+	//ボスが存在するか
+	bool isBossExist = false;
+	for (auto& enemy : enemys_)
+	{
+		if (enemy->IsBoss())
+		{
+			isBossExist = true;
+		}
+	}
+
+	//敵の数が少なくなった　かつ　ボスが存在しない場合はグループを解散する
+	if (GetEnemyCount() < MIN_ENEMY_NUM && !isBossExist)
+	{
+		isActive_ = false;
+		return;
+	}
 }
 
 void EnemyGroup::MoveToGoal(void)

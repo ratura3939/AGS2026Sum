@@ -30,5 +30,8 @@ private:
 
 	//吹っ飛び速度
 	static constexpr float SPEED = 1.0f;
+
+	//打ち上げの強さ
+	static constexpr float LAUNCH_POW = 7.0f;
 };
 

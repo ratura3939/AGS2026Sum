@@ -28,7 +28,7 @@
       "isLock": false,
       "fixPos": {
         "x": true,
-        "y": false,
+        "y": true,
         "z": true
       }
     },

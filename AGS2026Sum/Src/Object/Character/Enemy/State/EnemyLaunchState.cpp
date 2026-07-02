@@ -1,5 +1,4 @@
 #include "../../../../pch.h"
-#include "../../../../Manager/Generic/SceneManager.h"
 #include "../EnemyBase.h"
 #include "EnemyKnockDownState.h"
 #include "EnemyLaunchState.h"
@@ -18,6 +17,9 @@ void EnemyLaunchState::Enter(EnemyBase& _enemy)
 	//移動時間の初期化
 	damageMoveTime_ = 0.0f;
 
+	//打ち上げの強さ
+	_enemy.SetGravityPow(VGet(0.0f,LAUNCH_POW,0.0f));
+
 	//ダメージアニメーション
 	_enemy.PlayNoBlendAnim(L"Launch", ANIM_SPEED);
 
@@ -30,14 +32,17 @@ void EnemyLaunchState::Enter(EnemyBase& _enemy)
 
 void EnemyLaunchState::Update(EnemyBase& _enemy)
 {
-	//シーンマネージャー
-	auto& scnMng = SceneManager::GetInstance();
+	//重力反映
+	VECTOR gravityPow = _enemy.GetGravityPow();
 
-	//移動時間が一定以上ならノックダウン状態に遷移
-	if (damageMoveTime_ > DAMAGE_MOVE_TIME_MAX) _enemy.ChangeState(std::make_unique<EnemyKnockDownState>());
-	else damageMoveTime_ += scnMng.GetScaleUpdateSpeedRate(scnMng.GetDeltaTime());
+	//地面に着地したらノックダウン状態に遷移
+	if (_enemy.GetPos().y < 0.0f && gravityPow.y < 0.0f)
+	{
+		_enemy.ChangeState(std::make_unique<EnemyKnockDownState>());
+		return;
+	}
 
-	//移動方向に後ろを向きながら移動
+	//移動方向に移動
 	_enemy.Move();
 }
 

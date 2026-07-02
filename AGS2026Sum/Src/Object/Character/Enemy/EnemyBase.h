@@ -17,7 +17,7 @@ class EnemyBase : public CharacterBase
 public:
 
 	//敵がグループから離れられる距離
-	static constexpr float LEAVE_GROUP_DIST = 300.0f;
+	static constexpr float LEAVE_GROUP_DIST = 1000.0f;
 
 	//当たり判定
 	static constexpr float RADIUS = 30.0f;
@@ -99,11 +99,20 @@ public:
 	//敵の種類の取得
 	const ENEMY_TYPE& GetType(void) { return type_; }
 
+	//ボスかどうか
+	const bool IsBoss(void)const { return type_ != ENEMY_TYPE::NORMAL; }
+
 	//移動量の取得
 	const VECTOR& GetMovePow(void)const { return movePow_; }
 
 	//移動量の設定
 	void SetMovePow(const VECTOR& _movePow) { movePow_ = _movePow; }
+
+	//重力の取得
+	const VECTOR& GetGravityPow(void)const { return gravityPow_; }
+
+	//重力の設定
+	void SetGravityPow(const VECTOR& _gravityPow) { gravityPow_ = _gravityPow; }
 
 	//位置リセット
 	void ResetPos(void);
@@ -211,6 +220,7 @@ protected:
 
 	//個人の移動量
 	VECTOR movePow_;
+	VECTOR gravityPow_;
 
 	//目標地点
 	VECTOR goalPos_;

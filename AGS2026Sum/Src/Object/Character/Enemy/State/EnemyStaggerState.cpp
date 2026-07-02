@@ -36,6 +36,9 @@ void EnemyStaggerState::Update(EnemyBase& _enemy)
 	//移動時間が一定以上ならノックダウン状態に遷移
 	if (damageMoveTime_ > DAMAGE_MOVE_TIME_MAX) _enemy.ChangeState(std::make_unique<EnemyNormalState>());
 	else damageMoveTime_ += scnMng.GetScaleUpdateSpeedRate(scnMng.GetDeltaTime());
+
+	//移動
+	_enemy.Move();
 }
 
 void EnemyStaggerState::Exit(EnemyBase& _enemy)

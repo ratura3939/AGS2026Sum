@@ -1,5 +1,6 @@
 #include"../../pch.h"
 #include"../../Object/Character/Enemy/EnemyManager.h"
+#include"../../Manager/GameSystem/GravityManager.h"
 #include"../../Manager/GameSystem/AttackManager.h"
 #include"../../Manager/GameSystem/CollisionManager.h"
 #include"../../Manager/GameSystem/ChunkManager.h"
@@ -95,6 +96,9 @@ void Game::Init(void)
 	update_ = &Game::GameUpdate;
 
 	//生成
+
+	//重力マネージャー
+	GravityManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::GAME_END);
 
 	//攻撃マネージャー
 	AttackManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::GAME_END);
@@ -603,10 +607,10 @@ void Game::Release(void)
 	player_->Release();
 	enemy_->Release();
 	SoundManager& sndM = SoundManager::GetInstance();
-	sndM.Stop(SoundManager::SOUND_NAME::GAME_NORMAL_BGM);	//今まで流していたものを停止\
+	sndM.Stop(SoundManager::SOUND_NAME::GAME_NORMAL_BGM);	//今まで流していたものを停止
+
+	SingletonRegistry::GetInstance().Delete(SingletonRegistry::DESTROY_TIMING::GAME_END);	//シングルトンの削除
 	CollisionManager::GetInstance().DeleteAllCollider();
-	ChunkManager::GetInstance().DestroyInstance();
-	AttackManager::GetInstance().DestroyInstance();
 }
 
 void Game::Reset(void)

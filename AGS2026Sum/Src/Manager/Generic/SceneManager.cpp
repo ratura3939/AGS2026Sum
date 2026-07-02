@@ -36,7 +36,7 @@ void SceneManager::Init(void)
 	UIManager2d::CreateInstance();
 
 	//”»’è
-	CollisionManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::GAME_END);
+	CollisionManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::ALL_END);
 
 	fader_ = new Fader();
 	fader_->Init();

@@ -32,7 +32,7 @@ void EnemyManager::Load(void)
 
 void EnemyManager::Init(void)
 {
-	const int ENEMY_GROUP_NUM = 0;
+	const int ENEMY_GROUP_NUM = 20;
 	const int MIDDLE_BOSS_GROUP_NUM = 1;
 
 	//敵の生成(デバッグ)
@@ -73,9 +73,6 @@ void EnemyManager::Update(void)
 	//グループの削除処理
 	DeleteEnemyGroup();
 
-	//グループに所属していない敵を別グループに再所属させる
-	ReJoinGroups();
-
 	//敵の削除処理
 	DeleteEnemy();
 }
@@ -104,7 +101,7 @@ void EnemyManager::CreateEnemyGroup(const int _createNum)
 	EnemyGroup* group = enemyGroupPool_->Spawn(VGet(1000.0f,0.0f,1000.0f));
 
 	//グループの初期座標(デバッグ)
-	static VECTOR pos = { 0.0f, 0.0f, 0.0f };
+	static VECTOR pos = { 1000.0f, 0.0f, 0.0f };
 	//group->SetPos(pos);
 	//pos = VAdd(pos, { 1000.0f, 0.0f, 1000.0f });
 
@@ -145,11 +142,14 @@ void EnemyManager::CreateMiddleBossGroup(const int _createNum)
 	//中ボス
 	enemy = enemyPool_->Spawn(ENEMY_TYPE::MIDDLE_BOSS);
 
+	//グループに設定
+	Grouping(group, enemy);
+
 	//グループのチャンク管理用の添え字を設定
 	ChunkManager::GetInstance().AddEnemyGroup(group);
 
 	//指定分、敵を生成する
-	for (int i = 0; i < _createNum; i++)
+	for (int i = 1; i < _createNum; i++)
 	{
 		//生成
 		enemy = enemyPool_->Spawn(ENEMY_TYPE::NORMAL);
@@ -225,8 +225,8 @@ void EnemyManager::DeleteEnemyGroup(void)
 	//グループの削除処理
 	for (auto& group : enemyGroupPool_->GetActiveEnemyGroups())
 	{
-		//グループに所属している敵の数が一定数以下　または　グループが空なら削除
-		if (group->IsEmpty() || (group->GetEnemyCount() < MIN_ENEMY_NUM) && activeGroupNum > 1)
+		//非稼働　または　グループが空なら削除
+		if (group->IsEmpty() || !group->IsActive() && activeGroupNum > 1)
 		{
 			//削除するグループのリストに追加
 			removeGroups.push_back(group);
@@ -241,10 +241,18 @@ void EnemyManager::DeleteEnemyGroup(void)
 
 		//グループに所属している敵をグループから抜けさせる
 		enemyGroupPool_->Remove(removeGroup);
+
+		//グループに所属している敵を別グループに再所属させる
+		auto& enemys = removeGroup->GetEnemys();
+		for (auto& enemy : enemys)
+		{
+			//グループに所属している敵をグループから抜けさせる
+			ReJoinGroups(enemy);
+		}
 	}
 }
 
-void EnemyManager::ReJoinGroups(void)
+void EnemyManager::ReJoinGroups(EnemyBase* _enemy)
 {
 	//グループ　または　敵が空なら処理しない
 	if (!enemyGroupPool_ || !enemyPool_)return;
@@ -256,15 +264,7 @@ void EnemyManager::ReJoinGroups(void)
 	if (!enemyGroupBack)return;
 
 	//グループに所属していない敵を別グループに再所属させる
-	for (auto& enemy : enemyPool_->GetActiveEnemys())
-	{
-		//所属しているか
-		if (!enemy->IsInGroup())
-		{
-			//再所属
-			Grouping(enemyGroupBack, enemy);
-		}
-	}
+	Grouping(enemyGroupBack, _enemy);
 }
 
 void EnemyManager::DecideOrderByDistance(void)

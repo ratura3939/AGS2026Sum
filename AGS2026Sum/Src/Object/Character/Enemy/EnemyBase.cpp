@@ -2,6 +2,7 @@
 #include "../../../Manager/Generic/SceneManager.h"
 #include "../../../Manager/GameSystem/CollisionManager.h"
 #include "../../../Manager/GameSystem/AttackManager.h"
+#include "../../../Manager/GameSystem/GravityManager.h"
 #include "../../Common/Collider.h"
 #include "../../Common/Geometry/Sphere.h"
 #include "State/EnemyStateBase.h"
@@ -22,6 +23,7 @@ EnemyBase::EnemyBase(const ENEMY_TYPE& _type)
 	, action_(ENEMY_ACTION::STAY)
 	, state_(nullptr)
 	, movePow_(Utility::VECTOR_ZERO)
+	, gravityPow_(Utility::VECTOR_ZERO)
 {	
 	//行動ごとの処理の設定
 	actionFunc_[static_cast<int>(ENEMY_ACTION::STAY)] = { &EnemyBase::EnterStay, &EnemyBase::UpdateStay, &EnemyBase::ExitStay };
@@ -65,9 +67,6 @@ void EnemyBase::HitCollider(std::weak_ptr<Collider> _col)
 
 void EnemyBase::ChangeState(std::unique_ptr<EnemyStateBase> _nextState)
 {
-	//状態が同じなら処理しない
-	if (!_nextState || state_->GetStateId() == _nextState->GetStateId())return;
-
 	//状態抜けの処理
 	if(state_) state_->Exit(*this);
 
@@ -197,6 +196,9 @@ void EnemyBase::DoLoad(void)
 
 void EnemyBase::DoInit(void)
 {
+	//座標の初期化
+	ResetPos();
+
 	//ローカル回転
 	quaRotLocal_ = Quaternion();
 
@@ -424,16 +426,29 @@ void EnemyBase::Attack(void)
 
 void EnemyBase::Move(void)
 {
+	//重力
+	GravityManager::GetInstance().CalcGravity(Utility::DIR_D, gravityPow_);
+	movePow_ = VAdd(movePow_, gravityPow_);
+
+	//移動量をレートに合わせる
 	VECTOR movePow = VScale(movePow_, SceneManager::GetInstance().GetUpdateSpeedRate());
 
 	//移動後座標の更新
 	VECTOR movedPos = VAdd(movedPos_, movePow);
 
 	//回転の更新
-	quaRot_ = quaRot_.LookRotation(Utility::GetMoveVec(movedPos, movedPos_));
+	VECTOR moveDir = Utility::GetMoveVec(movedPos, movedPos_);
+	quaRot_ = quaRot_.LookRotation(VGet(moveDir.x, 0.0f, moveDir.z));
 
 	//移動後座標の更新
 	movedPos_ = movedPos;
+
+	//地面にめり込まないようにする
+	if(movedPos_.y < 0.0f)
+	{
+		movedPos_.y = 0.0f;
+		gravityPow_ = Utility::VECTOR_ZERO;
+	}
 }
 
 void EnemyBase::UpdateMovePow(void)
@@ -444,14 +459,29 @@ void EnemyBase::UpdateMovePow(void)
 
 void EnemyBase::BackMove(void)
 {
+	//重力
+	GravityManager::GetInstance().CalcGravity(Utility::DIR_D, gravityPow_);
+	movePow_ = VAdd(movePow_, gravityPow_);
+
+	//移動量をレートに合わせる
+	VECTOR movePow = VScale(movePow_, SceneManager::GetInstance().GetUpdateSpeedRate());
+
 	//移動後座標の更新
-	VECTOR movedPos = VAdd(movedPos_, movePow_);
+	VECTOR movedPos = VAdd(movedPos_, movePow);
 
 	//回転の更新
-	quaRot_ = quaRot_.LookRotation(VScale(Utility::GetMoveVec(movedPos, movedPos_), -1.0f));
+	VECTOR moveDir = Utility::GetMoveVec(movedPos_, movedPos);
+	quaRot_ = quaRot_.LookRotation(VGet(moveDir.x, 0.0f, moveDir.z));
 
 	//移動後座標の更新
 	movedPos_ = movedPos;
+
+	//地面にめり込まないようにする
+	if (movedPos_.y < 0.0f)
+	{
+		movedPos_.y = 0.0f;
+		gravityPow_ = Utility::VECTOR_ZERO;
+	}
 }
 
 void EnemyBase::EnableHitCollider(void)
