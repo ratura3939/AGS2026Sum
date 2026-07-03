@@ -110,7 +110,7 @@ void EnemyGroup::DeleteEnemy(void)
 	if (enemys_.empty()) return;
 
 	//死亡した敵の削除
-	std::erase_if(enemys_, [this](EnemyBase* _enemy) {return !_enemy->IsAlive(); });
+	std::erase_if(enemys_, [this](EnemyBase* _enemy) {return _enemy->IsEndState(); });
 
 	//グループ解散の判定
 	Disband();

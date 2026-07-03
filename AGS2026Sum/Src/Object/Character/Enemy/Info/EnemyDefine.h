@@ -42,5 +42,6 @@ enum class ENEMY_STATE
 	, STUN				//スタン
 	, KNOCK_DOWN		//ダウン
 	, DEATH				//死亡
+	, END				//終了
 	, MAX
 };

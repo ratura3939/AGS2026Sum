@@ -30,5 +30,8 @@ private:
 
 	//吹っ飛び速度
 	static constexpr float SPEED = 10.0f;
+
+	//移動時間の最大値
+	static constexpr float DAMAGE_MOVE_TIME_MAX = 0.3f;
 };
 

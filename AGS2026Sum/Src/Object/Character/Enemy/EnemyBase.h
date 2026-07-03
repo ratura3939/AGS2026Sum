@@ -168,6 +168,9 @@ public:
 	void PlayNoBlendAnim(const std::wstring& _animName, const float _speed = 1.0f);
 	void PlayNoBlendAnimIsFinish(const std::wstring& _animName, const float _speed = 1.0f);
 
+	//終了状態か
+	const bool IsEndState(void)const;
+
 protected:
 
 	//親ボーン名

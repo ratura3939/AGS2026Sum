@@ -145,6 +145,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Character\Enemy\State\EnemyEndState.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\GravityManager.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\State\EnemyBlowAwayState.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\State\EnemyPushBackState.cpp" />
@@ -224,6 +225,7 @@
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Character\Enemy\State\EnemyEndState.h" />
     <ClInclude Include="Src\Manager\GameSystem\GravityManager.h" />
     <ClInclude Include="Src\Object\Character\Enemy\State\EnemyBlowAwayState.h" />
     <ClInclude Include="Src\Object\Character\Enemy\State\EnemyPushBackState.h" />

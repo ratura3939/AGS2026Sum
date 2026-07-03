@@ -25,9 +25,6 @@ public:
 
 protected:
 
-	//移動時間の最大値
-	static constexpr float DAMAGE_MOVE_TIME_MAX = 3.0f;
-
 	//移動方向
 	VECTOR moveVec_;
 

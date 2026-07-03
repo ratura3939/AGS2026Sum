@@ -547,11 +547,13 @@ void EnemyBase::PlayNoBlendAnimIsFinish(const std::wstring& _animName, const flo
 	if (animController_->IsFinishNormalAnim())animController_->NoBlendPlay(_animName, _speed);
 }
 
+const bool EnemyBase::IsEndState(void) const
+{
+	return state_->GetStateId() == ENEMY_STATE::END;
+}
+
 void EnemyBase::Death(void)
 {
 	//死亡アニメーションの再生
 	animController_->Play(L"BlowEnd");
-	
-	//グループから離れる
-	LeaveGroup();
 }

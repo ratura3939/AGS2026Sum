@@ -197,7 +197,7 @@ void EnemyManager::DeleteEnemy(void)
 	//死亡した敵　または　グループに所属していない敵の削除
 	for (auto& activeEnemy : enemyPool_->GetActiveEnemys())
 	{
-		if (!activeEnemy->IsAlive() || !activeEnemy->IsInGroup())
+		if (activeEnemy->IsEndState() || !activeEnemy->IsInGroup())
 		{
 			//削除する敵のリストに追加
 			removeEnemys.push_back(activeEnemy);

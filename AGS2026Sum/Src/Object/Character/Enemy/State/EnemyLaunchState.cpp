@@ -1,6 +1,7 @@
 #include "../../../../pch.h"
 #include "../EnemyBase.h"
 #include "EnemyKnockDownState.h"
+#include "EnemyDeathState.h"
 #include "EnemyLaunchState.h"
 
 EnemyLaunchState::EnemyLaunchState(const VECTOR& _vec)
@@ -38,7 +39,8 @@ void EnemyLaunchState::Update(EnemyBase& _enemy)
 	//地面に着地したらノックダウン状態に遷移
 	if (_enemy.GetPos().y <= 0.0f && gravityPow.y <= 0.0f)
 	{
-		_enemy.ChangeState(std::make_unique<EnemyKnockDownState>());
+		if (_enemy.IsAlive())_enemy.ChangeState(std::make_unique<EnemyKnockDownState>());
+		else _enemy.ChangeState(std::make_unique<EnemyDeathState>());
 		return;
 	}
 

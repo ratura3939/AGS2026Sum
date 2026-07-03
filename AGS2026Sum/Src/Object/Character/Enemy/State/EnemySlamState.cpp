@@ -2,6 +2,7 @@
 #include "../../../../Manager/Generic/SceneManager.h"
 #include "../EnemyBase.h"
 #include "EnemyKnockDownState.h"
+#include "EnemyDeathState.h"
 #include "EnemySlamState.h"
 
 EnemySlamState::EnemySlamState(const VECTOR& _vec)
@@ -34,7 +35,12 @@ void EnemySlamState::Update(EnemyBase& _enemy)
 	auto& scnMng = SceneManager::GetInstance();
 
 	//移動時間が一定以上ならノックダウン状態に遷移
-	if (damageMoveTime_ > DAMAGE_MOVE_TIME_MAX) _enemy.ChangeState(std::make_unique<EnemyKnockDownState>());
+	if (damageMoveTime_ > DAMAGE_MOVE_TIME_MAX)
+	{
+		if (_enemy.IsAlive())_enemy.ChangeState(std::make_unique<EnemyKnockDownState>());
+		else _enemy.ChangeState(std::make_unique<EnemyDeathState>());
+		return;
+	}
 	else
 	{
 		//移動時間の更新
