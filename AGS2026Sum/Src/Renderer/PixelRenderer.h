@@ -5,9 +5,7 @@
 
 class PixelRenderer
 {
-
 public:
-
 	// ピクセルシェーダ用オリジナル定数バッファの使用開始スロット
 	static constexpr int CONSTANT_BUF_SLOT_BEGIN_PS = 4;
 
@@ -21,27 +19,26 @@ public:
 	static constexpr int NUM_POLYGON = 2;
 
 	// コンストラクタ
-	PixelRenderer(PixelMaterial& pixelMaterial);
+	PixelRenderer(void);
 
 	// デストラクタ
 	~PixelRenderer(void);
 
 	// 描画矩形の生成
-	void MakeSquereVertex(Vector2 pos, Vector2 size);
+	void MakeSquereVertex(Vector2 _pos, Vector2 _size);
 	void MakeSquereVertex(void);
 
 	// 座標設定
-	void SetPos(Vector2 pos);
+	void SetPos(Vector2 _pos);
 
 	// 画像サイズ設定
-	void SetSize(Vector2 size);
+	void SetSize(Vector2 _size);
 
 	// 描画
-	void Draw(void);
-	void Draw(int x, int y);
+	void Draw(PixelMaterial& _pixelMaterial);
+	void Draw(int x, int y, PixelMaterial& _pixelMaterial);
 
 private:
-
 	// 座標
 	Vector2 pos_;
 
@@ -53,8 +50,4 @@ private:
 
 	// 頂点インデックス
 	WORD indexes_[NUM_VERTEX_IDX];
-
-	// ピクセルマテリアル
-	PixelMaterial& pixelMaterial_;
-
 };

@@ -18,6 +18,7 @@ namespace {
 	//シェーダ関連(後でキャラクターに共通化するかも？)
 	const int VS_SKIN_BUFF_SIZE = 0;	//頂点シェーダの定数バッファの数
 	const int PS_SKIN_BUFF_SIZE = 0;	//ピクセルシェーダの定数バッファの数
+	const int PS_NORMAL_DEPTH_BUFF_SIZE = 1;	//ピクセルシェーダの定数バッファの数
 
 	const int PS_CAMERA_RAY_BUFF_NUM = 1;	//バッファ番号
 }
@@ -76,10 +77,12 @@ void PlayerChara::DoLoad(void)
 {
 	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::PLAYER_MDL);	//モデル取得
 
-	modelMaterial_ = std::make_unique<ModelMaterial>(L"SkinVS.cso", VS_SKIN_BUFF_SIZE,L"StdModelPS.cso", PS_SKIN_BUFF_SIZE);	//モデルマテリアル生成
-	modelMaterial_->AddConstBufPS(FLOAT4{ 0.0f, 0.0f, 0.0f, 1.0f });	//アウトラインの色
+	normalDepthMaterial_ = std::make_unique<ModelMaterial>(L"SkinVS.cso", VS_SKIN_BUFF_SIZE,L"NormalDepthPS.cso", PS_NORMAL_DEPTH_BUFF_SIZE);	//モデルマテリアル生成
+	normalDepthMaterial_->AddConstBufPS(FLOAT4{ Camera::CAMERA_FAR, 0.0f, 0.0f, 0.0f });	//カメラの描画距離を渡す
 
-	modelRenderer_ = std::make_unique<ModelRenderer>(modelId_, *modelMaterial_);	//モデルレンダラー生成
+	modelMaterial_ = std::make_unique<ModelMaterial>(L"SkinVS.cso", VS_SKIN_BUFF_SIZE,L"StdModelPS.cso", PS_SKIN_BUFF_SIZE);	//モデルマテリアル生成
+
+	modelRenderer_ = std::make_unique<ModelRenderer>(modelId_);	//モデルレンダラー生成
 
 	//当たり判定の生成
 	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, quaRot_, BROUD_RADIUS, RADIUS);
@@ -180,9 +183,15 @@ void PlayerChara::Draw(void)
 	DrawFormatString(10, 30, 0xffffff, L"PlayerPos: %f, %f, %f,\nInputDir: %f, %f, %f\nCameraPos: %f, %f, %f", pos_.x, pos_.y, pos_.z, inputDir_.x, inputDir_.y, inputDir_.z, cameraPos.x, cameraPos.y, cameraPos.z);
 
 	//描画
-	modelRenderer_->Draw();
+	modelRenderer_->Draw(*modelMaterial_);
 
 	DrawHP();
+}
+
+void PlayerChara::DrawNormalDepth(void)
+{
+	//法線・深度のみ描画
+	modelRenderer_->Draw(*normalDepthMaterial_);
 }
 
 void PlayerChara::Release(void)

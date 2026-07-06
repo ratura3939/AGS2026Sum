@@ -14,6 +14,7 @@ class PlayerChara :
         ~PlayerChara(void);
 
         void Draw(void)override;			//描画
+		void DrawNormalDepth(void);			//法線深度描画
         void Release(void)override;			//解放
 
 		void HitCollider(std::weak_ptr<Collider> _col)override;	//衝突後の処理
@@ -43,8 +44,9 @@ class PlayerChara :
 
 		void DrawHP(void);		//ｈｐ描画(α②用の一次的な関数)
 
-		std::unique_ptr<ModelMaterial> modelMaterial_;	//モデルマテリアル
-		std::unique_ptr<ModelRenderer> modelRenderer_;	//モデルレンダラー
+		std::unique_ptr<ModelMaterial>modelMaterial_;	//モデルマテリアル
+		std::unique_ptr<ModelMaterial>normalDepthMaterial_;	//法線深度マテリアル
+		std::unique_ptr<ModelRenderer>modelRenderer_;	//モデルレンダラー
 
         VECTOR inputDir_;       //移動入力方向
         float afterMoveRad_;    //最終的なキャラクター角度

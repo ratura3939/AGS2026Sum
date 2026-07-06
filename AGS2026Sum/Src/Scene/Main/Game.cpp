@@ -51,6 +51,10 @@ namespace {
 	const float LOCK_DISTANCE_MIN_BOSS = 1000.0f;		//ロックオン時に最低限離れておく距離
 
 	const int BGM_VOL = 80;
+
+	const int PS_EDGE_BUFF_NUM = 2;	//エッジ描画用のバッファ数
+	const float EDGE_NORMAL_THRESHOLD = 0.1f;	//エッジ描画用の閾値
+	const float EDGE_DEPTH_THRESHOLD = 0.1f;	//エッジ描画用の閾値
 }
 
 Game::Game(void)
@@ -74,10 +78,13 @@ Game::Game(void)
 	direcCnt_ = 0;
 
 	update_ = &Game::GameUpdate;
-	drawPostEffect_ = &Game::DrawScanLine;
+	//drawPostEffect_ = &Game::GameUpdate;
 
 	cameraGoalStayCounter_ = 0;
 	cameraGoalStayTime_ = 0;
+
+
+	debugEdge_ = true;
 }
 
 Game::~Game(void)
@@ -165,70 +172,20 @@ void Game::InitEffect(void)
 
 void Game::InitShader(void)
 {
-	////ブラー
-	////PS
-	//blurMaterial_ = std::make_unique<PixelMaterial>("Blur.cso", 3);
-	////拡散光
-	//blurMaterial_->AddConstBuf({ 1.0f,0.0f,0.0f,0.0f });
-	////時間
-	//blurMaterial_->AddConstBuf({ 0.0f,0.0f,0.0f,0.0f });
-	////画面大きさ
-	//blurMaterial_->AddConstBuf({ Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y,0.0f,0.0f });
+	Application& app = Application::GetInstance();
+	int screemWidth = app.GetWindowWidth();
+	int screemHeight = app.GetWindowHeight();
 
-	//blurRender_ = std::make_unique<PixelRenderer>(*blurMaterial_);
-	//blurRender_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
-	//// ポストエフェクト用スクリーン
-	//blurScreen_ = MakeScreen(
-	//	Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
+	normalDepthScreen_ = MakeScreen(screemWidth, screemHeight, true);
 
-	////ブラー(回避用)
-	////PS
-	//dodgeMaterial_ = std::make_unique<PixelMaterial>("JustDodgePS.cso", 3);
-	////拡散光
-	//dodgeMaterial_->AddConstBuf({ 1.0f,1.0f,1.0f,1.0f });
-	////時間
-	//dodgeMaterial_->AddConstBuf({ 0.0f,0.0f ,0.0f,0.0f });
-	////画面X・Y・強さ・半径
-	//dodgeMaterial_->AddConstBuf({ Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y ,0.02f,0.4f });
-
-	//dodgeMaterial_->SetTextureBuf(11, ResourceManager::GetInstance().Load(ResourceManager::SRC::FOCUS_IMG).handleId_);
-
-	//dodgeRender_ = std::make_unique<PixelRenderer>(*dodgeMaterial_);
-
-	//dodgeRender_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
-	//// ポストエフェクト用スクリーン
-	//dodgeScreen_ = MakeScreen(
-	//	Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
-
-	////走査線
-	////PS
-	//scanLineMaterial_ = std::make_unique<PixelMaterial>("ScanLine.cso", 2);
-	////拡散光
-	//scanLineMaterial_->AddConstBuf({ 1.0f,0.0f,0.0f,0.0f });
-	////時間
-	//scanLineMaterial_->AddConstBuf({ 0.0f,0.0f,0.0f,0.0f });
-
-	//scanLineRender_ = std::make_unique<PixelRenderer>(*scanLineMaterial_);
-	//scanLineRender_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
-	//// ポストエフェクト用スクリーン
-	//scanLineScreen_ = MakeScreen(
-	//	Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
+	edgeMaterial_ = std::make_unique<PixelMaterial>(L"EdgeDetectPS.cso", PS_EDGE_BUFF_NUM);
+	edgeMaterial_->AddConstBuf(FLOAT4{ 1.0f,1.0f,1.0f,1.0f });	//エッジの色
+	edgeMaterial_->AddConstBuf(FLOAT4{ 1.0f / static_cast<float>(screemWidth),1.0f / static_cast<float>(screemHeight),EDGE_DEPTH_THRESHOLD,EDGE_NORMAL_THRESHOLD });	//エッジの色
+	edgeMaterial_->AddTextureBuf(normalDepthScreen_);	//法線・深度描画用スクリーンをテクスチャとして登録
 
 
-	////スキップ用
-	////PS
-	//skipMaterial_ = std::make_unique<PixelMaterial>("ScanLine.cso", 1);
-	////拡散光
-	//skipMaterial_->AddConstBuf({ 1.0f,0.0f,0.0f,0.0f });
-
-	//skipRender_ = std::make_unique<PixelRenderer>(*skipMaterial_);
-	//skipRender_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
-	//// ポストエフェクト用スクリーン
-	//skipScreen_ = MakeScreen(
-	//	Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
-
-	//skipCounter_ = 0;
-	//isSkipEnd_ = false;
+	edgeRender_ = std::make_unique<PixelRenderer>();
+	edgeRender_->MakeSquereVertex({ 0,0 }, { screemWidth, screemHeight });
 }
 
 void Game::Update(void)
@@ -249,10 +206,13 @@ void Game::Update(void)
 	//}
 
 	// シーン遷移
-	//if (inpM.IsTrigerrDown(InputManager::INPUT_COMMAND::ENTER))
-	//{
-	//	SceneManager::GetInstance().ChangeScene(std::make_shared<Title>());
-	//}
+	if (inpM.IsTrigerrDown(InputManager::INPUT_COMMAND::ENTER))
+	{
+		debugEdge_ = !debugEdge_;
+	}
+
+
+
 	if(enemy_->GetActiveEnemyNum() <= 0)
 	{
 		SceneManager::GetInstance().ChangeScene(std::make_shared<GameClear>());
@@ -527,6 +487,30 @@ bool Game::DirectionCameraMove(void)
 	return false;
 }
 
+void Game::DrawEdge(void)
+{
+	int mainScreen = SceneManager::GetInstance().GetMainScreen();
+
+	//法線・深度描画用スクリーンに描画
+	SetDrawScreen(normalDepthScreen_);
+
+	ClearDrawScreen();
+	
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	player_->DrawNormalDepth();
+
+	// メインに戻す
+	SetDrawScreen(mainScreen);
+
+	edgeMaterial_->SetTextureBuf(0, normalDepthScreen_);
+	edgeRender_->Draw(*edgeMaterial_);
+
+	if(debugEdge_)
+	{
+		DrawGraph(0, 0, normalDepthScreen_, false);
+	}
+}
+
 void Game::Draw(void)
 {
 	DrawString(10, 10, L"GameScene", 0xffffff);
@@ -536,66 +520,13 @@ void Game::Draw(void)
 	enemy_->Draw();
 	player_->Draw();
 
+	DrawEdge();
+
 	//ポストエフェクトをかけるとき
 	if (isDrawPostEffect_) {
 		//描画
 		(this->*drawPostEffect_)();
 	}
-}
-
-void Game::DrawScanLine(void)
-{
-	//int mainScreen = SceneManager::GetInstance().GetMainScreen();
-
-	//SetDrawScreen(scanLineScreen_);
-
-	//// 画面を初期化
-	////ClearDrawScreen();
-
-	//DrawGraph(0, 0, mainScreen, false);
-	//scanLineRender_->Draw();
-
-	//// メインに戻す
-	//SetDrawScreen(mainScreen);
-	//DrawGraph(0, 0, scanLineScreen_, false);
-	////ポストエフェクトの上から鮮明な文字を出す
-	//UIManager2d::GetInstance().Draw(WARNING_STR_IMG);
-}
-
-void Game::DrawBlur(void)
-{
-	//int mainScreen = SceneManager::GetInstance().GetMainScreen();
-	//blurMaterial_->SetConstBuf(1, { SceneManager::GetInstance().GetTotalTime(),0.0f,0.0f,0.0f });
-
-	//SetDrawScreen(blurScreen_);
-
-	//// 画面を初期化
-	////ClearDrawScreen();
-
-	//DrawGraph(0, 0, mainScreen, false);
-	//blurRender_->Draw();
-
-	//// メインに戻す
-	//SetDrawScreen(mainScreen);
-	//DrawGraph(0, 0, blurScreen_, false);
-}
-
-void Game::DrawDodgeEffect(void)
-{
-	//int mainScreen = SceneManager::GetInstance().GetMainScreen();
-	//dodgeMaterial_->SetConstBuf(1, { SceneManager::GetInstance().GetTotalTime(),0.0f,0.0f,0.0f });
-
-	//SetDrawScreen(dodgeScreen_);
-
-	//// 画面を初期化
-	////ClearDrawScreen();
-
-	//DrawGraph(0, 0, mainScreen, false);
-	//dodgeRender_->Draw();
-
-	//// メインに戻す
-	//SetDrawScreen(mainScreen);
-	//DrawGraph(0, 0, dodgeScreen_, false);
 }
 
 void Game::Release(void)
@@ -639,20 +570,20 @@ void Game::ChangeActionDirec(const ACTION_DIRECTION _direc)
 	//とりあえずポストエフェクトを描画するように
 	isDrawPostEffect_ = true;
 
-	//各ポストエフェクトの描画設定
-	if (_direc == ACTION_DIRECTION::SCAN_LINE) {
-		drawPostEffect_ = &Game::DrawScanLine;
-	}
-	else if (_direc == ACTION_DIRECTION::BLUR) {
-		drawPostEffect_ = &Game::DrawBlur;
-	}
-	else if (_direc == ACTION_DIRECTION::JUST_DODGE) {
-		drawPostEffect_ = &Game::DrawDodgeEffect;
-	}
-	else {
-		//上記三つ以外の場合はポストエフェクトをかけない
-		isDrawPostEffect_ = false;
-	}
+	////各ポストエフェクトの描画設定
+	//if (_direc == ACTION_DIRECTION::SCAN_LINE) {
+	//	drawPostEffect_ = &Game::DrawScanLine;
+	//}
+	//else if (_direc == ACTION_DIRECTION::BLUR) {
+	//	drawPostEffect_ = &Game::DrawBlur;
+	//}
+	//else if (_direc == ACTION_DIRECTION::JUST_DODGE) {
+	//	drawPostEffect_ = &Game::DrawDodgeEffect;
+	//}
+	//else {
+	//	//上記三つ以外の場合はポストエフェクトをかけない
+	//	isDrawPostEffect_ = false;
+	//}
 }
 
 void Game::AttackDataInit(void)

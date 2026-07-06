@@ -27,7 +27,7 @@ StageManager::~StageManager(void)
 
 void StageManager::Draw(void)
 {
-	renderer_->Draw();
+	renderer_->Draw(*material_);
 }
 
 void StageManager::Release(void)
@@ -50,7 +50,7 @@ void StageManager::DoInit(void)
 
 	scl_ = INIT_SCALE_FOR_TEST;
 
-	renderer_ = std::make_unique<ModelRenderer>(modelId_, *material_);
+	renderer_ = std::make_unique<ModelRenderer>(modelId_);
 }
 
 void StageManager::DoUpdate(void)

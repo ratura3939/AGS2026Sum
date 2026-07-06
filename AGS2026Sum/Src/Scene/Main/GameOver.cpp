@@ -44,7 +44,7 @@ void GameOver::Init(void)
 	material_ = std::make_unique<PixelMaterial>(L"NomalTexPS.cso", 0);
 	material_->AddTextureBuf(rsM.Load(ResourceManager::SRC::GAME_OVER_BACK_IMG).handleId_);
 
-	render_ = std::make_unique<PixelRenderer>(*material_);
+	render_ = std::make_unique<PixelRenderer>();
 
 	auto& app = Application::GetInstance();
 	render_->MakeSquereVertex({ 0,0 }, { app.GetWindowWidth(), app.GetWindowHeight() });
@@ -122,7 +122,7 @@ void GameOver::Update(void)
 void GameOver::Draw(void)
 {
 	//背景描画
-	render_->Draw();
+	render_->Draw(*material_);
 
 	auto& uiM = UIManager2d::GetInstance();
 	uiM.Draw(UIManager2d::UI_NAME::BACK_TITLE_BUTTON);

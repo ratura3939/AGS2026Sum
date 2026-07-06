@@ -97,6 +97,11 @@ void PlayerManager::Draw(void)
 	DrawFormatString(30, 280, 0xffffff, L"AttackCansel = %d", static_cast<int>(isEnableAttackInput_));	//現在の攻撃アニメーション登録名の先頭文字を表示(デバッグ用)
 }
 
+void PlayerManager::DrawNormalDepth(void)
+{
+	character_->DrawNormalDepth();	//キャラクターの法線深度描画
+}
+
 void PlayerManager::Release(void)
 {
 	character_->Release();	//キャラクターの解放

@@ -49,7 +49,7 @@ void Title::Init(void)
 	material_ = std::make_unique<PixelMaterial>(L"NomalTexPS.cso", 0);
 	material_->AddTextureBuf(rsM.Load(ResourceManager::SRC::TITLE_BACK_IMG).handleId_);
 
-	render_ = std::make_unique<PixelRenderer>(*material_);
+	render_ = std::make_unique<PixelRenderer>();
 	auto& app = Application::GetInstance();
 	render_->MakeSquereVertex({ 0,0 }, { app.GetWindowWidth(), app.GetWindowHeight() });
 
@@ -154,7 +154,7 @@ void Title::Draw(void)
 	auto& uiM = UIManager2d::GetInstance();
 
 	//”wŒi•`‰æ
-	render_->Draw();
+	render_->Draw(*material_);
 
 	uiM.Draw(UIManager2d::UI_NAME::START_BUTTON);
 	uiM.Draw(UIManager2d::UI_NAME::END_BUTTON);

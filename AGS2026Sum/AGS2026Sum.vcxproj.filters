@@ -460,7 +460,8 @@
     <FxCompile Include="Src\Shader\Model\StdModelVS.hlsl" />
     <FxCompile Include="Src\Shader\Model\UVScalingVS.hlsl" />
     <FxCompile Include="Src\Shader\PostEffect\Blur.hlsl" />
-    <FxCompile Include="Src\Shader\Model\OutLinePS.hlsl" />
+    <FxCompile Include="Src\Shader\Model\NormalDepthPS.hlsl" />
+    <FxCompile Include="Src\Shader\PostEffect\EdgeDetectPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shader\Common\Pixel\PixelShader2DHeader.hlsli" />

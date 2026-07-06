@@ -79,9 +79,7 @@ private:
 	bool DirectionCameraMove(void);	//カメラ移動
 
 	//各種描画処理(ポストエフェクト)
-	void DrawScanLine(void);	//走査線
-	void DrawBlur(void);		//ブラー
-	void DrawDodgeEffect(void);	//ジャスト回避時
+	void DrawEdge(void);	//エッジ描画
 
 	/// <summary>
 	/// 攻撃の基礎情報登録(ゆくゆくは外部データにしたい)
@@ -121,19 +119,9 @@ private:
 #pragma endregion
 
 #pragma region shader関連
-	//走査線
-	//std::unique_ptr<PixelMaterial>scanLineMaterial_;
-	//std::unique_ptr<PixelRenderer>scanLineRender_;
-	//int scanLineScreen_;
-
-	////ブラー関連
-	//std::unique_ptr<PixelMaterial>blurMaterial_;
-	//std::unique_ptr<PixelRenderer>blurRender_;
-	//int blurScreen_;
-	////ジャスト回避
-	//std::unique_ptr<PixelMaterial>dodgeMaterial_;
-	//std::unique_ptr<PixelRenderer>dodgeRender_;
-	//int dodgeScreen_;
+	std::unique_ptr<PixelMaterial>edgeMaterial_;	//エッジ描画用マテリアル
+	std::unique_ptr<PixelRenderer>edgeRender_;	//エッジ描画用レンダラー
+	int normalDepthScreen_;	//法線・深度描画用スクリーン
 
 	bool isDrawPostEffect_;	//ポストエフェクトをかけるか
 #pragma endregion
@@ -171,5 +159,8 @@ private:
 	int skipScreen_;
 	int skipCounter_;
 	bool isSkipEnd_;
+
+
+	bool debugEdge_;
 };
 
