@@ -29,7 +29,7 @@ EnemyOnHit::~EnemyOnHit(void)
 void EnemyOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 {
 	//終了なら無視
-	if (parent_.IsEndState())return;
+	if (parent_.IsFade())return;
 
 	//攻撃マネージャー
 	auto& atkMng = AttackManager::GetInstance();

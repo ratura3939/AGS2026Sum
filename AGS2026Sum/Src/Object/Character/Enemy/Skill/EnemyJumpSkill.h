@@ -29,6 +29,9 @@ public:
 	//終了
 	void Exit(EnemyBase& _owner)override;
 
+	//攻撃属性の取得
+	const AttackDataBase::ATTACK_ELEMENT GetAttackElement(void)const override { return AttackDataBase::ATTACK_ELEMENT::JUMP; };
+
 private:
 
 	//攻撃時間

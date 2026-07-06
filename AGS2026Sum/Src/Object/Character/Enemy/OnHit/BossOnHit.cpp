@@ -1,0 +1,133 @@
+#include "../../../../pch.h"
+#include"../../../../Manager/Generic/SceneManager.h"
+#include"../../../../Manager/GameSystem/AttackManager.h"
+#include "../../Player/ToJson/PlayerAttackData.h"
+#include "../State/EnemyStaggerState.h"
+#include "../State/EnemyLaunchState.h"
+#include "../State/EnemySlamState.h"
+#include "../State/EnemyPushBackState.h"
+#include "../State/EnemyBlowAwayState.h"
+#include "../Skill/EnemySkillBase.h"
+#include "../EnemyBase.h"
+#include "../Types/Boss/MiddleBoss.h"
+#include "../Types/Boss/BossBattleComponent.h"
+#include "BossOnHit.h"
+
+BossOnHit::BossOnHit(EnemyBase& _parent)
+	: EnemyOnHit(_parent)
+{
+}
+
+BossOnHit::~BossOnHit(void)
+{
+}
+
+void BossOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
+{
+	//親をボスに
+	auto parent = dynamic_cast<MiddleBoss*>(&parent_);
+	if (!parent)return;
+
+	//終了なら無視
+	if (parent_.IsFade())return;
+
+	//攻撃マネージャー
+	auto& atkMng = AttackManager::GetInstance();
+
+	//ヒット者
+	const auto& col = _col.lock();
+
+	//自身のコライダ
+	const auto& myCol = parent_.GetColliders()[0];
+
+	//本体にあたってないので無視
+	if (!myCol->IsHit())return;
+
+	//当たれるか
+	if (!atkMng.IsCanHit(col, myCol)) return;
+
+	//攻撃情報
+	const auto& atkData = atkMng.GetAttackData(_col, myCol).lock();
+	auto data = dynamic_pointer_cast<AttackData>(atkData);
+
+	//攻撃間隔
+	if (data->hitInterval > cnt_ && data->isMultiHit)
+	{
+		//カウンタ
+		auto& scnMng = SceneManager::GetInstance();
+		cnt_ += scnMng.GetScaleUpdateSpeedRate(scnMng.GetDeltaTime());
+		return;
+	}
+
+	//ここからヒット処理
+
+	//リセット
+	cnt_ = 0.0f;
+
+	//回転情報
+	const Quaternion quaRot = col->GetGeometry().GetColRot();
+
+	//吹っ飛び(相手の向いている方向)
+	VECTOR blowPow = quaRot.GetForward();
+
+	//ガードブレイク値
+	float breakValue = data->guardBreakPower;
+
+	//戦闘情報
+	BossBattleComponent& battle = parent->GetBattleComponent();
+
+	//スタン判定
+	bool isGuardBreak = battle.IsGuardBreak();
+	bool isAttackCancel = false;
+
+	//敵の現在攻撃
+	auto enemySkill = parent_.GetCurrentSkill();
+	if (enemySkill != nullptr)
+	{
+		//属性が一致したなら削り値上昇と攻撃キャンセル
+		auto skillElement = enemySkill->GetAttackElement();
+		if (skillElement == data->element && skillElement != AttackDataBase::ATTACK_ELEMENT::NORMAL)
+		{
+			breakValue *= 10.0f;
+			isAttackCancel = true;
+		}
+	}
+
+	//ガードブレイク
+	battle.GuardBreak(breakValue);
+
+	//ダメージ状態
+	std::string knockback = data->knockBackType;
+
+	//ダメージ威力
+	float power = data->power;
+
+	//スタン中は状態遷移をしない
+	if (isGuardBreak)
+	{
+		parent_.ChangeState((this->*createState_[knockback])(blowPow));
+	}
+	else
+	{
+		//スタンしていないならダメージを減らす
+		power *= 0.1f;
+	}
+
+	//ダメージ処理
+	parent_.Damage(power);
+
+	//スタンしたなら攻撃キャンセル
+	if (battle.IsGuardBreak() && !battle.IsBreakEnd())isAttackCancel = true;
+
+	if (isAttackCancel)
+	{
+		//現在スキルの破棄
+		parent_.RemoveCurrentSkill();
+
+		//攻撃コライダの登録削除
+		parent_.RemoveAttackCollider();
+
+		//通常状態
+		parent_.ChangeAction(ENEMY_ACTION::STAY);
+	}
+}

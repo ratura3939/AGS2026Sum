@@ -1,7 +1,6 @@
 #include "../../../../pch.h"
 #include "../../../../Manager/Generic/SceneManager.h"
 #include "../EnemyBase.h"
-#include "EnemyKnockDownState.h"
 #include "EnemyDamageState.h"
 
 EnemyDamageState::EnemyDamageState(const VECTOR& _vec)

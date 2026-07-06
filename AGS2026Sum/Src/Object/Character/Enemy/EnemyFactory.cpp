@@ -4,7 +4,7 @@
 #include "../../../Manager/GameSystem/AnimationController.h"
 #include "Skill/EnemySkillBase.h"
 #include "Types/NormalEnemy.h"
-#include "Types/MiddleBoss.h"
+#include "Types/Boss/MiddleBoss.h"
 #include "EnemyManager.h"
 #include "EnemyBase.h"
 #include "EnemyFactory.h"

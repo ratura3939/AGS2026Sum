@@ -547,6 +547,11 @@ void EnemyBase::PlayNoBlendAnimIsFinish(const std::wstring& _animName, const flo
 	if (animController_->IsFinishNormalAnim())animController_->NoBlendPlay(_animName, _speed);
 }
 
+const bool EnemyBase::IsFade(void) const
+{
+	return state_->GetStateId() == ENEMY_STATE::FADE;
+}
+
 const bool EnemyBase::IsEndState(void) const
 {
 	return state_->GetStateId() == ENEMY_STATE::END;

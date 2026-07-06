@@ -198,7 +198,7 @@
     <ClCompile Include="Src\Object\Character\Enemy\Types\NormalEnemy.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Character\Enemy\Types\MiddleBoss.cpp">
+    <ClCompile Include="Src\Object\Character\Enemy\Types\Boss\MiddleBoss.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Object\Common\OnHitBase.cpp">
@@ -238,6 +238,12 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Object\Character\Enemy\State\EnemyEndState.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Object\Character\Enemy\OnHit\BossOnHit.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Object\Character\Enemy\Types\Boss\BossBattleComponentcpp.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -440,7 +446,7 @@
     <ClInclude Include="Src\Object\Character\Enemy\Types\NormalEnemy.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Character\Enemy\Types\MiddleBoss.h">
+    <ClInclude Include="Src\Object\Character\Enemy\Types\Boss\MiddleBoss.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Object\Common\OnHitBase.h">
@@ -489,6 +495,12 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Object\Character\Enemy\State\EnemyEndState.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Object\Character\Enemy\OnHit\BossOnHit.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Object\Character\Enemy\Types\Boss\BossBattleComponent.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

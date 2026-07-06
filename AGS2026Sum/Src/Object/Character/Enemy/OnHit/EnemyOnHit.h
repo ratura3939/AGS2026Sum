@@ -1,4 +1,5 @@
 #pragma once
+#include<unordered_map>
 #include"../../../Common/OnHitBase.h"
 
 class EnemyBase;
@@ -14,7 +15,7 @@ public:
 	//デストラクタ
 	~EnemyOnHit(void)override;
 
-private:
+protected:
 
 	//親
 	EnemyBase& parent_;
@@ -27,7 +28,7 @@ private:
 	std::unordered_map<std::string, Func> createState_;
 
 	//ダメージ計算
-	void CalcDamage(const std::weak_ptr<Collider> _col);
+	virtual void CalcDamage(const std::weak_ptr<Collider> _col);
 
 	//当たり判定のタグごとの処理
 	void HitPlayer(const std::weak_ptr<Collider> _col)override;

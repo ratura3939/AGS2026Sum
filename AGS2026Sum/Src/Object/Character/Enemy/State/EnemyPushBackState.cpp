@@ -37,14 +37,18 @@ void EnemyPushBackState::Update(EnemyBase& _enemy)
 	//移動時間が一定以上ならノックダウン状態に遷移
 	if (damageMoveTime_ > DAMAGE_MOVE_TIME_MAX)
 	{
+		//生きているなら通常に移行
 		if (_enemy.IsAlive())_enemy.ChangeState(std::make_unique<EnemyNormalState>());
+
+		//死亡しているなら死亡状態に移行
 		else _enemy.ChangeState(std::make_unique<EnemyDeathState>());
+
 		return;
 	}
-	else
-	{
-		damageMoveTime_ += scnMng.GetScaleUpdateSpeedRate(scnMng.GetDeltaTime());
-	}
+
+	//移動時間が一定未満ならカウントアップ
+	else damageMoveTime_ += scnMng.GetScaleUpdateSpeedRate(scnMng.GetDeltaTime());
+
 
 	//移動方向に後ろを向きながら移動
 	_enemy.BackMove();

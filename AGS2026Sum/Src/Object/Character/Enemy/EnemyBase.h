@@ -75,6 +75,9 @@ public:
 	//攻撃マネージャーからコライダを破棄
 	void RemoveAttackCollider(void)const;
 
+	//現在の攻撃取得
+	const EnemySkillBase* GetCurrentSkill(void) { return currentSkill_; };
+
 	//現在の攻撃設定
 	void SetCurrentSkill(EnemySkillBase* _skill);
 
@@ -168,6 +171,9 @@ public:
 	void PlayNoBlendAnim(const std::wstring& _animName, const float _speed = 1.0f);
 	void PlayNoBlendAnimIsFinish(const std::wstring& _animName, const float _speed = 1.0f);
 
+	//フェード中か
+	const bool IsFade(void)const;
+
 	//終了状態か
 	const bool IsEndState(void)const;
 
@@ -260,7 +266,7 @@ protected:
 	virtual void DoInit(void)override;
 
 	//更新
-	void DoUpdate(void)override;
+	virtual void DoUpdate(void)override;
 
 	//アニメーションの初期化
 	void InitAnim(void)override;

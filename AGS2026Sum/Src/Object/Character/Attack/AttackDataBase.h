@@ -28,4 +28,13 @@ struct AttackDataBase
 
 	//継承のキャスト用仮想関数
 	virtual ~AttackDataBase(void) = default;
+
+	//文字列をキャスト
+	const ATTACK_ELEMENT& CastStringToElement(const std::string& _elementStr)
+	{
+		if (_elementStr == "Normal") return ATTACK_ELEMENT::NORMAL;
+		else if (_elementStr == "Tackle") return ATTACK_ELEMENT::TACKLE;
+		else if (_elementStr == "Jump") return ATTACK_ELEMENT::JUMP;
+		else return ATTACK_ELEMENT::NORMAL;
+	}
 };

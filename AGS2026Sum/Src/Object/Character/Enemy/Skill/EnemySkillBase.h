@@ -1,4 +1,5 @@
 #pragma once
+#include"../../Attack/AttackDataBase.h"
 
 class EnemyBase;
 
@@ -29,6 +30,9 @@ public:
 
 	//終了
 	virtual void Exit(EnemyBase& _owner) = 0;
+
+	//攻撃属性の取得
+	virtual const AttackDataBase::ATTACK_ELEMENT GetAttackElement(void)const = 0;
 
 protected:
 

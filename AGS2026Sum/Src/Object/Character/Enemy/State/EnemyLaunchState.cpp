@@ -39,8 +39,12 @@ void EnemyLaunchState::Update(EnemyBase& _enemy)
 	//地面に着地したらノックダウン状態に遷移
 	if (_enemy.GetPos().y <= 0.0f && gravityPow.y <= 0.0f)
 	{
+		//生きているならノックダウンに移行
 		if (_enemy.IsAlive())_enemy.ChangeState(std::make_unique<EnemyKnockDownState>());
+
+		//死亡しているなら死亡状態に移行
 		else _enemy.ChangeState(std::make_unique<EnemyDeathState>());
+
 		return;
 	}
 

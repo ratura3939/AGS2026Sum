@@ -26,14 +26,23 @@ void EnemyKnockDownState::Enter(EnemyBase& _enemy)
 
 void EnemyKnockDownState::Update(EnemyBase& _enemy)
 {
+	//シーンマネージャー
+	auto& scnMng = SceneManager::GetInstance();
+	
 	//ダウン時間が一定以上なら通常状態に遷移
 	if (knockDownTime_ > KNOCK_DOWN_TIME_MAX)
 	{
+		//生きているなら通常に移行
 		if (_enemy.IsAlive())_enemy.ChangeState(std::make_unique<EnemyNormalState>());
+
+		//死亡しているなら死亡状態に移行
 		else _enemy.ChangeState(std::make_unique<EnemyDeathState>());
+
 		return;
 	}
-	else knockDownTime_ += SceneManager::GetInstance().GetDeltaTime();
+
+	//ダウン時間が一定未満ならカウントアップ
+	else knockDownTime_ += scnMng.GetScaleUpdateSpeedRate(scnMng.GetDeltaTime());
 
 	//落下はあるため移動処理を入れる
 	_enemy.Move();

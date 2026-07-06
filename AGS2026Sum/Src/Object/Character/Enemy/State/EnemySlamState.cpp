@@ -37,8 +37,12 @@ void EnemySlamState::Update(EnemyBase& _enemy)
 	//移動時間が一定以上ならノックダウン状態に遷移
 	if (damageMoveTime_ > DAMAGE_MOVE_TIME_MAX)
 	{
+		//生きているならノックダウンに移行
 		if (_enemy.IsAlive())_enemy.ChangeState(std::make_unique<EnemyKnockDownState>());
+
+		//死亡しているなら死亡状態に移行
 		else _enemy.ChangeState(std::make_unique<EnemyDeathState>());
+		
 		return;
 	}
 	else

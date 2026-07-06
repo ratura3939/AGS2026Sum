@@ -20,13 +20,16 @@ void EnemyEndState::Enter(EnemyBase& _enemy)
 
 	//移動量をなくす
 	_enemy.SetMovePow(Utility::VECTOR_ZERO);
+
+	//死亡アニメーション
+	_enemy.PlayAnim(L"BlowEnd");
 }
 
 void EnemyEndState::Update(EnemyBase& _enemy)
 {
 	//消えるまでの時間が一定以上なら終了状態に遷移
 	if (fadeTime_ < FADE_TIME)fadeTime_ += SceneManager::GetInstance().GetDeltaTime();
-
+	
 	//落下はあるため移動処理を入れる
 	_enemy.Move();
 }
@@ -38,5 +41,5 @@ void EnemyEndState::Exit(EnemyBase& _enemy)
 const ENEMY_STATE EnemyEndState::GetStateId(void) const
 {
 	//消えるまでの時間が一定以上なら終了状態に遷移
-	return fadeTime_ < FADE_TIME ? ENEMY_STATE::DEATH : ENEMY_STATE::END;
+	return fadeTime_ < FADE_TIME ? ENEMY_STATE::FADE : ENEMY_STATE::END;
 }
