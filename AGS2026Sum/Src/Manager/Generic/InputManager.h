@@ -122,7 +122,7 @@ public:
 	/// </summary>
 	/// <param name="_eventCode">登録名</param>
 	/// <returns></returns>
-	bool IsTrigerrDown(const INPUT_COMMAND& _eventCode, bool _isDistinguish = true);
+	bool IsTriggerDown(const INPUT_COMMAND& _eventCode, bool _isDistinguish = true);
 
 	/// <summary>
 	/// キーのアップトリガ

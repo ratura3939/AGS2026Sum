@@ -4,7 +4,6 @@
 
 // IN
 #include "../Common/Vertex/VertexInputType.hlsli"
-//#define VERTEX_INPUT DX_MV1_VERTEX_TYPE_8FRAME
 #define VERTEX_INPUT DX_MV1_VERTEX_TYPE_NMAP_8FRAME 
 
 #define L_W_MAT g_localWorldMatrix.lwMatrix

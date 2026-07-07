@@ -46,6 +46,7 @@ class PlayerChara :
 
 		std::unique_ptr<ModelMaterial>modelMaterial_;	//モデルマテリアル
 		std::unique_ptr<ModelMaterial>normalDepthMaterial_;	//法線深度マテリアル
+		std::unique_ptr<ModelMaterial>outlineMaterial_;	//アウトラインマテリアル
 		std::unique_ptr<ModelRenderer>modelRenderer_;	//モデルレンダラー
 
         VECTOR inputDir_;       //移動入力方向
@@ -55,5 +56,8 @@ class PlayerChara :
 		bool isAttack_;         //攻撃しているか  
 		std::wstring useAnim_;  //現在のアニメーション
 		PlayerOnHit onHit_;		//当たり判定用
+
+		bool isDebugOutLine_;	//デバッグ用アウトライン描画
+		float debugOutLineWidth_;
 };
 

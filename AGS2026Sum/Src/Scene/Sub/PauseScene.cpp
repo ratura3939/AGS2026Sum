@@ -100,7 +100,7 @@ void PauseScene::InputUser(void)
 
 	using COMMAND = InputManager::INPUT_COMMAND;
 
-	if (ins.IsTrigerrDown(COMMAND::ENTER))
+	if (ins.IsTriggerDown(COMMAND::ENTER))
 	{
 		if (isSelectBackTitle_) {
 			//シーン遷移
@@ -113,11 +113,11 @@ void PauseScene::InputUser(void)
 	}
 
 	//ボタン選択
-	if (ins.IsTrigerrDown(COMMAND::UP) && isSelectBackTitle_) {
+	if (ins.IsTriggerDown(COMMAND::UP) && isSelectBackTitle_) {
 		isSelectBackTitle_ = false;
 		ResetUIDirectionParam();
 	}
-	else if (ins.IsTrigerrDown(COMMAND::DOWN) && !isSelectBackTitle_) {
+	else if (ins.IsTriggerDown(COMMAND::DOWN) && !isSelectBackTitle_) {
 		isSelectBackTitle_ = true;
 		ResetUIDirectionParam();
 	}

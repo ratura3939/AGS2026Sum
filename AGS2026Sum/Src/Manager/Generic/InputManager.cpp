@@ -321,7 +321,7 @@ InputManager::MoveInput InputManager::GetKeyMoveInput(void)
 }
 
 
-bool InputManager::IsTrigerrDown(const INPUT_COMMAND& _eventCode, bool _isDistinguish)
+bool InputManager::IsTriggerDown(const INPUT_COMMAND& _eventCode, bool _isDistinguish)
 {
 	//æ‚É—v‘f‚ª‚È‚¢ê‡‚Ì—\–hü‚ğ‚Í‚é
 // ”½‰‚µ‚È‚¢‚¾‚¯‚Æ‚¢‚¤ó‘Ô‚ğì‚è‚½‚¢‚©‚ç

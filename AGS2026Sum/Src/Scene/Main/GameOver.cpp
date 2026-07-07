@@ -88,7 +88,7 @@ void GameOver::Update(void)
 {
 	// シーン遷移
 	InputManager& ins = InputManager::GetInstance();
-	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ENTER))
+	if (ins.IsTriggerDown(InputManager::INPUT_COMMAND::ENTER))
 	{
 		if (isSelectEndGame_) {
 			Application::GetInstance().EndGame();
@@ -100,11 +100,11 @@ void GameOver::Update(void)
 	}
 
 	//ボタン選択
-	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::LEFT) && isSelectEndGame_) {
+	if (ins.IsTriggerDown(InputManager::INPUT_COMMAND::LEFT) && isSelectEndGame_) {
 		isSelectEndGame_ = false;
 		ResetUIDirectionParam();
 	}
-	else if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::RIGHT) && !isSelectEndGame_) {
+	else if (ins.IsTriggerDown(InputManager::INPUT_COMMAND::RIGHT) && !isSelectEndGame_) {
 		isSelectEndGame_ = true;
 		ResetUIDirectionParam();
 	}

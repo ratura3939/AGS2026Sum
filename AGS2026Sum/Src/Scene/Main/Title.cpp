@@ -117,7 +117,7 @@ void Title::Update(void)
 {
 	// シーン遷移
 	InputManager& ins = InputManager::GetInstance();
-	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ENTER))
+	if (ins.IsTriggerDown(InputManager::INPUT_COMMAND::ENTER))
 	{
 		if (isSelectGameEnd_) {
 			Application::GetInstance().EndGame();
@@ -129,11 +129,11 @@ void Title::Update(void)
 	}
 
 	//ボタン選択
-	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::UP) && isSelectGameEnd_) {
+	if (ins.IsTriggerDown(InputManager::INPUT_COMMAND::UP) && isSelectGameEnd_) {
 		isSelectGameEnd_ = false;
 		ResetUIDirectionParam();
 	}
-	else if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::DOWN) && !isSelectGameEnd_) {
+	else if (ins.IsTriggerDown(InputManager::INPUT_COMMAND::DOWN) && !isSelectGameEnd_) {
 		isSelectGameEnd_ = true;
 		ResetUIDirectionParam();
 	}

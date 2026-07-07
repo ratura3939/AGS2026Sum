@@ -8,6 +8,8 @@
 #include"PlayerManager.h"
 #include "PlayerChara.h"
 
+#include"../../../Manager/Generic/InputManager.h"	
+
 namespace {
 	const float MOVE_SPEED = 25.0f;	//移動速度
 	const std::wstring ROOT_NAME = L"mixamorig8:Hips";
@@ -21,6 +23,8 @@ namespace {
 	const int PS_NORMAL_DEPTH_BUFF_SIZE = 1;	//ピクセルシェーダの定数バッファの数
 
 	const int PS_CAMERA_RAY_BUFF_NUM = 1;	//バッファ番号
+
+	const float OUTLINE_DEPTH_RANGE = 500.0f;	//アウトライン描画の深度範囲
 }
 
 PlayerChara::PlayerChara(void)
@@ -78,8 +82,14 @@ void PlayerChara::DoLoad(void)
 	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::PLAYER_MDL);	//モデル取得
 
 	normalDepthMaterial_ = std::make_unique<ModelMaterial>(L"SkinVS.cso", VS_SKIN_BUFF_SIZE,L"NormalDepthPS.cso", PS_NORMAL_DEPTH_BUFF_SIZE);	//モデルマテリアル生成
-	normalDepthMaterial_->AddConstBufPS(FLOAT4{ Camera::CAMERA_FAR, 0.0f, 0.0f, 0.0f });	//カメラの描画距離を渡す
+	normalDepthMaterial_->AddConstBufPS(FLOAT4{ OUTLINE_DEPTH_RANGE, 0.0f, 0.0f, 0.0f });	//カメラの描画距離を渡す
 
+	outlineMaterial_ = std::make_unique<ModelMaterial>(L"SkinOutLineVS.cso", 2, L"SkinOutLinePS.cso", 1);
+	outlineMaterial_->AddConstBufVS(FLOAT4{ 0.2f,0.0f,0.0f,0.0f });
+
+	const VECTOR& cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
+	outlineMaterial_->AddConstBufVS(FLOAT4{ cameraPos.x, cameraPos.y, cameraPos.z, 0.0f });
+	outlineMaterial_->AddConstBufPS(FLOAT4{ 0.0f,0.0f,0.0f,1.0f });
 	modelMaterial_ = std::make_unique<ModelMaterial>(L"SkinVS.cso", VS_SKIN_BUFF_SIZE,L"StdModelPS.cso", PS_SKIN_BUFF_SIZE);	//モデルマテリアル生成
 
 	modelRenderer_ = std::make_unique<ModelRenderer>(modelId_);	//モデルレンダラー生成
@@ -87,6 +97,9 @@ void PlayerChara::DoLoad(void)
 	//当たり判定の生成
 	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, quaRot_, BROUD_RADIUS, RADIUS);
 	MakeCollider(std::move(geo), Collider::COL_TAG::PLAYER, { Collider::COL_TAG::ENEMY,Collider::COL_TAG::ENEMY_ATTACK });
+
+	debugOutLineWidth_ = 0.2f;
+	isDebugOutLine_ = true;	
 }
 
 void PlayerChara::DoInit(void)
@@ -115,6 +128,17 @@ void PlayerChara::DoUpdate(void)
 	Rotation();
 	inputDir_ = Utility::VECTOR_ZERO;
 	animController_->Update();
+
+	//デバッグ
+	if (CheckHitKey(KEY_INPUT_L)) {
+		debugOutLineWidth_ += 0.01f;
+	}
+	else if(CheckHitKey(KEY_INPUT_K)) {
+		debugOutLineWidth_ -= 0.01f;
+	}
+	if (InputManager::GetInstance().IsTriggerDown(InputManager::INPUT_COMMAND::ENTER)) {
+		isDebugOutLine_ = !isDebugOutLine_;
+	}
 }
 
 void PlayerChara::InitAnim(void)
@@ -180,10 +204,26 @@ void PlayerChara::DrawHP(void)
 void PlayerChara::Draw(void)
 {
 	const VECTOR& cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
-	DrawFormatString(10, 30, 0xffffff, L"PlayerPos: %f, %f, %f,\nInputDir: %f, %f, %f\nCameraPos: %f, %f, %f", pos_.x, pos_.y, pos_.z, inputDir_.x, inputDir_.y, inputDir_.z, cameraPos.x, cameraPos.y, cameraPos.z);
+	DrawFormatString(10, 30, 0xffffff, L"PlayerPos: %f, %f, %f,\nInputDir: %f, %f, %f\nCameraPos: %f, %f, %f\noutLine=%.3f", pos_.x, pos_.y, pos_.z, inputDir_.x, inputDir_.y, inputDir_.z, cameraPos.x, cameraPos.y, cameraPos.z, debugOutLineWidth_);
 
 	//描画
-	modelRenderer_->Draw(*modelMaterial_);
+	outlineMaterial_->SetConstBufVS(0,FLOAT4{ debugOutLineWidth_, 0.0f, 0.0f, 0.0f });
+	outlineMaterial_->SetConstBufVS(1,FLOAT4{ cameraPos.x, cameraPos.y, cameraPos.z, 0.0f });
+
+	//モデル描画のZBufferを無効にする
+	//アウトライン用描画
+	MV1SetWriteZBuffer(modelId_, false);
+	MV1SetMeshBackCulling(modelId_, 0, DX_CULLING_RIGHT);	//裏面描画
+	modelRenderer_->Draw(*outlineMaterial_);
+
+	//本体描画
+	MV1SetWriteZBuffer(modelId_, true);
+	MV1SetMeshBackCulling(modelId_, 0, DX_CULLING_LEFT);	//表面描画
+
+	if (isDebugOutLine_) {
+		modelRenderer_->Draw(*modelMaterial_);
+	}
+	
 
 	DrawHP();
 }

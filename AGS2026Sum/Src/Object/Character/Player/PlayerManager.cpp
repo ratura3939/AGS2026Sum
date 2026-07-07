@@ -210,7 +210,7 @@ void PlayerManager::UserInput(void)
 	InputManager& ins = InputManager::GetInstance();
 
 	//ポーズシーン
-	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::PAUSE)) {
+	if (ins.IsTriggerDown(InputManager::INPUT_COMMAND::PAUSE)) {
 		//シーン追加(一つ次へ)
 		SceneManager::GetInstance().PushScene(std::make_shared<PauseScene>());
 	}
@@ -223,7 +223,7 @@ void PlayerManager::UserInput(void)
 		return;
 	}
 
-	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_NORMAL)) {
+	if (ins.IsTriggerDown(InputManager::INPUT_COMMAND::ATTACK_NORMAL)) {
 		//特殊攻撃準備中の場合
 		if (isSpecialAttackRedy_) {
 			isAttackInput = ReserveAttackSpecial(PlayerAttack::ATTACK_TYPE::PUNCH);	//攻撃クラスに特殊攻撃開始を伝え,結果を得る
@@ -233,7 +233,7 @@ void PlayerManager::UserInput(void)
 			isAttackInput = ReserveAttack(PlayerAttack::ATTACK_TYPE::PUNCH);	//攻撃クラスに攻撃開始を伝え,結果を得る
 		}
 	}
-	else if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_STRONG)) {
+	else if (ins.IsTriggerDown(InputManager::INPUT_COMMAND::ATTACK_STRONG)) {
 		//特殊攻撃準備中の場合
 		if (isSpecialAttackRedy_&& isEnableSpecial_) {
 			isAttackInput = ReserveAttackSpecial(PlayerAttack::ATTACK_TYPE::KICK);	//攻撃クラスに特殊攻撃開始を伝え,結果を得る
@@ -246,7 +246,7 @@ void PlayerManager::UserInput(void)
 
 	//必殺技
 	//デバッグ用のボタンが押されていたら
-	if (/*ins.IsPressed(InputManager::INPUT_COMMAND::DEBUG_ULT_REDY) && */ins.IsTrigerrDown(InputManager::INPUT_COMMAND::CANCEL)) {
+	if (/*ins.IsPressed(InputManager::INPUT_COMMAND::DEBUG_ULT_REDY) && */ins.IsTriggerDown(InputManager::INPUT_COMMAND::CANCEL)) {
 		attack_->ReserveAttackUltimate();	//必殺技予約
 		isEnableUltimate_ = true;			//必殺技中
 		scene_.StartSlow();					//スロー演出
@@ -263,7 +263,7 @@ void PlayerManager::UserInput(void)
 
 	//特殊攻撃準備
 	//開始
-	if (ins.IsTrigerrDown(InputManager::INPUT_COMMAND::ATTACK_SPECIAL) && isEnableSpecial_) {
+	if (ins.IsTriggerDown(InputManager::INPUT_COMMAND::ATTACK_SPECIAL) && isEnableSpecial_) {
 		scene_.StartSlow();
 	}
 	//終了

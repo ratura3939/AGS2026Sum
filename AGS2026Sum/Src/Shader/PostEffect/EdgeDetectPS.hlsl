@@ -5,11 +5,11 @@ Texture2D normalDepthTexture : register(t0);
 SamplerState normalDepthSampler : register(s0);
 
 //エッジ検出パラメータ
-cbuffer cbEdgeParam : register(b0)
+cbuffer cbEdgeParam : register(b4)
 {
     float4 g_outlineColor;      //アウトラインの色
     float2 g_texelSize;         //1ピクセル分のUVサイズ(1/画面幅, 1/画面高さ)
-    float g_depthThreshold; //深度差のしきい値
+    float g_depthThreshold;     //深度差のしきい値
     float g_normalThreshold;    //法線差のしきい値
 }
 

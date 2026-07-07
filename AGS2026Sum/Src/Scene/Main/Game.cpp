@@ -53,8 +53,8 @@ namespace {
 	const int BGM_VOL = 80;
 
 	const int PS_EDGE_BUFF_NUM = 2;	//エッジ描画用のバッファ数
-	const float EDGE_NORMAL_THRESHOLD = 0.1f;	//エッジ描画用の閾値
-	const float EDGE_DEPTH_THRESHOLD = 0.1f;	//エッジ描画用の閾値
+	const float EDGE_NORMAL_THRESHOLD = 0.7f;	//エッジ描画用の閾値
+	const float EDGE_DEPTH_THRESHOLD = 0.7f;	//エッジ描画用の閾値
 }
 
 Game::Game(void)
@@ -82,9 +82,6 @@ Game::Game(void)
 
 	cameraGoalStayCounter_ = 0;
 	cameraGoalStayTime_ = 0;
-
-
-	debugEdge_ = true;
 }
 
 Game::~Game(void)
@@ -179,7 +176,7 @@ void Game::InitShader(void)
 	normalDepthScreen_ = MakeScreen(screemWidth, screemHeight, true);
 
 	edgeMaterial_ = std::make_unique<PixelMaterial>(L"EdgeDetectPS.cso", PS_EDGE_BUFF_NUM);
-	edgeMaterial_->AddConstBuf(FLOAT4{ 1.0f,1.0f,1.0f,1.0f });	//エッジの色
+	edgeMaterial_->AddConstBuf(FLOAT4{ 0.0f,0.0f,0.0f,1.0f });	//エッジの色
 	edgeMaterial_->AddConstBuf(FLOAT4{ 1.0f / static_cast<float>(screemWidth),1.0f / static_cast<float>(screemHeight),EDGE_DEPTH_THRESHOLD,EDGE_NORMAL_THRESHOLD });	//エッジの色
 	edgeMaterial_->AddTextureBuf(normalDepthScreen_);	//法線・深度描画用スクリーンをテクスチャとして登録
 
@@ -204,13 +201,6 @@ void Game::Update(void)
 	//	//シーン遷移
 	//	//scM.ChangeScene(std::make_shared<GameOver>());
 	//}
-
-	// シーン遷移
-	if (inpM.IsTrigerrDown(InputManager::INPUT_COMMAND::ENTER))
-	{
-		debugEdge_ = !debugEdge_;
-	}
-
 
 
 	if(enemy_->GetActiveEnemyNum() <= 0)
@@ -495,6 +485,8 @@ void Game::DrawEdge(void)
 	SetDrawScreen(normalDepthScreen_);
 
 	ClearDrawScreen();
+
+	SceneManager::GetInstance().GetCamera().SetBeforeDraw();
 	
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	player_->DrawNormalDepth();
@@ -504,11 +496,6 @@ void Game::DrawEdge(void)
 
 	edgeMaterial_->SetTextureBuf(0, normalDepthScreen_);
 	edgeRender_->Draw(*edgeMaterial_);
-
-	if(debugEdge_)
-	{
-		DrawGraph(0, 0, normalDepthScreen_, false);
-	}
 }
 
 void Game::Draw(void)
@@ -520,7 +507,7 @@ void Game::Draw(void)
 	enemy_->Draw();
 	player_->Draw();
 
-	DrawEdge();
+	//DrawEdge();
 
 	//ポストエフェクトをかけるとき
 	if (isDrawPostEffect_) {

@@ -159,8 +159,5 @@ private:
 	int skipScreen_;
 	int skipCounter_;
 	bool isSkipEnd_;
-
-
-	bool debugEdge_;
 };
 
