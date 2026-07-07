@@ -1,6 +1,7 @@
 #include "../../../../pch.h"
 #include"../../../../Manager/Generic/SceneManager.h"
 #include"../../../../Manager/GameSystem/AttackManager.h"
+#include"../../../../Manager/GameSystem/ComboManager.h"
 #include "../../Player/ToJson/PlayerAttackData.h"
 #include "../State/EnemyStaggerState.h"
 #include "../State/EnemyLaunchState.h"
@@ -102,6 +103,15 @@ void BossOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 	//ダメージ威力
 	float power = data->power;
 
+	//スタンしたなら攻撃キャンセル
+	if (battle.IsGuardBreak() && !battle.IsBreakEnd())isAttackCancel = true;
+
+	if (isAttackCancel)
+	{
+		//通常状態
+		parent_.ChangeAction(ENEMY_ACTION::ATTACK_END);
+	}
+
 	//スタン中は状態遷移をしない
 	if (isGuardBreak)
 	{
@@ -113,21 +123,9 @@ void BossOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 		power *= 0.1f;
 	}
 
+	//コンボカウント
+	ComboManager::GetInstance().AddCombo();
+
 	//ダメージ処理
 	parent_.Damage(power);
-
-	//スタンしたなら攻撃キャンセル
-	if (battle.IsGuardBreak() && !battle.IsBreakEnd())isAttackCancel = true;
-
-	if (isAttackCancel)
-	{
-		//現在スキルの破棄
-		parent_.RemoveCurrentSkill();
-
-		//攻撃コライダの登録削除
-		parent_.RemoveAttackCollider();
-
-		//通常状態
-		parent_.ChangeAction(ENEMY_ACTION::STAY);
-	}
 }

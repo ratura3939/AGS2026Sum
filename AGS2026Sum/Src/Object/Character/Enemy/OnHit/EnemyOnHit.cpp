@@ -1,6 +1,7 @@
 #include "../../../../pch.h"
 #include"../../../../Manager/Generic/SceneManager.h"
 #include"../../../../Manager/GameSystem/AttackManager.h"
+#include"../../../../Manager/GameSystem/ComboManager.h"
 #include "../../Player/ToJson/PlayerAttackData.h"
 #include "../State/EnemyStaggerState.h"
 #include "../State/EnemyLaunchState.h"
@@ -61,17 +62,11 @@ void EnemyOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 
 	//ここからヒット処理
 
-	//現在スキルの破棄
-	parent_.RemoveCurrentSkill();
-
-	//攻撃コライダの登録削除
-	parent_.RemoveAttackCollider();
-
-	//通常状態
-	parent_.ChangeAction(ENEMY_ACTION::STAY);
-
 	//リセット
 	cnt_ = 0.0f;
+
+	//攻撃終了へ
+	parent_.ChangeAction(ENEMY_ACTION::ATTACK_END);
 
 	//回転情報
 	const Quaternion quaRot = col->GetGeometry().GetColRot();
@@ -82,6 +77,9 @@ void EnemyOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 	//ダメージ状態
 	std::string knockback = data->knockBackType;
 	parent_.ChangeState((this->*createState_[knockback])(blowPow));
+
+	//コンボカウント
+	ComboManager::GetInstance().AddCombo();
 
 	//ダメージ処理
 	parent_.Damage(data->power);

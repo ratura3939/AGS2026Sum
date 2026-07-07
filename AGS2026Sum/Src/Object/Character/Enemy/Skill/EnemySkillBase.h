@@ -31,6 +31,15 @@ public:
 	//終了
 	virtual void Exit(EnemyBase& _owner) = 0;
 
+	//終了開始
+	virtual void EndEnter(EnemyBase& _owner) = 0;
+
+	//終了更新
+	virtual const bool EndUpdate(EnemyBase& _owner) = 0;
+
+	//完全終了
+	virtual void EndExit(EnemyBase& _owner) = 0;
+
 	//攻撃属性の取得
 	virtual const AttackDataBase::ATTACK_ELEMENT GetAttackElement(void)const = 0;
 

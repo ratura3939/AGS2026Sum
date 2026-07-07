@@ -74,6 +74,7 @@ private:
 	std::unique_ptr<EnemyGroupPool> enemyGroupPool_;
 
 	//チャンク内の敵グループ(参照用)
+	std::vector<EnemyGroup*> oldChunkGroups_;
 	std::vector<EnemyGroup*> chunkGroups_;
 
 	//敵情報
@@ -96,4 +97,7 @@ private:
 
 	//距離ごとの行動決め
 	void DecideOrderByDistance(void);
+
+	//チャンク内グループの加入・離脱処理
+	void ChankGroupsEnterAndLeave(void);
 };

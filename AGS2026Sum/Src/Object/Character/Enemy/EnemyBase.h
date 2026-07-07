@@ -24,7 +24,7 @@ public:
 	static constexpr float BROUD_RADIUS = RADIUS + 15.0f;
 
 	//攻撃距離
-	static constexpr float ATTACK_RADIUS = RADIUS + 15.0f;
+	static constexpr float ATTACK_RADIUS = RADIUS + 100.0f;
 	static constexpr float ATTACK_BROUD_RADIUS = ATTACK_RADIUS + 15.0f;
 
 	//攻撃持続時間
@@ -47,6 +47,12 @@ public:
 
 	//アニメーション設定
 	void SetAnim(std::unique_ptr<AnimationController> _anim);
+
+	//コライダの生成
+	void CreateCollider(void);
+
+	//コライダの全削除(Groupからの命令用)
+	void DeleteCollider(void);
 
 	//描画
 	virtual void Draw(void)override;
@@ -83,9 +89,6 @@ public:
 
 	//現在の攻撃の破棄
 	void RemoveCurrentSkill(void);
-
-	//攻撃破棄
-	void BreakSkill(void);
 
 	//思考の更新
 	void UpdateBrain(void);
@@ -226,9 +229,6 @@ protected:
 	//攻撃目標座標
 	VECTOR attackPos_;
 
-	//攻撃用カウンタ
-	float attackCnt_;
-
 	//個人の移動量
 	VECTOR movePow_;
 	VECTOR gravityPow_;
@@ -280,6 +280,7 @@ protected:
 	void EnterAlert(void);
 	void EnterAttackReady(void);
 	void EnterAttack(void);
+	void EnterAttackEnd(void);
 	void EnterReturn(void);
 
 	//行動ごとの更新
@@ -288,6 +289,7 @@ protected:
 	void UpdateAlert(void);
 	void UpdateAttackReady(void);
 	void UpdateAttack(void);
+	void UpdateAttackEnd(void);
 	void UpdateReturn(void);
 
 	//行動抜けの処理
@@ -296,6 +298,7 @@ protected:
 	void ExitAlert(void);
 	void ExitAttackReady(void);
 	void ExitAttack(void);
+	void ExitAttackEnd(void);
 	void ExitReturn(void);
 
 	//攻撃

@@ -29,6 +29,12 @@ public:
 	//解放
 	void Release(void);
 
+	//チャンク内に入った時
+	void OnEnterActiveChank(void);
+
+	//チャンク外に出た時
+	void OnLeaveActiveChank(void);
+
 	//敵がいなくなったか
 	bool IsEmpty(void)const { return enemys_.empty(); }
 
@@ -80,6 +86,9 @@ public:
 	//生存状態の取得
 	const bool IsActive(void)const { return isActive_; }
 
+	//チャンク内にいるか
+	const bool IsInChank(void)const { return isInChank_; }
+
 	//死亡
 	void Kill(void) { isActive_ = false; }
 
@@ -125,6 +134,9 @@ private:
 
 	//生存状態
 	bool isActive_;
+
+	//チャンク内か
+	bool isInChank_;
 
 	//命令
 	GROUP_ORDER order_;														//グループの命令

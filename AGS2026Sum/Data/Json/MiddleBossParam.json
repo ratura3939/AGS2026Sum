@@ -73,7 +73,7 @@
       "isLock": false
     },
     "Jump": {
-      "isLoop": true,
+      "isLoop": false,
       "isLock": false
     }
   },

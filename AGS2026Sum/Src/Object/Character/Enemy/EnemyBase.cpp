@@ -19,7 +19,6 @@ EnemyBase::EnemyBase(const ENEMY_TYPE& _type)
 	, activeIndex_(-1)
 	, type_(_type)
 	, attackPos_(Utility::VECTOR_ZERO)
-	, attackCnt_(0.0f)
 	, action_(ENEMY_ACTION::STAY)
 	, state_(nullptr)
 	, movePow_(Utility::VECTOR_ZERO)
@@ -31,6 +30,7 @@ EnemyBase::EnemyBase(const ENEMY_TYPE& _type)
 	actionFunc_[static_cast<int>(ENEMY_ACTION::ALERT)] = { &EnemyBase::EnterAlert, &EnemyBase::UpdateAlert, &EnemyBase::ExitAlert };
 	actionFunc_[static_cast<int>(ENEMY_ACTION::ATTACK_READY)] = { &EnemyBase::EnterAttackReady, &EnemyBase::UpdateAttackReady, &EnemyBase::ExitAttackReady };
 	actionFunc_[static_cast<int>(ENEMY_ACTION::ATTACK)] = { &EnemyBase::EnterAttack, &EnemyBase::UpdateAttack, &EnemyBase::ExitAttack };
+	actionFunc_[static_cast<int>(ENEMY_ACTION::ATTACK_END)] = { &EnemyBase::EnterAttackEnd, &EnemyBase::UpdateAttackEnd, &EnemyBase::ExitAttackEnd };
 	actionFunc_[static_cast<int>(ENEMY_ACTION::RETURN_GROUP)] = { &EnemyBase::EnterReturn, &EnemyBase::UpdateReturn, &EnemyBase::ExitReturn };
 
 	//行動ごとの影響情報の設定
@@ -39,6 +39,7 @@ EnemyBase::EnemyBase(const ENEMY_TYPE& _type)
 	actionInfo_[static_cast<int>(ENEMY_ACTION::ALERT)] = { .isLock = false, .canMove = true };
 	actionInfo_[static_cast<int>(ENEMY_ACTION::ATTACK_READY)] = { .isLock = true, .canMove = false };
 	actionInfo_[static_cast<int>(ENEMY_ACTION::ATTACK)] = { .isLock = true, .canMove = false };
+	actionInfo_[static_cast<int>(ENEMY_ACTION::ATTACK_END)] = { .isLock = true, .canMove = false };
 	actionInfo_[static_cast<int>(ENEMY_ACTION::RETURN_GROUP)] = { .isLock = false, .canMove = true };
 }
 
@@ -129,19 +130,14 @@ void EnemyBase::SetCurrentSkill(EnemySkillBase* _skill)
 
 void EnemyBase::RemoveCurrentSkill(void)
 {
-	currentSkill_ = nullptr;
-}
-
-void EnemyBase::BreakSkill(void)
-{
 	//ないならスキップ
 	if (!currentSkill_)return;
 
 	//強制終了
-	currentSkill_->Exit(*this);
+	currentSkill_->EndEnter(*this);
 
-	//破棄
-	currentSkill_ = nullptr;
+	//攻撃コライダの登録削除
+	RemoveAttackCollider();
 }
 
 void EnemyBase::UpdateBrain(void)
@@ -201,18 +197,6 @@ void EnemyBase::DoInit(void)
 
 	//ローカル回転
 	quaRotLocal_ = Quaternion();
-
-	//コライダの初期化
-	DeleteAllColliders();
-
-	//当たり判定の生成
-	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, quaRot_, BROUD_RADIUS, RADIUS);
-	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY, { Collider::COL_TAG::PLAYER, Collider::COL_TAG::PLAYER_ATTACK ,Collider::COL_TAG::ENEMY });
-
-	//攻撃コライダ
-	geo = std::make_unique<Sphere>(attackPos_, attackPos_, quaRot_, ATTACK_BROUD_RADIUS, ATTACK_RADIUS);
-	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY_ATTACK, { Collider::COL_TAG::PLAYER });
-	DisableColliderAtTag(Collider::COL_TAG::ENEMY_ATTACK);
 }
 
 void EnemyBase::InitWithGroup(void)
@@ -239,6 +223,26 @@ void EnemyBase::SetModel(const int _modelId)
 void EnemyBase::SetAnim(std::unique_ptr<AnimationController> _anim)
 {
 	animController_ = std::move(_anim);
+}
+
+void EnemyBase::CreateCollider(void)
+{
+	//コライダの初期化
+	DeleteAllColliders();
+
+	//当たり判定の生成
+	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, quaRot_, BROUD_RADIUS, RADIUS);
+	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY, { Collider::COL_TAG::PLAYER, Collider::COL_TAG::PLAYER_ATTACK ,Collider::COL_TAG::ENEMY });
+
+	//攻撃コライダ
+	geo = std::make_unique<Sphere>(attackPos_, attackPos_, quaRot_, ATTACK_BROUD_RADIUS, ATTACK_RADIUS);
+	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY_ATTACK, { Collider::COL_TAG::PLAYER });
+	DisableColliderAtTag(Collider::COL_TAG::ENEMY_ATTACK);
+}
+
+void EnemyBase::DeleteCollider(void)
+{
+	DeleteAllColliders();
 }
 
 void EnemyBase::DoUpdate(void)
@@ -298,7 +302,11 @@ void EnemyBase::EnterAlert(void)
 void EnemyBase::EnterAttackReady(void)
 {
 	//スキルが入ってないなら強制的に待機に移行
-	if (!currentSkill_)ChangeAction(ENEMY_ACTION::STAY);
+	if (!currentSkill_)
+	{
+		ChangeAction(ENEMY_ACTION::STAY);
+		return;
+	}
 
 	//準備入り
 	currentSkill_->ReadyEnter(*this);
@@ -307,10 +315,27 @@ void EnemyBase::EnterAttackReady(void)
 void EnemyBase::EnterAttack(void)
 {
 	//スキルが入ってないなら強制的に待機に移行
-	if (!currentSkill_)ChangeAction(ENEMY_ACTION::STAY);
+	if (!currentSkill_)
+	{
+		ChangeAction(ENEMY_ACTION::STAY);
+		return;
+	}
 
 	//攻撃入り
 	currentSkill_->Enter(*this);
+}
+
+void EnemyBase::EnterAttackEnd(void)
+{
+	//スキルが入ってないなら強制的に待機に移行
+	if (!currentSkill_)
+	{
+		ChangeAction(ENEMY_ACTION::STAY);
+		return;
+	}
+
+	//攻撃終了
+	RemoveCurrentSkill();
 }
 
 void EnemyBase::EnterReturn(void)
@@ -347,7 +372,11 @@ void EnemyBase::UpdateAlert(void)
 void EnemyBase::UpdateAttackReady(void)
 {
 	//スキルが入ってないなら強制的に待機に移行
-	if (!currentSkill_)ChangeAction(ENEMY_ACTION::STAY);
+	if (!currentSkill_)
+	{
+		ChangeAction(ENEMY_ACTION::STAY);
+		return;
+	}
 
 	//目標地点を更新
 	goalPos_ = group_->GetGoalPos();
@@ -355,9 +384,6 @@ void EnemyBase::UpdateAttackReady(void)
 	//スキルごとの準備行動
 	if (currentSkill_->ReadyUpdate(*this))
 	{
-		//準備終了
-		currentSkill_->ReadyExit(*this);
-
 		//攻撃移行
 		ChangeAction(ENEMY_ACTION::ATTACK);
 	}
@@ -366,13 +392,36 @@ void EnemyBase::UpdateAttackReady(void)
 void EnemyBase::UpdateAttack(void)
 {
 	//スキルが入ってないなら強制的に待機に移行
-	if (!currentSkill_)ChangeAction(ENEMY_ACTION::STAY);
+	if (!currentSkill_)
+	{
+		ChangeAction(ENEMY_ACTION::STAY);
+		return;
+	}
 
 	//スキルごとの行動
 	if (currentSkill_->Update(*this))
 	{
-		//攻撃終了
-		currentSkill_->Exit(*this);
+		//待機
+		ChangeAction(ENEMY_ACTION::ATTACK_END);
+	}
+}
+
+void EnemyBase::UpdateAttackEnd(void)
+{
+	//スキルが入ってないなら強制的に待機に移行
+	if (!currentSkill_)
+	{
+		ChangeAction(ENEMY_ACTION::STAY);
+		return;
+	}
+
+	//スキルごとの行動
+	if (currentSkill_->EndUpdate(*this))
+	{
+		//完全終了
+		currentSkill_->EndExit(*this);
+
+		//破棄
 		currentSkill_ = nullptr;
 
 		//待機
@@ -403,17 +452,18 @@ void EnemyBase::ExitAlert(void)
 
 void EnemyBase::ExitAttackReady(void)
 {
-	//攻撃カウンタのリセット
-	attackCnt_ = 0.0f;
+	//準備終了
+	if(currentSkill_)currentSkill_->ReadyExit(*this);
 }
 
 void EnemyBase::ExitAttack(void)
 {
-	//攻撃カウンタのリセット
-	attackCnt_ = 0.0f;
+	//攻撃終了
+	if (currentSkill_)currentSkill_->Exit(*this);
+}
 
-	//攻撃コライダの無効化
-	DisableColliderAtTag(Collider::COL_TAG::ENEMY_ATTACK);
+void EnemyBase::ExitAttackEnd(void)
+{
 }
 
 void EnemyBase::ExitReturn(void)

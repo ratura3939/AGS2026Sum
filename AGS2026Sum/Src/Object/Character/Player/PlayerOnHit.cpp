@@ -1,6 +1,7 @@
 #include "../../../pch.h"
 #include "../../../Manager/Generic/SceneManager.h"
 #include "../../../Manager/GameSystem/AttackManager.h"
+#include"../../../Manager/GameSystem/ComboManager.h"
 #include "../Attack/AttackDataBase.h"
 #include "PlayerChara.h"
 #include "PlayerOnHit.h"
@@ -48,6 +49,9 @@ void PlayerOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 
 	//リセット
 	cnt_ = 0.0f;
+
+	//コンボリセット
+	ComboManager::GetInstance().ResetCombo();
 
 	//ダメージ処理
 	parent_.Damage(atkData->power);

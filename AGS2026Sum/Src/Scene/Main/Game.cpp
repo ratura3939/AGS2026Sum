@@ -4,6 +4,7 @@
 #include"../../Manager/GameSystem/AttackManager.h"
 #include"../../Manager/GameSystem/CollisionManager.h"
 #include"../../Manager/GameSystem/ChunkManager.h"
+#include"../../Manager/GameSystem/ComboManager.h"
 #include"../../Manager/Generic/Camera.h"
 #include"../../Manager/Generic/SceneManager.h"
 #include"../../Manager/Generic/InputManager.h"
@@ -105,6 +106,9 @@ void Game::Init(void)
 	
 	//チャンク管理
 	ChunkManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::GAME_END);
+
+	//コンボ管理
+	ComboManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::ALL_END);
 
 	//ステージ
 	stage_ = std::make_unique<StageManager>();
@@ -329,7 +333,11 @@ void Game::GameUpdate(void)
 		enemy_->Update();
 	}
 
+	//当たり判定更新
 	CollisionManager::GetInstance().UpdateColliders();
+
+	//コンボの更新
+	ComboManager::GetInstance().Update();
 
 #pragma endregion
 
@@ -539,6 +547,7 @@ void Game::Draw(void)
 	ChunkManager::GetInstance().DebugDraw();
 	enemy_->Draw();
 	player_->Draw();
+	ComboManager::GetInstance().Draw();
 
 	//ポストエフェクトをかけるとき
 	if (isDrawPostEffect_) {

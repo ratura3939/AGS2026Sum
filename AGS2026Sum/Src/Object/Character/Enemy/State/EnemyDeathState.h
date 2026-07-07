@@ -26,7 +26,7 @@ public:
 private:
 
 	//死亡許容時間
-	static constexpr float DEATH_TIME = 2.0f;
+	static constexpr float DEATH_TIME = 1.5f;
 
 	//死亡してからの時間
 	float deathTime_;

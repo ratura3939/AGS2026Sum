@@ -12,6 +12,7 @@ EnemyGroup::EnemyGroup(void)
 	, movePow_(Utility::VECTOR_INIT)
 	, order_(GROUP_ORDER::STAY)
 	, isActive_(false)
+	, isInChank_(false)
 {
 	//状態ごとの処理の設定
 	orderFunc_[static_cast<int>(GROUP_ORDER::STAY)] = { &EnemyGroup::EnterStay, &EnemyGroup::UpdateStay, &EnemyGroup::ExitStay };
@@ -74,6 +75,30 @@ void EnemyGroup::Draw(void)
 
 void EnemyGroup::Release(void)
 {
+}
+
+void EnemyGroup::OnEnterActiveChank(void)
+{
+	//チャンクに入った
+	isInChank_ = true;
+
+	//コライダの生成
+	for (auto& enemy : enemys_)
+	{
+		enemy->CreateCollider();
+	}
+}
+
+void EnemyGroup::OnLeaveActiveChank(void)
+{
+	//チャンクから出た
+	isInChank_ = false;
+
+	//コライダの削除
+	for (auto& enemy : enemys_)
+	{
+		enemy->DeleteCollider();
+	}
 }
 
 const VECTOR& EnemyGroup::GetGroupPos(void)const

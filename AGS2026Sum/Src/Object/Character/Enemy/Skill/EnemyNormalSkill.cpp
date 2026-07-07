@@ -16,6 +16,9 @@ void EnemyNormalSkill::ReadyEnter(EnemyBase& _owner)
 {
 	//初期化
 	attackCnt_ = 0.0f;
+
+	//アニメーション
+	_owner.PlayAnim(L"Attack");
 }
 
 const bool EnemyNormalSkill::ReadyUpdate(EnemyBase& _owner)
@@ -50,9 +53,6 @@ void EnemyNormalSkill::Enter(EnemyBase& _owner)
 	//攻撃範囲設定
 	_owner.SetAttackRadius(RADIUS);
 
-	//アニメーション
-	_owner.PlayAnim(L"Attack");
-
 	//初期化
 	attackCnt_ = 0.0f;
 }
@@ -71,12 +71,36 @@ const bool EnemyNormalSkill::Update(EnemyBase& _owner)
 
 void EnemyNormalSkill::Exit(EnemyBase& _owner)
 {
+	//初期化
+	attackCnt_ = 0.0f;
+}
+
+void EnemyNormalSkill::EndEnter(EnemyBase& _owner)
+{
 	//攻撃コライダの無効化
 	_owner.DisableAttack();
 
 	//攻撃マネージャーから破棄
 	_owner.RemoveAttackCollider();
 
+	//初期化
+	attackCnt_ = 0.0f;
+}
+
+const bool EnemyNormalSkill::EndUpdate(EnemyBase& _owner)
+{
+	//シーンマネージャー
+	auto& scnMng = SceneManager::GetInstance();
+
+	//攻撃が終わったらtrue
+	if (attackCnt_ > ATTACK_END_TIME)return true;
+	else attackCnt_ += scnMng.GetScaleUpdateSpeedRate(scnMng.GetDeltaTime());
+
+	return false;
+}
+
+void EnemyNormalSkill::EndExit(EnemyBase& _owner)
+{
 	//初期化
 	attackCnt_ = 0.0f;
 }

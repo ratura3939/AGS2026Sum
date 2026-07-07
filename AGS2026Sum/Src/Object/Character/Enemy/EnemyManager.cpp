@@ -12,6 +12,7 @@ EnemyManager::EnemyManager(const VECTOR& _pPos)
 	:playerPos_(_pPos)
 {
 	//チャンク内の敵の管理用のリストにとりあえず初期確保数分の容量を確保しておく(確保・削除を減らすため)
+	oldChunkGroups_.reserve(INIT_CHUNK_GROUP_NUM);
 	chunkGroups_.reserve(INIT_CHUNK_GROUP_NUM);
 }
 
@@ -32,12 +33,13 @@ void EnemyManager::Load(void)
 
 void EnemyManager::Init(void)
 {
-	const int ENEMY_GROUP_NUM = 0;
+	const int ENEMY_GROUP_NUM = 100;
 	const int MIDDLE_BOSS_GROUP_NUM = 1;
 
 	//敵の生成(デバッグ)
 	for (int i = 0; i < ENEMY_GROUP_NUM;i++)
 	{
+		//CreateEnemyGroup(1);
 		CreateEnemyGroup(CREATE_NUM);
 	}
 	for (int i = 0; i < MIDDLE_BOSS_GROUP_NUM;i++)
@@ -51,14 +53,20 @@ void EnemyManager::Update(void)
 	//インスタンス
 	ChunkManager& chunkMng = ChunkManager::GetInstance();
 
-	//距離ごとの命令決め
-	DecideOrderByDistance();
+	//古いのを保存
+	oldChunkGroups_ = chunkGroups_;
 
 	//チャンク管理リストを空にする
 	chunkGroups_.clear();
 
 	//チャンク管理用のリストを更新
 	chunkMng.GetEnemyGroupsInRangeChunk(chunkGroups_, playerPos_, CHUNK_RANGE);
+
+	//加入・離脱処理
+	ChankGroupsEnterAndLeave();
+
+	//距離ごとの命令決め
+	DecideOrderByDistance();
 
 	//チャンク内のみ更新
 	for (auto& group : chunkGroups_)
@@ -97,11 +105,14 @@ void EnemyManager::Release(void)
 
 void EnemyManager::CreateEnemyGroup(const int _createNum)
 {
-	//グループ
-	EnemyGroup* group = enemyGroupPool_->Spawn(VGet(1000.0f,0.0f,1000.0f));
-
 	//グループの初期座標(デバッグ)
-	static VECTOR pos = { 1000.0f, 0.0f, 0.0f };
+	static int createCount = 0;
+	VECTOR pos = { 1000.0f * createCount / 10, 0.0f, 1000.0f * static_cast<int>(createCount % 10) };
+	createCount == 100 ? createCount = 0 : createCount++;
+
+	//グループ
+	EnemyGroup* group = enemyGroupPool_->Spawn(pos);
+
 	//group->SetPos(pos);
 	//pos = VAdd(pos, { 1000.0f, 0.0f, 1000.0f });
 
@@ -301,6 +312,29 @@ void EnemyManager::DecideOrderByDistance(void)
 		{
 			//グループを待機状態にする
 			group->ChangeOrder(GROUP_ORDER::STAY);
+		}
+	}
+}
+
+void EnemyManager::ChankGroupsEnterAndLeave(void)
+{
+	for (auto* group : chunkGroups_)
+	{
+		//前回いなかったので加入処理
+		if (!group->IsInChank())
+		{
+			group->OnEnterActiveChank();
+		}
+	}
+
+	for (auto* group : oldChunkGroups_)
+	{
+		//今回いないので離脱処理
+		if (std::find(chunkGroups_.begin(),
+			chunkGroups_.end(),
+			group) == chunkGroups_.end())
+		{
+			group->OnLeaveActiveChank();
 		}
 	}
 }

@@ -63,7 +63,7 @@ const bool EnemyJumpSkill::Update(EnemyBase& _owner)
 	auto& scnMng = SceneManager::GetInstance();
 
 	//準備が終わったらtrue
-	if (attackCnt_ > ATTACK_READY_TIME)return true;
+	if (attackCnt_ > ATTACK_TIME)return true;
 	else attackCnt_ += scnMng.GetScaleUpdateSpeedRate(scnMng.GetDeltaTime());
 
 	return false;
@@ -71,12 +71,36 @@ const bool EnemyJumpSkill::Update(EnemyBase& _owner)
 
 void EnemyJumpSkill::Exit(EnemyBase& _owner)
 {
+	//初期化
+	attackCnt_ = 0.0f;
+}
+
+void EnemyJumpSkill::EndEnter(EnemyBase& _owner)
+{
 	//攻撃コライダの無効化
 	_owner.DisableAttack();
 
 	//攻撃マネージャーから破棄
 	_owner.RemoveAttackCollider();
 
+	//初期化
+	attackCnt_ = 0.0f;
+}
+
+const bool EnemyJumpSkill::EndUpdate(EnemyBase& _owner)
+{
+	//シーンマネージャー
+	auto& scnMng = SceneManager::GetInstance();
+
+	//攻撃が終わったらtrue
+	if (attackCnt_ > ATTACK_END_TIME)return true;
+	else attackCnt_ += scnMng.GetScaleUpdateSpeedRate(scnMng.GetDeltaTime());
+
+	return false;
+}
+
+void EnemyJumpSkill::EndExit(EnemyBase& _owner)
+{
 	//初期化
 	attackCnt_ = 0.0f;
 }

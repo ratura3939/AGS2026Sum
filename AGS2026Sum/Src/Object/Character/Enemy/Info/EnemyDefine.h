@@ -26,6 +26,7 @@ enum class ENEMY_ACTION
 	, ALERT				//警戒
 	, ATTACK_READY		//攻撃準備
 	, ATTACK			//攻撃
+	, ATTACK_END		//攻撃終了
 	, RETURN_GROUP		//グループに戻る
 	, MAX
 };
