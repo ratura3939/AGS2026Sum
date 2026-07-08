@@ -1,8 +1,7 @@
 #include"../pch.h"
 #include "ModelRenderer.h"
 
-ModelRenderer::ModelRenderer(int modelId)
-	: modelId_(modelId)
+ModelRenderer::ModelRenderer(void)
 {
 }
 
@@ -10,7 +9,7 @@ ModelRenderer::~ModelRenderer(void)
 {
 }
 
-void ModelRenderer::Draw(ModelMaterial& _modelMaterial)
+void ModelRenderer::Draw(int _modelId, ModelMaterial& _modelMaterial)
 {
 
 	// オリジナルシェーダ設定(ON)
@@ -30,8 +29,8 @@ void ModelRenderer::Draw(ModelMaterial& _modelMaterial)
 	SetTextureAddressModeUV(texAType, texAType);
 
 	// 描画
-	MV1DrawModel(modelId_);
-	auto pos = MV1GetPosition(modelId_);
+	MV1DrawModel(_modelId);
+	auto pos = MV1GetPosition(_modelId);
 	pos.x += 1.0f;
 
 	// テクスチャアドレスタイプを元に戻す

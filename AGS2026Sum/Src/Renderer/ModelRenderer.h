@@ -12,18 +12,15 @@ public:
 	static constexpr int CONSTANT_BUF_SLOT_BEGIN_PS = 4;
 
 	// コンストラクタ
-	ModelRenderer(int modelId_);
+	ModelRenderer(void);
 
 	// デストラクタ
 	~ModelRenderer(void);
 
 	// 描画
-	void Draw(ModelMaterial& _modelMaterial);
+	void Draw(int _modelId, ModelMaterial& _modelMaterial);
 
 private:
-	// モデルのハンドルID
-	int modelId_;
-
 	// シェーダ設定(頂点)
 	void SetReserveVS(ModelMaterial& _modelMaterial);
 

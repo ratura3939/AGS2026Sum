@@ -16,9 +16,19 @@ public:
 	void CloseDoor(void);
 
 private:
-	VECTOR pos_;
-	int leftDoorModelId_;
-	int rightDoorModelId_;
-	bool isOpen_;
+	void MoveOpenDoor(void);	//ドアを開く
+	void MoveCloseDoor(void);	//ドアを閉じる
+
+	using DoorMoveFunc = void(AutoDoor::*)(void);
+	DoorMoveFunc moveFunc_;	//ドアの移動関数
+
+	VECTOR pos_;			//ドアの中心座標
+	VECTOR leftDoorPos_;	//左ドアの座標
+	VECTOR rightDoorPos_;	//右ドアの座標
+
+	int leftDoorModelId_;	//左ドアのモデルID
+	int rightDoorModelId_;	//右ドアのモデルID
+	bool isMoving_;			//ドアが動いているか
+	float movingPower_;		//ドアの移動量(総量)
 };
 

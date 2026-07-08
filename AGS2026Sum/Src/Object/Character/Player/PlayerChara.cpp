@@ -92,7 +92,7 @@ void PlayerChara::DoLoad(void)
 	outlineMaterial_->AddConstBufPS(FLOAT4{ 0.0f,0.0f,0.0f,1.0f });
 	modelMaterial_ = std::make_unique<ModelMaterial>(L"SkinVS.cso", VS_SKIN_BUFF_SIZE,L"StdModelPS.cso", PS_SKIN_BUFF_SIZE);	//モデルマテリアル生成
 
-	modelRenderer_ = std::make_unique<ModelRenderer>(modelId_);	//モデルレンダラー生成
+	modelRenderer_ = std::make_unique<ModelRenderer>();	//モデルレンダラー生成
 
 	//当たり判定の生成
 	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, quaRot_, BROUD_RADIUS, RADIUS);
@@ -214,14 +214,14 @@ void PlayerChara::Draw(void)
 	//アウトライン用描画
 	MV1SetWriteZBuffer(modelId_, false);//モデル描画のZBufferを無効にする
 	MV1SetMeshBackCulling(modelId_, 0, DX_CULLING_RIGHT);	//裏面描画
-	modelRenderer_->Draw(*outlineMaterial_);
+	modelRenderer_->Draw(modelId_, *outlineMaterial_);
 
 	//本体描画
 	MV1SetWriteZBuffer(modelId_, true);
 	MV1SetMeshBackCulling(modelId_, 0, DX_CULLING_LEFT);	//表面描画
 
 	if (isDebugOutLine_) {
-		modelRenderer_->Draw(*modelMaterial_);
+		modelRenderer_->Draw(modelId_, *modelMaterial_);
 	}
 	
 
@@ -231,7 +231,7 @@ void PlayerChara::Draw(void)
 void PlayerChara::DrawNormalDepth(void)
 {
 	//法線・深度のみ描画
-	modelRenderer_->Draw(*normalDepthMaterial_);
+	modelRenderer_->Draw(modelId_, *normalDepthMaterial_);
 }
 
 void PlayerChara::Release(void)
