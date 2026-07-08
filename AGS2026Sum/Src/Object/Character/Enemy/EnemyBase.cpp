@@ -240,6 +240,10 @@ void EnemyBase::CreateCollider(void)
 
 void EnemyBase::DeleteCollider(void)
 {
+	//攻撃マネージャーに攻撃コライダが消えることを伝える
+	AttackManager::GetInstance().DeleteAttackCollider(colliders_[1]);
+
+	//コライダの全削除
 	DeleteAllColliders();
 }
 

@@ -49,7 +49,7 @@ public:
 	void SetAnim(std::unique_ptr<AnimationController> _anim);
 
 	//コライダの生成
-	void CreateCollider(void);
+	virtual void CreateCollider(void);
 
 	//コライダの全削除(Groupからの命令用)
 	void DeleteCollider(void);

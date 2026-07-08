@@ -40,17 +40,8 @@ void MiddleBoss::DoInit(void)
 	//戦闘情報リセット
 	battle_.Reset();
 
-	//コライダの初期化
-	DeleteAllColliders();
-
-	//当たり判定の生成(ボスはほかの敵と接触しない)
-	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, quaRot_, BROUD_RADIUS, RADIUS);
-	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY, { Collider::COL_TAG::PLAYER, Collider::COL_TAG::PLAYER_ATTACK });
-
-	//攻撃コライダ
-	geo = std::make_unique<Sphere>(attackPos_, attackPos_, quaRot_, ATTACK_BROUD_RADIUS, ATTACK_RADIUS);
-	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY_ATTACK, { Collider::COL_TAG::PLAYER });
-	DisableColliderAtTag(Collider::COL_TAG::ENEMY_ATTACK);
+	//コライダの生成
+	CreateCollider();
 }
 
 void MiddleBoss::DoUpdate(void)
@@ -87,4 +78,19 @@ void MiddleBoss::Draw(void)
 	{
 		DrawBox(healthPos.x, healthPos.y, healthPos.x + HP_WIDTH * (hp_ / hpMax_), healthPos.y + HP_HEIGHT, 0xff0000, true);
 	}
+}
+
+void MiddleBoss::CreateCollider(void)
+{
+	//コライダの初期化
+	DeleteAllColliders();
+
+	//当たり判定の生成(ボスはほかの敵と接触しない)
+	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, quaRot_, BROUD_RADIUS, RADIUS);
+	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY, { Collider::COL_TAG::PLAYER, Collider::COL_TAG::PLAYER_ATTACK });
+
+	//攻撃コライダ
+	geo = std::make_unique<Sphere>(attackPos_, attackPos_, quaRot_, ATTACK_BROUD_RADIUS, ATTACK_RADIUS);
+	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY_ATTACK, { Collider::COL_TAG::PLAYER });
+	DisableColliderAtTag(Collider::COL_TAG::ENEMY_ATTACK);
 }
