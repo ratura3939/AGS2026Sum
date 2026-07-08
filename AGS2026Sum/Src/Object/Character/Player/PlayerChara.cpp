@@ -210,9 +210,9 @@ void PlayerChara::Draw(void)
 	outlineMaterial_->SetConstBufVS(0,FLOAT4{ debugOutLineWidth_, 0.0f, 0.0f, 0.0f });
 	outlineMaterial_->SetConstBufVS(1,FLOAT4{ cameraPos.x, cameraPos.y, cameraPos.z, 0.0f });
 
-	//モデル描画のZBufferを無効にする
+	
 	//アウトライン用描画
-	MV1SetWriteZBuffer(modelId_, false);
+	MV1SetWriteZBuffer(modelId_, false);//モデル描画のZBufferを無効にする
 	MV1SetMeshBackCulling(modelId_, 0, DX_CULLING_RIGHT);	//裏面描画
 	modelRenderer_->Draw(*outlineMaterial_);
 
