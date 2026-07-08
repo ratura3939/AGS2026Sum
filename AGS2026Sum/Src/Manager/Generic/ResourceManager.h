@@ -55,7 +55,10 @@ public:
 		, ENEMY_DEATH_ANIM				//死亡
 
 		//ステージ
-		,STAGE_MDL
+		,STAGE_MDL			//初期位置モデル
+		,BOSS_STAGE_MDL		//ボスステージ
+		,DOOR_RIGHT_MDL		//ドア右
+		,DOOR_LEFT_MDL		//ドア左
 
 		//エフェクト
 		,PLAYER_PUNCH_THIRD_EFC		//パンチ三段目

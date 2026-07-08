@@ -68,8 +68,17 @@ void ResourceManager::InitGame(void)
 {
 	Resource res;
 
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + L"tutorial.mv1");
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + L"Tutorial.mv1");
 	resourcesMap_.emplace(SRC::STAGE_MDL, res);
+
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + L"BossStage.mv1");
+	resourcesMap_.emplace(SRC::BOSS_STAGE_MDL, res);
+
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + L"DoorRight.mv1");
+	resourcesMap_.emplace(SRC::DOOR_RIGHT_MDL, res);
+
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + L"DoorLeft.mv1");
+	resourcesMap_.emplace(SRC::DOOR_LEFT_MDL, res);
 
 	ResourcePlayer();	//プレイヤー関連
 
