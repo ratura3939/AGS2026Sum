@@ -1,8 +1,10 @@
 #include"../../pch.h"
 #include"../../Object/Character/Enemy/EnemyManager.h"
+#include"../../Manager/GameSystem/GravityManager.h"
 #include"../../Manager/GameSystem/AttackManager.h"
 #include"../../Manager/GameSystem/CollisionManager.h"
 #include"../../Manager/GameSystem/ChunkManager.h"
+#include"../../Manager/GameSystem/ComboManager.h"
 #include"../../Manager/Generic/Camera.h"
 #include"../../Manager/Generic/SceneManager.h"
 #include"../../Manager/Generic/InputManager.h"
@@ -100,11 +102,17 @@ void Game::Init(void)
 
 	//生成
 
+	//重力マネージャー
+	GravityManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::GAME_END);
+
 	//攻撃マネージャー
 	AttackManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::GAME_END);
 	
 	//チャンク管理
 	ChunkManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::GAME_END);
+
+	//コンボ管理
+	ComboManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::ALL_END);
 
 	//ステージ
 	stage_ = std::make_unique<StageManager>();
@@ -275,7 +283,11 @@ void Game::GameUpdate(void)
 		enemy_->Update();
 	}
 
+	//当たり判定更新
 	CollisionManager::GetInstance().UpdateColliders();
+
+	//コンボの更新
+	ComboManager::GetInstance().Update();
 
 #pragma endregion
 
@@ -506,6 +518,7 @@ void Game::Draw(void)
 	ChunkManager::GetInstance().DebugDraw();
 	enemy_->Draw();
 	player_->Draw();
+	ComboManager::GetInstance().Draw();
 
 	//DrawEdge();
 
@@ -521,10 +534,10 @@ void Game::Release(void)
 	player_->Release();
 	enemy_->Release();
 	SoundManager& sndM = SoundManager::GetInstance();
-	sndM.Stop(SoundManager::SOUND_NAME::GAME_NORMAL_BGM);	//今まで流していたものを停止\
+	sndM.Stop(SoundManager::SOUND_NAME::GAME_NORMAL_BGM);	//今まで流していたものを停止
+
+	SingletonRegistry::GetInstance().Delete(SingletonRegistry::DESTROY_TIMING::GAME_END);	//シングルトンの削除
 	CollisionManager::GetInstance().DeleteAllCollider();
-	ChunkManager::GetInstance().DestroyInstance();
-	AttackManager::GetInstance().DestroyInstance();
 }
 
 void Game::Reset(void)

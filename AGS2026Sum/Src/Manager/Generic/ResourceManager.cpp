@@ -263,6 +263,18 @@ void ResourceManager::ResourceEnemy(void)
 	res = Resource(Resource::TYPE::MODEL, animPath + L"Jumping.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_JUMP_ANIM, res);
 
+	//ÇÊÇÎÇØ
+	res = Resource(Resource::TYPE::MODEL, animPath + L"Stagger.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_STAGGER_ANIM, res);
+
+	//ë≈Çøè„Ç∞
+	res = Resource(Resource::TYPE::MODEL, animPath + L"Launch.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_LAUNCH_ANIM, res);
+
+	//ë≈Çøè„Ç∞ì|ÇÍ
+	res = Resource(Resource::TYPE::MODEL, animPath + L"LaunchDown.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_LAUNCH_DOWN_ANIM, res);
+
 	//êÅÇ¡îÚÇ—ëOîº
 	res = Resource(Resource::TYPE::MODEL, animPath + L"BlowFirstHalf.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_BLOW_FIRST_HALF_ANIM, res);

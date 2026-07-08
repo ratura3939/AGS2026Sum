@@ -2,6 +2,7 @@
   "Punch_First": {
     "radius": 100.0,
     "power": 10.0,
+    "element" :  "Normal",
     "isMultiHit" :  false,
     "localPos": {
       "x": 0.0,
@@ -12,6 +13,7 @@
     "nextAttacks": [ "Punch_Second", "Kick_First" ],
     "colliderEnableTiming": 0.0,
     "knockBackType": "Stagger",
+    "guardBreakPower": 0.5,
     "vibratePower": 50,
     "vibrateTime": 200
   },
@@ -19,6 +21,7 @@
   "Punch_Second": {
     "radius": 150.0,
     "power": 20.0,
+    "element": "Normal",
     "isMultiHit": false,
     "localPos": {
       "x": 0.0,
@@ -29,6 +32,7 @@
     "nextAttacks": [ "Punch_Third", "Kick_Second" ],
     "colliderEnableTiming": 0.0,
     "knockBackType": "Launch",
+    "guardBreakPower": 0.7,
     "vibratePower": 100,
     "vibrateTime": 300
   },
@@ -36,6 +40,7 @@
   "Punch_Third": {
     "radius": 200.0,
     "power": 20.0,
+    "element": "Normal",
     "isMultiHit": false,
     "localPos": {
       "x": 0.0,
@@ -46,6 +51,7 @@
     "nextAttacks": [ "", "Kick_Third" ],
     "colliderEnableTiming": 0.4,
     "knockBackType": "Slam",
+    "guardBreakPower": 1.0,
     "vibratePower": 200,
     "vibrateTime": 400
   },
@@ -53,6 +59,7 @@
   "Kick_First": {
     "radius": 150.0,
     "power": 10.0,
+    "element": "Normal",
     "isMultiHit": false,
     "localPos": {
       "x": 0.0,
@@ -63,6 +70,7 @@
     "nextAttacks": [ "", "Kick_Second" ],
     "colliderEnableTiming": 0.2,
     "knockBackType": "PushBack",
+    "guardBreakPower": 1.0,
     "vibratePower": 100,
     "vibrateTime": 200
   },
@@ -70,6 +78,7 @@
   "Kick_Second": {
     "radius": 200.0,
     "power": 20.0,
+    "element": "Normal",
     "isMultiHit": false,
     "localPos": {
       "x": 0.0,
@@ -80,15 +89,17 @@
     "nextAttacks": [ "", "Kick_Third" ],
     "colliderEnableTiming": 0.15,
     "knockBackType": "Launch",
+    "guardBreakPower": 1.2,
     "vibratePower": 200,
     "vibrateTime": 300
   },
 
   "Kick_Third": {
     "radius": 300.0,
-    "power": 2.0,
+    "power": 5.0,
+    "element": "Normal",
     "isMultiHit": true,
-    "hitInterval": 0.5,
+    "hitInterval": 0.05,
     "localPos": {
       "x": 0.0,
       "y": 50.0,
@@ -98,13 +109,15 @@
     "nextAttacks": [ "", "" ],
     "colliderEnableTiming": 0.0,
     "knockBackType": "BlowAway",
+    "guardBreakPower": 1.0,
     "vibratePower": 300,
     "vibrateTime": 800
   },
 
   "Punch_Special": {
     "radius": 300.0,
-    "power": 100.0,
+    "power": 75.0,
+    "element": "Tackle",
     "isMultiHit": false,
     "localPos": {
       "x": 0.0,
@@ -115,13 +128,15 @@
     "nextAttacks": [ "", "" ],
     "colliderEnableTiming": 0.6,
     "knockBackType": "BlowAway",
+    "guardBreakPower": 6.0,
     "vibratePower": 300,
     "vibrateTime": 600
   },
 
   "Kick_Special": {
     "radius": 300.0,
-    "power": 100.0,
+    "power": 75.0,
+    "element": "Jump",
     "isMultiHit": false,
     "localPos": {
       "x": 0.0,
@@ -132,6 +147,7 @@
     "nextAttacks": [ "", "" ],
     "colliderEnableTiming": 0.0,
     "knockBackType": "BlowAway",
+    "guardBreakPower": 6.0,
     "vibratePower": 300,
     "vibrateTime": 600
   },
@@ -139,8 +155,9 @@
   "Ultimate": {
     "radius": 500.0,
     "power": 20.0,
+    "element": "Normal",
     "isMultiHit": true,
-    "hitInterval": 0.2,
+    "hitInterval": 0.1,
     "localPos": {
       "x": 0.0,
       "y": 50.0,
@@ -150,25 +167,8 @@
     "nextAttacks": [ "", "" ],
     "colliderEnableTiming": 0.5,
     "knockBackType": "BlowAway",
+    "guardBreakPower": 1.0,
     "vibratePower": 600,
     "vibrateTime": 1000
-  },
-
-  "Ultimate_Test": {
-    "radius": 500.0,
-    "power": 20.0,
-    "isMultiHit": true,
-    "hitInterval": 0.2,
-    "localPos": {
-      "x": 0.0,
-      "y": 50.0,
-      "z": 0.0
-    },
-    "animationSpeed": 2.0,
-    "nextAttacks": [ "", "" ],
-    "colliderEnableTiming": 0.0,
-    "knockBackType": "BlowAway",
-    "vibratePower": 50,
-    "vibrateTime": 100
   }
 }

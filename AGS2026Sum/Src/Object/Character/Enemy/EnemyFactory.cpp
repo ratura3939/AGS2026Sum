@@ -4,12 +4,12 @@
 #include "../../../Manager/GameSystem/AnimationController.h"
 #include "Skill/EnemySkillBase.h"
 #include "Types/NormalEnemy.h"
-#include "Types/MiddleBoss.h"
+#include "Types/Boss/MiddleBoss.h"
 #include "EnemyManager.h"
 #include "EnemyBase.h"
 #include "EnemyFactory.h"
 
-//ヘッダー内に余計なマネージャーインクルードをしないため、namespaceにて記載
+//ヘッダー内に余計なマネージャーインクルードをしないために、namespaceにて記載
 namespace
 {
 	//リソース名のテーブル
@@ -26,6 +26,9 @@ namespace
 			{L"Walk",   ResourceManager::SRC::ENEMY_WALK_ANIM},
 			{L"Run",    ResourceManager::SRC::ENEMY_RUN_ANIM},
 			{L"Attack", ResourceManager::SRC::ENEMY_ATTACK_ANIM},
+			{L"Stagger", ResourceManager::SRC::ENEMY_STAGGER_ANIM},
+			{L"Launch", ResourceManager::SRC::ENEMY_LAUNCH_ANIM},
+			{L"LaunchDown", ResourceManager::SRC::ENEMY_LAUNCH_DOWN_ANIM},
 			{L"BlowFirstHalf", ResourceManager::SRC::ENEMY_BLOW_FIRST_HALF_ANIM},
 			{L"BlowSecondHalf", ResourceManager::SRC::ENEMY_BLOW_SECOND_HALF_ANIM},
 			{L"BlowEnd", ResourceManager::SRC::ENEMY_BLOW_END_ANIM}
@@ -39,6 +42,9 @@ namespace
 			{L"Walk",   ResourceManager::SRC::ENEMY_WALK_ANIM},
 			{L"Run",    ResourceManager::SRC::ENEMY_RUN_ANIM},
 			{L"Attack", ResourceManager::SRC::ENEMY_ATTACK_ANIM},
+			{L"Stagger", ResourceManager::SRC::ENEMY_STAGGER_ANIM},
+			{L"Launch", ResourceManager::SRC::ENEMY_LAUNCH_ANIM},
+			{L"LaunchDown", ResourceManager::SRC::ENEMY_LAUNCH_DOWN_ANIM},
 			{L"BlowFirstHalf", ResourceManager::SRC::ENEMY_BLOW_FIRST_HALF_ANIM},
 			{L"BlowSecondHalf", ResourceManager::SRC::ENEMY_BLOW_SECOND_HALF_ANIM},
 			{L"BlowEnd", ResourceManager::SRC::ENEMY_BLOW_END_ANIM},

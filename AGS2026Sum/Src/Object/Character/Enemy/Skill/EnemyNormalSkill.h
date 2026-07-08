@@ -29,16 +29,29 @@ public:
 	//終了
 	void Exit(EnemyBase& _owner)override;
 
+	//終了開始
+	void EndEnter(EnemyBase& _owner)override;
+
+	//終了更新
+	const bool EndUpdate(EnemyBase& _owner)override;
+
+	//完全終了
+	void EndExit(EnemyBase& _owner)override;
+
+	//攻撃属性の取得
+	const AttackDataBase::ATTACK_ELEMENT GetAttackElement(void)const override { return AttackDataBase::ATTACK_ELEMENT::NORMAL; };
+
 private:
 
 	//攻撃時間
 	static constexpr float ATTACK_READY_TIME = 1.0f;
 	static constexpr float ATTACK_TIME = 2.0f;
+	static constexpr float ATTACK_END_TIME = 1.0f;
 
 	//攻撃の相対座標
-	static constexpr VECTOR ATTACK_LOCAL_POS = { 0.0f, 0.0f, -30.0f };
+	static constexpr VECTOR ATTACK_LOCAL_POS = { 0.0f, 0.0f, -60.0f };
 
 	//攻撃の半径
-	static constexpr float RADIUS = 100.0f;
+	static constexpr float RADIUS = 80.0f;
 };
 

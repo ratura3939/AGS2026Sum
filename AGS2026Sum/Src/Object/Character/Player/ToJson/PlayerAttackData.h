@@ -13,6 +13,7 @@ struct AttackData  : public AttackDataBase{
 	std::array<std::string, ATTACK_TYPE_NUM>nextAttacks;	//次の攻撃(パンチorキックの最大２派生)
 	float colliderEnableTiming = -1.0f;						//コライダー有効タイミング(0.0f~1.0f):アニメーション再生進捗参照
 	std::string knockBackType;								//ノックバックの種類
+	float guardBreakPower = -1.0f;							//ガードブレイクの強さ
 
 	int vibratePower = 0;		//振動の強さ
 	int vibrateTime = 0;		//振動の長さ
@@ -21,6 +22,7 @@ struct AttackData  : public AttackDataBase{
 inline void from_json(const nlohmann::json& _data, AttackData& _attackData) {
 	_data.at("radius").get_to(_attackData.radius);
 	_data.at("power").get_to(_attackData.power);
+	_attackData.element = _attackData.CastStringToElement(_data.value("element", "Normal"));
 	_data.at("isMultiHit").get_to(_attackData.isMultiHit);
 	if (_data.contains("hitInterval"))_data.at("hitInterval").get_to(_attackData.hitInterval);
 
@@ -40,6 +42,7 @@ inline void from_json(const nlohmann::json& _data, AttackData& _attackData) {
 
 	_data.at("colliderEnableTiming").get_to(_attackData.colliderEnableTiming);
 	_data.at("knockBackType").get_to(_attackData.knockBackType);
+	_data.at("guardBreakPower").get_to(_attackData.guardBreakPower);
 	_data.at("vibratePower").get_to(_attackData.vibratePower);
 	_data.at("vibrateTime").get_to(_attackData.vibrateTime);
 }

@@ -88,9 +88,6 @@ void EnemyGroupPool::Remove(EnemyGroup* _enemyGroup)
 		enemyGroupBack->SetActiveIndex(index);
 	}
 
-	//死亡判定
-	_enemyGroup->Kill();
-
 	//非稼働中の敵グループのリストに追加
 	inactiveEnemyGroups_.push_back(_enemyGroup);
 

@@ -64,9 +64,6 @@ private:
 	//チャンク管理用の初期確保数
 	static constexpr int INIT_CHUNK_GROUP_NUM = 100;
 
-	//グループを維持できる最小の敵の数
-	static constexpr int MIN_ENEMY_NUM = 3;
-
 	//敵の生成数
 	static constexpr int CREATE_NUM = 7;
 
@@ -77,6 +74,7 @@ private:
 	std::unique_ptr<EnemyGroupPool> enemyGroupPool_;
 
 	//チャンク内の敵グループ(参照用)
+	std::vector<EnemyGroup*> oldChunkGroups_;
 	std::vector<EnemyGroup*> chunkGroups_;
 
 	//敵情報
@@ -95,8 +93,11 @@ private:
 	void DeleteEnemyGroup(void);
 
 	//グループに所属していない敵を別グループに再所属させる
-	void ReJoinGroups(void);
+	void ReJoinGroups(EnemyBase*_enemy);
 
 	//距離ごとの行動決め
 	void DecideOrderByDistance(void);
+
+	//チャンク内グループの加入・離脱処理
+	void ChankGroupsEnterAndLeave(void);
 };

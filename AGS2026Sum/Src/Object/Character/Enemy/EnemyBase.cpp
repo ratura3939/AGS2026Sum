@@ -2,6 +2,7 @@
 #include "../../../Manager/Generic/SceneManager.h"
 #include "../../../Manager/GameSystem/CollisionManager.h"
 #include "../../../Manager/GameSystem/AttackManager.h"
+#include "../../../Manager/GameSystem/GravityManager.h"
 #include "../../Common/Collider.h"
 #include "../../Common/Geometry/Sphere.h"
 #include "State/EnemyStateBase.h"
@@ -18,10 +19,10 @@ EnemyBase::EnemyBase(const ENEMY_TYPE& _type)
 	, activeIndex_(-1)
 	, type_(_type)
 	, attackPos_(Utility::VECTOR_ZERO)
-	, attackCnt_(0.0f)
 	, action_(ENEMY_ACTION::STAY)
 	, state_(nullptr)
 	, movePow_(Utility::VECTOR_ZERO)
+	, gravityPow_(Utility::VECTOR_ZERO)
 {	
 	//行動ごとの処理の設定
 	actionFunc_[static_cast<int>(ENEMY_ACTION::STAY)] = { &EnemyBase::EnterStay, &EnemyBase::UpdateStay, &EnemyBase::ExitStay };
@@ -29,6 +30,7 @@ EnemyBase::EnemyBase(const ENEMY_TYPE& _type)
 	actionFunc_[static_cast<int>(ENEMY_ACTION::ALERT)] = { &EnemyBase::EnterAlert, &EnemyBase::UpdateAlert, &EnemyBase::ExitAlert };
 	actionFunc_[static_cast<int>(ENEMY_ACTION::ATTACK_READY)] = { &EnemyBase::EnterAttackReady, &EnemyBase::UpdateAttackReady, &EnemyBase::ExitAttackReady };
 	actionFunc_[static_cast<int>(ENEMY_ACTION::ATTACK)] = { &EnemyBase::EnterAttack, &EnemyBase::UpdateAttack, &EnemyBase::ExitAttack };
+	actionFunc_[static_cast<int>(ENEMY_ACTION::ATTACK_END)] = { &EnemyBase::EnterAttackEnd, &EnemyBase::UpdateAttackEnd, &EnemyBase::ExitAttackEnd };
 	actionFunc_[static_cast<int>(ENEMY_ACTION::RETURN_GROUP)] = { &EnemyBase::EnterReturn, &EnemyBase::UpdateReturn, &EnemyBase::ExitReturn };
 
 	//行動ごとの影響情報の設定
@@ -37,11 +39,13 @@ EnemyBase::EnemyBase(const ENEMY_TYPE& _type)
 	actionInfo_[static_cast<int>(ENEMY_ACTION::ALERT)] = { .isLock = false, .canMove = true };
 	actionInfo_[static_cast<int>(ENEMY_ACTION::ATTACK_READY)] = { .isLock = true, .canMove = false };
 	actionInfo_[static_cast<int>(ENEMY_ACTION::ATTACK)] = { .isLock = true, .canMove = false };
+	actionInfo_[static_cast<int>(ENEMY_ACTION::ATTACK_END)] = { .isLock = true, .canMove = false };
 	actionInfo_[static_cast<int>(ENEMY_ACTION::RETURN_GROUP)] = { .isLock = false, .canMove = true };
 }
 
 EnemyBase::~EnemyBase(void)
 {
+	group_ = nullptr;
 }
 
 void EnemyBase::Draw(void)
@@ -65,9 +69,6 @@ void EnemyBase::HitCollider(std::weak_ptr<Collider> _col)
 
 void EnemyBase::ChangeState(std::unique_ptr<EnemyStateBase> _nextState)
 {
-	//状態が同じなら処理しない
-	if (!_nextState || state_->GetStateId() == _nextState->GetStateId())return;
-
 	//状態抜けの処理
 	if(state_) state_->Exit(*this);
 
@@ -130,19 +131,14 @@ void EnemyBase::SetCurrentSkill(EnemySkillBase* _skill)
 
 void EnemyBase::RemoveCurrentSkill(void)
 {
-	currentSkill_ = nullptr;
-}
-
-void EnemyBase::BreakSkill(void)
-{
 	//ないならスキップ
 	if (!currentSkill_)return;
 
 	//強制終了
-	currentSkill_->Exit(*this);
+	currentSkill_->EndEnter(*this);
 
-	//破棄
-	currentSkill_ = nullptr;
+	//攻撃コライダの登録削除
+	RemoveAttackCollider();
 }
 
 void EnemyBase::UpdateBrain(void)
@@ -184,10 +180,6 @@ void EnemyBase::ResetPos(void)
 
 void EnemyBase::DoLoad(void)
 {
-	//状態の初期化
-	state_ = std::make_unique<EnemyNormalState>();
-	state_->Enter(*this);
-
 	//思考の初期化
 	brain_ = std::make_unique<EnemyBrain>(*this);
 
@@ -200,17 +192,9 @@ void EnemyBase::DoInit(void)
 	//ローカル回転
 	quaRotLocal_ = Quaternion();
 
-	//コライダの初期化
-	DeleteAllColliders();
-
-	//当たり判定の生成
-	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, quaRot_, BROUD_RADIUS, RADIUS);
-	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY, { Collider::COL_TAG::PLAYER, Collider::COL_TAG::PLAYER_ATTACK ,Collider::COL_TAG::ENEMY });
-
-	//攻撃コライダ
-	geo = std::make_unique<Sphere>(attackPos_, attackPos_, quaRot_, ATTACK_BROUD_RADIUS, ATTACK_RADIUS);
-	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY_ATTACK, { Collider::COL_TAG::PLAYER });
-	DisableColliderAtTag(Collider::COL_TAG::ENEMY_ATTACK);
+	//状態の初期化
+	state_ = std::make_unique<EnemyNormalState>();
+	state_->Enter(*this);
 }
 
 void EnemyBase::InitWithGroup(void)
@@ -237,6 +221,30 @@ void EnemyBase::SetModel(const int _modelId)
 void EnemyBase::SetAnim(std::unique_ptr<AnimationController> _anim)
 {
 	animController_ = std::move(_anim);
+}
+
+void EnemyBase::CreateCollider(void)
+{
+	//コライダの初期化
+	DeleteAllColliders();
+
+	//当たり判定の生成
+	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, quaRot_, BROUD_RADIUS, RADIUS);
+	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY, { Collider::COL_TAG::PLAYER, Collider::COL_TAG::PLAYER_ATTACK ,Collider::COL_TAG::ENEMY });
+
+	//攻撃コライダ
+	geo = std::make_unique<Sphere>(attackPos_, attackPos_, quaRot_, ATTACK_BROUD_RADIUS, ATTACK_RADIUS);
+	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY_ATTACK, { Collider::COL_TAG::PLAYER });
+	DisableColliderAtTag(Collider::COL_TAG::ENEMY_ATTACK);
+}
+
+void EnemyBase::DeleteCollider(void)
+{
+	//攻撃マネージャーに攻撃コライダが消えることを伝える
+	AttackManager::GetInstance().DeleteAttackCollider(colliders_[1]);
+
+	//コライダの全削除
+	DeleteAllColliders();
 }
 
 void EnemyBase::DoUpdate(void)
@@ -296,7 +304,11 @@ void EnemyBase::EnterAlert(void)
 void EnemyBase::EnterAttackReady(void)
 {
 	//スキルが入ってないなら強制的に待機に移行
-	if (!currentSkill_)ChangeAction(ENEMY_ACTION::STAY);
+	if (!currentSkill_)
+	{
+		ChangeAction(ENEMY_ACTION::STAY);
+		return;
+	}
 
 	//準備入り
 	currentSkill_->ReadyEnter(*this);
@@ -305,10 +317,27 @@ void EnemyBase::EnterAttackReady(void)
 void EnemyBase::EnterAttack(void)
 {
 	//スキルが入ってないなら強制的に待機に移行
-	if (!currentSkill_)ChangeAction(ENEMY_ACTION::STAY);
+	if (!currentSkill_)
+	{
+		ChangeAction(ENEMY_ACTION::STAY);
+		return;
+	}
 
 	//攻撃入り
 	currentSkill_->Enter(*this);
+}
+
+void EnemyBase::EnterAttackEnd(void)
+{
+	//スキルが入ってないなら強制的に待機に移行
+	if (!currentSkill_)
+	{
+		ChangeAction(ENEMY_ACTION::STAY);
+		return;
+	}
+
+	//攻撃終了
+	RemoveCurrentSkill();
 }
 
 void EnemyBase::EnterReturn(void)
@@ -345,7 +374,11 @@ void EnemyBase::UpdateAlert(void)
 void EnemyBase::UpdateAttackReady(void)
 {
 	//スキルが入ってないなら強制的に待機に移行
-	if (!currentSkill_)ChangeAction(ENEMY_ACTION::STAY);
+	if (!currentSkill_)
+	{
+		ChangeAction(ENEMY_ACTION::STAY);
+		return;
+	}
 
 	//目標地点を更新
 	goalPos_ = group_->GetGoalPos();
@@ -353,9 +386,6 @@ void EnemyBase::UpdateAttackReady(void)
 	//スキルごとの準備行動
 	if (currentSkill_->ReadyUpdate(*this))
 	{
-		//準備終了
-		currentSkill_->ReadyExit(*this);
-
 		//攻撃移行
 		ChangeAction(ENEMY_ACTION::ATTACK);
 	}
@@ -364,13 +394,36 @@ void EnemyBase::UpdateAttackReady(void)
 void EnemyBase::UpdateAttack(void)
 {
 	//スキルが入ってないなら強制的に待機に移行
-	if (!currentSkill_)ChangeAction(ENEMY_ACTION::STAY);
+	if (!currentSkill_)
+	{
+		ChangeAction(ENEMY_ACTION::STAY);
+		return;
+	}
 
 	//スキルごとの行動
 	if (currentSkill_->Update(*this))
 	{
-		//攻撃終了
-		currentSkill_->Exit(*this);
+		//待機
+		ChangeAction(ENEMY_ACTION::ATTACK_END);
+	}
+}
+
+void EnemyBase::UpdateAttackEnd(void)
+{
+	//スキルが入ってないなら強制的に待機に移行
+	if (!currentSkill_)
+	{
+		ChangeAction(ENEMY_ACTION::STAY);
+		return;
+	}
+
+	//スキルごとの行動
+	if (currentSkill_->EndUpdate(*this))
+	{
+		//完全終了
+		currentSkill_->EndExit(*this);
+
+		//破棄
 		currentSkill_ = nullptr;
 
 		//待機
@@ -401,17 +454,18 @@ void EnemyBase::ExitAlert(void)
 
 void EnemyBase::ExitAttackReady(void)
 {
-	//攻撃カウンタのリセット
-	attackCnt_ = 0.0f;
+	//準備終了
+	if(currentSkill_)currentSkill_->ReadyExit(*this);
 }
 
 void EnemyBase::ExitAttack(void)
 {
-	//攻撃カウンタのリセット
-	attackCnt_ = 0.0f;
+	//攻撃終了
+	if (currentSkill_)currentSkill_->Exit(*this);
+}
 
-	//攻撃コライダの無効化
-	DisableColliderAtTag(Collider::COL_TAG::ENEMY_ATTACK);
+void EnemyBase::ExitAttackEnd(void)
+{
 }
 
 void EnemyBase::ExitReturn(void)
@@ -424,16 +478,29 @@ void EnemyBase::Attack(void)
 
 void EnemyBase::Move(void)
 {
+	//重力
+	GravityManager::GetInstance().CalcGravity(Utility::DIR_D, gravityPow_);
+	movePow_ = VAdd(movePow_, gravityPow_);
+
+	//移動量をレートに合わせる
 	VECTOR movePow = VScale(movePow_, SceneManager::GetInstance().GetUpdateSpeedRate());
 
 	//移動後座標の更新
 	VECTOR movedPos = VAdd(movedPos_, movePow);
 
 	//回転の更新
-	quaRot_ = quaRot_.LookRotation(Utility::GetMoveVec(movedPos, movedPos_));
+	VECTOR moveDir = Utility::GetMoveVec(movedPos, movedPos_);
+	quaRot_ = quaRot_.LookRotation(VGet(moveDir.x, 0.0f, moveDir.z));
 
 	//移動後座標の更新
 	movedPos_ = movedPos;
+
+	//地面にめり込まないようにする
+	if(movedPos_.y < 0.0f)
+	{
+		movedPos_.y = 0.0f;
+		gravityPow_ = Utility::VECTOR_ZERO;
+	}
 }
 
 void EnemyBase::UpdateMovePow(void)
@@ -444,14 +511,29 @@ void EnemyBase::UpdateMovePow(void)
 
 void EnemyBase::BackMove(void)
 {
+	//重力
+	GravityManager::GetInstance().CalcGravity(Utility::DIR_D, gravityPow_);
+	movePow_ = VAdd(movePow_, gravityPow_);
+
+	//移動量をレートに合わせる
+	VECTOR movePow = VScale(movePow_, SceneManager::GetInstance().GetUpdateSpeedRate());
+
 	//移動後座標の更新
-	VECTOR movedPos = VAdd(movedPos_, movePow_);
+	VECTOR movedPos = VAdd(movedPos_, movePow);
 
 	//回転の更新
-	quaRot_ = quaRot_.LookRotation(VScale(Utility::GetMoveVec(movedPos, movedPos_), -1.0f));
+	VECTOR moveDir = Utility::GetMoveVec(movedPos_, movedPos);
+	quaRot_ = quaRot_.LookRotation(VGet(moveDir.x, 0.0f, moveDir.z));
 
 	//移動後座標の更新
 	movedPos_ = movedPos;
+
+	//地面にめり込まないようにする
+	if (movedPos_.y < 0.0f)
+	{
+		movedPos_.y = 0.0f;
+		gravityPow_ = Utility::VECTOR_ZERO;
+	}
 }
 
 void EnemyBase::EnableHitCollider(void)
@@ -480,7 +562,9 @@ void EnemyBase::SetAttackPos(const VECTOR& _localPos)
 void EnemyBase::SetAttackRadius(const float _radius)
 {
 	//半径変更
-	colliders_[1]->GetGeometry<Sphere>()->SetRadius(_radius);
+	auto sphere = colliders_[1]->GetGeometry<Sphere>();
+	sphere->SetRadius(_radius);
+	sphere->SetBroudRadius(_radius);
 }
 
 void EnemyBase::EnableAttack(void)
@@ -500,16 +584,33 @@ void EnemyBase::PlayAnim(const std::wstring& _animName, const float _speed)
 	animController_->Play(_animName, _speed);
 }
 
+void EnemyBase::PlayAnimIsFinish(const std::wstring& _animName, const float _speed)
+{
+	if(animController_->IsFinishNormalAnim())animController_->Play(_animName, _speed);
+}
+
 void EnemyBase::PlayNoBlendAnim(const std::wstring& _animName, const float _speed)
 {
 	animController_->NoBlendPlay(_animName, _speed);
+}
+
+void EnemyBase::PlayNoBlendAnimIsFinish(const std::wstring& _animName, const float _speed)
+{
+	if (animController_->IsFinishNormalAnim())animController_->NoBlendPlay(_animName, _speed);
+}
+
+const bool EnemyBase::IsFade(void) const
+{
+	return state_->GetStateId() == ENEMY_STATE::FADE;
+}
+
+const bool EnemyBase::IsEndState(void) const
+{
+	return state_->GetStateId() == ENEMY_STATE::END;
 }
 
 void EnemyBase::Death(void)
 {
 	//死亡アニメーションの再生
 	animController_->Play(L"BlowEnd");
-	
-	//グループから離れる
-	LeaveGroup();
 }

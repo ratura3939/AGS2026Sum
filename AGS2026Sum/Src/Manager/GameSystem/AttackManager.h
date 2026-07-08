@@ -13,7 +13,7 @@
 
 class AttackManager : public Singleton<AttackManager>
 {
-	//シングルトン化のため共有化
+	//シングルトン化のため、Singletonクラスをフレンドクラスに指定
 	friend class Singleton<AttackManager>;
 
 public:
