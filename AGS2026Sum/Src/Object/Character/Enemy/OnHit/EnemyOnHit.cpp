@@ -1,15 +1,26 @@
 #include "../../../../pch.h"
 #include"../../../../Manager/Generic/SceneManager.h"
 #include"../../../../Manager/GameSystem/AttackManager.h"
-#include "../EnemyBase.h"
+#include"../../../../Manager/GameSystem/ComboManager.h"
 #include "../../Player/ToJson/PlayerAttackData.h"
-#include "../State/EnemyDamageState.h"
+#include "../State/EnemyStaggerState.h"
+#include "../State/EnemyLaunchState.h"
+#include "../State/EnemySlamState.h"
+#include "../State/EnemyPushBackState.h"
+#include "../State/EnemyBlowAwayState.h"
+#include "../EnemyBase.h"
 #include "EnemyOnHit.h"
 
 EnemyOnHit::EnemyOnHit(EnemyBase& _parent)
 	: parent_(_parent)
-	, cnt_(0.0f)
+	, cnt_(INT_MAX)
 {
+	//状態生成関数
+	createState_.emplace("Stagger", &EnemyOnHit::CreateStagger);
+	createState_.emplace("Launch", &EnemyOnHit::CreateLaunch);
+	createState_.emplace("Slam", &EnemyOnHit::CreateSlam);
+	createState_.emplace("PushBack", &EnemyOnHit::CreatePushBack);
+	createState_.emplace("BlowAway", &EnemyOnHit::CreateBlowAway);
 }
 
 EnemyOnHit::~EnemyOnHit(void)
@@ -18,6 +29,9 @@ EnemyOnHit::~EnemyOnHit(void)
 
 void EnemyOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 {
+	//終了なら無視
+	if (parent_.IsFade())return;
+
 	//攻撃マネージャー
 	auto& atkMng = AttackManager::GetInstance();
 
@@ -38,7 +52,7 @@ void EnemyOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 	auto data = dynamic_pointer_cast<AttackData>(atkData);
 
 	//攻撃間隔
-	if (data->hitInterval < cnt_ && data->isMultiHit)
+	if (data->hitInterval > cnt_ && data->isMultiHit)
 	{
 		//カウンタ
 		auto& scnMng = SceneManager::GetInstance();
@@ -48,23 +62,24 @@ void EnemyOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 
 	//ここからヒット処理
 
-	//現在スキルの破棄
-	parent_.RemoveCurrentSkill();
-
 	//リセット
 	cnt_ = 0.0f;
+
+	//攻撃終了へ
+	parent_.ChangeAction(ENEMY_ACTION::ATTACK_END);
 
 	//回転情報
 	const Quaternion quaRot = col->GetGeometry().GetColRot();
 
 	//吹っ飛び(相手の向いている方向)
-	VECTOR blowPow = VScale(quaRot.GetForward(), BLOW_POWER);
-
-	//吹っ飛びの移動量を与える
-	parent_.SetMovePow(blowPow);
+	VECTOR blowPow = quaRot.GetForward();
 
 	//ダメージ状態
-	parent_.ChangeState(std::make_unique<EnemyDamageState>());
+	std::string knockback = data->knockBackType;
+	parent_.ChangeState((this->*createState_[knockback])(blowPow));
+
+	//コンボカウント
+	ComboManager::GetInstance().AddCombo();
 
 	//ダメージ処理
 	parent_.Damage(data->power);
@@ -90,6 +105,9 @@ void EnemyOnHit::HitEnemy(const std::weak_ptr<Collider> _col)
 
 	//相手側の接触情報
 	const auto& result = geo.GetHitResult();
+
+	//自分のコライダの方が優先度が低い場合は無視して、多重に押し戻さないようにする
+	if (parent_.GetColliders()[0].get() > hitCol.get())return;
 
 	//自分の法線方向なので相手側の逆
 	VECTOR myNormal = VScale(result.normal, -1.0f);
@@ -117,4 +135,29 @@ void EnemyOnHit::HitEnemy(const std::weak_ptr<Collider> _col)
 
 void EnemyOnHit::HitEnemyAttack(const std::weak_ptr<Collider> _col)
 {
+}
+
+std::unique_ptr<EnemyStateBase> EnemyOnHit::CreateStagger(const VECTOR& _vec)
+{
+	return std::make_unique<EnemyStaggerState>(_vec);
+}
+
+std::unique_ptr<EnemyStateBase> EnemyOnHit::CreateLaunch(const VECTOR& _vec)
+{
+	return std::make_unique<EnemyLaunchState>(_vec);
+}
+
+std::unique_ptr<EnemyStateBase> EnemyOnHit::CreateSlam(const VECTOR& _vec)
+{
+	return std::make_unique<EnemySlamState>(_vec);
+}
+
+std::unique_ptr<EnemyStateBase> EnemyOnHit::CreatePushBack(const VECTOR& _vec)
+{
+	return std::make_unique<EnemyPushBackState>(_vec);
+}
+
+std::unique_ptr<EnemyStateBase> EnemyOnHit::CreateBlowAway(const VECTOR& _vec)
+{
+	return std::make_unique<EnemyBlowAwayState>(_vec);
 }

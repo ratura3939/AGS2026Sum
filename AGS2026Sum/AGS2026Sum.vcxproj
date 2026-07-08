@@ -145,11 +145,21 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Manager\GameSystem\ComboManager.cpp" />
+    <ClCompile Include="Src\Object\Character\Enemy\OnHit\BossOnHit.cpp" />
+    <ClCompile Include="Src\Object\Character\Enemy\State\EnemyEndState.cpp" />
+    <ClCompile Include="Src\Manager\GameSystem\GravityManager.cpp" />
+    <ClCompile Include="Src\Object\Character\Enemy\State\EnemyBlowAwayState.cpp" />
+    <ClCompile Include="Src\Object\Character\Enemy\State\EnemyPushBackState.cpp" />
+    <ClCompile Include="Src\Object\Character\Enemy\State\EnemyLaunchState.cpp" />
+    <ClCompile Include="Src\Object\Character\Enemy\State\EnemySlamState.cpp" />
+    <ClCompile Include="Src\Object\Character\Enemy\State\EnemyStaggerState.cpp" />
+    <ClCompile Include="Src\Object\Character\Enemy\Types\Boss\BossBattleComponentcpp.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerOnHit.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\Skill\EnemyJumpSkill.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\Skill\EnemyTackleSkill.cpp" />
     <ClCompile Include="Src\Object\Common\OnHitBase.cpp" />
-    <ClCompile Include="Src\Object\Character\Enemy\Types\MiddleBoss.cpp" />
+    <ClCompile Include="Src\Object\Character\Enemy\Types\Boss\MiddleBoss.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\Types\NormalEnemy.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\Skill\EnemySkillFactory.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\Brain\MiddleBossBrain.cpp" />
@@ -218,13 +228,23 @@
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Manager\GameSystem\ComboManager.h" />
+    <ClInclude Include="Src\Object\Character\Enemy\OnHit\BossOnHit.h" />
+    <ClInclude Include="Src\Object\Character\Enemy\State\EnemyEndState.h" />
+    <ClInclude Include="Src\Manager\GameSystem\GravityManager.h" />
+    <ClInclude Include="Src\Object\Character\Enemy\State\EnemyBlowAwayState.h" />
+    <ClInclude Include="Src\Object\Character\Enemy\State\EnemyPushBackState.h" />
+    <ClInclude Include="Src\Object\Character\Enemy\State\EnemyLaunchState.h" />
+    <ClInclude Include="Src\Object\Character\Enemy\State\EnemySlamState.h" />
+    <ClInclude Include="Src\Object\Character\Enemy\State\EnemyStaggerState.h" />
+    <ClInclude Include="Src\Object\Character\Enemy\Types\Boss\BossBattleComponent.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerOnHit.h" />
     <ClInclude Include="Src\Object\Character\Enemy\Skill\EnemyJumpSkill.h" />
     <ClInclude Include="Src\Object\Character\Enemy\Skill\EnemyTackleSkill.h" />
     <ClInclude Include="Src\Object\Character\Attack\AttackDataBase.h" />
     <ClInclude Include="Src\Object\Character\Enemy\Skill\EnemySkillsData.h" />
     <ClInclude Include="Src\Object\Common\OnHitBase.h" />
-    <ClInclude Include="Src\Object\Character\Enemy\Types\MiddleBoss.h" />
+    <ClInclude Include="Src\Object\Character\Enemy\Types\Boss\MiddleBoss.h" />
     <ClInclude Include="Src\Object\Character\Enemy\Types\NormalEnemy.h" />
     <ClInclude Include="Src\Object\Character\Enemy\Skill\EnemySkillFactory.h" />
     <ClInclude Include="Src\Object\Character\Enemy\Brain\MiddleBossBrain.h" />

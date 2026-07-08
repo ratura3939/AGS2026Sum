@@ -21,12 +21,12 @@ public:
 	void Exit(EnemyBase& _enemy)override;
 	
 	//状態IDの取得
-	const ENEMY_STATE GetStateId(void)const override { return ENEMY_STATE::DEATH; }
+	const ENEMY_STATE GetStateId(void)const override { return ENEMY_STATE::DEATH; };
 
 private:
 
 	//死亡許容時間
-	static constexpr float DEATH_TIME = 2.0f;
+	static constexpr float DEATH_TIME = 1.5f;
 
 	//死亡してからの時間
 	float deathTime_;

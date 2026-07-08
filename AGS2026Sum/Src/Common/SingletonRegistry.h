@@ -36,6 +36,7 @@ public:
 	{
 		// “o˜^‚Ì‹t‡‚Å”jŠüiˆË‘¶ŠÖŒW‚ğl—¶j
 		for (auto it = destroyer_[_timing].rbegin(); it != destroyer_[_timing].rend(); ++it) {
+			if (*it == nullptr) continue;
 			(*it)();
 		}
 

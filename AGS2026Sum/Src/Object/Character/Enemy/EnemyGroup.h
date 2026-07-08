@@ -29,6 +29,12 @@ public:
 	//解放
 	void Release(void);
 
+	//チャンク内に入った時
+	void OnEnterActiveChank(void);
+
+	//チャンク外に出た時
+	void OnLeaveActiveChank(void);
+
 	//敵がいなくなったか
 	bool IsEmpty(void)const { return enemys_.empty(); }
 
@@ -74,8 +80,14 @@ public:
 	//敵の数の取得
 	const int GetEnemyCount(void)const { return static_cast<int>(enemys_.size()); }
 
+	//敵の取得
+	const std::vector<EnemyBase*>& GetEnemys(void)const { return enemys_; }
+
 	//生存状態の取得
 	const bool IsActive(void)const { return isActive_; }
+
+	//チャンク内にいるか
+	const bool IsInChank(void)const { return isInChank_; }
 
 	//死亡
 	void Kill(void) { isActive_ = false; }
@@ -87,6 +99,9 @@ private:
 
 	//速度
 	static constexpr float SPEED = 5.0f;
+
+	//グループを維持できる最小の敵の数
+	static constexpr int MIN_ENEMY_NUM = 3;
 
 	//命令の関数ポインタ
 	using Func = void(EnemyGroup::*)(void);
@@ -120,15 +135,21 @@ private:
 	//生存状態
 	bool isActive_;
 
+	//チャンク内か
+	bool isInChank_;
+
 	//命令
-	GROUP_ORDER order_;										//グループの命令
-	std::unordered_map<GROUP_ORDER, OrderFunc> orderFunc_;	//命令ごとの処理
+	GROUP_ORDER order_;														//グループの命令
+	std::array<OrderFunc, static_cast<int>(GROUP_ORDER::MAX)> orderFunc_;	//命令ごとの処理
 
 	//敵情報
 	std::vector<EnemyBase*> enemys_;	//敵の情報(Managerからの参照用)
 
 	//死亡した敵の削除
 	void DeleteEnemy(void);
+	
+	//グループ解散
+	void Disband(void);
 
 	//ゴール地点に向かう移動量を設定
 	void MoveToGoal(void);

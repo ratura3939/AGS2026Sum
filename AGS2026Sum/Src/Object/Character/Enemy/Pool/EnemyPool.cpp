@@ -99,6 +99,9 @@ void EnemyPool::Remove(EnemyBase* _enemy)
 		backEnemy->SetActiveIndex(index);
 	}
 
+	//死亡した敵のコライダを無効化する
+	_enemy->DisableHitCollider();
+
 	//死亡した敵を非稼働中の敵のリストに追加
 	inactiveEnemys_[type].push_back(_enemy);
 

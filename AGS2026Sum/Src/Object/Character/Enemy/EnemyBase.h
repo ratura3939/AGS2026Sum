@@ -17,14 +17,14 @@ class EnemyBase : public CharacterBase
 public:
 
 	//敵がグループから離れられる距離
-	static constexpr float LEAVE_GROUP_DIST = 300.0f;
+	static constexpr float LEAVE_GROUP_DIST = 1000.0f;
 
 	//当たり判定
 	static constexpr float RADIUS = 30.0f;
 	static constexpr float BROUD_RADIUS = RADIUS + 15.0f;
 
 	//攻撃距離
-	static constexpr float ATTACK_RADIUS = RADIUS + 15.0f;
+	static constexpr float ATTACK_RADIUS = RADIUS + 100.0f;
 	static constexpr float ATTACK_BROUD_RADIUS = ATTACK_RADIUS + 15.0f;
 
 	//攻撃持続時間
@@ -47,6 +47,12 @@ public:
 
 	//アニメーション設定
 	void SetAnim(std::unique_ptr<AnimationController> _anim);
+
+	//コライダの生成
+	void CreateCollider(void);
+
+	//コライダの全削除(Groupからの命令用)
+	void DeleteCollider(void);
 
 	//描画
 	virtual void Draw(void)override;
@@ -75,14 +81,14 @@ public:
 	//攻撃マネージャーからコライダを破棄
 	void RemoveAttackCollider(void)const;
 
+	//現在の攻撃取得
+	const EnemySkillBase* GetCurrentSkill(void) { return currentSkill_; };
+
 	//現在の攻撃設定
 	void SetCurrentSkill(EnemySkillBase* _skill);
 
 	//現在の攻撃の破棄
 	void RemoveCurrentSkill(void);
-
-	//攻撃破棄
-	void BreakSkill(void);
 
 	//思考の更新
 	void UpdateBrain(void);
@@ -99,11 +105,20 @@ public:
 	//敵の種類の取得
 	const ENEMY_TYPE& GetType(void) { return type_; }
 
+	//ボスかどうか
+	const bool IsBoss(void)const { return type_ != ENEMY_TYPE::NORMAL; }
+
 	//移動量の取得
 	const VECTOR& GetMovePow(void)const { return movePow_; }
 
 	//移動量の設定
 	void SetMovePow(const VECTOR& _movePow) { movePow_ = _movePow; }
+
+	//重力の取得
+	const VECTOR& GetGravityPow(void)const { return gravityPow_; }
+
+	//重力の設定
+	void SetGravityPow(const VECTOR& _gravityPow) { gravityPow_ = _gravityPow; }
 
 	//位置リセット
 	void ResetPos(void);
@@ -155,7 +170,15 @@ public:
 
 	//アニメーションプレイ
 	void PlayAnim(const std::wstring& _animName, const float _speed = 1.0f);
+	void PlayAnimIsFinish(const std::wstring& _animName, const float _speed = 1.0f);
 	void PlayNoBlendAnim(const std::wstring& _animName, const float _speed = 1.0f);
+	void PlayNoBlendAnimIsFinish(const std::wstring& _animName, const float _speed = 1.0f);
+
+	//フェード中か
+	const bool IsFade(void)const;
+
+	//終了状態か
+	const bool IsEndState(void)const;
 
 protected:
 
@@ -206,11 +229,9 @@ protected:
 	//攻撃目標座標
 	VECTOR attackPos_;
 
-	//攻撃用カウンタ
-	float attackCnt_;
-
 	//個人の移動量
 	VECTOR movePow_;
+	VECTOR gravityPow_;
 
 	//目標地点
 	VECTOR goalPos_;
@@ -245,7 +266,7 @@ protected:
 	virtual void DoInit(void)override;
 
 	//更新
-	void DoUpdate(void)override;
+	virtual void DoUpdate(void)override;
 
 	//アニメーションの初期化
 	void InitAnim(void)override;
@@ -259,6 +280,7 @@ protected:
 	void EnterAlert(void);
 	void EnterAttackReady(void);
 	void EnterAttack(void);
+	void EnterAttackEnd(void);
 	void EnterReturn(void);
 
 	//行動ごとの更新
@@ -267,6 +289,7 @@ protected:
 	void UpdateAlert(void);
 	void UpdateAttackReady(void);
 	void UpdateAttack(void);
+	void UpdateAttackEnd(void);
 	void UpdateReturn(void);
 
 	//行動抜けの処理
@@ -275,6 +298,7 @@ protected:
 	void ExitAlert(void);
 	void ExitAttackReady(void);
 	void ExitAttack(void);
+	void ExitAttackEnd(void);
 	void ExitReturn(void);
 
 	//攻撃

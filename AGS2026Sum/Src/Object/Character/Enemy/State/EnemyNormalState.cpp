@@ -16,7 +16,7 @@ void EnemyNormalState::Enter(EnemyBase& _enemy)
 	_enemy.EnableHitCollider();
 
 	//アクションの初期化
-	_enemy.ChangeAction(ENEMY_ACTION::STAY);
+	//_enemy.ChangeAction(ENEMY_ACTION::STAY);
 }
 
 void EnemyNormalState::Update(EnemyBase& _enemy)

@@ -1,5 +1,5 @@
 {
-  "hp": 200,
+  "hp": 500,
   "modelName": "MiddleBoss",
   "mainFrameName": "mixamorig:Hips",
   "animation": {
@@ -18,6 +18,28 @@
     "Attack": {
       "isLoop": false,
       "isLock": false
+    },
+    "Stagger": {
+      "isLoop": false,
+      "isLock": false
+    },
+    "Launch": {
+      "isLoop": false,
+      "isLock": false,
+      "fixPos": {
+        "x": true,
+        "y": true,
+        "z": true
+      }
+    },
+    "LaunchDown": {
+      "isLoop": true,
+      "isLock": false,
+      "fixPos": {
+        "x": true,
+        "y": true,
+        "z": true
+      }
     },
     "BlowFirstHalf": {
       "isLoop": true,
@@ -51,7 +73,7 @@
       "isLock": false
     },
     "Jump": {
-      "isLoop": true,
+      "isLoop": false,
       "isLock": false
     }
   },

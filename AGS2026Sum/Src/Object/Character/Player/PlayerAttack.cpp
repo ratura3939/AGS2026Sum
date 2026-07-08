@@ -16,7 +16,6 @@ namespace {
 	const std::string SPECIAL_PUNCH_KEY = "Punch_Special";
 	const std::string SPECIAL_KICK_KEY = "Kick_Special";
 	const std::string ULTIMATE_KEY = "Ultimate";
-	const std::string ULTIMATE_TEST_KEY = "Ultimate_Test";
 
 	const int DEFAULT_COLOR = 0xffffff;
 	const int KICK_COLOR = 0x0000ff;
@@ -89,7 +88,6 @@ void PlayerAttack::DoInit(void)
 	directionNames_.emplace(SPECIAL_PUNCH_KEY, INIT_ANIM_DIRECTION_INFO);
 	directionNames_.emplace(SPECIAL_KICK_KEY, INIT_ANIM_DIRECTION_INFO);
 	directionNames_.emplace(ULTIMATE_KEY, INIT_ANIM_DIRECTION_INFO);
-	directionNames_.emplace(ULTIMATE_TEST_KEY, INIT_ANIM_DIRECTION_INFO);
 
 	LoadAttackSound();			//SE
 	LoadAttackEffect();			//Effect
@@ -231,7 +229,6 @@ void PlayerAttack::LoadAttackSound(void)
 	directionNames_.at(SPECIAL_PUNCH_KEY).seName = SOUND_NAME::MAX;	//パンチ特殊
 	directionNames_.at(SPECIAL_KICK_KEY).seName = SOUND_NAME::MAX;	//キック特殊
 	directionNames_.at(ULTIMATE_KEY).seName = SOUND_NAME::MAX;		//必殺技
-	directionNames_.at(ULTIMATE_TEST_KEY).seName = SOUND_NAME::MAX;	//必殺技テスト
 }
 
 void PlayerAttack::LoadAttackEffect(void)
@@ -255,7 +252,6 @@ void PlayerAttack::LoadAttackEffect(void)
 	directionNames_.at(SPECIAL_PUNCH_KEY).efcName = EFC_NAME::PLAYER_PUNCH_SPECIAL;	//パンチ特殊
 	directionNames_.at(SPECIAL_KICK_KEY).efcName = EFC_NAME::MAX;	//キック特殊
 	directionNames_.at(ULTIMATE_KEY).efcName = EFC_NAME::PLAYER_ULTIMATE;		//必殺技
-	directionNames_.at(ULTIMATE_TEST_KEY).efcName = EFC_NAME::MAX;	//必殺技テスト
 }
 
 void PlayerAttack::RegisterAttackData(void)
@@ -272,7 +268,6 @@ void PlayerAttack::RegisterAttackData(void)
 	data_.emplace(SPECIAL_PUNCH_KEY, res.GetData<AttackData>(SPECIAL_PUNCH_KEY));//特殊攻撃(対横方向)
 	data_.emplace(SPECIAL_KICK_KEY, res.GetData<AttackData>(SPECIAL_KICK_KEY));	//特殊攻撃(対上方向)
 	data_.emplace(ULTIMATE_KEY, res.GetData<AttackData>(ULTIMATE_KEY));			//必殺技
-	data_.emplace(ULTIMATE_TEST_KEY, res.GetData<AttackData>(ULTIMATE_TEST_KEY));
 }
 
 void PlayerAttack::RegisterAttackAnimData(void)
@@ -286,7 +281,6 @@ void PlayerAttack::RegisterAttackAnimData(void)
 	animNames_.emplace(SPECIAL_PUNCH_KEY, PlayerManager::ANIM_SPECIAL_PUNCH);	//特殊攻撃(対横方向)
 	animNames_.emplace(SPECIAL_KICK_KEY, PlayerManager::ANIM_SPECIAL_KICK);		//特殊攻撃(対上方向)
 	animNames_.emplace(ULTIMATE_KEY, PlayerManager::ANIM_ULTIMATE);				//必殺技
-	animNames_.emplace(ULTIMATE_TEST_KEY, PlayerManager::ANIM_ULTIMATE_TEST);
 }
 
 void PlayerAttack::RegisterComboData(void)
@@ -300,7 +294,6 @@ void PlayerAttack::RegisterComboData(void)
 	comboRouteInfos_.emplace(SPECIAL_PUNCH_KEY, ComboRouteInfo{ ATTACK_TYPE::PUNCH,false,false });	//特殊攻撃(対横方向)
 	comboRouteInfos_.emplace(SPECIAL_KICK_KEY, ComboRouteInfo{ ATTACK_TYPE::KICK,false,false });	//特殊攻撃(対上方向)
 	comboRouteInfos_.emplace(ULTIMATE_KEY, ComboRouteInfo{ ATTACK_TYPE::ULTIMATE,false,false });		//必殺技
-	comboRouteInfos_.emplace(ULTIMATE_TEST_KEY, ComboRouteInfo{ ATTACK_TYPE::ULTIMATE,false,false });
 }
 
 void PlayerAttack::LoadAttackDirectionData(void)
@@ -315,7 +308,6 @@ void PlayerAttack::LoadAttackDirectionData(void)
 	directionNames_.at(SPECIAL_PUNCH_KEY).detail = res.GetData<AttackDirectionData>(SPECIAL_PUNCH_KEY);//パンチ特殊
 	directionNames_.at(SPECIAL_KICK_KEY).detail = res.GetData<AttackDirectionData>(SPECIAL_KICK_KEY);	//キック特殊
 	directionNames_.at(ULTIMATE_KEY).detail = res.GetData<AttackDirectionData>(ULTIMATE_KEY);			//必殺技
-	directionNames_.at(ULTIMATE_TEST_KEY).detail = res.GetData<AttackDirectionData>(ULTIMATE_TEST_KEY);//必殺技テスト
 }
 
 void PlayerAttack::ApplyAttackColliderSettings(void)

@@ -1,16 +1,17 @@
-#include "../../../../pch.h"
-#include "../../../../Application.h"
-#include "../Info/EnemyDefine.h"
-#include "../State/EnemyNormalState.h"
-#include "../Brain/MiddleBossBrain.h"
-#include "../OnHit/EnemyOnHit.h"
-#include "../../../Common/Collider.h"
-#include "../../../Common/Geometry/Sphere.h"
+#include "../../../../../pch.h"
+#include "../../../../../Application.h"
+#include "../../../../../Manager/Generic/SceneManager.h"
+#include "../../Info/EnemyDefine.h"
+#include "../../State/EnemyNormalState.h"
+#include "../../Brain/MiddleBossBrain.h"
+#include "../../OnHit/BossOnHit.h"
+#include "../../../../Common/Collider.h"
+#include "../../../../Common/Geometry/Sphere.h"
 #include "MiddleBoss.h"
 
 MiddleBoss::MiddleBoss(void)
 	: EnemyBase(ENEMY_TYPE::MIDDLE_BOSS)
-	, guardBreakPoint_(GUARD_BREAK_POINT_MAX)
+	, battle_()
 {
 }
 
@@ -28,13 +29,16 @@ void MiddleBoss::DoLoad(void)
 	brain_ = std::make_unique<MiddleBossBrain>(*this);
 
 	//接触処理の初期化
-	onHit_ = std::make_unique<EnemyOnHit>(*this);
+	onHit_ = std::make_unique<BossOnHit>(*this);
 }
 
 void MiddleBoss::DoInit(void)
 {
 	//ローカル回転
 	quaRotLocal_ = Quaternion();
+
+	//戦闘情報リセット
+	battle_.Reset();
 
 	//コライダの初期化
 	DeleteAllColliders();
@@ -49,10 +53,22 @@ void MiddleBoss::DoInit(void)
 	DisableColliderAtTag(Collider::COL_TAG::ENEMY_ATTACK);
 }
 
+void MiddleBoss::DoUpdate(void)
+{
+	//戦闘情報更新
+	if(!IsEndState() && !IsFade())battle_.Update();
+
+	//共通更新
+	EnemyBase::DoUpdate();
+}
+
 void MiddleBoss::Draw(void)
 {
 	//デバッグ描画
 	DrawDebug();
+
+	//戦闘情報描画
+	battle_.Draw();
 
 	//モデル描画
 	MV1DrawModel(modelId_);

@@ -90,12 +90,39 @@ const bool EnemyTackleSkill::Update(EnemyBase& _owner)
 
 void EnemyTackleSkill::Exit(EnemyBase& _owner)
 {
+	//初期化
+	attackCnt_ = 0.0f;
+}
+
+void EnemyTackleSkill::EndEnter(EnemyBase& _owner)
+{
+	//初期化
+	attackCnt_ = 0.0f;
+
 	//攻撃コライダの無効化
 	_owner.DisableAttack();
 
 	//攻撃マネージャーから破棄
 	_owner.RemoveAttackCollider();
 
+	//移動速度設定
+	_owner.SetSpeed(0.0f);
+}
+
+const bool EnemyTackleSkill::EndUpdate(EnemyBase& _owner)
+{
+	//シーンマネージャー
+	auto& scnMng = SceneManager::GetInstance();
+
+	//攻撃が終わったらtrue
+	if (attackCnt_ > ATTACK_END_TIME)return true;
+	else attackCnt_ += scnMng.GetScaleUpdateSpeedRate(scnMng.GetDeltaTime());
+
+	return false;
+}
+
+void EnemyTackleSkill::EndExit(EnemyBase& _owner)
+{
 	//初期化
 	attackCnt_ = 0.0f;
 }
