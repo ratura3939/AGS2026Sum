@@ -45,6 +45,7 @@ EnemyBase::EnemyBase(const ENEMY_TYPE& _type)
 
 EnemyBase::~EnemyBase(void)
 {
+	group_ = nullptr;
 }
 
 void EnemyBase::Draw(void)
@@ -179,10 +180,6 @@ void EnemyBase::ResetPos(void)
 
 void EnemyBase::DoLoad(void)
 {
-	//状態の初期化
-	state_ = std::make_unique<EnemyNormalState>();
-	state_->Enter(*this);
-
 	//思考の初期化
 	brain_ = std::make_unique<EnemyBrain>(*this);
 
@@ -192,11 +189,12 @@ void EnemyBase::DoLoad(void)
 
 void EnemyBase::DoInit(void)
 {
-	//座標の初期化
-	ResetPos();
-
 	//ローカル回転
 	quaRotLocal_ = Quaternion();
+
+	//状態の初期化
+	state_ = std::make_unique<EnemyNormalState>();
+	state_->Enter(*this);
 }
 
 void EnemyBase::InitWithGroup(void)

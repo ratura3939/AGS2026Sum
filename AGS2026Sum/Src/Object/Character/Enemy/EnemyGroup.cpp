@@ -22,11 +22,6 @@ EnemyGroup::EnemyGroup(void)
 
 EnemyGroup::~EnemyGroup(void)
 {
-	//敵にグループ崩壊を伝える
-	for(EnemyBase* enemy : enemys_)
-	{
-		enemy->LeaveGroup();
-	}
 }
 
 void EnemyGroup::Init(const VECTOR& _initPos)
