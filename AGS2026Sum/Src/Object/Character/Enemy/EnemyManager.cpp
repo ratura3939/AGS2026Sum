@@ -34,7 +34,7 @@ void EnemyManager::Load(void)
 
 void EnemyManager::Init(void)
 {
-	const int ENEMY_GROUP_NUM = 30;
+	const int ENEMY_GROUP_NUM = 100;
 	const int MIDDLE_BOSS_GROUP_NUM = 1;
 
 	//敵の生成(デバッグ)
@@ -114,7 +114,7 @@ void EnemyManager::CreateEnemyGroup(const int _createNum)
 	//グループの初期座標(デバッグ)
 	static int createCount = 0;
 	VECTOR pos = { 1000.0f * createCount / 10, 0.0f, 1000.0f * static_cast<int>(createCount % 10) };
-	//createCount == 100 ? createCount = 0 : createCount++;
+	createCount == 100 ? createCount = 0 : createCount++;
 
 	//グループ
 	EnemyGroup* group = enemyGroupPool_->Spawn(pos);
