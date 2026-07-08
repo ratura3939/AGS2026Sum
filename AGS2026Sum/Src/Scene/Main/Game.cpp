@@ -527,6 +527,7 @@ void Game::Draw(void)
 		//•`‰æ
 		(this->*drawPostEffect_)();
 	}
+	//DrawFormatString(400, 0, 0xffffff, L"%d", GetDrawCallCount());
 }
 
 void Game::Release(void)

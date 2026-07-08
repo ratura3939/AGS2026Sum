@@ -65,7 +65,7 @@ private:
 	static constexpr int INIT_CHUNK_GROUP_NUM = 100;
 
 	//“G‚Ì¶¬”
-	static constexpr int CREATE_NUM = 7;
+	static constexpr int CREATE_NUM = 8;
 
 	//ƒ`ƒƒƒ“ƒN”ÍˆÍ
 	static constexpr int CHUNK_RANGE = 2;

@@ -229,6 +229,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Manager\GameSystem\ComboManager.h" />
+    <ClInclude Include="Src\Object\Character\Enemy\Info\EnemyAnimationData.h" />
     <ClInclude Include="Src\Object\Character\Enemy\OnHit\BossOnHit.h" />
     <ClInclude Include="Src\Object\Character\Enemy\State\EnemyEndState.h" />
     <ClInclude Include="Src\Manager\GameSystem\GravityManager.h" />

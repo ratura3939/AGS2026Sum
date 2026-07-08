@@ -98,7 +98,7 @@ private:
 	static constexpr float ATTACK_DISTANCE = 150.0f;
 
 	//速度
-	static constexpr float SPEED = 5.0f;
+	static constexpr float SPEED = 10.0f;
 
 	//グループを維持できる最小の敵の数
 	static constexpr int MIN_ENEMY_NUM = 3;

@@ -34,7 +34,7 @@ void EnemyManager::Load(void)
 
 void EnemyManager::Init(void)
 {
-	const int ENEMY_GROUP_NUM = 100;
+	const int ENEMY_GROUP_NUM = 10;
 	const int MIDDLE_BOSS_GROUP_NUM = 1;
 
 	//敵の生成(デバッグ)
@@ -45,7 +45,7 @@ void EnemyManager::Init(void)
 	}
 	for (int i = 0; i < MIDDLE_BOSS_GROUP_NUM;i++)
 	{
-		CreateMiddleBossGroup(1);
+		CreateMiddleBossGroup(CREATE_NUM);
 	}
 }
 

@@ -17,7 +17,7 @@ class EnemyBase : public CharacterBase
 public:
 
 	//敵がグループから離れられる距離
-	static constexpr float LEAVE_GROUP_DIST = 1000.0f;
+	static constexpr float LEAVE_GROUP_DIST = 500.0f;
 
 	//当たり判定
 	static constexpr float RADIUS = 30.0f;
@@ -204,7 +204,7 @@ protected:
 	};
 
 	//速度
-	static constexpr float ALERT_SPEED = 4.0f;					//警戒時速度
+	static constexpr float ALERT_SPEED = 6.0f;					//警戒時速度
 	static constexpr float WALK_SPEED = ALERT_SPEED * 2.0f;		//通常移動速度
 	static constexpr float RETURN_SPEED = ALERT_SPEED * 3.0f;	//通常移動速度
 
@@ -261,6 +261,9 @@ protected:
 
 	//読み込み
 	virtual void DoLoad(void)override;
+
+	//シェーダーの読み込み
+	virtual void LoadShader(void);
 
 	//初期化
 	virtual void DoInit(void)override;

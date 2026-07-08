@@ -289,6 +289,10 @@ void ResourceManager::ResourceEnemy(void)
 	//スキル情報
 	res = Resource(Resource::TYPE::JSON, Application::PATH_JSON + L"EnemySkillsData.json");
 	resourcesMap_.emplace(SRC::ENEMY_SKILLS_DATA, res);
+
+	//アニメーション
+	res = Resource(Resource::TYPE::JSON, Application::PATH_JSON + L"EnemyAnimationData.json");
+	resourcesMap_.emplace(SRC::ENEMY_ANIMATION_DATA, res);
 }
 
 void ResourceManager::ResourceBoss(void)

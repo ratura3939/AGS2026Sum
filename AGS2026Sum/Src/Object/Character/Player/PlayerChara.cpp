@@ -18,8 +18,6 @@ namespace {
 	const float BROUD_RADIUS = RADIUS + 15.0f;
 
 	//シェーダ関連(後でキャラクターに共通化するかも？)
-	const int VS_SKIN_BUFF_SIZE = 0;	//頂点シェーダの定数バッファの数
-	const int PS_SKIN_BUFF_SIZE = 0;	//ピクセルシェーダの定数バッファの数
 	const int PS_NORMAL_DEPTH_BUFF_SIZE = 1;	//ピクセルシェーダの定数バッファの数
 
 	const int PS_CAMERA_RAY_BUFF_NUM = 1;	//バッファ番号
