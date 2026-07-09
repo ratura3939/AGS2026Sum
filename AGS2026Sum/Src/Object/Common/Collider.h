@@ -18,6 +18,7 @@ public:
 		, PLAYER_ATTACK	//プレイヤーの攻撃
 		, ENEMY			//敵
 		, ENEMY_ATTACK	//敵の攻撃
+		, STAGE			//ステージ
 		, MAX
 	};
 

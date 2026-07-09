@@ -153,6 +153,12 @@ public:
 	//本体当たり判定の無効化
 	void DisableHitCollider(void);
 
+	//接地判定
+	const bool IsGrounding(void)const { return isGrounding_; };
+
+	//接地状態の設定
+	void SetGrounding(const bool _isGrounding) { isGrounding_ = _isGrounding; }
+
 	//本体当たり判定の半径
 	const float GetHitRadius(void);
 
@@ -238,6 +244,9 @@ protected:
 
 	//移動速度
 	float speed_;
+
+	//接地
+	bool isGrounding_;
 
 	//状態
 	std::unique_ptr<EnemyStateBase> state_;

@@ -114,10 +114,6 @@ void Game::Init(void)
 	//コンボ管理
 	ComboManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::ALL_END);
 
-	//ステージ
-	stage_ = std::make_unique<StageManager>();
-	stage_->Init();
-
 	//プレイヤー
 	player_ = std::make_unique<PlayerManager>(*this);
 	player_->Init();
@@ -126,6 +122,10 @@ void Game::Init(void)
 	enemy_ = std::make_unique<EnemyManager>(player_->GetPos());
 	enemy_->Load();
 	enemy_->Init();
+
+	//ステージ
+	stage_ = std::make_unique<StageManager>();
+	stage_->Init();
 
 	//カメラの初期設定
 	Camera& camera = SceneManager::GetInstance().GetCamera();

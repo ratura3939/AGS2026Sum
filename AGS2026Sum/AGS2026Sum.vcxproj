@@ -226,6 +226,7 @@
     <ClCompile Include="Src\Scene\Sub\PauseScene.cpp" />
     <ClCompile Include="Src\Utility\Utility.cpp" />
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
+    <ClCompile Include="Src\Object\Stage\StageObjectBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Manager\GameSystem\ComboManager.h" />
@@ -315,6 +316,7 @@
     <ClInclude Include="Src\Scene\Sub\PauseScene.h" />
     <ClInclude Include="Src\Utility\Utility.h" />
     <ClInclude Include="Src\Object\Stage\StageManager.h" />
+    <ClInclude Include="Src\Object\Stage\StageObjectBase.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shader\Model\NoiseWavePS.hlsl">

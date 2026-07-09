@@ -52,7 +52,7 @@ inline void from_json(const nlohmann::json& _data, EnemyAnimationData& _param)
 		EnemyAnimationData::AnimationInfo info;
 
 		//メインボーン名
-		modelJson.at("mainFrameName").get_to(_param.info[modelName].mainFrameName);
+		modelJson.at("mainFrameName").get_to(info.mainFrameName);
 
 		//アニメーション分取得
 		for (const auto& [animName, animJson] : modelJson.at("Animation").items())

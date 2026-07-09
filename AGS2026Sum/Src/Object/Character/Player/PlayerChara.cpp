@@ -94,7 +94,7 @@ void PlayerChara::DoLoad(void)
 
 	//当たり判定の生成
 	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, quaRot_, BROUD_RADIUS, RADIUS);
-	MakeCollider(std::move(geo), Collider::COL_TAG::PLAYER, { Collider::COL_TAG::ENEMY,Collider::COL_TAG::ENEMY_ATTACK });
+	MakeCollider(std::move(geo), Collider::COL_TAG::PLAYER, { Collider::COL_TAG::ENEMY,Collider::COL_TAG::ENEMY_ATTACK, Collider::COL_TAG::STAGE });
 
 	debugOutLineWidth_ = 0.2f;
 	isDebugOutLine_ = true;	
