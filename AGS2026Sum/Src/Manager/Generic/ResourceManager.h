@@ -25,6 +25,8 @@ public:
 		,END_BUTTON_IMG			//終了ボタン
 		,BACK_TITLE_IMG			//タイトルに戻る
 		,BACK_GAME_IMG			//ゲームに戻る
+		,COMBO_NUMBER_IMG		//コンボ用の数字
+		,COMBO_STRING_IMG		//「COMBO」画像
 
 		//アニメーション
 		//プレイヤー

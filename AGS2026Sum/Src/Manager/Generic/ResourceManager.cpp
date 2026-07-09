@@ -80,6 +80,12 @@ void ResourceManager::InitGame(void)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + L"DoorLeft.mv1");
 	resourcesMap_.emplace(SRC::DOOR_LEFT_MDL, res);
 
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_UI + L"comboNumber.png", 5, 2, 52, 64);
+	resourcesMap_.emplace(SRC::COMBO_NUMBER_IMG, res);
+
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"ComboUI.png");
+	resourcesMap_.emplace(SRC::COMBO_STRING_IMG, res);
+
 	ResourcePlayer();	//プレイヤー関連
 
 	ResourceEnemy();	//敵関連
@@ -128,7 +134,7 @@ void ResourceManager::InitPause(void)
 	resourcesMap_.emplace(SRC::BACK_TITLE_IMG, res);
 
 	// ゲームに戻る
-	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"BackGameButton.png");
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"ReturnGameButton.png");
 	resourcesMap_.emplace(SRC::BACK_GAME_IMG, res);
 }
 
