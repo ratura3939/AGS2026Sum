@@ -76,15 +76,25 @@ void CollisionManager::CollisionGeometry(std::weak_ptr<Collider> _col1, std::wea
 
 	//前判定
 	if (!PreCollision(_col1, _col2))return;
+
+	//コライダ
+	const auto& col1 = _col1.lock();
+	const auto& col2 = _col2.lock();
 	
 	//形状同士の当たり判定
-	auto& geo1 = _col1.lock()->GetGeometry();
-	auto& geo2 = _col2.lock()->GetGeometry();
+	auto& geo1 = col1->GetGeometry();
+	auto& geo2 = col2->GetGeometry();
 
 	//衝突があった場合
 	if (geo1.IsHit(geo2)) {
-		_col1.lock()->OnHit(_col2);
-		_col2.lock()->OnHit(_col1);
+		
+		//各ヒット処理
+		col1->OnHit(_col2);
+		col2->OnHit(_col1);
+		
+		//ヒット後処理
+		col1->GetGeometry().HitAfter();
+		col2->GetGeometry().HitAfter();
 	}
 }
 

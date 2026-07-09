@@ -34,18 +34,18 @@ void EnemyManager::Load(void)
 
 void EnemyManager::Init(void)
 {
-	const int ENEMY_GROUP_NUM = 100;
-	const int MIDDLE_BOSS_GROUP_NUM = 1;
+	const int ENEMY_GROUP_NUM = 1;
+	const int MIDDLE_BOSS_GROUP_NUM = 0;
 
 	//敵の生成(デバッグ)
 	for (int i = 0; i < ENEMY_GROUP_NUM;i++)
 	{
-		//CreateEnemyGroup(1);
-		CreateEnemyGroup(CREATE_NUM);
+		CreateEnemyGroup(1);
+		//CreateEnemyGroup(CREATE_NUM);
 	}
 	for (int i = 0; i < MIDDLE_BOSS_GROUP_NUM;i++)
 	{
-		CreateMiddleBossGroup(1);
+		CreateMiddleBossGroup(CREATE_NUM);
 	}
 }
 

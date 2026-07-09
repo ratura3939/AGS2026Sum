@@ -1,5 +1,7 @@
 #include"../../Manager/Generic/SceneManager.h"
 #include"../../Manager/Generic/Camera.h"
+#include"../../Renderer/ModelMaterial.h"
+#include"../../Renderer/ModelRenderer.h"
 #include"../../Utility/Utility.h"
 #include "CharacterBase.h"
 

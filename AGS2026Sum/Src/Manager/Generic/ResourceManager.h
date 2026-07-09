@@ -87,6 +87,7 @@ public:
 		,NORMAL_ENEMY_PARAMETER		//雑魚敵パラメーター
 		,MIDDLE_BOSS_PARAMETER		//中ボスパラメーター
 		,ENEMY_SKILLS_DATA			//敵スキルのデータ
+		,ENEMY_ANIMATION_DATA		//敵のアニメーションデータ
 
 		,MAX
 	};

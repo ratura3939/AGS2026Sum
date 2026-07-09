@@ -72,12 +72,16 @@ void EnemyFactory::Load(void)
 	//外部ファイル取得
 	parameters_[static_cast<int>(ENEMY_TYPE::NORMAL)] = res.Load(ResourceManager::SRC::NORMAL_ENEMY_PARAMETER).GetData<EnemyParameter>();
 	parameters_[static_cast<int>(ENEMY_TYPE::MIDDLE_BOSS)] = res.Load(ResourceManager::SRC::MIDDLE_BOSS_PARAMETER).GetData<EnemyParameter>();
+	animDatas_ = res.Load(ResourceManager::SRC::ENEMY_ANIMATION_DATA).GetData<EnemyAnimationData>();
 }
 
 std::unique_ptr<EnemyBase> EnemyFactory::CreateNewEnemy(const ENEMY_TYPE& _type)
 {
 	//敵の生成
 	std::unique_ptr<EnemyBase> enemy = create_[static_cast<int>(_type)]();
+
+	//モデルとアニメーションのロード
+	LoadModelAndAnimation(*enemy, _type);
 
 	//ロード
 	enemy->Load();
@@ -87,9 +91,6 @@ std::unique_ptr<EnemyBase> EnemyFactory::CreateNewEnemy(const ENEMY_TYPE& _type)
 
 	//動的パラメーターの初期化
 	enemy->InitRunTimeParameter(parameters_[static_cast<int>(_type)]);
-
-	//モデルとアニメーションのロード
-	LoadModelAndAnimation(*enemy, _type);
 
 	//スキル生成
 	CreateSkill(*enemy, _type);
@@ -112,6 +113,7 @@ void EnemyFactory::LoadModelAndAnimation(EnemyBase& _enemy, const ENEMY_TYPE& _t
 
 	//参照パラメータ
 	const auto& param = parameters_[static_cast<int>(_type)];
+	const auto& animData = animDatas_.info[param.modelName];
 
 	//モデルID
 	int model = res.LoadModelDuplicate(SRC_TABLE[type].at(L"ModelName"));
@@ -123,9 +125,9 @@ void EnemyFactory::LoadModelAndAnimation(EnemyBase& _enemy, const ENEMY_TYPE& _t
 	_enemy.SetModel(model);
 
 	//メインボーン
-	anim->SetRootFrameIndex(Utility::StringToWstring(param.mainFrameName));
+	anim->SetRootFrameIndex(Utility::StringToWstring(animData.mainFrameName));
 
-	for (auto& [animName, animParam] : param.animParam)
+	for (auto& [animName, animParam] : animData.animParam)
 	{
 		//アニメーション名
 		std::wstring animNameWstr = Utility::StringToWstring(animName);

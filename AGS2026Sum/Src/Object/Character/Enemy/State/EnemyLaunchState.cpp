@@ -18,6 +18,9 @@ void EnemyLaunchState::Enter(EnemyBase& _enemy)
 	//移動時間の初期化
 	damageMoveTime_ = 0.0f;
 
+	//接地判定の無効化
+	_enemy.SetGrounding(false);
+
 	//打ち上げの強さ
 	_enemy.SetGravityPow(VGet(0.0f,LAUNCH_POW,0.0f));
 
@@ -37,7 +40,7 @@ void EnemyLaunchState::Update(EnemyBase& _enemy)
 	VECTOR gravityPow = _enemy.GetGravityPow();
 
 	//地面に着地したらノックダウン状態に遷移
-	if (_enemy.GetPos().y <= 0.0f && gravityPow.y <= 0.0f)
+	if (_enemy.IsGrounding() && gravityPow.y <= 0.0f)
 	{
 		//生きているならノックダウンに移行
 		if (_enemy.IsAlive())_enemy.ChangeState(std::make_unique<EnemyKnockDownState>());

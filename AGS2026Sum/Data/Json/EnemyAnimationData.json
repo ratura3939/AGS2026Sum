@@ -1,0 +1,151 @@
+{
+  "NormalEnemy": {
+    "mainFrameName": "mixamorig:Hips",
+    "Animation": {
+      "Idle": {
+        "isLoop": true,
+        "isLock": false
+      },
+      "Walk": {
+        "isLoop": true,
+        "isLock": false
+      },
+      "Run": {
+        "isLoop": true,
+        "isLock": false
+      },
+      "Attack": {
+        "isLoop": false,
+        "isLock": false
+      },
+      "Stagger": {
+        "isLoop": false,
+        "isLock": false
+      },
+      "Launch": {
+        "isLoop": false,
+        "isLock": false,
+        "fixPos": {
+          "x": true,
+          "y": true,
+          "z": true
+        }
+      },
+      "LaunchDown": {
+        "isLoop": true,
+        "isLock": false,
+        "fixPos": {
+          "x": true,
+          "y": true,
+          "z": true
+        }
+      },
+      "BlowFirstHalf": {
+        "isLoop": true,
+        "isLock": false,
+        "fixPos": {
+          "x": true,
+          "y": false,
+          "z": true
+        }
+      },
+      "BlowSecondHalf": {
+        "isLoop": false,
+        "isLock": false,
+        "fixPos": {
+          "x": true,
+          "y": false,
+          "z": true
+        }
+      },
+      "BlowEnd": {
+        "isLoop": true,
+        "isLock": false,
+        "fixPos": {
+          "x": true,
+          "y": false,
+          "z": true
+        }
+      }
+    }
+  },
+
+  "MiddleBoss": {
+    "mainFrameName": "mixamorig:Hips",
+    "Animation": {
+      "Idle": {
+        "isLoop": true,
+        "isLock": false
+      },
+      "Walk": {
+        "isLoop": true,
+        "isLock": false
+      },
+      "Run": {
+        "isLoop": true,
+        "isLock": false
+      },
+      "Attack": {
+        "isLoop": false,
+        "isLock": false
+      },
+      "Stagger": {
+        "isLoop": false,
+        "isLock": false
+      },
+      "Launch": {
+        "isLoop": false,
+        "isLock": false,
+        "fixPos": {
+          "x": true,
+          "y": true,
+          "z": true
+        }
+      },
+      "LaunchDown": {
+        "isLoop": true,
+        "isLock": false,
+        "fixPos": {
+          "x": true,
+          "y": true,
+          "z": true
+        }
+      },
+      "BlowFirstHalf": {
+        "isLoop": true,
+        "isLock": false,
+        "fixPos": {
+          "x": true,
+          "y": false,
+          "z": true
+        }
+      },
+      "BlowSecondHalf": {
+        "isLoop": false,
+        "isLock": false,
+        "fixPos": {
+          "x": true,
+          "y": false,
+          "z": true
+        }
+      },
+      "BlowEnd": {
+        "isLoop": true,
+        "isLock": false,
+        "fixPos": {
+          "x": true,
+          "y": false,
+          "z": true
+        }
+      },
+      "Tackle": {
+        "isLoop": true,
+        "isLock": false
+      },
+      "Jump": {
+        "isLoop": false,
+        "isLock": false
+      }
+    }
+  }
+}

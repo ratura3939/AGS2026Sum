@@ -8,6 +8,7 @@ OnHitBase::OnHitBase(void)
 	onHit_[static_cast<int>(Collider::COL_TAG::PLAYER_ATTACK)] = &OnHitBase::HitPlayerAttack;
 	onHit_[static_cast<int>(Collider::COL_TAG::ENEMY)] = &OnHitBase::HitEnemy;
 	onHit_[static_cast<int>(Collider::COL_TAG::ENEMY_ATTACK)] = &OnHitBase::HitEnemyAttack;
+	onHit_[static_cast<int>(Collider::COL_TAG::STAGE)] = &OnHitBase::HitStage;
 }
 
 OnHitBase::~OnHitBase(void)

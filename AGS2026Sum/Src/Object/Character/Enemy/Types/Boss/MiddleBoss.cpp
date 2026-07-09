@@ -1,6 +1,9 @@
 #include "../../../../../pch.h"
 #include "../../../../../Application.h"
 #include "../../../../../Manager/Generic/SceneManager.h"
+#include "../../../../../Manager/Generic/Camera.h"
+#include"../../../../../Renderer/ModelMaterial.h"
+#include"../../../../../Renderer/ModelRenderer.h"
 #include "../../Info/EnemyDefine.h"
 #include "../../State/EnemyNormalState.h"
 #include "../../Brain/MiddleBossBrain.h"
@@ -21,27 +24,36 @@ MiddleBoss::~MiddleBoss(void)
 
 void MiddleBoss::DoLoad(void)
 {
-	//状態の初期化
-	state_ = std::make_unique<EnemyNormalState>();
-	state_->Enter(*this);
-
 	//思考の初期化
 	brain_ = std::make_unique<MiddleBossBrain>(*this);
 
 	//接触処理の初期化
 	onHit_ = std::make_unique<BossOnHit>(*this);
+
+	//シェーダーの読み込み
+	LoadShader();
+}
+
+void MiddleBoss::LoadShader(void)
+{
+	//共通
+	EnemyBase::LoadShader();
+
+	outlineMaterial_ = std::make_unique<ModelMaterial>(L"SkinOutLineVS.cso", 2, L"SkinOutLinePS.cso", 1);
+	outlineMaterial_->AddConstBufVS(FLOAT4{ 2.0f,0.0f,0.0f,0.0f });
+
+	const VECTOR& cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
+	outlineMaterial_->AddConstBufVS(FLOAT4{ cameraPos.x, cameraPos.y, cameraPos.z, 0.0f });
+	outlineMaterial_->AddConstBufPS(FLOAT4{ 0.0f,0.0f,0.0f,1.0f });
 }
 
 void MiddleBoss::DoInit(void)
 {
-	//ローカル回転
-	quaRotLocal_ = Quaternion();
+	//共通
+	EnemyBase::DoInit();
 
 	//戦闘情報リセット
 	battle_.Reset();
-
-	//コライダの生成
-	CreateCollider();
 }
 
 void MiddleBoss::DoUpdate(void)
@@ -56,13 +68,31 @@ void MiddleBoss::DoUpdate(void)
 void MiddleBoss::Draw(void)
 {
 	//デバッグ描画
-	DrawDebug();
+	//DrawDebug();
 
 	//戦闘情報描画
 	battle_.Draw();
 
 	//モデル描画
-	MV1DrawModel(modelId_);
+	//MV1DrawModel(modelId_);
+
+	//カメラ座標
+	const VECTOR& cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
+
+	//描画
+	outlineMaterial_->SetConstBufVS(1, FLOAT4{ cameraPos.x, cameraPos.y, cameraPos.z, 0.0f });
+
+	//アウトライン用描画
+	MV1SetWriteZBuffer(modelId_, false);					//モデル描画のZBufferを無効にする
+	MV1SetMeshBackCulling(modelId_, 0, DX_CULLING_RIGHT);	//裏面描画
+	modelRenderer_->Draw(modelId_,*outlineMaterial_);
+
+	//本体描画
+	MV1SetWriteZBuffer(modelId_, true);
+	MV1SetMeshBackCulling(modelId_, 0, DX_CULLING_LEFT);	//表面描画
+
+	//モデルの描画
+	modelRenderer_->Draw(modelId_, *modelMaterial_);
 
 	//ボスUI
 	Vector2 healthPos;

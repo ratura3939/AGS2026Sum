@@ -44,10 +44,8 @@ class PlayerChara :
 
 		void DrawHP(void);		//ｈｐ描画(α②用の一次的な関数)
 
-		std::unique_ptr<ModelMaterial>modelMaterial_;	//モデルマテリアル
 		std::unique_ptr<ModelMaterial>normalDepthMaterial_;	//法線深度マテリアル
 		std::unique_ptr<ModelMaterial>outlineMaterial_;	//アウトラインマテリアル
-		std::unique_ptr<ModelRenderer>modelRenderer_;	//モデルレンダラー
 
         VECTOR inputDir_;       //移動入力方向
         float afterMoveRad_;    //最終的なキャラクター角度
