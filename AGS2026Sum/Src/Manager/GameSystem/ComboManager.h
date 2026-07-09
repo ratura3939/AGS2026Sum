@@ -34,6 +34,9 @@ public:
 
 private:
 
+	//コンボUIの描画
+	void DrawComboUI(void);
+
 	//コンボの最大受付時間
 	static constexpr float COMBO_MAX_TIME = 2.0f;
 
@@ -45,6 +48,12 @@ private:
 
 	//ヒット数
 	int hitCount_;
+
+	//数字画像
+	int* numberImages_;
+
+	//「COMBO」画像
+	int comboStringImage_;
 
 	//コンストラクタ
 	ComboManager(void);

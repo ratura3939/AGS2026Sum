@@ -18,6 +18,9 @@ public:
 	void OpenDoor(void);
 	void CloseDoor(void);
 
+	const VECTOR& GetPos(void) { return pos_; }
+	const VECTOR& GetCameraGoalPosOfDoorEvent(void);
+
 private:
 	VECTOR pos_;			//ドアの中心座標
 	float movingPower_;		//ドアの移動量(総量)

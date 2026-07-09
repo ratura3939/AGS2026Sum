@@ -4,6 +4,7 @@
 
 namespace {
 	const float DOOR_MOVE_LIMIT = 500.0f;	//ドアの移動制限
+	const VECTOR CAMERA_GOAL_POS_RELATIVE = { 0.0f,0.0f,200.0f };	//カメラ目標位置
 }
 
 AutoDoor::AutoDoor(const VECTOR& _position)
@@ -87,4 +88,9 @@ void AutoDoor::CloseDoor(void)
 {
 	leftDoor_->ChangeState(Door::DOOR_STATE::CLOSING);
 	rightDoor_->ChangeState(Door::DOOR_STATE::CLOSING);
+}
+
+const VECTOR& AutoDoor::GetCameraGoalPosOfDoorEvent(void)
+{
+	return VAdd(pos_, Utility::VMul(leftDoor_->GetForward(), CAMERA_GOAL_POS_RELATIVE));
 }
