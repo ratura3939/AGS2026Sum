@@ -18,8 +18,6 @@ namespace {
 	const float BROUD_RADIUS = RADIUS + 15.0f;
 
 	//シェーダ関連(後でキャラクターに共通化するかも？)
-	const int VS_SKIN_BUFF_SIZE = 0;	//頂点シェーダの定数バッファの数
-	const int PS_SKIN_BUFF_SIZE = 0;	//ピクセルシェーダの定数バッファの数
 	const int PS_NORMAL_DEPTH_BUFF_SIZE = 1;	//ピクセルシェーダの定数バッファの数
 
 	const int PS_CAMERA_RAY_BUFF_NUM = 1;	//バッファ番号
@@ -96,7 +94,7 @@ void PlayerChara::DoLoad(void)
 
 	//当たり判定の生成
 	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, quaRot_, BROUD_RADIUS, RADIUS);
-	MakeCollider(std::move(geo), Collider::COL_TAG::PLAYER, { Collider::COL_TAG::ENEMY,Collider::COL_TAG::ENEMY_ATTACK });
+	MakeCollider(std::move(geo), Collider::COL_TAG::PLAYER, { Collider::COL_TAG::ENEMY,Collider::COL_TAG::ENEMY_ATTACK, Collider::COL_TAG::STAGE });
 
 	debugOutLineWidth_ = 0.2f;
 	isDebugOutLine_ = true;	

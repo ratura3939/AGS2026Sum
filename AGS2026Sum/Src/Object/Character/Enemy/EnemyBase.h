@@ -17,7 +17,7 @@ class EnemyBase : public CharacterBase
 public:
 
 	//敵がグループから離れられる距離
-	static constexpr float LEAVE_GROUP_DIST = 1000.0f;
+	static constexpr float LEAVE_GROUP_DIST = 500.0f;
 
 	//当たり判定
 	static constexpr float RADIUS = 30.0f;
@@ -153,6 +153,12 @@ public:
 	//本体当たり判定の無効化
 	void DisableHitCollider(void);
 
+	//接地判定
+	const bool IsGrounding(void)const { return isGrounding_; };
+
+	//接地状態の設定
+	void SetGrounding(const bool _isGrounding) { isGrounding_ = _isGrounding; }
+
 	//本体当たり判定の半径
 	const float GetHitRadius(void);
 
@@ -204,7 +210,7 @@ protected:
 	};
 
 	//速度
-	static constexpr float ALERT_SPEED = 4.0f;					//警戒時速度
+	static constexpr float ALERT_SPEED = 6.0f;					//警戒時速度
 	static constexpr float WALK_SPEED = ALERT_SPEED * 2.0f;		//通常移動速度
 	static constexpr float RETURN_SPEED = ALERT_SPEED * 3.0f;	//通常移動速度
 
@@ -239,6 +245,9 @@ protected:
 	//移動速度
 	float speed_;
 
+	//接地
+	bool isGrounding_;
+
 	//状態
 	std::unique_ptr<EnemyStateBase> state_;
 
@@ -261,6 +270,9 @@ protected:
 
 	//読み込み
 	virtual void DoLoad(void)override;
+
+	//シェーダーの読み込み
+	virtual void LoadShader(void);
 
 	//初期化
 	virtual void DoInit(void)override;

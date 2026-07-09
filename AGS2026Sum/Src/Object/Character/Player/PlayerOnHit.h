@@ -29,5 +29,6 @@ private:
 	void HitPlayerAttack(const std::weak_ptr<Collider> _col)override;
 	void HitEnemy(const std::weak_ptr<Collider> _col)override;
 	void HitEnemyAttack(const std::weak_ptr<Collider> _col)override;
+	void HitStage(const std::weak_ptr<Collider> _col)override;
 };
 

@@ -1,6 +1,7 @@
 #pragma once
 #include<memory>
 #include"../../../Manager/Generic/ResourceManager.h"
+#include"Info/EnemyAnimationData.h"
 #include"Info/EnemyDefine.h"
 #include"Info/EnemyParameter.h"
 #include"Skill/EnemySkillFactory.h"
@@ -33,6 +34,9 @@ private:
 
 	//敵のパラメータ情報
 	std::array<EnemyParameter, static_cast<int>(ENEMY_TYPE::MAX)> parameters_;
+	
+	//敵のアニメーション情報
+	EnemyAnimationData animDatas_;
 
 	//敵生成用関数ポインタ
 	using CreateFunc = std::unique_ptr<EnemyBase>(*)(void);

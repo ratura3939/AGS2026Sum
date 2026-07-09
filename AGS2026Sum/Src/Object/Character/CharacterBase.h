@@ -3,6 +3,9 @@
 #include "../Common/ActorBase.h"
 #include"../../Manager/GameSystem/AnimationController.h"
 
+class ModelMaterial;
+class ModelRenderer;
+
 class CharacterBase :
     public ActorBase
 {
@@ -40,6 +43,10 @@ public:
 	void SetAnimationSpeedPercent(const float _percent);	//アニメーション速度倍率設定
 
 protected:
+
+	static constexpr int VS_SKIN_BUFF_SIZE = 0;	//頂点シェーダの定数バッファの数
+	static constexpr int PS_SKIN_BUFF_SIZE = 0;	//ピクセルシェーダの定数バッファの数
+
 	virtual void DoInit(void)override = 0;		//初期化
 	virtual void DoLoad(void)override = 0;		//読み込み
 	virtual void DoUpdate(void)override = 0;	//更新
@@ -54,6 +61,9 @@ protected:
 	void Rotation(void);						//回転
 
 	std::unique_ptr<AnimationController> animController_;	//アニメーションコントローラー
+
+	std::unique_ptr<ModelMaterial>modelMaterial_;	//モデルマテリアル
+	std::unique_ptr<ModelRenderer>modelRenderer_;	//モデルレンダラー
 
 	float hp_;					//体力
 

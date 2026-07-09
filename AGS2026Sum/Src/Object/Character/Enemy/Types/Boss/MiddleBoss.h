@@ -33,8 +33,14 @@ private:
 	//ボスの戦闘情報
 	BossBattleComponent battle_;
 
+	//アウトラインマテリアル
+	std::unique_ptr<ModelMaterial>outlineMaterial_;	
+
 	//読み込み
 	void DoLoad(void)override;
+
+	//シェーダーの読み込み
+	void LoadShader(void)override;
 
 	//初期化
 	void DoInit(void)override;

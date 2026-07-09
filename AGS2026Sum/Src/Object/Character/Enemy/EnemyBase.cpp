@@ -5,6 +5,8 @@
 #include "../../../Manager/GameSystem/GravityManager.h"
 #include "../../Common/Collider.h"
 #include "../../Common/Geometry/Sphere.h"
+#include"../../../Renderer/ModelMaterial.h"
+#include"../../../Renderer/ModelRenderer.h"
 #include "State/EnemyStateBase.h"
 #include "State/EnemyNormalState.h"
 #include "Skill/EnemySkillBase.h"
@@ -51,10 +53,13 @@ EnemyBase::~EnemyBase(void)
 void EnemyBase::Draw(void)
 {
 	//デバッグ描画
-	DrawDebug();
+	//DrawDebug();
 
 	//モデル描画
-	MV1DrawModel(modelId_);
+	//MV1DrawModel(modelId_);
+
+	//モデルの描画
+	modelRenderer_->Draw(*modelMaterial_);
 }
 
 void EnemyBase::Release(void)
@@ -185,6 +190,18 @@ void EnemyBase::DoLoad(void)
 
 	//接触処理の初期化
 	onHit_ = std::make_unique<EnemyOnHit>(*this);
+
+	//シェーダーの読み込み
+	LoadShader();
+}
+
+void EnemyBase::LoadShader(void)
+{
+	//モデルマテリアル生成
+	modelMaterial_ = std::make_unique<ModelMaterial>(L"SkinVS.cso", VS_SKIN_BUFF_SIZE, L"StdModelPS.cso", PS_SKIN_BUFF_SIZE);
+
+	//モデルレンダラー生成
+	modelRenderer_ = std::make_unique<ModelRenderer>(modelId_);
 }
 
 void EnemyBase::DoInit(void)
@@ -195,6 +212,9 @@ void EnemyBase::DoInit(void)
 	//状態の初期化
 	state_ = std::make_unique<EnemyNormalState>();
 	state_->Enter(*this);
+
+	//アニメーション初期化
+	InitAnim();
 }
 
 void EnemyBase::InitWithGroup(void)
@@ -230,7 +250,11 @@ void EnemyBase::CreateCollider(void)
 
 	//当たり判定の生成
 	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, quaRot_, BROUD_RADIUS, RADIUS);
-	MakeCollider(std::move(geo), Collider::COL_TAG::ENEMY, { Collider::COL_TAG::PLAYER, Collider::COL_TAG::PLAYER_ATTACK ,Collider::COL_TAG::ENEMY });
+	MakeCollider(
+		std::move(geo)
+		, Collider::COL_TAG::ENEMY
+		, { Collider::COL_TAG::PLAYER, Collider::COL_TAG::PLAYER_ATTACK ,Collider::COL_TAG::ENEMY,Collider::COL_TAG::STAGE 
+		});
 
 	//攻撃コライダ
 	geo = std::make_unique<Sphere>(attackPos_, attackPos_, quaRot_, ATTACK_BROUD_RADIUS, ATTACK_RADIUS);
@@ -240,6 +264,9 @@ void EnemyBase::CreateCollider(void)
 
 void EnemyBase::DeleteCollider(void)
 {
+	//空なら何もしない
+	if (colliders_.empty())return;
+
 	//攻撃マネージャーに攻撃コライダが消えることを伝える
 	AttackManager::GetInstance().DeleteAttackCollider(colliders_[1]);
 
@@ -261,6 +288,11 @@ void EnemyBase::DoUpdate(void)
 
 void EnemyBase::InitAnim(void)
 {
+	//空なら何もしない
+	if (!animController_.get())return;
+
+	//初期アニメーション
+	animController_->Play(L"Idle");
 }
 
 void EnemyBase::DrawDebug(void)
@@ -496,7 +528,7 @@ void EnemyBase::Move(void)
 	movedPos_ = movedPos;
 
 	//地面にめり込まないようにする
-	if(movedPos_.y < 0.0f)
+	if(isGrounding_)
 	{
 		movedPos_.y = 0.0f;
 		gravityPow_ = Utility::VECTOR_ZERO;

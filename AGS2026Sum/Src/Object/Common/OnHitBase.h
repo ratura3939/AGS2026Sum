@@ -34,5 +34,6 @@ protected:
 	virtual void HitPlayerAttack(const std::weak_ptr<Collider> _col) = 0;
 	virtual void HitEnemy(const std::weak_ptr<Collider> _col) = 0;
 	virtual void HitEnemyAttack(const std::weak_ptr<Collider> _col) = 0;
+	virtual void HitStage(const std::weak_ptr<Collider> _col) = 0;
 };
 
