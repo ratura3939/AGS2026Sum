@@ -59,7 +59,7 @@ void EnemyBase::Draw(void)
 	//MV1DrawModel(modelId_);
 
 	//モデルの描画
-	modelRenderer_->Draw(*modelMaterial_);
+	modelRenderer_->Draw(modelId_,*modelMaterial_);
 }
 
 void EnemyBase::Release(void)
@@ -201,7 +201,7 @@ void EnemyBase::LoadShader(void)
 	modelMaterial_ = std::make_unique<ModelMaterial>(L"SkinVS.cso", VS_SKIN_BUFF_SIZE, L"StdModelPS.cso", PS_SKIN_BUFF_SIZE);
 
 	//モデルレンダラー生成
-	modelRenderer_ = std::make_unique<ModelRenderer>(modelId_);
+	modelRenderer_ = std::make_unique<ModelRenderer>();
 }
 
 void EnemyBase::DoInit(void)

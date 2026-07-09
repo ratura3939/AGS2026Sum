@@ -85,14 +85,14 @@ void MiddleBoss::Draw(void)
 	//アウトライン用描画
 	MV1SetWriteZBuffer(modelId_, false);					//モデル描画のZBufferを無効にする
 	MV1SetMeshBackCulling(modelId_, 0, DX_CULLING_RIGHT);	//裏面描画
-	modelRenderer_->Draw(*outlineMaterial_);
+	modelRenderer_->Draw(modelId_,*outlineMaterial_);
 
 	//本体描画
 	MV1SetWriteZBuffer(modelId_, true);
 	MV1SetMeshBackCulling(modelId_, 0, DX_CULLING_LEFT);	//表面描画
 
 	//モデルの描画
-	modelRenderer_->Draw(*modelMaterial_);
+	modelRenderer_->Draw(modelId_, *modelMaterial_);
 
 	//ボスUI
 	Vector2 healthPos;

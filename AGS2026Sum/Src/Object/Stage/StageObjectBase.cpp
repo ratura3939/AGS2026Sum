@@ -28,7 +28,7 @@ StageObjectBase::~StageObjectBase(void)
 
 void StageObjectBase::Draw(void)
 {
-	renderer_->Draw(*material_);
+	renderer_->Draw(modelId_,*material_);
 }
 
 void StageObjectBase::Release(void)
@@ -55,7 +55,7 @@ void StageObjectBase::DoLoad(void)
 
 	scl_ = INIT_SCALE_FOR_TEST;
 
-	renderer_ = std::make_unique<ModelRenderer>(modelId_);
+	renderer_ = std::make_unique<ModelRenderer>();
 }
 
 void StageObjectBase::DoInit(void)
