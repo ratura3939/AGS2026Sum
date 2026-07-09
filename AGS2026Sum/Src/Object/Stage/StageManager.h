@@ -4,30 +4,27 @@
 
 class ModelRenderer;
 class ModelMaterial;
+class StageObjectBase;
 class AutoDoor;
 
-class StageManager :
-    public ActorBase
+class StageManager 
 {
 public:
     StageManager(void);
-    ~StageManager(void) override;
-    void Draw(void) override;
-	void Release(void) override;
+    ~StageManager(void);
 
-	void HitCollider(std::weak_ptr<Collider> _col) override {};
+	void Load(void);
+	void Init(void);
+	void Update(void);
+	void Draw(void);
+	void Release(void);
 
 	void OpenDoor(void);	//ドアを開く
 	void CloseDoor(void);	//ドアを閉じる
 
 private:
-	void DoLoad(void) override;
-	void DoInit(void) override;
-	void DoUpdate(void) override;
 
-	std::unique_ptr<ModelMaterial> material_;
-	std::unique_ptr<ModelRenderer> renderer_;
-
-	std::unique_ptr<AutoDoor> door_;	//ステージ仕切り用のドア
+	std::unique_ptr<StageObjectBase> object_;	//ステージオブジェクト
+	std::unique_ptr<AutoDoor> door_;			//ステージ仕切り用のドア
 };
 

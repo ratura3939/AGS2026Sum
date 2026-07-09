@@ -2,6 +2,7 @@
 #include "../../Manager/Generic/ResourceManager.h"
 #include"../../Renderer/ModelMaterial.h"
 #include"../../Renderer/ModelRenderer.h"
+#include"StageObjectBase.h"
 #include"AutoDoor.h"
 #include "StageManager.h"
 
@@ -28,14 +29,40 @@ StageManager::~StageManager(void)
 {
 }
 
+void StageManager::Load(void)
+{
+	//ステージオブジェクトの生成
+	object_ = std::make_unique<StageObjectBase>();
+	object_->Load();
+	object_->Init();
+
+	//ドアの生成
+	door_ = std::make_unique<AutoDoor>(INIT_POS_DOOR);
+	door_->Init();
+}
+
+void StageManager::Init(void)
+{
+	object_->Init();
+	door_->Init();
+}
+
+void StageManager::Update(void)
+{
+	object_->Update();
+	door_->Update();
+}
+
 void StageManager::Draw(void)
 {
-	renderer_->Draw(modelId_, *material_);
+	object_->Draw();
 	door_->Draw();
 }
 
 void StageManager::Release(void)
 {
+	object_->Release();
+	door_->Release();
 }
 
 void StageManager::OpenDoor(void)
@@ -46,33 +73,4 @@ void StageManager::OpenDoor(void)
 void StageManager::CloseDoor(void)
 {
 	door_->CloseDoor();
-}
-
-void StageManager::DoLoad(void)
-{
-	quaRotLocal_ = Quaternion::Euler(0.0f, 0.0f, 0.0f);
-}
-
-void StageManager::DoInit(void)
-{
-	ResourceManager& rsM = ResourceManager::GetInstance();
-	modelId_ = rsM.Load(ResourceManager::SRC::STAGE_MDL).handleId_;
-
-	pos_ = INIT_POS_FIRST_STAGE;
-
-	material_ = std::make_unique<ModelMaterial>(L"UVScalingVS.cso", VS_BUFF_NUM, L"StdModelPS.cso", PS_BUFF_NUM);
-	material_->AddConstBufVS(SCALING_UV);
-
-	scl_ = INIT_SCALE_FOR_TEST;
-
-	renderer_ = std::make_unique<ModelRenderer>();
-
-	//ドアの生成
-	door_ = std::make_unique<AutoDoor>(INIT_POS_DOOR);
-	door_->Init();
-}
-
-void StageManager::DoUpdate(void)
-{
-	door_->Update();
 }
