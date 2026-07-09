@@ -84,6 +84,8 @@ Game::Game(void)
 
 	cameraGoalStayCounter_ = 0;
 	cameraGoalStayTime_ = 0;
+
+	isDebug_ = false;
 }
 
 Game::~Game(void)
@@ -116,6 +118,7 @@ void Game::Init(void)
 
 	//ステージ
 	stage_ = std::make_unique<StageManager>();
+	stage_->Load();
 	stage_->Init();
 
 	//プレイヤー
@@ -235,12 +238,12 @@ void Game::Update(void)
 		//一定時間経過していたら
 		if (cameraGoalStayCounter_ >= cameraGoalStayTime_) {
 			//フォローに変化
-			camera.ChangeMode(Camera::MODE::FOLLOW);
-			camera.SetFocusPos(player_->GetFocusPos());				//注視点
-			EndSlow();
+			camera.ChangeMode(Camera::MODE::FOLLOW);		//追従に変更(リセット後のモード変更用)
+			camera.SetFocusPos(player_->GetFocusPos());		//注視点
+			EndSlow();		//スロー演出終了
 			cameraGoalStayCounter_ = 0;
 
-			camera.ChangeMode(Camera::MODE::RESET);
+			camera.ChangeMode(Camera::MODE::RESET);	//カメラリセット
 		}
 	}
 }
@@ -266,7 +269,20 @@ void Game::GameUpdate(void)
 	//	scM.PushScene(std::make_shared<PauseScene>());
 	//}
 
+	if (inpM.IsTriggerDown(InputManager::INPUT_COMMAND::DEBUG_ULT_REDY)) {
+		isDebug_ = !isDebug_;
+
+		if (isDebug_) {
+			stage_->OpenDoor();
+		}
+		else {
+			stage_->CloseDoor();
+		}
+	}
+
 #pragma region 基礎アプデ
+	stage_->Update();
+
 	//プレイヤー
 	player_->Update();
 	//敵はスローの効果を受ける

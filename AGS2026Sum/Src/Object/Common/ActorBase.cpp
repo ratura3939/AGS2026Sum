@@ -30,13 +30,14 @@ ActorBase::~ActorBase(void)
 
 void ActorBase::Load(void)
 {
-	DoLoad();
 	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT), 0.0f);
+	DoLoad();
 }
 
 void ActorBase::Init(void)
 {
 	DoInit();
+	movedPos_ = pos_;
 
 	//ƒ‚ƒfƒ‹‚ª‚ ‚é‚Ì‚İs‚¤
 	if (modelId_ != -1) {

@@ -17,7 +17,7 @@ namespace {
 
 	const VECTOR INIT_SCALE_FOR_TEST = { 3.0f,3.0f,3.0f };
 
-	const VECTOR INIT_POS_DOOR = { 0.0f,0.0f,0.0f };	//ドアの初期位置}
+	const VECTOR INIT_POS_DOOR = { 0.0f,0.0f,500.0f };	//ドアの初期位置}
 }
 
 StageManager::StageManager(void)
@@ -50,6 +50,7 @@ void StageManager::CloseDoor(void)
 
 void StageManager::DoLoad(void)
 {
+	quaRotLocal_ = Quaternion::Euler(0.0f, 0.0f, 0.0f);
 }
 
 void StageManager::DoInit(void)
@@ -68,6 +69,7 @@ void StageManager::DoInit(void)
 
 	//ドアの生成
 	door_ = std::make_unique<AutoDoor>(INIT_POS_DOOR);
+	door_->Init();
 }
 
 void StageManager::DoUpdate(void)

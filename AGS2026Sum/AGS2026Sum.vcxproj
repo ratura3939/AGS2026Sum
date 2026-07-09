@@ -145,6 +145,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Stage\Door.cpp" />
     <ClCompile Include="Src\Object\Stage\AutoDoor.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\ComboManager.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\OnHit\BossOnHit.cpp" />
@@ -229,6 +230,7 @@
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Stage\Door.h" />
     <ClInclude Include="Src\Object\Stage\AutoDoor.h" />
     <ClInclude Include="Src\Manager\GameSystem\ComboManager.h" />
     <ClInclude Include="Src\Object\Character\Enemy\OnHit\BossOnHit.h" />

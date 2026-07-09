@@ -1,22 +1,13 @@
 #include "../../pch.h"
-#include"../../Manager/Generic/ResourceManager.h"
+#include"Door.h"
 #include "AutoDoor.h"
 
 namespace {
-	const VECTOR INIT_LEFT_DOOR_DIFF = { -50.0f,0.0f,0.0f };	//左ドアの初期位置の差分
-	const VECTOR INIT_RIGHT_DOOR_DIFF = { 50.0f,0.0f,0.0f };	//右ドアの初期位置の差分
-	const float DOOR_MOVE_SPEED = 2.0f;		//ドアの移動速度
-	const float DOOR_MOVE_LIMIT = 50.0f;	//ドアの移動制限
+	const float DOOR_MOVE_LIMIT = 500.0f;	//ドアの移動制限
 }
 
 AutoDoor::AutoDoor(const VECTOR& _position)
-	:moveFunc_(nullptr)
-	,pos_(_position)
-	,leftDoorPos_(VAdd(_position, INIT_LEFT_DOOR_DIFF))
-	,rightDoorPos_(VAdd(_position, INIT_RIGHT_DOOR_DIFF))
-	,leftDoorModelId_(-1)
-	,rightDoorModelId_(-1)
-	,isMoving_(false)
+	:pos_(_position)
 	,movingPower_(0.0f)
 {
 }
@@ -27,63 +18,73 @@ AutoDoor::~AutoDoor(void)
 
 void AutoDoor::Init(void)
 {
-	ResourceManager& resM = ResourceManager::GetInstance();
-	leftDoorModelId_ = resM.LoadModelDuplicate(ResourceManager::SRC::DOOR_LEFT_MDL);
-	rightDoorModelId_ = resM.LoadModelDuplicate(ResourceManager::SRC::DOOR_RIGHT_MDL);
+	//左ドア
+	leftDoor_ = std::make_unique<Door>(pos_, Door::DOOR_SIDE::LEFT);
+	leftDoor_->Load();
+	leftDoor_->Init();
 
-	MV1SetPosition(leftDoorModelId_, leftDoorPos_);
-	MV1SetPosition(rightDoorModelId_, rightDoorPos_);
+	//右ドア
+	rightDoor_ = std::make_unique<Door>(pos_, Door::DOOR_SIDE::RIGHT);
+	rightDoor_->Load();
+	rightDoor_->Init();
 }
 
 void AutoDoor::Update(void)
 {
-	if (isMoving_) {
-		(this->*moveFunc_)();	//ドアの移動関数を呼び出す
+	leftDoor_->Update();
+	rightDoor_->Update();
 
-		//ドアのモデルの座標を更新
-		MV1SetPosition(leftDoorModelId_, leftDoorPos_);
-		MV1SetPosition(rightDoorModelId_, rightDoorPos_);
+#pragma region 移動制限
+	//総移動量を加算(左右に移動量の差はないので、片方のみ取得)
+	movingPower_ += leftDoor_->GetMovePowerOfFrame();
 
-		movingPower_ += DOOR_MOVE_SPEED;	//総移動量の更新
-
-		//移動量が制限を超えたら移動終了
-		if (movingPower_ >= DOOR_MOVE_LIMIT) {
-			isMoving_ = false;	//移動終了
-			movingPower_ = 0.0f;	//移動量をリセット
+	//移動上限に達していた場合
+	if (movingPower_ >= DOOR_MOVE_LIMIT) {
+		//ドアの状態の取得(左右に状態の差はないので、片方のみ取得)
+		Door::DOOR_STATE nowState = leftDoor_->GetState();
+		Door::DOOR_STATE nextState = Door::DOOR_STATE::MAX;	
+		
+		//開いていた時
+		if (nowState == Door::DOOR_STATE::OPENING) {
+			//OPEN状態に変更
+			nextState = Door::DOOR_STATE::OPEN;
 		}
+		//閉じていた時
+		else if(nowState==Door::DOOR_STATE::CLOSING) {
+			//CLOSE状態に変更
+			nextState = Door::DOOR_STATE::CLOSE;
+		}
+
+		//状態の変更
+		leftDoor_->ChangeState(nextState);
+		rightDoor_->ChangeState(nextState);
+
+		//総移動量の初期化
+		movingPower_ = 0.0f;	
 	}
+#pragma endregion
 }
 
 void AutoDoor::Draw(void)
 {
-	MV1DrawModel(leftDoorModelId_);
-	MV1DrawModel(rightDoorModelId_);
+	leftDoor_->Draw();
+	rightDoor_->Draw();
 }
 
 void AutoDoor::Release(void)
 {
+	leftDoor_->Release();
+	rightDoor_->Release();
 }
 
 void AutoDoor::OpenDoor(void)
 {
-	moveFunc_ = &AutoDoor::MoveOpenDoor;
-	isMoving_ = true;
+	leftDoor_->ChangeState(Door::DOOR_STATE::OPENING);
+	rightDoor_->ChangeState(Door::DOOR_STATE::OPENING);
 }
 
 void AutoDoor::CloseDoor(void)
 {
-	moveFunc_ = &AutoDoor::MoveCloseDoor;
-	isMoving_ = true;
-}
-
-void AutoDoor::MoveOpenDoor(void)
-{
-	leftDoorPos_.x -= DOOR_MOVE_SPEED;
-	rightDoorPos_.x += DOOR_MOVE_SPEED;
-}
-
-void AutoDoor::MoveCloseDoor(void)
-{
-	leftDoorPos_.x += DOOR_MOVE_SPEED;
-	rightDoorPos_.x -= DOOR_MOVE_SPEED;
+	leftDoor_->ChangeState(Door::DOOR_STATE::CLOSING);
+	rightDoor_->ChangeState(Door::DOOR_STATE::CLOSING);
 }
