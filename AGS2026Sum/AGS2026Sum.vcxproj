@@ -231,6 +231,7 @@
     <ClCompile Include="Src\Object\Stage\StageObjectBase.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Character\Enemy\Info\StageEnemys.h" />
     <ClInclude Include="Src\Object\Stage\Door.h" />
     <ClInclude Include="Src\Object\Stage\AutoDoor.h" />
     <ClInclude Include="Src\Manager\GameSystem\ComboManager.h" />

@@ -1,0 +1,10 @@
+{
+  "Tutorial": {
+    "groupNum": 10,
+    "bossGroupNum": 2,
+    "boss": {
+      "type": "MiddleBoss",
+      "eventKey": "OpenTutorialDoor"
+    }
+  }
+}
