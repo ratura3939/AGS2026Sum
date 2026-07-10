@@ -58,8 +58,8 @@ void EnemyGroup::Update(void)
 void EnemyGroup::Draw(void)
 {
 	//デバッグ
-	DrawSphere3D(groupGoalPos_, 20, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), false);
-	DrawSphere3D(pos_, 20, 20, GetColor(255, 255, 0), GetColor(255, 255, 0), false);
+	//DrawSphere3D(groupGoalPos_, 20, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), false);
+	//DrawSphere3D(pos_, 20, 20, GetColor(255, 255, 0), GetColor(255, 255, 0), false);
 
 	//敵の描画
 	for (auto& enemy : enemys_)

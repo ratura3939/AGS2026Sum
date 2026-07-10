@@ -136,7 +136,7 @@ void EnemyManager::CreateEnemyGroup(const int _createNum, const VECTOR& _pos, co
 	Grouping(group, enemy);
 
 	//指定分、敵を生成する
-	for (int i = 0; i < _createNum; i++)
+	for (int i = 1; i < _createNum; i++)
 	{
 		//生成
 		enemy = enemyPool_->Spawn(ENEMY_TYPE::NORMAL);
