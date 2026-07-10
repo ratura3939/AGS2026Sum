@@ -145,6 +145,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Manager\GameSystem\Event\EventManager.cpp" />
     <ClCompile Include="Src\Object\Stage\Door.cpp" />
     <ClCompile Include="Src\Object\Stage\AutoDoor.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\ComboManager.cpp" />
@@ -231,7 +232,9 @@
     <ClCompile Include="Src\Object\Stage\StageObjectBase.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Src\Object\Character\Enemy\Info\StageEnemys.h" />
+    <ClInclude Include="Src\Manager\GameSystem\Event\EventManager.h" />
+    <ClInclude Include="Src\Manager\GameSystem\Event\EventType.h" />
+    <ClInclude Include="Src\Object\Character\Enemy\Info\StageEnemyData.h" />
     <ClInclude Include="Src\Object\Stage\Door.h" />
     <ClInclude Include="Src\Object\Stage\AutoDoor.h" />
     <ClInclude Include="Src\Manager\GameSystem\ComboManager.h" />

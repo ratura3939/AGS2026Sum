@@ -86,6 +86,7 @@ public:
 		,MIDDLE_BOSS_PARAMETER		//中ボスパラメーター
 		,ENEMY_SKILLS_DATA			//敵スキルのデータ
 		,ENEMY_ANIMATION_DATA		//敵のアニメーションデータ
+		,STAGE_ENEMY_DATA			//ステージごとの敵データ
 
 		,MAX
 	};
