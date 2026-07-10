@@ -79,14 +79,14 @@ void ComboManager::DrawComboUI(void)
 	}
 
 	const int drawPos_Y = 120;			//描画位置Y(共通)
-	const int comboStartPos_X = 100;	//「COMBO」描画位置X
-	const int numberPosOffset_X = 20;	//数字ごとの位置調整差分
+	const int comboStartPos_X = 200;	//「COMBO」描画位置X
+	const int numberPosOffset_X = 100;	//数字ごとの位置調整差分
 
-	const double exRate = 1.0;			//拡大率
+	const double exRate = 0.7;			//拡大率
 	const double angle = 0.0;			//回転
 
 	//「COMBO」の表示
-	DrawRotaGraph(comboStartPos_X, drawPos_Y, exRate, angle, comboStringImage_, false);
+	DrawRotaGraph(comboStartPos_X, drawPos_Y, exRate, angle, comboStringImage_, true);
 
 	std::vector<int>digitNumbers;	//桁それぞれを保持
 	int remainingCombo = comboCount_;
@@ -104,13 +104,14 @@ void ComboManager::DrawComboUI(void)
 
 	//描画初期位置
 	int numberDrawPos_X = comboStartPos_X - numberPosOffset_X;
+	const int numberDrwaOffset_X = 40;
 
 	for (int& useNumber : digitNumbers) {
 		//数字の描画
-		DrawRotaGraph(numberDrawPos_X, drawPos_Y, exRate, angle, numberImages_[useNumber], false);
+		DrawRotaGraph(numberDrawPos_X, drawPos_Y, exRate, angle, numberImages_[useNumber], true);
 
 		//位置差分
-		numberDrawPos_X -= numberPosOffset_X;
+		numberDrawPos_X -= numberDrwaOffset_X;
 	}
 }
 

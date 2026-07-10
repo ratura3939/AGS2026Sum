@@ -80,7 +80,7 @@ void ResourceManager::InitGame(void)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + L"DoorLeft.mv1");
 	resourcesMap_.emplace(SRC::DOOR_LEFT_MDL, res);
 
-	res = Resource(Resource::TYPE::IMGS, Application::PATH_UI + L"comboNumber.png", 5, 2, 52, 64);
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_UI + L"comboNumber.png", 5, 2, 64, 64);
 	resourcesMap_.emplace(SRC::COMBO_NUMBER_IMG, res);
 
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"ComboUI.png");
