@@ -5,7 +5,7 @@
 #include "Door.h"
 
 namespace {
-	const float SCALING = 2.5f;
+	const float SCALING = 3.0f;
 	const VECTOR INIT_SCALE_FOR_TEST = { SCALING,SCALING,SCALING };
 
 	const float INIT_DOOR_DIFF_X = 100.0f* SCALING;	//左ドアの初期位置差分X

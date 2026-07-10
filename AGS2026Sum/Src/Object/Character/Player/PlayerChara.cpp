@@ -11,6 +11,8 @@
 #include"../../../Manager/Generic/InputManager.h"	
 
 namespace {
+	const VECTOR INIT_POS = { 5000.0f,0.0f,1000.0f };	//初期位置
+
 	const float MOVE_SPEED = 25.0f;	//移動速度
 	const std::wstring ROOT_NAME = L"mixamorig8:Hips";
 	const int HP_MAX = 50;	//体力最大
@@ -100,7 +102,8 @@ void PlayerChara::DoLoad(void)
 void PlayerChara::DoInit(void)
 {
 	//pos_ = Utility::VECTOR_ZERO;
-	pos_ = { 100.0f,0.0f,100.0f };
+	pos_ = INIT_POS;
+	movedPos_ = pos_;	
 	moveSpeed_ = MOVE_SPEED;
 	inputDir_ = Utility::VECTOR_ZERO;
 

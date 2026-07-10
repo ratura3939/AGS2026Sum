@@ -10,7 +10,7 @@ class StageObjectBase : public ActorBase
 public:
 
 	//コンストラクタ
-	StageObjectBase(void);
+	StageObjectBase(int _modelId,const VECTOR& _position);
 
 	//デストラクタ
 	~StageObjectBase(void)override;

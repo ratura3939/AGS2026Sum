@@ -7,7 +7,7 @@
 #include "StageManager.h"
 
 namespace {
-	const VECTOR INIT_POS_FIRST_STAGE = { -2000.0f,0.0f,-1000.0f };	//初期ステージ初期位置
+	const VECTOR INIT_POS_FIRST_STAGE = { 7000.0f,0.0f,11000.0f };	//初期ステージ初期位置
 	const int VS_BUFF_NUM = 1;
 	const int PS_BUFF_NUM = 0;
 
@@ -18,7 +18,7 @@ namespace {
 
 	const VECTOR INIT_SCALE_FOR_TEST = { 3.0f,3.0f,3.0f };
 
-	const VECTOR INIT_POS_DOOR = { 0.0f,0.0f,500.0f };	//ドアの初期位置}
+	const VECTOR INIT_POS_DOOR = { 4300.0f,0.0f,11000.0f };	//ドアの初期位置}
 }
 
 StageManager::StageManager(void)
@@ -31,8 +31,10 @@ StageManager::~StageManager(void)
 
 void StageManager::Load(void)
 {
+	ResourceManager& resM = ResourceManager::GetInstance();
+
 	//ステージオブジェクトの生成
-	object_ = std::make_unique<StageObjectBase>();
+	object_ = std::make_unique<StageObjectBase>(resM.LoadModelDuplicate(ResourceManager::SRC::STAGE_MDL), INIT_POS_FIRST_STAGE);
 	object_->Load();
 	object_->Init();
 

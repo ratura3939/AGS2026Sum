@@ -18,8 +18,10 @@ namespace {
 	const VECTOR INIT_SCALE_FOR_TEST = { 3.0f,3.0f,3.0f };
 }
 
-StageObjectBase::StageObjectBase(void)
+StageObjectBase::StageObjectBase(int _modelId, const VECTOR& _position)
 {
+	modelId_ = _modelId;
+	pos_ = _position;
 }
 
 StageObjectBase::~StageObjectBase(void)
@@ -41,14 +43,9 @@ void StageObjectBase::HitCollider(std::weak_ptr<Collider> _col)
 
 void StageObjectBase::DoLoad(void)
 {
-	ResourceManager& rsM = ResourceManager::GetInstance();
-	modelId_ = rsM.Load(ResourceManager::SRC::STAGE_MDL).handleId_;
-
 	//コライダ
 	std::unique_ptr<Geometry> geo = std::make_unique<Model>(pos_, pos_, quaRot_, 20000.0f, modelId_);
 	MakeCollider(std::move(geo), Collider::COL_TAG::STAGE, { Collider::COL_TAG::PLAYER,Collider::COL_TAG::ENEMY });
-
-	pos_ = INIT_POS;
 
 	material_ = std::make_unique<ModelMaterial>(L"UVScalingVS.cso", VS_BUFF_NUM, L"StdModelPS.cso", PS_BUFF_NUM);
 	material_->AddConstBufVS(SCALING_UV);
