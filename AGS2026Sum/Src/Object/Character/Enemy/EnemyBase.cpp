@@ -3,6 +3,7 @@
 #include "../../../Manager/GameSystem/CollisionManager.h"
 #include "../../../Manager/GameSystem/AttackManager.h"
 #include "../../../Manager/GameSystem/GravityManager.h"
+#include "../../../Manager/GameSystem/Event/EventManager.h"
 #include "../../Common/Collider.h"
 #include "../../Common/Geometry/Sphere.h"
 #include"../../../Renderer/ModelMaterial.h"
@@ -25,6 +26,7 @@ EnemyBase::EnemyBase(const ENEMY_TYPE& _type)
 	, state_(nullptr)
 	, movePow_(Utility::VECTOR_ZERO)
 	, gravityPow_(Utility::VECTOR_ZERO)
+	, eventKey_(EVENT_TYPE::NONE)
 {	
 	//行動ごとの処理の設定
 	actionFunc_[static_cast<int>(ENEMY_ACTION::STAY)] = { &EnemyBase::EnterStay, &EnemyBase::UpdateStay, &EnemyBase::ExitStay };
@@ -639,6 +641,23 @@ const bool EnemyBase::IsFade(void) const
 const bool EnemyBase::IsEndState(void) const
 {
 	return state_->GetStateId() == ENEMY_STATE::END;
+}
+
+void EnemyBase::SetEventKey(const EVENT_TYPE& _event)
+{
+	eventKey_ = _event;
+}
+
+void EnemyBase::AddEventCount(void)const
+{
+	//マネージャーに伝える
+	EventManager::GetInstance().AddFlagCount(eventKey_);
+}
+
+void EnemyBase::SubEventCount(void)const
+{
+	//マネージャーに伝える
+	EventManager::GetInstance().SubFlagCount(eventKey_);
 }
 
 void EnemyBase::Death(void)

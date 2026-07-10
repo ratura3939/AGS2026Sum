@@ -323,6 +323,10 @@ void ResourceManager::ResourceEnemy(void)
 	//アニメーション
 	res = Resource(Resource::TYPE::JSON, Application::PATH_JSON + L"EnemyAnimationData.json");
 	resourcesMap_.emplace(SRC::ENEMY_ANIMATION_DATA, res);
+
+	//ステージごとのデータ
+	res = Resource(Resource::TYPE::JSON, Application::PATH_JSON + L"StageEnemys.json");
+	resourcesMap_.emplace(SRC::STAGE_ENEMY_DATA, res);
 }
 
 void ResourceManager::ResourceBoss(void)

@@ -2,6 +2,7 @@
 #include <array>
 #include <string>
 #include "../../../Manager/GameSystem/AttackManager.h"
+#include "../../../Manager/GameSystem/Event/EventType.h"
 #include "../CharacterBase.h"
 #include "Info/EnemyDefine.h"
 #include "Info/EnemyParameter.h"
@@ -186,6 +187,15 @@ public:
 	//終了状態か
 	const bool IsEndState(void)const;
 
+	//イベント管理
+	void SetEventKey(const EVENT_TYPE& _event);
+
+	//イベントフラグ管理の設定
+	void AddEventCount(void)const;
+
+	//イベントフラグの判定
+	void SubEventCount(void)const;
+
 protected:
 
 	//親ボーン名
@@ -267,6 +277,9 @@ protected:
 
 	//当たり判定の処理
 	std::unique_ptr<EnemyOnHit> onHit_;
+
+	//発動イベント情報
+	EVENT_TYPE eventKey_;
 
 	//読み込み
 	virtual void DoLoad(void)override;

@@ -2,7 +2,9 @@
 #include"../../Utility/Utility.h"
 #include"../../../Manager/GameSystem/ChunkManager.h"
 #include"../../../Manager/Generic/InputManager.h"
+#include"../../../Manager/Generic/ResourceManager.h"
 #include"Info/EnemyDefine.h"
+#include"Info/StageEnemyData.h"
 #include"Pool/EnemyGroupPool.h"
 #include"Pool/EnemyPool.h"
 #include"EnemyGroup.h"
@@ -23,6 +25,9 @@ EnemyManager::~EnemyManager(void)
 
 void EnemyManager::Load(void)
 {
+	//リソース
+	auto& res = ResourceManager::GetInstance();
+
 	//敵グループのプールを生成
 	enemyGroupPool_ = std::make_unique<EnemyGroupPool>();
 	enemyGroupPool_->Load();
@@ -34,19 +39,19 @@ void EnemyManager::Load(void)
 
 void EnemyManager::Init(void)
 {
-	const int ENEMY_GROUP_NUM = 1;
-	const int MIDDLE_BOSS_GROUP_NUM = 0;
+	//const int ENEMY_GROUP_NUM = 1;
+	//const int MIDDLE_BOSS_GROUP_NUM = 0;
 
-	//敵の生成(デバッグ)
-	for (int i = 0; i < ENEMY_GROUP_NUM;i++)
-	{
-		CreateEnemyGroup(1);
-		//CreateEnemyGroup(CREATE_NUM);
-	}
-	for (int i = 0; i < MIDDLE_BOSS_GROUP_NUM;i++)
-	{
-		CreateMiddleBossGroup(CREATE_NUM);
-	}
+	////敵の生成(デバッグ)
+	//for (int i = 0; i < ENEMY_GROUP_NUM;i++)
+	//{
+	//	CreateEnemyGroup(1,ENEMY_TYPE::NORMAL);
+	//	//CreateEnemyGroup(CREATE_NUM);
+	//}
+	//for (int i = 0; i < MIDDLE_BOSS_GROUP_NUM;i++)
+	//{
+	//	CreateEnemyGroup(CREATE_NUM,ENEMY_TYPE::MIDDLE_BOSS);
+	//}
 }
 
 void EnemyManager::Update(void)
@@ -109,21 +114,26 @@ void EnemyManager::Release(void)
 	enemyPool_.reset();
 }
 
-void EnemyManager::CreateEnemyGroup(const int _createNum)
+void EnemyManager::CreateEnemyGroup(const int _createNum, const VECTOR& _pos, const ENEMY_TYPE& _leaderType, const EVENT_TYPE& _event)
 {
-	//グループの初期座標(デバッグ)
-	static int createCount = 0;
-	VECTOR pos = { 1000.0f * createCount / 10, 0.0f, 1000.0f * static_cast<int>(createCount % 10) };
-	createCount == 100 ? createCount = 0 : createCount++;
+	//生成数の制限
+	if (_createNum <= 0)return;
 
 	//グループ
-	EnemyGroup* group = enemyGroupPool_->Spawn(pos);
-
-	//group->SetPos(pos);
-	//pos = VAdd(pos, { 1000.0f, 0.0f, 1000.0f });
+	EnemyGroup* group = enemyGroupPool_->Spawn(_pos);
 
 	//敵の参照用ポインタ
 	EnemyBase* enemy = nullptr;
+
+	//リーダー生成
+	enemy = enemyPool_->Spawn(_leaderType);
+
+	//イベントの所持
+	enemy->SetEventKey(_event);
+	enemy->AddEventCount();
+
+	//グループに設定
+	Grouping(group, enemy);
 
 	//指定分、敵を生成する
 	for (int i = 0; i < _createNum; i++)
@@ -131,6 +141,10 @@ void EnemyManager::CreateEnemyGroup(const int _createNum)
 		//生成
 		enemy = enemyPool_->Spawn(ENEMY_TYPE::NORMAL);
 
+		//イベントの所持
+		enemy->SetEventKey(EVENT_TYPE::NONE);
+		enemy->AddEventCount();
+
 		//グループに設定
 		Grouping(group, enemy);
 		enemy->InitWithGroup();
@@ -141,43 +155,6 @@ void EnemyManager::CreateEnemyGroup(const int _createNum)
 
 	//グループのチャンク管理用の添え字を設定
 	ChunkManager::GetInstance().AddEnemyGroup(group);
-}
-
-void EnemyManager::CreateMiddleBossGroup(const int _createNum)
-{
-	//グループ
-	EnemyGroup* group = enemyGroupPool_->Spawn(VGet(1000.0f, 0.0f, 1000.0f));
-
-	//グループの初期座標(デバッグ)
-	static VECTOR pos = { 0.0f, 0.0f, 0.0f };
-	//group->SetPos(pos);
-	//pos = VAdd(pos, { 1000.0f, 0.0f, 1000.0f });
-
-	//敵の参照用ポインタ
-	EnemyBase* enemy = nullptr;
-
-	//中ボス
-	enemy = enemyPool_->Spawn(ENEMY_TYPE::MIDDLE_BOSS);
-
-	//グループに設定
-	Grouping(group, enemy);
-
-	//グループのチャンク管理用の添え字を設定
-	ChunkManager::GetInstance().AddEnemyGroup(group);
-
-	//指定分、敵を生成する
-	for (int i = 1; i < _createNum; i++)
-	{
-		//生成
-		enemy = enemyPool_->Spawn(ENEMY_TYPE::NORMAL);
-
-		//グループに設定
-		Grouping(group, enemy);
-		enemy->InitWithGroup();
-	}
-
-	//座標リセット
-	group->ResetPos();
 }
 
 const int EnemyManager::GetActiveEnemyNum(void) const
@@ -193,6 +170,28 @@ void EnemyManager::SetAnimSpeedPercent(const float _percent)
 	for (auto& enemy : enemyPool_->GetActiveEnemys())
 	{
 		enemy->SetAnimationSpeedPercent(_percent);
+	}
+}
+
+void EnemyManager::CreateStageEnemy(const StageEnemyData::AllEnemysInfo& _enemyInfo)
+{
+	//座標
+	VECTOR pos = _enemyInfo.pos;
+	VECTOR randPos;
+
+	//ボスグループの生成
+	const auto& bossInfo = _enemyInfo.bossInfo;
+	for (int i = 0; i < _enemyInfo.bossGroupNum;i++)
+	{
+		randPos = Utility::GetRandomValue(VScale(_enemyInfo.localPos, -1.0f), _enemyInfo.localPos);
+		CreateEnemyGroup(_enemyInfo.enemyNum, VAdd(pos, randPos), bossInfo.bossType, bossInfo.eventType);
+	}
+
+	//雑魚グループの生成
+	for (int i = 0; i < _enemyInfo.groupNum;i++)
+	{
+		randPos = Utility::GetRandomValue(VScale(_enemyInfo.localPos, -1.0f), _enemyInfo.localPos);
+		CreateEnemyGroup(_enemyInfo.enemyNum, VAdd(pos, randPos), ENEMY_TYPE::NORMAL, EVENT_TYPE::NONE);
 	}
 }
 

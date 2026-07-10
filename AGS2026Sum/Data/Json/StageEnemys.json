@@ -1,0 +1,23 @@
+{
+  "Tutorial": {
+    "groupNum": 10,
+    "enemyNum" :  10,
+    "bossGroupNum": 1,
+    "boss": {
+      "type": "MiddleBoss",
+      "eventKey": "OpenTutorialDoor"
+    },
+
+    "pos": {
+      "x": 7000.0,
+      "y": 0.0,
+      "z": 5000.0
+    },
+
+    "localPos": {
+      "x" :  2000.0,
+      "y" :  0.0,
+      "z" :  2000.0
+    }
+  }
+}
