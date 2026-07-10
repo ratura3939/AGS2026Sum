@@ -68,7 +68,7 @@ void PauseScene::InitUI(void)
 
 	//ゲームに戻るボタン設定
 	uiM.Add(UI_NAME::BACK_GAME_BUTTON, resM.Load(SOURCE::BACK_GAME_IMG).handleId_, UI_DIREC::FLASHING, UI_DIMENSION::DIMENSION_2);	//登録
-	uiM.SetUIInfo(UI_NAME::BACK_GAME_BUTTON, VAdd(screenCenter, BUTTON_TOGAME_RELATIVE_CENTER), 0.4f);							//基礎設定
+	uiM.SetUIInfo(UI_NAME::BACK_GAME_BUTTON, VAdd(screenCenter, BUTTON_TOGAME_RELATIVE_CENTER), BUTTON_SCALE);							//基礎設定
 	uiM.SetUIDirectionPram(UI_NAME::BACK_GAME_BUTTON, UI_GROUP::GRADUALLY, BUTTON_ALPHA_ACC, BUTTON_ALPHA_MAX, BUTTON_ALPHA_MIN);		//演出設定
 
 	//対等に戻るボタン設定
@@ -79,7 +79,19 @@ void PauseScene::InitUI(void)
 
 void PauseScene::InitSound(void)
 {
-	//随時追加
+	ResourceManager& resM = ResourceManager::GetInstance();
+	SoundManager& sndM = SoundManager::GetInstance();
+
+	using SND_TYPE = SoundManager::TYPE;
+	using SND_NAME = SoundManager::SOUND_NAME;
+
+	//決定
+	sndM.Add(SND_TYPE::SE, SND_NAME::ENTER_SE,
+		resM.Load(ResourceManager::SRC::ENTER_SE).handleId_);
+
+	//カーソル音
+	sndM.Add(SND_TYPE::SE, SND_NAME::MOVE_CUSUR_SE,
+		resM.Load(ResourceManager::SRC::MOVE_CURSUR_SE).handleId_);
 }
 
 void PauseScene::InitEffect(void)
@@ -97,11 +109,13 @@ void PauseScene::InputUser(void)
 {
 	SceneManager& scM = SceneManager::GetInstance();
 	InputManager& ins = InputManager::GetInstance();
+	SoundManager& sndM = SoundManager::GetInstance();
 
 	using COMMAND = InputManager::INPUT_COMMAND;
 
 	if (ins.IsTriggerDown(COMMAND::ENTER))
 	{
+		sndM.Play(SoundManager::SOUND_NAME::ENTER_SE);
 		if (isSelectBackTitle_) {
 			//シーン遷移
 			SceneManager::GetInstance().ChangeScene(std::make_shared<Title>());
@@ -116,10 +130,12 @@ void PauseScene::InputUser(void)
 	if (ins.IsTriggerDown(COMMAND::UP) && isSelectBackTitle_) {
 		isSelectBackTitle_ = false;
 		ResetUIDirectionParam();
+		sndM.Play(SoundManager::SOUND_NAME::MOVE_CUSUR_SE);
 	}
 	else if (ins.IsTriggerDown(COMMAND::DOWN) && !isSelectBackTitle_) {
 		isSelectBackTitle_ = true;
 		ResetUIDirectionParam();
+		sndM.Play(SoundManager::SOUND_NAME::MOVE_CUSUR_SE);
 	}
 
 	//UI更新

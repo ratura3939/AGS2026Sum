@@ -87,10 +87,13 @@ void GameClear::InitUI(void)
 
 void GameClear::Update(void)
 {
+	SoundManager& sndM = SoundManager::GetInstance();
+
 	// シーン遷移
 	InputManager& ins = InputManager::GetInstance();
 	if (ins.IsTriggerDown(InputManager::INPUT_COMMAND::ENTER))
 	{
+		sndM.Play(SoundManager::SOUND_NAME::ENTER_SE);
 		if (isSelectEndGame_) {
 			Application::GetInstance().EndGame();
 			return;	//ゲーム終了
@@ -104,10 +107,12 @@ void GameClear::Update(void)
 	if (ins.IsTriggerDown(InputManager::INPUT_COMMAND::LEFT) && isSelectEndGame_) {
 		isSelectEndGame_ = false;
 		ResetUIDirectionParam();
+		sndM.Play(SoundManager::SOUND_NAME::MOVE_CUSUR_SE);
 	}
 	else if (ins.IsTriggerDown(InputManager::INPUT_COMMAND::RIGHT) && !isSelectEndGame_) {
 		isSelectEndGame_ = true;
 		ResetUIDirectionParam();
+		sndM.Play(SoundManager::SOUND_NAME::MOVE_CUSUR_SE);
 	}
 
 	//UI更新
@@ -140,8 +145,19 @@ void GameClear::Reset(void)
 
 void GameClear::InitSound(void)
 {
-	ResourceManager& rsM = ResourceManager::GetInstance();
+	ResourceManager& resM = ResourceManager::GetInstance();
 	SoundManager& sndM = SoundManager::GetInstance();
+
+	using SND_TYPE = SoundManager::TYPE;
+	using SND_NAME = SoundManager::SOUND_NAME;
+
+	//決定
+	sndM.Add(SND_TYPE::SE, SND_NAME::ENTER_SE,
+		resM.Load(ResourceManager::SRC::ENTER_SE).handleId_);
+
+	//カーソル音
+	sndM.Add(SND_TYPE::SE, SND_NAME::MOVE_CUSUR_SE,
+		resM.Load(ResourceManager::SRC::MOVE_CURSUR_SE).handleId_);
 }
 
 void GameClear::InitEffect(void)

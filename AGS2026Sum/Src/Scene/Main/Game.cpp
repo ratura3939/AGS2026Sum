@@ -160,13 +160,10 @@ void Game::InitSound(void)
 	using SND_NAME = SoundManager::SOUND_NAME;
 
 	//BGM
-	/*sndM.Add(SND_TYPE::BGM, SND_NAME::GAME_NORMAL_BGM,
-		rsM.Load(ResourceManager::SRC::GAME_BGM).handleId_);*/
+	sndM.Add(SND_TYPE::BGM, SND_NAME::GAME_BGM,
+		rsM.Load(ResourceManager::SRC::GAME_BGM).handleId_);
 
-	//‰è‚Í•’Ê‚ÌBGM
-	/*sndM.Play(SND_NAME::GAME_NORMAL_BGM);
-	nowBgmStr_ = "NomalBgm";
-	switchBgmStr_ = "BattleBgm";*/
+	sndM.Play(SND_NAME::GAME_BGM);
 }
 
 void Game::InitEffect(void)
@@ -551,7 +548,7 @@ void Game::Release(void)
 	player_->Release();
 	enemy_->Release();
 	SoundManager& sndM = SoundManager::GetInstance();
-	sndM.Stop(SoundManager::SOUND_NAME::GAME_NORMAL_BGM);	//¡‚Ü‚Å—¬‚µ‚Ä‚¢‚½‚à‚Ì‚ğ’â~
+	sndM.Stop(SoundManager::SOUND_NAME::GAME_BGM);	//¡‚Ü‚Å—¬‚µ‚Ä‚¢‚½‚à‚Ì‚ğ’â~
 
 	SingletonRegistry::GetInstance().Delete(SingletonRegistry::DESTROY_TIMING::GAME_END);	//ƒVƒ“ƒOƒ‹ƒgƒ“‚Ìíœ
 	CollisionManager::GetInstance().DeleteAllCollider();

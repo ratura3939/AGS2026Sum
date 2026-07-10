@@ -72,7 +72,13 @@ public:
 		,PLAYER_ULTIMATE_EFC		//必殺技エフェクト
 
 		//サウンド
+		// BGM
+		,GAME_BGM		//ゲームシーン
+
 		//SE
+		,MOVE_CURSUR_SE
+		,ENTER_SE
+
 		,PUNCH_FIRST_PLAYER_SE		//パンチ初段
 		,PUNCH_SECOND_PLAYER_SE		//パンチ二段目
 		,PUNCH_THIRD_PLAYER_SE		//パンチ最終段
@@ -123,6 +129,7 @@ private:
 	void ResourcePlayer(void);	//プレイヤー関連リソース
 	void ResourceEnemy(void);	//敵関連リソース
 	void ResourceBoss(void);	//ボス関連リソース
+	void ResourceCursurSound(void);	//ボタンおよびカーソルに関する音声
 
 	// デフォルトコンストラクタをprivateにして、
 	// 外部から生成できない様にする

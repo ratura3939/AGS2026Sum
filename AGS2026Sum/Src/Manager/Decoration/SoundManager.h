@@ -14,11 +14,13 @@ public:
 	enum class SOUND_NAME {
 		//BGM
 		TITLE_BGM
-		,GAME_NORMAL_BGM
-		,GAME_BATTLE_BGM
-		,GAME_BOSS_BGM
+		,GAME_BGM
 
 		//SE
+		//システム
+		,ENTER_SE
+		,MOVE_CUSUR_SE
+
 		//プレイヤー攻撃
 		,PUNCH_FIRST_PLAYER_SE
 		,PUNCH_SECOND_PLAYER_SE

@@ -47,6 +47,9 @@ void ResourceManager::InitTitle(void)
 {
 	Resource res;
 
+	//カーソル関連の音
+	ResourceCursurSound();
+
 	// タイトル
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + L"Title.png");
 	resourcesMap_.emplace(SRC::TITLE_BACK_IMG, res);
@@ -67,6 +70,9 @@ void ResourceManager::InitTitle(void)
 void ResourceManager::InitGame(void)
 {
 	Resource res;
+
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + L"GameScene.mp3");
+	resourcesMap_.emplace(SRC::GAME_BGM, res);
 
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + L"Tutorial.mv1");
 	resourcesMap_.emplace(SRC::STAGE_MDL, res);
@@ -97,6 +103,9 @@ void ResourceManager::InitClear(void)
 {
 	Resource res;	
 
+	//カーソル関連の音
+	ResourceCursurSound();
+
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + L"GameClear.png");
 	resourcesMap_.emplace(SRC::GAME_CLEAR_BACK_IMG, res);
 
@@ -113,6 +122,9 @@ void ResourceManager::InitGameOver(void)
 {
 	Resource res;
 
+	//カーソル関連の音
+	ResourceCursurSound();
+
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + L"GameOver.png");
 	resourcesMap_.emplace(SRC::GAME_OVER_BACK_IMG, res);
 
@@ -128,6 +140,9 @@ void ResourceManager::InitGameOver(void)
 void ResourceManager::InitPause(void)
 {
 	Resource res;
+
+	//カーソル関連の音
+	ResourceCursurSound();
 
 	// タイトルに戻る
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"BackTitleButton.png");
@@ -321,6 +336,16 @@ void ResourceManager::ResourceBoss(void)
 	//パラメーター
 	res = Resource(Resource::TYPE::JSON, Application::PATH_JSON + L"MiddleBossParam.json");
 	resourcesMap_.emplace(SRC::MIDDLE_BOSS_PARAMETER, res);
+}
+
+void ResourceManager::ResourceCursurSound(void)
+{
+	Resource res;
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + L"Enter.mp3");
+	resourcesMap_.emplace(SRC::ENTER_SE, res);
+
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + L"MoveCursur.mp3");
+	resourcesMap_.emplace(SRC::MOVE_CURSUR_SE, res);
 }
 
 void ResourceManager::Release(void)
