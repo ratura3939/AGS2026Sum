@@ -108,6 +108,8 @@ void EnemyBase::SetSkills(std::vector<std::unique_ptr<EnemySkillBase>> _skills)
 
 void EnemyBase::SetAttackCollider(const AttackManager::ATTACK_TYPE& _name)const
 {
+	if (colliders_.empty())return;
+
 	//攻撃マネージャー
 	auto& atkMng = AttackManager::GetInstance();
 
@@ -120,6 +122,8 @@ void EnemyBase::SetAttackCollider(const AttackManager::ATTACK_TYPE& _name)const
 
 void EnemyBase::RemoveAttackCollider(void) const
 {
+	if (colliders_.empty())return;
+
 	//攻撃マネージャーから攻撃コライダを破棄
 	AttackManager::GetInstance().DeleteAttackCollider(colliders_[1]);
 }
