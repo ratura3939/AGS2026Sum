@@ -83,7 +83,7 @@ void PlayerChara::DoLoad(void)
 	normalDepthMaterial_->AddConstBufPS(FLOAT4{ OUTLINE_DEPTH_RANGE, 0.0f, 0.0f, 0.0f });	//カメラの描画距離を渡す
 
 	outlineMaterial_ = std::make_unique<ModelMaterial>(L"SkinOutLineVS.cso", 2, L"SkinOutLinePS.cso", 1);
-	outlineMaterial_->AddConstBufVS(FLOAT4{ 0.2f,0.0f,0.0f,0.0f });
+	outlineMaterial_->AddConstBufVS(FLOAT4{ 2.0f,0.0f,0.0f,0.0f });
 
 	const VECTOR& cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
 	outlineMaterial_->AddConstBufVS(FLOAT4{ cameraPos.x, cameraPos.y, cameraPos.z, 0.0f });
@@ -95,9 +95,6 @@ void PlayerChara::DoLoad(void)
 	//当たり判定の生成
 	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, quaRot_, BROUD_RADIUS, RADIUS);
 	MakeCollider(std::move(geo), Collider::COL_TAG::PLAYER, { Collider::COL_TAG::ENEMY,Collider::COL_TAG::ENEMY_ATTACK, Collider::COL_TAG::STAGE });
-
-	debugOutLineWidth_ = 0.2f;
-	isDebugOutLine_ = true;	
 }
 
 void PlayerChara::DoInit(void)
@@ -126,17 +123,6 @@ void PlayerChara::DoUpdate(void)
 	Rotation();
 	inputDir_ = Utility::VECTOR_ZERO;
 	animController_->Update();
-
-	//デバッグ
-	if (CheckHitKey(KEY_INPUT_L)) {
-		debugOutLineWidth_ += 0.01f;
-	}
-	else if(CheckHitKey(KEY_INPUT_K)) {
-		debugOutLineWidth_ -= 0.01f;
-	}
-	if (InputManager::GetInstance().IsTriggerDown(InputManager::INPUT_COMMAND::ENTER)) {
-		isDebugOutLine_ = !isDebugOutLine_;
-	}
 }
 
 void PlayerChara::InitAnim(void)
@@ -202,10 +188,9 @@ void PlayerChara::DrawHP(void)
 void PlayerChara::Draw(void)
 {
 	const VECTOR& cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
-	DrawFormatString(10, 30, 0xffffff, L"PlayerPos: %f, %f, %f,\nInputDir: %f, %f, %f\nCameraPos: %f, %f, %f\noutLine=%.3f", pos_.x, pos_.y, pos_.z, inputDir_.x, inputDir_.y, inputDir_.z, cameraPos.x, cameraPos.y, cameraPos.z, debugOutLineWidth_);
+	//DrawFormatString(10, 30, 0xffffff, L"PlayerPos: %f, %f, %f,\nInputDir: %f, %f, %f\nCameraPos: %f, %f, %f", pos_.x, pos_.y, pos_.z, inputDir_.x, inputDir_.y, inputDir_.z, cameraPos.x, cameraPos.y, cameraPos.z);
 
 	//描画
-	outlineMaterial_->SetConstBufVS(0,FLOAT4{ debugOutLineWidth_, 0.0f, 0.0f, 0.0f });
 	outlineMaterial_->SetConstBufVS(1,FLOAT4{ cameraPos.x, cameraPos.y, cameraPos.z, 0.0f });
 
 	
@@ -217,11 +202,7 @@ void PlayerChara::Draw(void)
 	//本体描画
 	MV1SetWriteZBuffer(modelId_, true);
 	MV1SetMeshBackCulling(modelId_, 0, DX_CULLING_LEFT);	//表面描画
-
-	if (isDebugOutLine_) {
-		modelRenderer_->Draw(modelId_, *modelMaterial_);
-	}
-	
+	modelRenderer_->Draw(modelId_, *modelMaterial_);
 
 	DrawHP();
 }

@@ -42,10 +42,6 @@ namespace {
 	const int WARNING_DIRECTION_TIME = 150;		//WARNING警告時間
 	const int CAMERA_SHAKE_NUM = 3;				//カメラ演出における振動回数
 	const int CAMERA_SHAKE_COOL_TIME = 40;		//振動のクールタイム
-	
-	const float BTN_EX = 0.6f;
-	const int BTN_DIFF_X = 300;
-	const int BTN_DIFF_Y = 100;
 
 	const float CAMERA_FOLLOW_DIFF_Y_ABILITY = 200.0f;	//能力使用時の注視点差分
 
@@ -57,6 +53,8 @@ namespace {
 	const int PS_EDGE_BUFF_NUM = 2;	//エッジ描画用のバッファ数
 	const float EDGE_NORMAL_THRESHOLD = 0.7f;	//エッジ描画用の閾値
 	const float EDGE_DEPTH_THRESHOLD = 0.7f;	//エッジ描画用の閾値
+
+	const int BGM_VOLUME_PERCENT = 90;	//BGM音量
 }
 
 Game::Game(void)
@@ -162,6 +160,8 @@ void Game::InitSound(void)
 	//BGM
 	sndM.Add(SND_TYPE::BGM, SND_NAME::GAME_BGM,
 		rsM.Load(ResourceManager::SRC::GAME_BGM).handleId_);
+
+	sndM.AdjustVolume(SND_NAME::GAME_BGM, BGM_VOLUME_PERCENT);
 
 	sndM.Play(SND_NAME::GAME_BGM);
 }
