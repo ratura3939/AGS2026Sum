@@ -545,11 +545,11 @@ void Game::UpdateTutorial(void)
 		stage_->OpenDoor();
 
 		//カメラの調整
-	/*	Camera& camera = SceneManager::GetInstance().GetCamera();
+		Camera& camera = SceneManager::GetInstance().GetCamera();
 		camera.ChangeMode(Camera::MODE::AUTO_MOVE);
-		SetCameraStayTimeAtAutoMove(20.0f);
+		SetCameraStayTimeAtAutoMove(120.0f);
 		camera.SetGoalPos(stage_->GetGoalPosAtDoorOpen());
-		camera.SetFocusPos(stage_->GetDoorPos());*/
+		camera.SetFocusPos(stage_->GetDoorPos());
 
 		//ステージ１に移行
 		updateProgress_ = &Game::UpdateStage1;
