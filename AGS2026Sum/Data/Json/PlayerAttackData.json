@@ -154,7 +154,7 @@
 
   "Ultimate": {
     "radius": 500.0,
-    "power": 1000.0,
+    "power": 10.0,
     "element": "Normal",
     "isMultiHit": true,
     "hitInterval": 0.05,
