@@ -5,6 +5,7 @@
 #include"../../Manager/GameSystem/CollisionManager.h"
 #include"../../Manager/GameSystem/ChunkManager.h"
 #include"../../Manager/GameSystem/ComboManager.h"
+#include"../../Manager/GameSystem/Event/EventManager.h"
 #include"../../Manager/Generic/Camera.h"
 #include"../../Manager/Generic/SceneManager.h"
 #include"../../Manager/Generic/InputManager.h"
@@ -55,6 +56,13 @@ namespace {
 	const float EDGE_DEPTH_THRESHOLD = 0.7f;	//エッジ描画用の閾値
 
 	const int BGM_VOLUME_PERCENT = 90;	//BGM音量
+
+	//現在の進行度
+	std::array<std::string, static_cast<int>(Game::GAME_PROGRESS::MAX)> PROGRESS =
+	{
+		"Tutorial"
+		,"Stage1"
+	};
 }
 
 Game::Game(void)
@@ -73,6 +81,8 @@ Game::Game(void)
 	direcState_ = BOSS_DIRECTION::NONE;
 	cameraShakeCollTimeCnt_ = 0;
 	stayCameraShake_ = false;
+
+	progress_ = GAME_PROGRESS::TUTORIAL;
 
 	isDrawPostEffect_ = false;
 	direcCnt_ = 0;
@@ -100,6 +110,12 @@ void Game::Init(void)
 
 	update_ = &Game::GameUpdate;
 
+	//進行度
+	progress_ = GAME_PROGRESS::TUTORIAL;
+
+	//更新
+	updateProgress_ = &Game::UpdateTutorial;
+
 	//生成
 
 	//重力マネージャー
@@ -118,10 +134,14 @@ void Game::Init(void)
 	player_ = std::make_unique<PlayerManager>(*this);
 	player_->Init();
 
+	//ステージごとの敵情報
+	stageEnemyData_ = rsM.Load(ResourceManager::SRC::STAGE_ENEMY_DATA).GetData<StageEnemyData>();
+
 	//敵
 	enemy_ = std::make_unique<EnemyManager>(player_->GetPos());
 	enemy_->Load();
 	enemy_->Init();
+	enemy_->CreateStageEnemy(stageEnemyData_.allStageInfo[PROGRESS[static_cast<int>(progress_)]]);
 
 	//ステージ
 	stage_ = std::make_unique<StageManager>();
@@ -211,10 +231,10 @@ void Game::Update(void)
 	//}
 
 
-	if(enemy_->GetActiveEnemyNum() <= 0)
-	{
-		SceneManager::GetInstance().ChangeScene(std::make_shared<GameClear>());
-	}
+	//if(enemy_->GetActiveEnemyNum() <= 0)
+	//{
+	//	SceneManager::GetInstance().ChangeScene(std::make_shared<GameClear>());
+	//}
 	if (!player_->IsAlive())
 	{
 		SceneManager::GetInstance().ChangeScene(std::make_shared<GameOver>());
@@ -301,6 +321,9 @@ void Game::GameUpdate(void)
 
 	//コンボの更新
 	ComboManager::GetInstance().Update();
+
+	//進行度の更新
+	(this->*updateProgress_)();
 
 #pragma endregion
 
@@ -521,6 +544,35 @@ void Game::DrawEdge(void)
 
 	edgeMaterial_->SetTextureBuf(0, normalDepthScreen_);
 	edgeRender_->Draw(*edgeMaterial_);
+}
+
+void Game::UpdateTutorial(void)
+{
+	//条件キーを持っている敵がいなくなったら
+	auto& evMng = EventManager::GetInstance();
+	if (evMng.IsPlayEvent(EVENT_TYPE::OPEN_TUTORIAL_DOOR))
+	{
+		//ドアを開ける
+		stage_->OpenDoor();
+
+		//ステージ１に移行
+		updateProgress_ = &Game::UpdateStage1;
+		progress_ = GAME_PROGRESS::STAGE_1;
+
+		//敵生成
+		enemy_->CreateStageEnemy(stageEnemyData_.allStageInfo[PROGRESS[static_cast<int>(progress_)]]);
+	}
+}
+
+void Game::UpdateStage1(void)
+{
+	//条件キーを持っている敵がいなくなったら
+	auto& evMng = EventManager::GetInstance();
+	if (evMng.IsPlayEvent(EVENT_TYPE::GAME_CLEAR))
+	{
+		//ゲームクリア
+		SceneManager::GetInstance().ChangeScene(std::make_shared<GameClear>());
+	}
 }
 
 void Game::Draw(void)

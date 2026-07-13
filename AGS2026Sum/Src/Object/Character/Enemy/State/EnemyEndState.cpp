@@ -36,6 +36,7 @@ void EnemyEndState::Update(EnemyBase& _enemy)
 
 void EnemyEndState::Exit(EnemyBase& _enemy)
 {
+	_enemy.SubEventCount();
 }
 
 const ENEMY_STATE EnemyEndState::GetStateId(void) const

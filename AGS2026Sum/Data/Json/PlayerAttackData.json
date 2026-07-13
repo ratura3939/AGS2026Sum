@@ -154,10 +154,10 @@
 
   "Ultimate": {
     "radius": 500.0,
-    "power": 20.0,
+    "power": 10.0,
     "element": "Normal",
     "isMultiHit": true,
-    "hitInterval": 0.1,
+    "hitInterval": 0.05,
     "localPos": {
       "x": 0.0,
       "y": 50.0,

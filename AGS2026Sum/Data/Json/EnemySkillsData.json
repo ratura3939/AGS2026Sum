@@ -1,16 +1,16 @@
 {
   "NormalSkill": {
-    "power": 2.0,
+    "power": 1.0,
     "element": "Normal",
     "isMultiHit": false
   },
   "Tackle": {
-    "power": 5.0,
+    "power": 3.0,
     "element": "Tackle",
     "isMultiHit": false
   },
   "Jump": {
-    "power": 7.0,
+    "power": 5.0,
     "element": "Jump",
     "isMultiHit": false
   }

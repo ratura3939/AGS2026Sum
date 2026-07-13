@@ -1,13 +1,23 @@
 #pragma once
+#include<string>
 
 //敵の種類
 enum class ENEMY_TYPE
 {
 	NORMAL,			//雑魚
 	MIDDLE_BOSS,	//中ボス
-	BOSS,			//大ボス
+	//BOSS,			//大ボス
 	MAX
 };
+
+//String型のキャスト
+static const ENEMY_TYPE& CastStringToEnemyType(std::string _string)
+{
+	if (_string == "NormalEnemy") return ENEMY_TYPE::NORMAL;
+	else if (_string == "MiddleBoss")return ENEMY_TYPE::MIDDLE_BOSS;
+	//else if (_string == "Boss") return ENEMY_TYPE::BOSS;
+	else return ENEMY_TYPE::NORMAL;
+}
 
 //グループごとの状態
 enum class GROUP_ORDER

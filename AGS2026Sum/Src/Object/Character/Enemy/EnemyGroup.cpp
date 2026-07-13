@@ -58,8 +58,8 @@ void EnemyGroup::Update(void)
 void EnemyGroup::Draw(void)
 {
 	//デバッグ
-	DrawSphere3D(groupGoalPos_, 20, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), false);
-	DrawSphere3D(pos_, 20, 20, GetColor(255, 255, 0), GetColor(255, 255, 0), false);
+	//DrawSphere3D(groupGoalPos_, 20, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), false);
+	//DrawSphere3D(pos_, 20, 20, GetColor(255, 255, 0), GetColor(255, 255, 0), false);
 
 	//敵の描画
 	for (auto& enemy : enemys_)
@@ -77,10 +77,10 @@ void EnemyGroup::OnEnterActiveChank(void)
 	//チャンクに入った
 	isInChank_ = true;
 
-	//コライダの生成
+	//各敵の加入処理
 	for (auto& enemy : enemys_)
 	{
-		enemy->CreateCollider();
+		enemy->OnEnterActiveChank();
 	}
 }
 
@@ -89,10 +89,10 @@ void EnemyGroup::OnLeaveActiveChank(void)
 	//チャンクから出た
 	isInChank_ = false;
 
-	//コライダの削除
+	//各敵の離脱処理
 	for (auto& enemy : enemys_)
 	{
-		enemy->DeleteCollider();
+		enemy->OnLeaveActiveChank();
 	}
 }
 

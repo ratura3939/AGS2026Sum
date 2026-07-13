@@ -4,13 +4,15 @@
 #include<DxLib.h>
 #include"../../Common/Quaternion.h"
 #include"Info/EnemyDefine.h"
+#include"Info/StageEnemyData.h"
 #include"Info/EnemyParameter.h"
+#include "../../../Manager/GameSystem/Event/EventType.h"
 
 class EnemyBase;
 class EnemyPool;
 class EnemyGroup;
 class EnemyGroupPool;
-class Game;
+class StageEnemyData;
 class AnimationController;
 
 class EnemyManager
@@ -41,17 +43,14 @@ public:
 	//解放
 	void Release(void);
 
-	//敵グループの生成
-	void CreateEnemyGroup(const int _createNum);
-
-	//中ボスグループの生成(_createNumは雑魚敵の数)
-	void CreateMiddleBossGroup(const int _createNum);
-
 	//生存中の敵の数を取得
 	const int GetActiveEnemyNum(void)const;
 
 	//アニメーション速度の全体の割合設定
 	void SetAnimSpeedPercent(const float _percent);
+
+	//ステージごとの敵生成
+	void CreateStageEnemy(const StageEnemyData::AllEnemysInfo& _enemyInfo);
 
 private:
 
@@ -82,6 +81,9 @@ private:
 
 	//プレイヤー座標
 	const VECTOR& playerPos_;
+
+	//敵グループの生成(_createNumは取り巻きの数)
+	void CreateEnemyGroup(const int _createNum, const VECTOR& _pos, const ENEMY_TYPE& _leaderType, const EVENT_TYPE& _event);
 
 	//グループと敵の関連付け
 	void Grouping(EnemyGroup* _group, EnemyBase* _enemy);

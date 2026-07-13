@@ -113,8 +113,9 @@ void BossOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 	}
 
 	//スタン中は状態遷移をしない
-	if (isGuardBreak)
+	if (isGuardBreak || !parent_.IsAlive())
 	{
+		//各吹っ飛び
 		parent_.ChangeState((this->*createState_[knockback])(blowPow));
 	}
 	else

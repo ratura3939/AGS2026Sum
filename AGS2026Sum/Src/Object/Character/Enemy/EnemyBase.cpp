@@ -3,12 +3,14 @@
 #include "../../../Manager/GameSystem/CollisionManager.h"
 #include "../../../Manager/GameSystem/AttackManager.h"
 #include "../../../Manager/GameSystem/GravityManager.h"
+#include "../../../Manager/GameSystem/Event/EventManager.h"
 #include "../../Common/Collider.h"
 #include "../../Common/Geometry/Sphere.h"
 #include"../../../Renderer/ModelMaterial.h"
 #include"../../../Renderer/ModelRenderer.h"
 #include "State/EnemyStateBase.h"
 #include "State/EnemyNormalState.h"
+#include "State/EnemyEndState.h"
 #include "Skill/EnemySkillBase.h"
 #include "Brain/EnemyBrain.h"
 #include "OnHit/EnemyOnHit.h"
@@ -25,6 +27,7 @@ EnemyBase::EnemyBase(const ENEMY_TYPE& _type)
 	, state_(nullptr)
 	, movePow_(Utility::VECTOR_ZERO)
 	, gravityPow_(Utility::VECTOR_ZERO)
+	, eventKey_(EVENT_TYPE::NONE)
 {	
 	//行動ごとの処理の設定
 	actionFunc_[static_cast<int>(ENEMY_ACTION::STAY)] = { &EnemyBase::EnterStay, &EnemyBase::UpdateStay, &EnemyBase::ExitStay };
@@ -106,6 +109,8 @@ void EnemyBase::SetSkills(std::vector<std::unique_ptr<EnemySkillBase>> _skills)
 
 void EnemyBase::SetAttackCollider(const AttackManager::ATTACK_TYPE& _name)const
 {
+	//if (colliders_.empty())return;
+
 	//攻撃マネージャー
 	auto& atkMng = AttackManager::GetInstance();
 
@@ -118,6 +123,8 @@ void EnemyBase::SetAttackCollider(const AttackManager::ATTACK_TYPE& _name)const
 
 void EnemyBase::RemoveAttackCollider(void) const
 {
+	//if (colliders_.empty())return;
+
 	//攻撃マネージャーから攻撃コライダを破棄
 	AttackManager::GetInstance().DeleteAttackCollider(colliders_[1]);
 }
@@ -183,6 +190,19 @@ void EnemyBase::ResetPos(void)
 	movedPos_ = pos_;
 }
 
+void EnemyBase::StateEnd(void)
+{
+	//最後の状態の終了
+	if (state_) state_->Exit(*this);
+
+	//終了状態
+	state_ = std::make_unique<EnemyEndState>();
+
+	//終了
+	state_->Enter(*this);
+	state_->Exit(*this);
+}
+
 void EnemyBase::DoLoad(void)
 {
 	//思考の初期化
@@ -246,7 +266,7 @@ void EnemyBase::SetAnim(std::unique_ptr<AnimationController> _anim)
 void EnemyBase::CreateCollider(void)
 {
 	//コライダの初期化
-	DeleteAllColliders();
+	DeleteCollider();
 
 	//当たり判定の生成
 	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, quaRot_, BROUD_RADIUS, RADIUS);
@@ -264,11 +284,8 @@ void EnemyBase::CreateCollider(void)
 
 void EnemyBase::DeleteCollider(void)
 {
-	//空なら何もしない
-	if (colliders_.empty())return;
-
 	//攻撃マネージャーに攻撃コライダが消えることを伝える
-	AttackManager::GetInstance().DeleteAttackCollider(colliders_[1]);
+	if(!colliders_.empty())AttackManager::GetInstance().DeleteAttackCollider(colliders_[1]);
 
 	//コライダの全削除
 	DeleteAllColliders();
@@ -639,6 +656,35 @@ const bool EnemyBase::IsFade(void) const
 const bool EnemyBase::IsEndState(void) const
 {
 	return state_->GetStateId() == ENEMY_STATE::END;
+}
+
+void EnemyBase::SetEventKey(const EVENT_TYPE& _event)
+{
+	eventKey_ = _event;
+}
+
+void EnemyBase::AddEventCount(void)const
+{
+	//マネージャーに伝える
+	EventManager::GetInstance().AddFlagCount(eventKey_);
+}
+
+void EnemyBase::SubEventCount(void)const
+{
+	//マネージャーに伝える
+	EventManager::GetInstance().SubFlagCount(eventKey_);
+}
+
+void EnemyBase::OnEnterActiveChank(void)
+{
+	//コライダ生成
+	CreateCollider();
+}
+
+void EnemyBase::OnLeaveActiveChank(void)
+{
+	//コライダの削除
+	DeleteCollider();
 }
 
 void EnemyBase::Death(void)

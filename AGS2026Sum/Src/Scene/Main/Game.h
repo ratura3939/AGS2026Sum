@@ -2,6 +2,7 @@
 #include "../SceneBase.h"
 #include<memory>
 #include<string>
+#include"../../Object/Character/Enemy/Info/StageEnemyData.h"
 
 class StageManager;
 class PlayerManager;
@@ -38,6 +39,14 @@ public:
 		JUST_DODGE,
 		SCAN_LINE,
 		END
+	};
+
+	//ゲームの進行度
+	enum class GAME_PROGRESS
+	{
+		TUTORIAL,	//チュートリアル
+		STAGE_1,	//ステージ１
+		MAX
 	};
 
 	Game(void);
@@ -81,6 +90,10 @@ private:
 	//各種描画処理(ポストエフェクト)
 	void DrawEdge(void);	//エッジ描画
 
+	//進行度ごとの更新
+	void UpdateTutorial(void);
+	void UpdateStage1(void);
+
 	/// <summary>
 	/// 攻撃の基礎情報登録(ゆくゆくは外部データにしたい)
 	/// </summary>
@@ -116,6 +129,11 @@ private:
 	//描画関数
 	using DrawPostEffect_f = void(Game::*)(void);
 	DrawPostEffect_f drawPostEffect_;	//ポストエフェクト管理
+
+	//進行度の更新
+	using UpdateProgress_f = void(Game::*)(void);
+	UpdateProgress_f updateProgress_;
+
 #pragma endregion
 
 #pragma region shader関連
@@ -148,7 +166,14 @@ private:
 	bool stayCameraShake_;			//画面揺れ待機フラグ true=待機
 	int cameraGoalStayTime_;		//カメラ自動移動時、ゴール付近でどれほど滞在するか
 	int cameraGoalStayCounter_;		//カメラ自動移動時、ゴール付近滞在カウンター
+
+	//敵
+	StageEnemyData stageEnemyData_;	//敵のステージごとデータ
+
 #pragma endregion
+
+	//進行度
+	GAME_PROGRESS progress_;
 
 	bool prevInputP_;			//デバッグ用トリガ
 	bool isEnemyUpdate_;

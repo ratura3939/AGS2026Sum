@@ -18,9 +18,6 @@ public:
 	//戦闘情報を返す
 	BossBattleComponent& GetBattleComponent(void) { return battle_; }
 
-	//コライダの生成
-	virtual void CreateCollider(void);
-
 private:
 
 	//HPバーの位置
@@ -47,5 +44,8 @@ private:
 
 	//更新
 	void DoUpdate(void)override;
+
+	//コライダの生成
+	virtual void CreateCollider(void);
 };
 

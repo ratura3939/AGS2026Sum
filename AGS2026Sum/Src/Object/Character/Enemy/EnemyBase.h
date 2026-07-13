@@ -2,6 +2,7 @@
 #include <array>
 #include <string>
 #include "../../../Manager/GameSystem/AttackManager.h"
+#include "../../../Manager/GameSystem/Event/EventType.h"
 #include "../CharacterBase.h"
 #include "Info/EnemyDefine.h"
 #include "Info/EnemyParameter.h"
@@ -47,12 +48,6 @@ public:
 
 	//アニメーション設定
 	void SetAnim(std::unique_ptr<AnimationController> _anim);
-
-	//コライダの生成
-	virtual void CreateCollider(void);
-
-	//コライダの全削除(Groupからの命令用)
-	void DeleteCollider(void);
 
 	//描画
 	virtual void Draw(void)override;
@@ -123,8 +118,8 @@ public:
 	//位置リセット
 	void ResetPos(void);
 
-	//グループを抜ける
-	void LeaveGroup(void) { group_ = nullptr; }
+	//グループを抜ける処理
+	void StateEnd(void);
 
 	//グループに所属しているか
 	const bool IsInGroup(void)const { return group_ != nullptr; }
@@ -185,6 +180,21 @@ public:
 
 	//終了状態か
 	const bool IsEndState(void)const;
+
+	//イベント管理
+	void SetEventKey(const EVENT_TYPE& _event);
+
+	//イベントフラグ管理の設定
+	void AddEventCount(void)const;
+
+	//イベントフラグの判定
+	void SubEventCount(void)const;
+
+	//チャンクに入った時の処理
+	void OnEnterActiveChank(void);
+
+	//チャンクから出た時の処理
+	void OnLeaveActiveChank(void);
 
 protected:
 
@@ -268,6 +278,9 @@ protected:
 	//当たり判定の処理
 	std::unique_ptr<EnemyOnHit> onHit_;
 
+	//発動イベント情報
+	EVENT_TYPE eventKey_;
+
 	//読み込み
 	virtual void DoLoad(void)override;
 
@@ -279,6 +292,12 @@ protected:
 
 	//更新
 	virtual void DoUpdate(void)override;
+
+	//コライダの生成
+	virtual void CreateCollider(void);
+
+	//コライダの全削除(Groupからの命令用)
+	void DeleteCollider(void);
 
 	//アニメーションの初期化
 	void InitAnim(void)override;
