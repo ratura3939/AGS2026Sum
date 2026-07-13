@@ -45,6 +45,7 @@ public:
 	enum class GAME_PROGRESS
 	{
 		TUTORIAL,	//チュートリアル
+		STAGE_1,	//ステージ１
 		MAX
 	};
 
@@ -91,6 +92,7 @@ private:
 
 	//進行度ごとの更新
 	void UpdateTutorial(void);
+	void UpdateStage1(void);
 
 	/// <summary>
 	/// 攻撃の基礎情報登録(ゆくゆくは外部データにしたい)

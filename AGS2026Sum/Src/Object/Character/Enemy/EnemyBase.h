@@ -118,8 +118,8 @@ public:
 	//位置リセット
 	void ResetPos(void);
 
-	//グループを抜ける
-	void LeaveGroup(void) { group_ = nullptr; }
+	//グループを抜ける処理
+	void StateEnd(void);
 
 	//グループに所属しているか
 	const bool IsInGroup(void)const { return group_ != nullptr; }

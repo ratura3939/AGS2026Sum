@@ -99,6 +99,9 @@ void EnemyPool::Remove(EnemyBase* _enemy)
 		backEnemy->SetActiveIndex(index);
 	}
 
+	//状態関係の終了処理
+	_enemy->StateEnd();
+
 	//死亡した敵のコライダを無効化する
 	_enemy->DisableHitCollider();
 

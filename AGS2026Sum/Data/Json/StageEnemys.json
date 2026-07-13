@@ -1,7 +1,7 @@
 {
   "Tutorial": {
     "groupNum": 10,
-    "enemyNum" :  2,
+    "enemyNum" :  6,
     "bossGroupNum": 1,
     "boss": {
       "type": "MiddleBoss",
@@ -12,6 +12,27 @@
       "x": 6000.0,
       "y": 0.0,
       "z": 5000.0
+    },
+
+    "localPos": {
+      "x" :  500.0,
+      "y" :  0.0,
+      "z" :  500.0
+    }
+  },
+  "Stage1": {
+    "groupNum": 10,
+    "enemyNum" :  10,
+    "bossGroupNum": 2,
+    "boss": {
+      "type": "MiddleBoss",
+      "eventKey": "GameClear"
+    },
+
+    "pos": {
+      "x": 6000.0,
+      "y": 0.0,
+      "z": 7000.0
     },
 
     "localPos": {

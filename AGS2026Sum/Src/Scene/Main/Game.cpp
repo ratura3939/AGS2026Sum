@@ -61,6 +61,7 @@ namespace {
 	std::array<std::string, static_cast<int>(Game::GAME_PROGRESS::MAX)> PROGRESS =
 	{
 		"Tutorial"
+		,"Stage1"
 	};
 }
 
@@ -230,10 +231,10 @@ void Game::Update(void)
 	//}
 
 
-	if(enemy_->GetActiveEnemyNum() <= 0)
-	{
-		SceneManager::GetInstance().ChangeScene(std::make_shared<GameClear>());
-	}
+	//if(enemy_->GetActiveEnemyNum() <= 0)
+	//{
+	//	SceneManager::GetInstance().ChangeScene(std::make_shared<GameClear>());
+	//}
 	if (!player_->IsAlive())
 	{
 		SceneManager::GetInstance().ChangeScene(std::make_shared<GameOver>());
@@ -547,11 +548,30 @@ void Game::DrawEdge(void)
 
 void Game::UpdateTutorial(void)
 {
+	//条件キーを持っている敵がいなくなったら
 	auto& evMng = EventManager::GetInstance();
 	if (evMng.IsPlayEvent(EVENT_TYPE::OPEN_TUTORIAL_DOOR))
 	{
 		//ドアを開ける
 		stage_->OpenDoor();
+
+		//ステージ１に移行
+		updateProgress_ = &Game::UpdateStage1;
+		progress_ = GAME_PROGRESS::STAGE_1;
+
+		//敵生成
+		enemy_->CreateStageEnemy(stageEnemyData_.allStageInfo[PROGRESS[static_cast<int>(progress_)]]);
+	}
+}
+
+void Game::UpdateStage1(void)
+{
+	//条件キーを持っている敵がいなくなったら
+	auto& evMng = EventManager::GetInstance();
+	if (evMng.IsPlayEvent(EVENT_TYPE::GAME_CLEAR))
+	{
+		//ゲームクリア
+		SceneManager::GetInstance().ChangeScene(std::make_shared<GameClear>());
 	}
 }
 

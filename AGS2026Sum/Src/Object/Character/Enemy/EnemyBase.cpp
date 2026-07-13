@@ -10,6 +10,7 @@
 #include"../../../Renderer/ModelRenderer.h"
 #include "State/EnemyStateBase.h"
 #include "State/EnemyNormalState.h"
+#include "State/EnemyEndState.h"
 #include "Skill/EnemySkillBase.h"
 #include "Brain/EnemyBrain.h"
 #include "OnHit/EnemyOnHit.h"
@@ -187,6 +188,19 @@ void EnemyBase::ResetPos(void)
 	//座標のリセット
 	pos_ = VAdd(groupPos, randPos);
 	movedPos_ = pos_;
+}
+
+void EnemyBase::StateEnd(void)
+{
+	//最後の状態の終了
+	if (state_) state_->Exit(*this);
+
+	//終了状態
+	state_ = std::make_unique<EnemyEndState>();
+
+	//終了
+	state_->Enter(*this);
+	state_->Exit(*this);
 }
 
 void EnemyBase::DoLoad(void)
