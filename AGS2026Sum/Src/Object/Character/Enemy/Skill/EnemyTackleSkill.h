@@ -45,7 +45,7 @@ private:
 
 	//アニメーションスピード
 	static constexpr float TACKLE_ANIM_SPEED = 5.0f;
-	static constexpr float TACKLE_SPEED = 25.0f;
+	static constexpr float TACKLE_SPEED = 15.0f;
 
 	//攻撃時間
 	static constexpr float ATTACK_READY_TIME = 2.0f;
