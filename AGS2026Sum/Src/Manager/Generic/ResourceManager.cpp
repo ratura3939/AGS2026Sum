@@ -74,8 +74,8 @@ void ResourceManager::InitGame(void)
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + L"GameScene.mp3");
 	resourcesMap_.emplace(SRC::GAME_BGM, res);
 
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + L"Tutorial.mv1");
-	resourcesMap_.emplace(SRC::STAGE_MDL, res);
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + L"TutorialStage.mv1");
+	resourcesMap_.emplace(SRC::FIRST_STAGE_MDL, res);
 
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + L"BossStage.mv1");
 	resourcesMap_.emplace(SRC::BOSS_STAGE_MDL, res);

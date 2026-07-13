@@ -17,16 +17,22 @@ AutoDoor::~AutoDoor(void)
 {
 }
 
-void AutoDoor::Init(void)
+void AutoDoor::Load(void)
 {
 	//左ドア
 	leftDoor_ = std::make_unique<Door>(pos_, Door::DOOR_SIDE::LEFT);
 	leftDoor_->Load();
-	leftDoor_->Init();
 
 	//右ドア
 	rightDoor_ = std::make_unique<Door>(pos_, Door::DOOR_SIDE::RIGHT);
 	rightDoor_->Load();
+}
+
+void AutoDoor::Init(void)
+{
+	//左ドア
+	leftDoor_->Init();
+	//右ドア
 	rightDoor_->Init();
 }
 

@@ -7,8 +7,8 @@
 #include "StageManager.h"
 
 namespace {
-	const VECTOR INIT_POS_FIRST_STAGE = { 7000.0f,0.0f,11000.0f };	//初期ステージ初期位置
-	const int VS_BUFF_NUM = 1;
+	const VECTOR INIT_POS_FIRST_STAGE = { 5000,0.0f,1000.0f };	//初期ステージ初期位置
+	const VECTOR INIT_POS_BOSS_STAGE = { 5000,0.0f,11000.0f };
 	const int PS_BUFF_NUM = 0;
 
 	const float SCALING_X = 1.0f;
@@ -34,36 +34,43 @@ void StageManager::Load(void)
 	ResourceManager& resM = ResourceManager::GetInstance();
 
 	//ステージオブジェクトの生成
-	object_ = std::make_unique<StageObjectBase>(resM.LoadModelDuplicate(ResourceManager::SRC::STAGE_MDL), INIT_POS_FIRST_STAGE);
-	object_->Load();
-	object_->Init();
+	firstStage_ = std::make_unique<StageObjectBase>(resM.LoadModelDuplicate(ResourceManager::SRC::FIRST_STAGE_MDL), INIT_POS_FIRST_STAGE);
+	firstStage_->Load();
+
+	//ステージオブジェクトの生成
+	bossStage_ = std::make_unique<StageObjectBase>(resM.LoadModelDuplicate(ResourceManager::SRC::BOSS_STAGE_MDL), INIT_POS_BOSS_STAGE);
+	bossStage_->Load();
 
 	//ドアの生成
 	door_ = std::make_unique<AutoDoor>(INIT_POS_DOOR);
-	door_->Init();
+	door_->Load();
 }
 
 void StageManager::Init(void)
 {
-	object_->Init();
+	firstStage_->Init();
+	bossStage_->Init();
 	door_->Init();
 }
 
 void StageManager::Update(void)
 {
-	object_->Update();
+	firstStage_->Update();
+	bossStage_->Update();
 	door_->Update();
 }
 
 void StageManager::Draw(void)
 {
-	object_->Draw();
+	firstStage_->Draw();
+	bossStage_->Draw();
 	door_->Draw();
 }
 
 void StageManager::Release(void)
 {
-	object_->Release();
+	firstStage_->Release();
+	bossStage_->Release();
 	door_->Release();
 }
 

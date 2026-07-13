@@ -10,6 +10,7 @@ public:
 	AutoDoor(const VECTOR& _position);
 	~AutoDoor(void);
 
+	void Load(void);
 	void Init(void);
 	void Update(void);
 	void Draw(void);

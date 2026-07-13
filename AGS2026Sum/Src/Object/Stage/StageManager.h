@@ -24,7 +24,8 @@ public:
 
 private:
 
-	std::unique_ptr<StageObjectBase> object_;	//ステージオブジェクト
+	std::unique_ptr<StageObjectBase>firstStage_;	//ステージオブジェクト
+	std::unique_ptr<StageObjectBase>bossStage_;	//ボスステージオブジェクト
 	std::unique_ptr<AutoDoor> door_;			//ステージ仕切り用のドア
 };
 
