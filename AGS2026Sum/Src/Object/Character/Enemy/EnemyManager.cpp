@@ -59,11 +59,6 @@ void EnemyManager::Update(void)
 	//インスタンス
 	ChunkManager& chunkMng = ChunkManager::GetInstance();
 
-	//if (InputManager::GetInstance().IsTrigerrDown(InputManager::INPUT_COMMAND::CANCEL))
-	//{
-	//	CreateEnemyGroup(CREATE_NUM);
-	//}
-
 	//古いのを保存
 	oldChunkGroups_ = chunkGroups_;
 
@@ -200,6 +195,13 @@ void EnemyManager::Grouping(EnemyGroup* _group, EnemyBase* _enemy)
 	//グループに所属させる
 	_group->AddEnemy(_enemy);
 	_enemy->SetGroup(_group);
+
+	//グループが加入済みなら
+	if (_group->IsInChank())
+	{
+		//チャンクに入った時の処理
+		_enemy->OnEnterActiveChank();
+	}
 }
 
 void EnemyManager::DeleteEnemy(void)
@@ -254,6 +256,13 @@ void EnemyManager::DeleteEnemyGroup(void)
 	{
 		//チャンク管理から削除
 		ChunkManager::GetInstance().RemoveEnemyGroup(removeGroup);
+
+		//グループが加入済みなら
+		if (removeGroup->IsInChank())
+		{
+			//チャンクから出る処理
+			removeGroup->OnLeaveActiveChank();
+		}
 
 		//グループに所属している敵をグループから抜けさせる
 		enemyGroupPool_->Remove(removeGroup);
@@ -339,6 +348,8 @@ void EnemyManager::ChankGroupsEnterAndLeave(void)
 			chunkGroups_.end(),
 			group) == chunkGroups_.end())
 		{
+			//そもそもグループが存在していないなら無視
+			if (!group->IsActive())continue;
 			group->OnLeaveActiveChank();
 		}
 	}

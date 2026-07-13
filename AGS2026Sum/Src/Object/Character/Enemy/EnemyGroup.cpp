@@ -77,10 +77,10 @@ void EnemyGroup::OnEnterActiveChank(void)
 	//チャンクに入った
 	isInChank_ = true;
 
-	//コライダの生成
+	//各敵の加入処理
 	for (auto& enemy : enemys_)
 	{
-		enemy->CreateCollider();
+		enemy->OnEnterActiveChank();
 	}
 }
 
@@ -89,10 +89,10 @@ void EnemyGroup::OnLeaveActiveChank(void)
 	//チャンクから出た
 	isInChank_ = false;
 
-	//コライダの削除
+	//各敵の離脱処理
 	for (auto& enemy : enemys_)
 	{
-		enemy->DeleteCollider();
+		enemy->OnLeaveActiveChank();
 	}
 }
 

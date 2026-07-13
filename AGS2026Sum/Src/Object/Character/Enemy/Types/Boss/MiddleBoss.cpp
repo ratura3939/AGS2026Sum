@@ -113,7 +113,7 @@ void MiddleBoss::Draw(void)
 void MiddleBoss::CreateCollider(void)
 {
 	//コライダの初期化
-	DeleteAllColliders();
+	DeleteCollider();
 
 	//当たり判定の生成(ボスはほかの敵と接触しない)
 	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, quaRot_, BROUD_RADIUS, RADIUS);

@@ -49,12 +49,6 @@ public:
 	//アニメーション設定
 	void SetAnim(std::unique_ptr<AnimationController> _anim);
 
-	//コライダの生成
-	virtual void CreateCollider(void);
-
-	//コライダの全削除(Groupからの命令用)
-	void DeleteCollider(void);
-
 	//描画
 	virtual void Draw(void)override;
 
@@ -196,6 +190,12 @@ public:
 	//イベントフラグの判定
 	void SubEventCount(void)const;
 
+	//チャンクに入った時の処理
+	void OnEnterActiveChank(void);
+
+	//チャンクから出た時の処理
+	void OnLeaveActiveChank(void);
+
 protected:
 
 	//親ボーン名
@@ -292,6 +292,12 @@ protected:
 
 	//更新
 	virtual void DoUpdate(void)override;
+
+	//コライダの生成
+	virtual void CreateCollider(void);
+
+	//コライダの全削除(Groupからの命令用)
+	void DeleteCollider(void);
 
 	//アニメーションの初期化
 	void InitAnim(void)override;

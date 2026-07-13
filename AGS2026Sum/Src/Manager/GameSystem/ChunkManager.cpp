@@ -77,8 +77,8 @@ void ChunkManager::RemoveEnemyGroup(EnemyGroup* _enemyGroup)
 	int index = _enemyGroup->GetChunkIndex();
 
 	//チャンクから削除
-	auto& group = chunkEnemyMap_[index];
-	group.erase(std::remove(group.begin(), group.end(), _enemyGroup), group.end());
+	auto& groups = chunkEnemyMap_[index];
+	groups.erase(std::remove(groups.begin(), groups.end(), _enemyGroup), groups.end());
 }
 
 void ChunkManager::MoveEnemyGroup(EnemyGroup* _enemyGroup)

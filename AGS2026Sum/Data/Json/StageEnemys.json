@@ -1,7 +1,7 @@
 {
   "Tutorial": {
     "groupNum": 10,
-    "enemyNum" :  6,
+    "enemyNum" :  2,
     "bossGroupNum": 1,
     "boss": {
       "type": "MiddleBoss",
