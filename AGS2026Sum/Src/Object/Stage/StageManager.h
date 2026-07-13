@@ -22,6 +22,10 @@ public:
 	void OpenDoor(void);	//ドアを開く
 	void CloseDoor(void);	//ドアを閉じる
 
+	const VECTOR& GetGoalPosAtDoorOpen(void)const;	//ドアオープン時のカメラ目標位置
+	const VECTOR& GetDoorPos(void)const;	//ドア位置
+
+
 private:
 
 	std::unique_ptr<StageObjectBase>firstStage_;	//ステージオブジェクト

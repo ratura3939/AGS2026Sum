@@ -83,3 +83,13 @@ void StageManager::CloseDoor(void)
 {
 	door_->CloseDoor();
 }
+
+const VECTOR& StageManager::GetDoorPos(void) const
+{
+	return door_->GetPos();
+}
+
+const VECTOR& StageManager::GetGoalPosAtDoorOpen(void)const
+{
+	return door_->GetCameraGoalPosOfDoorEvent();
+}

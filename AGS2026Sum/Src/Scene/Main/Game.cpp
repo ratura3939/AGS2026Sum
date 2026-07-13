@@ -286,17 +286,6 @@ void Game::GameUpdate(void)
 	//	scM.PushScene(std::make_shared<PauseScene>());
 	//}
 
-	if (inpM.IsTriggerDown(InputManager::INPUT_COMMAND::DEBUG_ULT_REDY)) {
-		isDebug_ = !isDebug_;
-
-		if (isDebug_) {
-			stage_->OpenDoor();
-		}
-		else {
-			stage_->CloseDoor();
-		}
-	}
-
 #pragma region 基礎アプデ
 	stage_->Update();
 
@@ -554,6 +543,13 @@ void Game::UpdateTutorial(void)
 	{
 		//ドアを開ける
 		stage_->OpenDoor();
+
+		//カメラの調整
+	/*	Camera& camera = SceneManager::GetInstance().GetCamera();
+		camera.ChangeMode(Camera::MODE::AUTO_MOVE);
+		SetCameraStayTimeAtAutoMove(20.0f);
+		camera.SetGoalPos(stage_->GetGoalPosAtDoorOpen());
+		camera.SetFocusPos(stage_->GetDoorPos());*/
 
 		//ステージ１に移行
 		updateProgress_ = &Game::UpdateStage1;
