@@ -26,7 +26,7 @@ public:
 private:
 
 	//消えるまでの時間
-	static constexpr float FADE_TIME = 5.0f;
+	static constexpr float FADE_TIME = 0.5f;
 
 	//消えるまでの時間
 	float fadeTime_;

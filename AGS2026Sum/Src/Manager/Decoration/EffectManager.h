@@ -18,6 +18,10 @@ public:
 		,PLAYER_KICK_THIRD		//キック三段目
 		,PLAYER_PUNCH_SPECIAL	//パンチ特殊
 		,PLAYER_ULTIMATE		//必殺技
+		,PLAYER_HIT				//プレイヤーヒット
+		,ENEMY_HIT				//敵ヒット
+		,ENEMY_DEAD				//死亡
+		,ENEMY_TACKLE			//突進
 		,MAX
 	};
 

@@ -3,6 +3,7 @@
 #include"../../../Manager/GameSystem/ChunkManager.h"
 #include"../../../Manager/Generic/InputManager.h"
 #include"../../../Manager/Generic/ResourceManager.h"
+#include"../../../Manager/Decoration/EffectManager.h"
 #include"Info/EnemyDefine.h"
 #include"Info/StageEnemyData.h"
 #include"Pool/EnemyGroupPool.h"
@@ -27,6 +28,12 @@ void EnemyManager::Load(void)
 {
 	//リソース
 	auto& res = ResourceManager::GetInstance();
+	auto& eff = EffectManager::GetInstance();
+
+	//エフェクト
+	eff.Add(EffectManager::EFFECT_NAME::ENEMY_HIT, res.Load(ResourceManager::SRC::ENEMY_HIT_EFC).handleId_);
+	eff.Add(EffectManager::EFFECT_NAME::ENEMY_DEAD, res.Load(ResourceManager::SRC::ENEMY_DEAD_EFC).handleId_);
+	eff.Add(EffectManager::EFFECT_NAME::ENEMY_TACKLE, res.Load(ResourceManager::SRC::ENEMY_TACKLE_EFC).handleId_);
 
 	//敵グループのプールを生成
 	enemyGroupPool_ = std::make_unique<EnemyGroupPool>();

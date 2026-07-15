@@ -1,6 +1,7 @@
 #include "../../../../pch.h"
 #include "../../../../Manager/Generic/SceneManager.h"
 #include "../../../../Manager/GameSystem/AttackManager.h"
+#include "../../../../Manager/Decoration/EffectManager.h"
 #include "../EnemyBase.h"
 #include "EnemyTackleSkill.h"
 
@@ -59,6 +60,9 @@ void EnemyTackleSkill::Enter(EnemyBase& _owner)
 	//初回のみの移動量更新
 	_owner.UpdateMovePow();
 
+	//エフェクト
+	EffectManager::GetInstance().Play(_owner.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_TACKLE, _owner.GetPos(), _owner.GetQua(), 10.0f);
+
 	//初期化
 	attackCnt_ = 0.0f;
 }
@@ -92,6 +96,9 @@ void EnemyTackleSkill::Exit(EnemyBase& _owner)
 {
 	//初期化
 	attackCnt_ = 0.0f;
+
+	//エフェクトストップ
+	EffectManager::GetInstance().Stop(_owner.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_TACKLE);
 }
 
 void EnemyTackleSkill::EndEnter(EnemyBase& _owner)

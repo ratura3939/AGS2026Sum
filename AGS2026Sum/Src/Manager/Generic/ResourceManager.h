@@ -70,6 +70,10 @@ public:
 		,PLAYER_KICK_THIRD_EFC		//キック三段目
 		,PLAYER_PUNCH_SPECIAL_EFC	//パンチ特殊
 		,PLAYER_ULTIMATE_EFC		//必殺技エフェクト
+		,PLAYER_HIT_EFC				//プレイヤーヒットエフェクト
+		,ENEMY_HIT_EFC				//敵ヒットエフェクト
+		,ENEMY_DEAD_EFC				//敵死亡エフェクト
+		,ENEMY_TACKLE_EFC			//敵突進エフェクト
 
 		//サウンド
 		// BGM

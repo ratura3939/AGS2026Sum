@@ -31,6 +31,9 @@ public:
 	//攻撃持続時間
 	static constexpr float ATTACK_DURATION = 1.0f;
 
+	//シェーダーの設定
+	static constexpr int PS_C_BUFF_SIZE = 1;
+
 	//コンストラクタ
 	EnemyBase(const ENEMY_TYPE& _type);
 
@@ -196,6 +199,9 @@ public:
 	//チャンクから出た時の処理
 	void OnLeaveActiveChank(void);
 
+	//色変更
+	void SetColor(FLOAT4 _color) { color_ = _color; }
+
 protected:
 
 	//親ボーン名
@@ -280,6 +286,9 @@ protected:
 
 	//発動イベント情報
 	EVENT_TYPE eventKey_;
+
+	//色
+	FLOAT4 color_;
 
 	//読み込み
 	virtual void DoLoad(void)override;

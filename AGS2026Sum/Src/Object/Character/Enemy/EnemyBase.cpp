@@ -28,6 +28,7 @@ EnemyBase::EnemyBase(const ENEMY_TYPE& _type)
 	, movePow_(Utility::VECTOR_ZERO)
 	, gravityPow_(Utility::VECTOR_ZERO)
 	, eventKey_(EVENT_TYPE::NONE)
+	, color_({0.0f,0.0f,0.0f,0.0f})
 {	
 	//行動ごとの処理の設定
 	actionFunc_[static_cast<int>(ENEMY_ACTION::STAY)] = { &EnemyBase::EnterStay, &EnemyBase::UpdateStay, &EnemyBase::ExitStay };
@@ -62,6 +63,7 @@ void EnemyBase::Draw(void)
 	//MV1DrawModel(modelId_);
 
 	//モデルの描画
+	modelMaterial_->SetConstBufPS(0, color_);
 	modelRenderer_->Draw(modelId_,*modelMaterial_);
 }
 
@@ -109,8 +111,6 @@ void EnemyBase::SetSkills(std::vector<std::unique_ptr<EnemySkillBase>> _skills)
 
 void EnemyBase::SetAttackCollider(const AttackManager::ATTACK_TYPE& _name)const
 {
-	//if (colliders_.empty())return;
-
 	//攻撃マネージャー
 	auto& atkMng = AttackManager::GetInstance();
 
@@ -123,8 +123,6 @@ void EnemyBase::SetAttackCollider(const AttackManager::ATTACK_TYPE& _name)const
 
 void EnemyBase::RemoveAttackCollider(void) const
 {
-	//if (colliders_.empty())return;
-
 	//攻撃マネージャーから攻撃コライダを破棄
 	AttackManager::GetInstance().DeleteAttackCollider(colliders_[1]);
 }
@@ -218,7 +216,8 @@ void EnemyBase::DoLoad(void)
 void EnemyBase::LoadShader(void)
 {
 	//モデルマテリアル生成
-	modelMaterial_ = std::make_unique<ModelMaterial>(L"SkinVS.cso", VS_SKIN_BUFF_SIZE, L"StdModelPS.cso", PS_SKIN_BUFF_SIZE);
+	modelMaterial_ = std::make_unique<ModelMaterial>(L"SkinVS.cso", VS_SKIN_BUFF_SIZE, L"StdModelPS.cso", PS_C_BUFF_SIZE);
+	modelMaterial_->AddConstBufPS(color_);
 
 	//モデルレンダラー生成
 	modelRenderer_ = std::make_unique<ModelRenderer>();
