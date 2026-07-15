@@ -6,6 +6,7 @@
 #include"../Decoration/EffectManager.h"
 #include"../Decoration/SoundManager.h"
 #include"../Decoration/UIManager2d.h"
+#include"../Decoration/MakeCutSceneManager.h"
 #include "ResourceManager.h"
 #include "Camera.h"
 #include "SceneManager.h"
@@ -37,6 +38,13 @@ void SceneManager::Init(void)
 
 	//判定
 	CollisionManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::ALL_END);
+
+#ifdef _DEBUG
+
+	//カットシーン制作マネージャの生成
+	MakeCutSceneManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::ALL_END);
+
+#endif
 
 	fader_ = new Fader();
 	fader_->Init();
@@ -112,6 +120,16 @@ void SceneManager::Update(void)
 	}
 	else
 	{
+#ifdef _DEBUG
+
+		MakeCutSceneManager& makeCutM = MakeCutSceneManager::GetInstance();
+		makeCutM.Update();
+
+		if (makeCutM.IsUseMakeEdit()) {
+			return;
+		}
+#endif
+
 		// カメラ更新
 		camera_->Update();
 		//最新のシーンだけを更新
@@ -124,6 +142,10 @@ void SceneManager::Update(void)
 void SceneManager::Draw(void)
 {
 	
+#ifdef _DEBUG
+	MakeCutSceneManager& makeCutM = MakeCutSceneManager::GetInstance();
+#endif
+
 	// 描画先グラフィック領域の指定
 	// (３Ｄ描画で使用するカメラの設定などがリセットされる)
 	SetDrawScreen(mainScreen_);
@@ -142,6 +164,10 @@ void SceneManager::Draw(void)
 		scene->Draw();
 	}
 
+#ifdef _DEBUG
+	makeCutM.DrawAtMainWindow();
+#endif
+
 	//エフェクシア描画
 	DrawEffekseer3D();
 
@@ -152,6 +178,15 @@ void SceneManager::Draw(void)
 	SetDrawScreen(DX_SCREEN_BACK);
 	ClearDrawScreen();
 	DrawGraph(0, 0, mainScreen_, true);
+
+
+#ifdef _DEBUG
+
+	if (makeCutM.IsUseMakeEdit()) {
+		makeCutM.Draw();
+	}
+	
+#endif
 }
 
 void SceneManager::Destroy(void)

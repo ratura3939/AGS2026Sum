@@ -3,6 +3,7 @@
 #include "Manager/Generic/ResourceManager.h"
 #include "Manager/Generic/InputManager.h"
 #include "Manager/Generic/SceneManager.h"
+#include"Common/SingletonRegistry.h"
 #include "Application.h"
 
 Application* Application::instance_ = nullptr;
@@ -125,6 +126,8 @@ void Application::Destroy(void)
 	ResourceManager::GetInstance().Destroy();
 	SceneManager::GetInstance().Destroy();
 	
+	SingletonRegistry::GetInstance().Delete(SingletonRegistry::DESTROY_TIMING::ALL_END);
+
 	// Effekseer‚ğI—¹‚·‚éB
 	Effkseer_End();
 	// DxLibI—¹
