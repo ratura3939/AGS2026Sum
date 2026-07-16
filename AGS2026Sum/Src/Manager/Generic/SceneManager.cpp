@@ -39,13 +39,6 @@ void SceneManager::Init(void)
 	//判定
 	CollisionManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::ALL_END);
 
-#ifdef _DEBUG
-
-	//カットシーン制作マネージャの生成
-	MakeCutSceneManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::ALL_END);
-
-#endif
-
 	fader_ = new Fader();
 	fader_->Init();
 
@@ -129,7 +122,6 @@ void SceneManager::Update(void)
 			return;
 		}
 #endif
-
 		// カメラ更新
 		camera_->Update();
 		//最新のシーンだけを更新
@@ -178,15 +170,6 @@ void SceneManager::Draw(void)
 	SetDrawScreen(DX_SCREEN_BACK);
 	ClearDrawScreen();
 	DrawGraph(0, 0, mainScreen_, true);
-
-
-#ifdef _DEBUG
-
-	if (makeCutM.IsUseMakeEdit()) {
-		makeCutM.Draw();
-	}
-	
-#endif
 }
 
 void SceneManager::Destroy(void)

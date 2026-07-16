@@ -3,6 +3,7 @@
 #include "Manager/Generic/ResourceManager.h"
 #include "Manager/Generic/InputManager.h"
 #include "Manager/Generic/SceneManager.h"
+#include "Manager/Decoration/MakeCutSceneManager.h"
 #include"Common/SingletonRegistry.h"
 #include "Application.h"
 
@@ -85,6 +86,13 @@ void Application::Init(void)
 	// シーン管理初期化
 	SceneManager::CreateInstance();
 
+#ifdef _DEBUG
+
+	//カットシーン制作マネージャの生成
+	MakeCutSceneManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::ALL_END);
+
+#endif
+
 	//FPS用初期化
 	currentFrame_ = 0;
 	lastFrame_ = 0;
@@ -115,6 +123,15 @@ void Application::Run(void)
 		sceneManager.Draw();
 
 		ScreenFlip();
+
+#ifdef _DEBUG
+		MakeCutSceneManager& makeCutM = MakeCutSceneManager::GetInstance();
+
+		if (makeCutM.IsUseMakeEdit()) {
+			makeCutM.Draw();
+		}
+
+#endif
 
 	}
 }

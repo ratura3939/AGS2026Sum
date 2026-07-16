@@ -145,6 +145,12 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Manager\Decoration\MakeCutSceneElement\EditData.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\MakeCutSceneElement\AddNewData.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\MakeCutSceneElement\DataEditBase.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\MakeCutSceneElement\MakeFile.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\MakeCutSceneElement\SelectFunction.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\MakeCutSceneElement\MakeCutSceneElementBase.cpp" />
     <ClCompile Include="Src\Manager\Decoration\CutSceneManager.cpp" />
     <ClCompile Include="Src\Manager\Decoration\MakeCutSceneManager.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\Event\EventManager.cpp" />
@@ -232,8 +238,15 @@
     <ClCompile Include="Src\Utility\Utility.cpp" />
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObjectBase.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\MakeCutSceneElement\StartUp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Manager\Decoration\MakeCutSceneElement\EditData.h" />
+    <ClInclude Include="Src\Manager\Decoration\MakeCutSceneElement\AddNewData.h" />
+    <ClInclude Include="Src\Manager\Decoration\MakeCutSceneElement\DataEditBase.h" />
+    <ClInclude Include="Src\Manager\Decoration\MakeCutSceneElement\MakeFile.h" />
+    <ClInclude Include="Src\Manager\Decoration\MakeCutSceneElement\SelectFunction.h" />
+    <ClInclude Include="Src\Manager\Decoration\MakeCutSceneElement\MakeCutSceneElementBase.h" />
     <ClInclude Include="Src\Manager\Decoration\CutSceneManager.h" />
     <ClInclude Include="Src\Manager\Decoration\MakeCutSceneManager.h" />
     <ClInclude Include="Src\Manager\GameSystem\Event\EventManager.h" />
@@ -329,6 +342,7 @@
     <ClInclude Include="Src\Utility\Utility.h" />
     <ClInclude Include="Src\Object\Stage\StageManager.h" />
     <ClInclude Include="Src\Object\Stage\StageObjectBase.h" />
+    <ClInclude Include="Src\Manager\Decoration\MakeCutSceneElement\StartUp.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shader\Model\NoiseWavePS.hlsl">

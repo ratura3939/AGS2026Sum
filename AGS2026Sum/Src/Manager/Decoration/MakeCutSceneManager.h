@@ -2,14 +2,21 @@
 #include<memory>
 #include"../../Common/Singleton.h"
 
+class MakeCutSceneElementBase;
+class StartUp;
+class SelectFunction;
+class MakeFile;
+class EditData;
+class AddNewData;
+
 class MakeCutSceneManager
 	: public Singleton<MakeCutSceneManager>
 {
 	friend class Singleton<MakeCutSceneManager>;
 
 public:
-	enum class USER_INPUT_ACTION {
-		NONE
+	enum class FUNCTION {
+		START_UP	//開始処理
 		,SELECT		//機能選択
 		,MAKE_FILE	//ファイルの生成
 		,EDIT		//編集
@@ -21,21 +28,14 @@ public:
 	void Draw(void);
 
 	const bool IsUseMakeEdit(void)const { return useMakeCutSceneWindow_; }
+	void ChangeFunction(const FUNCTION& _command);	//切り替え
 
 private:
-	void ChangeFunction(const USER_INPUT_ACTION& _command);	//切り替え
-
-	void UpdateStart(void);				//開始時
-	void UpdateSelectFunction(void);	//使用する機能選択
-	void UpdateMakeFile(void);			//ファイル生成
-	void UpdateEdit(void);				//既存データ編集
-	void UpdateAddData(void);			//新規データ
-
-	void DrawStart(void);			//開始時
-	void DrawSelectFunction(void);	//使用する機能選択
-	void DrawMakeFile(void);		//ファイル生成
-	void DrawEdit(void);			//既存データ編集
-	void DrawAddData(void);			//新規データ
+	/// <summary>
+	/// ウィンドウの準備
+	/// </summary>
+	/// <param name="_showFlag">true=表示/false=非表示</param>
+	void RedyWindow(const bool _showFlag);
 
 	void MakeWindow(void);			//ウィンドウの生成
 
@@ -47,11 +47,12 @@ private:
 	HWND editWindow_;
 	int editScreen_;		//スクリーン
 
-	using Func = void(MakeCutSceneManager::*)(void);
+	std::weak_ptr<MakeCutSceneElementBase>useFunction_;
 
-	Func updateFunc_;	//更新処理
-	Func drawFunc_;		//描画処理
-
-	
+	std::shared_ptr<StartUp>startUp_;
+	std::shared_ptr<SelectFunction>selectFunction_;
+	std::shared_ptr<MakeFile>makeFile_;
+	std::shared_ptr<EditData>editData_;
+	std::shared_ptr<AddNewData>addNewData_;
 };
 

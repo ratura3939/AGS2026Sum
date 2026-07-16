@@ -1,5 +1,6 @@
 #include"../../pch.h"
 #include"../../Application.h"
+#include"../Decoration/MakeCutSceneManager.h"
 #include "InputManager.h"
 
 InputManager* InputManager::instance_ = nullptr;
@@ -92,6 +93,14 @@ void InputManager::Update(void)
 
 	//マウス位置初期化
 	mousePos_ = centerMousePos_;
+
+#ifdef _DEBUG
+	//カットシーン制作中はマウスの位置こちを行わない
+	if (MakeCutSceneManager::GetInstance().IsUseMakeEdit()) {
+		return;
+	}
+#endif
+
 	SetMousePoint(mousePos_.x, mousePos_.y);
 }
 

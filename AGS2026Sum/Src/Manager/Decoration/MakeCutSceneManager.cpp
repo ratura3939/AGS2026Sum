@@ -1,116 +1,113 @@
 #include "../../pch.h"
 #include"../../Application.h"
+#include"MakeCutSceneElement/MakeCutSceneElementBase.h"
+#include"MakeCutSceneElement/StartUp.h"
+#include"MakeCutSceneElement/SelectFunction.h"
+#include"MakeCutSceneElement/MakeFile.h"
+#include"MakeCutSceneElement/EditData.h"
+#include"MakeCutSceneElement/AddNewData.h"
 #include "MakeCutSceneManager.h"
+
+namespace{
+	const int WINDOW_SHOW_IDX = 1;
+	const int WINDOW_HIDE_IDX = 0;
+}
 
 void MakeCutSceneManager::Update(void)
 {
+	//空の時
+	if (useFunction_.expired()) {
+		//処理しない
+		return;
+	}
+
 	//更新処理
-	(this->*updateFunc_)();
+	useFunction_.lock()->Update();
 }
 
 void MakeCutSceneManager::DrawAtMainWindow(void)
 {
+	//空の時
+	if (useFunction_.expired()) {
+		//処理しない
+		return;
+	}
+
 	if (!useMakeCutSceneWindow_) {
 		//描画処理
-		(this->*drawFunc_)();
+		useFunction_.lock()->Draw();
 	}
 }
 
 void MakeCutSceneManager::Draw(void)
 {
+	//空の時
+	if (useFunction_.expired()) {
+		//処理しない
+		return;
+	}
+
 	SetScreenFlipTargetWindow(editWindow_); // 専用ウィンドウをターゲットに設定
+	SetDrawScreen(editScreen_);
+
+	// 画面を初期化
+	ClearDrawScreen();
+
 	//描画処理
-	(this->*drawFunc_)();
+	useFunction_.lock()->Draw();
+
+	// 背面スクリーンにメインスクリーンを描画
+	SetDrawScreen(DX_SCREEN_BACK);
+	ClearDrawScreen();
+	DrawGraph(0, 0, editScreen_, true);
+
+	ScreenFlip();
 
 	SetScreenFlipTargetWindow(NULL);;	//戻す
 }
 
-void MakeCutSceneManager::ChangeFunction(const USER_INPUT_ACTION& _command)
+void MakeCutSceneManager::ChangeFunction(const FUNCTION& _command)
 {
 	switch (_command) {
-	case USER_INPUT_ACTION::NONE:
-		updateFunc_ = &MakeCutSceneManager::UpdateStart;
-		drawFunc_ = &MakeCutSceneManager::DrawStart;
+	case FUNCTION::START_UP:
+		useFunction_ = startUp_;
 		break;
 
-	case USER_INPUT_ACTION::SELECT:
-		updateFunc_ = &MakeCutSceneManager::UpdateSelectFunction;
-		drawFunc_ = &MakeCutSceneManager::DrawSelectFunction;
+	case FUNCTION::SELECT:
+		useFunction_ = selectFunction_;
 		break;
 
-	case USER_INPUT_ACTION::MAKE_FILE:
-		updateFunc_ = &MakeCutSceneManager::UpdateMakeFile;
-		drawFunc_ = &MakeCutSceneManager::DrawMakeFile;
+	case FUNCTION::MAKE_FILE:
+		useFunction_ = makeFile_;
 		break;
 
-	case USER_INPUT_ACTION::EDIT:
-		updateFunc_ = &MakeCutSceneManager::UpdateEdit;
-		drawFunc_ = &MakeCutSceneManager::DrawEdit;
+	case FUNCTION::EDIT:
+		useFunction_ = editData_;
 		break;
 
-	case USER_INPUT_ACTION::ADD_DATA:
-		updateFunc_ = &MakeCutSceneManager::UpdateAddData;
-		drawFunc_ = &MakeCutSceneManager::DrawAddData;
+	case FUNCTION::ADD_DATA:
+		useFunction_ = addNewData_;
 		break;
 	}
 
-	//ウィンドウの生成・削除
-	if (_command == USER_INPUT_ACTION::NONE) {
-		DestroyWindow(editWindow_);
-		useMakeCutSceneWindow_ = false;
+	//ウィンドウが描画されていない時
+	if (!useMakeCutSceneWindow_) {
+		//必要とするシーンへと遷移するとき
+		if (_command != FUNCTION::START_UP) {
+			//ウィンドウを表示する
+			RedyWindow(true);
+		}
 	}
+	//すでに描画されている時
 	else {
-		MakeWindow();
-		useMakeCutSceneWindow_ = true;
+		//必要としないシーンへと遷移するとき
+		if ( _command == FUNCTION::START_UP) {
+			//ウィンドウを非表示する
+			RedyWindow(false);
+		}
 	}
-}
 
-void MakeCutSceneManager::UpdateStart(void)
-{
-	if (CheckHitKey(KEY_INPUT_M)) {
-		ChangeFunction(USER_INPUT_ACTION::SELECT);
-	}
-}
-
-void MakeCutSceneManager::UpdateSelectFunction(void)
-{
-	if (CheckHitKey(KEY_INPUT_N)) {
-		ChangeFunction(USER_INPUT_ACTION::NONE);
-	}
-}
-
-void MakeCutSceneManager::UpdateMakeFile(void)
-{
-}
-
-void MakeCutSceneManager::UpdateEdit(void)
-{
-}
-
-void MakeCutSceneManager::UpdateAddData(void)
-{
-}
-
-void MakeCutSceneManager::DrawStart(void)
-{
-	DrawString(0, 0, L"OK!CreateManager", 0xff0000);
-}
-
-void MakeCutSceneManager::DrawSelectFunction(void)
-{
-	DrawString(0, 0, L"OK!!NewWindow", 0xff0000);
-}
-
-void MakeCutSceneManager::DrawMakeFile(void)
-{
-}
-
-void MakeCutSceneManager::DrawEdit(void)
-{
-}
-
-void MakeCutSceneManager::DrawAddData(void)
-{
+	useFunction_.lock()->Reset();	//必要パラメータ初期化
 }
 
 //ウィンドウ関係
@@ -126,6 +123,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		return DefWindowProc(hWnd, msg, wParam, lParam);
 	}
 	return 0;
+}
+
+void MakeCutSceneManager::RedyWindow(const bool _showFlag)
+{
+	//ウィンドウの状態設定
+	int windowModeIdx = WINDOW_HIDE_IDX;
+
+	if (_showFlag) {
+		windowModeIdx = WINDOW_SHOW_IDX;
+	}
+
+	ShowWindow(editWindow_, windowModeIdx);
+	//使用フラグオン
+	useMakeCutSceneWindow_ = _showFlag;
+	//マウス表示設定
+	SetMouseDispFlag(_showFlag);
+	//両方のウィンドウをアクティブ設定
+	SetAlwaysRunFlag(_showFlag);
 }
 
 void MakeCutSceneManager::MakeWindow(void)
@@ -166,24 +181,31 @@ void MakeCutSceneManager::MakeWindow(void)
 		windowRect.bottom - windowRect.top,
 		NULL, NULL, hInstance, NULL
 	);
-
-	const int windowShowNomal = 1;
-	ShowWindow(editWindow_, windowShowNomal);
-
 	const int posX = windowWidth;
 	const int posY = 0;
 	SetWindowPos(editWindow_, NULL, posX, posY, posX + windowWidth, posY + windowHeight, NULL);
+
+	//スクリーンも生成
+	editScreen_ = MakeScreen(
+		windowWidth, windowHeight, true);
 }
 
 MakeCutSceneManager::MakeCutSceneManager(void)
 	:useMakeCutSceneWindow_(false)
-	,editScreen_(-1)
-	,updateFunc_(&MakeCutSceneManager::UpdateStart)
-	,drawFunc_(&MakeCutSceneManager::DrawStart)
+	, editScreen_(-1)
+	, startUp_(std::make_shared<StartUp>())
+	, selectFunction_(std::make_shared<SelectFunction>())
+	, makeFile_(std::make_shared<MakeFile>())
+	, editData_(std::make_shared<EditData>())
+	, addNewData_(std::make_shared<AddNewData>())
+	, useFunction_()
 {
+	MakeWindow();
+	ChangeFunction(FUNCTION::START_UP);
 }
 
 
 MakeCutSceneManager::~MakeCutSceneManager(void)
 {
+	DestroyWindow(editWindow_);
 }
