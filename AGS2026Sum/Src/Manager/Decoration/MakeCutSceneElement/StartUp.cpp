@@ -23,7 +23,7 @@ void StartUp::Update(void)
 
 	if (isStart_) {
 		if (CheckHitKey(KEY_INPUT_Y)) {
-			MakeCutSceneManager::GetInstance().ChangeFunction(MakeCutSceneManager::FUNCTION::SELECT);
+			MakeCutSceneManager::GetInstance().ChangeFunction(MakeCutSceneManager::FUNCTION::EDIT);
 		}
 		else if (CheckHitKey(KEY_INPUT_N)) {
 			isStart_ = false;

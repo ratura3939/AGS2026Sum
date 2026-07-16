@@ -4,10 +4,7 @@
 
 class MakeCutSceneElementBase;
 class StartUp;
-class SelectFunction;
-class MakeFile;
-class EditData;
-class AddNewData;
+class EditDataScene;
 
 class MakeCutSceneManager
 	: public Singleton<MakeCutSceneManager>
@@ -17,10 +14,7 @@ class MakeCutSceneManager
 public:
 	enum class FUNCTION {
 		START_UP	//開始処理
-		,SELECT		//機能選択
-		,MAKE_FILE	//ファイルの生成
 		,EDIT		//編集
-		,ADD_DATA	//新規データ	
 	};
 
 	void Update(void);
@@ -50,9 +44,6 @@ private:
 	std::weak_ptr<MakeCutSceneElementBase>useFunction_;
 
 	std::shared_ptr<StartUp>startUp_;
-	std::shared_ptr<SelectFunction>selectFunction_;
-	std::shared_ptr<MakeFile>makeFile_;
-	std::shared_ptr<EditData>editData_;
-	std::shared_ptr<AddNewData>addNewData_;
+	std::shared_ptr<EditDataScene>editData_;
 };
 

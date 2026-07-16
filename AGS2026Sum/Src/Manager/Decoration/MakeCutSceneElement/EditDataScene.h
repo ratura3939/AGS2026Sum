@@ -1,11 +1,12 @@
 #pragma once
 #include "MakeCutSceneElementBase.h"
-class MakeFile :
+
+class EditDataScene :
     public MakeCutSceneElementBase
 {
 public:
-    MakeFile(void);
-    ~MakeFile(void)override;
+    EditDataScene(void);
+    ~EditDataScene(void)override;
 
     void Init(void)override;
     void Update(void)override;

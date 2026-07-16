@@ -145,11 +145,11 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Src\Manager\Decoration\MakeCutSceneElement\EditData.cpp" />
-    <ClCompile Include="Src\Manager\Decoration\MakeCutSceneElement\AddNewData.cpp" />
-    <ClCompile Include="Src\Manager\Decoration\MakeCutSceneElement\DataEditBase.cpp" />
-    <ClCompile Include="Src\Manager\Decoration\MakeCutSceneElement\MakeFile.cpp" />
-    <ClCompile Include="Src\Manager\Decoration\MakeCutSceneElement\SelectFunction.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\MakeCutSceneElement\EditDataScene.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\MakeCutSceneElement\EditFunction\EditData.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\MakeCutSceneElement\EditFunction\AddNewData.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\MakeCutSceneElement\EditFunction\DataEditBase.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\MakeCutSceneElement\EditFunction\MakeFile.cpp" />
     <ClCompile Include="Src\Manager\Decoration\MakeCutSceneElement\MakeCutSceneElementBase.cpp" />
     <ClCompile Include="Src\Manager\Decoration\CutSceneManager.cpp" />
     <ClCompile Include="Src\Manager\Decoration\MakeCutSceneManager.cpp" />
@@ -241,11 +241,11 @@
     <ClCompile Include="Src\Manager\Decoration\MakeCutSceneElement\StartUp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Src\Manager\Decoration\MakeCutSceneElement\EditData.h" />
-    <ClInclude Include="Src\Manager\Decoration\MakeCutSceneElement\AddNewData.h" />
-    <ClInclude Include="Src\Manager\Decoration\MakeCutSceneElement\DataEditBase.h" />
-    <ClInclude Include="Src\Manager\Decoration\MakeCutSceneElement\MakeFile.h" />
-    <ClInclude Include="Src\Manager\Decoration\MakeCutSceneElement\SelectFunction.h" />
+    <ClInclude Include="Src\Manager\Decoration\MakeCutSceneElement\EditDataScene.h" />
+    <ClInclude Include="Src\Manager\Decoration\MakeCutSceneElement\EditFunction\EditData.h" />
+    <ClInclude Include="Src\Manager\Decoration\MakeCutSceneElement\EditFunction\AddNewData.h" />
+    <ClInclude Include="Src\Manager\Decoration\MakeCutSceneElement\EditFunction\DataEditBase.h" />
+    <ClInclude Include="Src\Manager\Decoration\MakeCutSceneElement\EditFunction\MakeFile.h" />
     <ClInclude Include="Src\Manager\Decoration\MakeCutSceneElement\MakeCutSceneElementBase.h" />
     <ClInclude Include="Src\Manager\Decoration\CutSceneManager.h" />
     <ClInclude Include="Src\Manager\Decoration\MakeCutSceneManager.h" />

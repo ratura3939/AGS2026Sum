@@ -2,10 +2,7 @@
 #include"../../Application.h"
 #include"MakeCutSceneElement/MakeCutSceneElementBase.h"
 #include"MakeCutSceneElement/StartUp.h"
-#include"MakeCutSceneElement/SelectFunction.h"
-#include"MakeCutSceneElement/MakeFile.h"
-#include"MakeCutSceneElement/EditData.h"
-#include"MakeCutSceneElement/AddNewData.h"
+#include"MakeCutSceneElement/EditDataScene.h"
 #include "MakeCutSceneManager.h"
 
 namespace{
@@ -73,20 +70,8 @@ void MakeCutSceneManager::ChangeFunction(const FUNCTION& _command)
 		useFunction_ = startUp_;
 		break;
 
-	case FUNCTION::SELECT:
-		useFunction_ = selectFunction_;
-		break;
-
-	case FUNCTION::MAKE_FILE:
-		useFunction_ = makeFile_;
-		break;
-
 	case FUNCTION::EDIT:
 		useFunction_ = editData_;
-		break;
-
-	case FUNCTION::ADD_DATA:
-		useFunction_ = addNewData_;
 		break;
 	}
 
@@ -192,13 +177,10 @@ void MakeCutSceneManager::MakeWindow(void)
 
 MakeCutSceneManager::MakeCutSceneManager(void)
 	:useMakeCutSceneWindow_(false)
-	, editScreen_(-1)
-	, startUp_(std::make_shared<StartUp>())
-	, selectFunction_(std::make_shared<SelectFunction>())
-	, makeFile_(std::make_shared<MakeFile>())
-	, editData_(std::make_shared<EditData>())
-	, addNewData_(std::make_shared<AddNewData>())
-	, useFunction_()
+	,editScreen_(-1)
+	,startUp_(std::make_shared<StartUp>())
+	,editData_(std::make_shared<EditDataScene>())
+	,useFunction_()
 {
 	MakeWindow();
 	ChangeFunction(FUNCTION::START_UP);
