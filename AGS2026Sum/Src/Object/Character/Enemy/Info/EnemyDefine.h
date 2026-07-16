@@ -11,7 +11,7 @@ enum class ENEMY_TYPE
 };
 
 //String型のキャスト
-static const ENEMY_TYPE& CastStringToEnemyType(std::string _string)
+inline const ENEMY_TYPE CastStringToEnemyType(std::string _string)
 {
 	if (_string == "NormalEnemy") return ENEMY_TYPE::NORMAL;
 	else if (_string == "MiddleBoss")return ENEMY_TYPE::MIDDLE_BOSS;

@@ -27,7 +27,7 @@ BossOnHit::~BossOnHit(void)
 void BossOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 {
 	//親をボスに
-	auto parent = dynamic_cast<MiddleBoss*>(&parent_);
+	auto parent = dynamic_cast<BossBase*>(&parent_);
 	if (!parent)return;
 
 	//終了なら無視

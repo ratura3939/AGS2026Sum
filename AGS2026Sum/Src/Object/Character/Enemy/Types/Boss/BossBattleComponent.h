@@ -28,6 +28,9 @@ public:
 	//ブレイクが終わったか
 	const bool IsBreakEnd(void)const { return breakTime_ >= BREAK_TIME; }
 
+	//ガード耐久値の取得
+	const float GetGuardDurability(void)const { return guardDurability_; }
+
 private:
 
 	//ガード耐久値最大値
