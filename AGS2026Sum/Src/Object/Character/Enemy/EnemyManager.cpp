@@ -34,6 +34,7 @@ void EnemyManager::Load(void)
 	eff.Add(EffectManager::EFFECT_NAME::ENEMY_HIT, res.Load(ResourceManager::SRC::ENEMY_HIT_EFC).handleId_);
 	eff.Add(EffectManager::EFFECT_NAME::ENEMY_DEAD, res.Load(ResourceManager::SRC::ENEMY_DEAD_EFC).handleId_);
 	eff.Add(EffectManager::EFFECT_NAME::ENEMY_TACKLE, res.Load(ResourceManager::SRC::ENEMY_TACKLE_EFC).handleId_);
+	eff.Add(EffectManager::EFFECT_NAME::ENEMY_LANDING, res.Load(ResourceManager::SRC::ENEMY_LANDING_EFC).handleId_);
 
 	//敵グループのプールを生成
 	enemyGroupPool_ = std::make_unique<EnemyGroupPool>();
@@ -177,23 +178,38 @@ void EnemyManager::SetAnimSpeedPercent(const float _percent)
 
 void EnemyManager::CreateStageEnemy(const StageEnemyData::AllEnemysInfo& _enemyInfo)
 {
-	//座標
-	VECTOR pos = _enemyInfo.pos;
-	VECTOR randPos;
+	//スポーンエリア
+	const auto& spawnArea = _enemyInfo.spawnAreas;
+
+	//エリアの個数
+	int areaNum = static_cast<int>(spawnArea.size());
 
 	//ボスグループの生成
-	const auto& bossInfo = _enemyInfo.bossInfo;
-	for (int i = 0; i < _enemyInfo.bossGroupNum;i++)
+	const auto& bossInfos = _enemyInfo.bossInfos;
+	for (const auto& bossInfo : bossInfos)
 	{
-		randPos = Utility::GetRandomValue(VScale(_enemyInfo.localPos, -1.0f), _enemyInfo.localPos);
-		CreateEnemyGroup(_enemyInfo.enemyNum, VAdd(pos, randPos), bossInfo.bossType, bossInfo.eventType);
+		CreateEnemyGroup(_enemyInfo.enemyNum, bossInfo.pos, bossInfo.bossType, bossInfo.eventType);
 	}
 
 	//雑魚グループの生成
+	VECTOR randPos;
 	for (int i = 0; i < _enemyInfo.groupNum;i++)
 	{
-		randPos = Utility::GetRandomValue(VScale(_enemyInfo.localPos, -1.0f), _enemyInfo.localPos);
-		CreateEnemyGroup(_enemyInfo.enemyNum, VAdd(pos, randPos), ENEMY_TYPE::NORMAL, EVENT_TYPE::NONE);
+		//ランダム
+		int randAreaNum = Utility::GetRandomValue(0, areaNum - 1);
+
+		//ランダムのエリア
+		const auto& randArea = spawnArea[randAreaNum];
+
+		//ランダムのエリアに設定
+		randPos = randArea.center;
+
+		//そこから少しずらす
+		randPos.x += Utility::GetRandomValue(-randArea.size, randArea.size);
+		randPos.z += Utility::GetRandomValue(-randArea.size, randArea.size);
+
+		//生成
+		CreateEnemyGroup(_enemyInfo.enemyNum, randPos, ENEMY_TYPE::NORMAL, EVENT_TYPE::NONE);
 	}
 }
 

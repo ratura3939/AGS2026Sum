@@ -68,7 +68,7 @@ void MiddleBoss::DoUpdate(void)
 void MiddleBoss::Draw(void)
 {
 	//デバッグ描画
-	//DrawDebug();
+	DrawDebug();
 
 	//戦闘情報描画
 	battle_.Draw();

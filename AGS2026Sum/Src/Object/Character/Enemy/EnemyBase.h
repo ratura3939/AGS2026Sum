@@ -136,6 +136,9 @@ public:
 	//移動処理
 	void Move(void)override;
 
+	//回転更新
+	void Rotation(void);
+
 	//速度設定
 	void SetSpeed(const float _speed) { speed_ = _speed; }
 
@@ -144,6 +147,9 @@ public:
 
 	//バック移動
 	void BackMove(void);
+
+	//バック用回転更新
+	void BackRotation(void);
 
 	//本体当たり判定の有効化
 	void EnableHitCollider(void);

@@ -44,6 +44,7 @@ public:
 private:
 
 	//アニメーションスピード
+	static constexpr float TACKLE_PRE_ANIM_SPEED = 5.0f;
 	static constexpr float TACKLE_ANIM_SPEED = 2.0f;
 	static constexpr float TACKLE_SPEED = 15.0f;
 
@@ -57,5 +58,8 @@ private:
 
 	//攻撃の半径
 	static constexpr float RADIUS = 200.0f;
+
+	//エフェクトの大きさ
+	static constexpr float EFF_SCALE = 100.0f;
 };
 

@@ -193,7 +193,10 @@ void EnemyBase::StateEnd(void)
 	//最後の状態の終了
 	if (state_) state_->Exit(*this);
 
-	//終了状態
+	//既に終了しているなら終わり
+	if (state_->GetStateId() == ENEMY_STATE::END)return;
+
+	//途中で強制終了しているなら終了処理をする
 	state_ = std::make_unique<EnemyEndState>();
 
 	//終了
@@ -231,6 +234,9 @@ void EnemyBase::DoInit(void)
 	//状態の初期化
 	state_ = std::make_unique<EnemyNormalState>();
 	state_->Enter(*this);
+
+	//色の初期化
+	color_ = { 0.0f,0.0f,0.0f,0.0f };
 
 	//アニメーション初期化
 	InitAnim();
@@ -537,11 +543,16 @@ void EnemyBase::Move(void)
 	VECTOR movedPos = VAdd(movedPos_, movePow);
 
 	//回転の更新
-	VECTOR moveDir = Utility::GetMoveVec(movedPos, movedPos_);
-	quaRot_ = quaRot_.LookRotation(VGet(moveDir.x, 0.0f, moveDir.z));
+	Rotation();
 
 	//移動後座標の更新
 	movedPos_ = movedPos;
+
+	//下に落ちすぎないようにする
+	if (movedPos.y < -100.0f)
+	{
+		isGrounding_ = true;
+	}
 
 	//地面にめり込まないようにする
 	if(isGrounding_)
@@ -549,6 +560,16 @@ void EnemyBase::Move(void)
 		movedPos_.y = 0.0f;
 		gravityPow_ = Utility::VECTOR_ZERO;
 	}
+}
+
+void EnemyBase::Rotation(void)
+{
+	//移動後座標の更新
+	VECTOR movedPos = VAdd(movedPos_, movePow_);
+
+	//回転の更新
+	VECTOR moveDir = Utility::GetMoveVec(movedPos, movedPos_);
+	quaRot_ = quaRot_.LookRotation(VGet(moveDir.x, 0.0f, moveDir.z));
 }
 
 void EnemyBase::UpdateMovePow(void)
@@ -559,29 +580,21 @@ void EnemyBase::UpdateMovePow(void)
 
 void EnemyBase::BackMove(void)
 {
-	//重力
-	GravityManager::GetInstance().CalcGravity(Utility::DIR_D, gravityPow_);
-	movePow_ = VAdd(movePow_, gravityPow_);
+	//移動
+	Move();
 
-	//移動量をレートに合わせる
-	VECTOR movePow = VScale(movePow_, SceneManager::GetInstance().GetUpdateSpeedRate());
+	//回転の更新
+	BackRotation();
+}
 
+void EnemyBase::BackRotation(void)
+{
 	//移動後座標の更新
-	VECTOR movedPos = VAdd(movedPos_, movePow);
+	VECTOR movedPos = VAdd(movedPos_, movePow_);
 
 	//回転の更新
 	VECTOR moveDir = Utility::GetMoveVec(movedPos_, movedPos);
 	quaRot_ = quaRot_.LookRotation(VGet(moveDir.x, 0.0f, moveDir.z));
-
-	//移動後座標の更新
-	movedPos_ = movedPos;
-
-	//地面にめり込まないようにする
-	if (movedPos_.y < 0.0f)
-	{
-		movedPos_.y = 0.0f;
-		gravityPow_ = Utility::VECTOR_ZERO;
-	}
 }
 
 void EnemyBase::EnableHitCollider(void)

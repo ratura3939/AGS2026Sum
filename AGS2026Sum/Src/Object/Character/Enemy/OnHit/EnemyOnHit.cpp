@@ -66,7 +66,9 @@ void EnemyOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 	//ここからヒット処理
 
 	//ヒットエフェクト
-	EffectManager::GetInstance().Play(parent_.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_HIT, parent_.GetPos(), parent_.GetQua(), 10.0f);
+	auto& eff = EffectManager::GetInstance();
+	if(!eff.IsEffectPlay(parent_.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_HIT))
+		eff.Play(parent_.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_HIT, parent_.GetPos(), parent_.GetQua(), 10.0f);
 
 	//リセット
 	cnt_ = 0.0f;

@@ -342,6 +342,10 @@ void ResourceManager::ResourceEnemy(void)
 	//突進エフェクト
 	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"Tackle.efk");
 	resourcesMap_.emplace(SRC::ENEMY_TACKLE_EFC, res);
+
+	//突進エフェクト
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"Landing.efk");
+	resourcesMap_.emplace(SRC::ENEMY_LANDING_EFC, res);
 }
 
 void ResourceManager::ResourceBoss(void)

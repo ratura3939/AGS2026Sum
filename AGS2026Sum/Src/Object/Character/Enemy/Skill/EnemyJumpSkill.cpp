@@ -1,6 +1,7 @@
 #include "../../../../pch.h"
 #include "../../../../Manager/Generic/SceneManager.h"
 #include "../../../../Manager/GameSystem/AttackManager.h"
+#include "../../../../Manager/Decoration/EffectManager.h"
 #include "../EnemyBase.h"
 #include "EnemyJumpSkill.h"
 
@@ -53,6 +54,9 @@ void EnemyJumpSkill::Enter(EnemyBase& _owner)
 	//攻撃範囲設定
 	_owner.SetAttackRadius(RADIUS);
 
+	//エフェクト
+	EffectManager::GetInstance().Play(_owner.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_LANDING, _owner.GetPos(), _owner.GetQua(), EFF_SCALE);
+
 	//初期化
 	attackCnt_ = 0.0f;
 }
@@ -73,6 +77,9 @@ void EnemyJumpSkill::Exit(EnemyBase& _owner)
 {
 	//初期化
 	attackCnt_ = 0.0f;
+
+	//エフェクト
+	EffectManager::GetInstance().Stop(_owner.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_LANDING);
 }
 
 void EnemyJumpSkill::EndEnter(EnemyBase& _owner)

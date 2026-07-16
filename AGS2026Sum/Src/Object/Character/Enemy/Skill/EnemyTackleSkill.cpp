@@ -17,6 +17,9 @@ void EnemyTackleSkill::ReadyEnter(EnemyBase& _owner)
 {
 	//初期化
 	attackCnt_ = 0.0f;
+
+	//アニメーション
+	_owner.PlayNoBlendAnim(L"Tackle", TACKLE_PRE_ANIM_SPEED);
 }
 
 const bool EnemyTackleSkill::ReadyUpdate(EnemyBase& _owner)
@@ -27,6 +30,10 @@ const bool EnemyTackleSkill::ReadyUpdate(EnemyBase& _owner)
 	//準備が終わったらtrue
 	if (attackCnt_ > ATTACK_READY_TIME)return true;
 	else attackCnt_ += scnMng.GetScaleUpdateSpeedRate(scnMng.GetDeltaTime());
+	
+	//対象にベクトルを合わせる
+	_owner.UpdateMovePow();
+	_owner.Rotation();
 
 	return false;
 }
@@ -35,6 +42,9 @@ void EnemyTackleSkill::ReadyExit(EnemyBase& _owner)
 {
 	//初期化
 	attackCnt_ = 0.0f;
+
+	//アニメーション
+	_owner.PlayNoBlendAnim(L"Idle");
 }
 
 void EnemyTackleSkill::Enter(EnemyBase& _owner)
@@ -61,7 +71,7 @@ void EnemyTackleSkill::Enter(EnemyBase& _owner)
 	_owner.UpdateMovePow();
 
 	//エフェクト
-	EffectManager::GetInstance().Play(_owner.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_TACKLE, _owner.GetPos(), _owner.GetQua(), 10.0f);
+	EffectManager::GetInstance().Play(_owner.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_TACKLE, _owner.GetPos(), _owner.GetQua(), EFF_SCALE);
 
 	//初期化
 	attackCnt_ = 0.0f;

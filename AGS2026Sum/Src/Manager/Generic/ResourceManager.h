@@ -74,6 +74,7 @@ public:
 		,ENEMY_HIT_EFC				//敵ヒットエフェクト
 		,ENEMY_DEAD_EFC				//敵死亡エフェクト
 		,ENEMY_TACKLE_EFC			//敵突進エフェクト
+		,ENEMY_LANDING_EFC			//敵ジャンプ着地エフェクト
 
 		//サウンド
 		// BGM
