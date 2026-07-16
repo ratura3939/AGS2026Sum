@@ -17,6 +17,7 @@ public:
 		,EDIT		//編集
 	};
 
+	void Init(void)override;
 	void Update(void);
 	void DrawAtMainWindow(void);	//初期描画（元ウィンドウでの表示）
 	void Draw(void);

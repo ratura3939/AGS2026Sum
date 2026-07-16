@@ -10,6 +10,12 @@ namespace{
 	const int WINDOW_HIDE_IDX = 0;
 }
 
+void MakeCutSceneManager::Init(void)
+{
+	startUp_->Init();
+	editData_->Init();
+}
+
 void MakeCutSceneManager::Update(void)
 {
 	//空の時

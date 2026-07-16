@@ -1,4 +1,5 @@
 #include "../../pch.h"
+#include"../MakeCutSceneManager.h"
 #include "StartUp.h"
 
 StartUp::StartUp(void)
@@ -17,7 +18,6 @@ void StartUp::Init(void)
 void StartUp::Update(void)
 {
 	if (CheckHitKey(KEY_INPUT_M)) {
-		//MakeCutSceneManager::GetInstance().ChangeFunction(MakeCutSceneManager::FUNCTION::SELECT);
 		isStart_ = true;
 	}
 

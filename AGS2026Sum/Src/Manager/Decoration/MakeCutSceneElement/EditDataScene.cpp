@@ -1,8 +1,14 @@
 #include "../../pch.h"
 #include"../MakeCutSceneManager.h"
+#include"EditFunction/AddNewData.h"
+#include"EditFunction/EditData.h"
+#include"EditFunction/MakeFile.h"
 #include "EditDataScene.h"
 
 EditDataScene::EditDataScene(void)
+	:newDataFunc_(std::make_unique<AddNewData>())
+	,editDataFunc_(std::make_unique<EditData>())
+	,makeFileFunc_(std::make_unique<MakeFile>())
 {
 }
 

@@ -1,6 +1,4 @@
 #pragma once
-#include"../MakeCutSceneManager.h"
-
 class MakeCutSceneElementBase
 {
 public:
