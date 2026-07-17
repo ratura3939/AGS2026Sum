@@ -243,6 +243,9 @@ void Game::Update(void)
 			cameraGoalStayCounter_ = 0;
 
 			camera.ChangeMode(Camera::MODE::RESET);	//カメラリセット
+
+			//個別演出
+
 		}
 	}
 }
@@ -347,13 +350,6 @@ void Game::UpdateTutorial(void)
 		SetCameraStayTimeAtAutoMove(120.0f);
 		camera.SetGoalPos(stage_->GetGoalPosAtDoorOpen());
 		camera.SetFocusPos(stage_->GetDoorPos());
-
-		//ステージ１に移行
-		updateProgress_ = &Game::UpdateStage1;
-		progress_ = GAME_PROGRESS::STAGE_1;
-
-		//敵生成
-		enemy_->CreateStageEnemy(stageEnemyData_.allStageInfo[PROGRESS[static_cast<int>(progress_)]]);
 	}
 }
 
@@ -436,6 +432,22 @@ void Game::FinishSwitchBgm(void)
 	switchBgmStr_ = ret;
 	//初期化
 	nextBgmVol_ = 0;
+}
+
+void Game::StartNextStage(void)
+{
+	//暗転
+
+	//ステージの変更
+
+	//プレイヤーの移動
+
+	//終了判定をステージ１に移行
+	updateProgress_ = &Game::UpdateStage1;
+	progress_ = GAME_PROGRESS::STAGE_1;
+
+	//敵生成
+	enemy_->CreateStageEnemy(stageEnemyData_.allStageInfo[PROGRESS[static_cast<int>(progress_)]]);
 }
 
 void Game::StartSlow(void)

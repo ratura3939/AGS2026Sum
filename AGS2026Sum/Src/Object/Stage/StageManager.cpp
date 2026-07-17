@@ -22,6 +22,8 @@ namespace {
 }
 
 StageManager::StageManager(void)
+	:updateFunc_{&StageManager::UpdateTutorialStage,&StageManager::UpdateFirstStage }
+	,drawFunc_{&StageManager::DrawTutorialStage,&StageManager::DrawFirstStage }
 {
 }
 
@@ -55,6 +57,8 @@ void StageManager::Init(void)
 
 void StageManager::Update(void)
 {
+	(this->*updateFunc_)();
+
 	firstStage_->Update();
 	bossStage_->Update();
 	door_->Update();
@@ -62,6 +66,7 @@ void StageManager::Update(void)
 
 void StageManager::Draw(void)
 {
+	(this->*drawFunc_)();
 	firstStage_->Draw();
 	bossStage_->Draw();
 	door_->Draw();
@@ -87,6 +92,22 @@ void StageManager::CloseDoor(void)
 const VECTOR& StageManager::GetDoorPos(void) const
 {
 	return door_->GetPos();
+}
+
+void StageManager::UpdateTutorialStage(void)
+{
+}
+
+void StageManager::UpdateFirstStage(void)
+{
+}
+
+void StageManager::DrawTutorialStage(void)
+{
+}
+
+void StageManager::DrawFirstStage(void)
+{
 }
 
 const VECTOR& StageManager::GetGoalPosAtDoorOpen(void)const

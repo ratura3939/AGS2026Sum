@@ -92,6 +92,9 @@ private:
 	//切り換え終了時の処理
 	void FinishSwitchBgm(void);
 	
+	//２ステージ目の開始
+	void StartNextStage(void);
+
 	//デバッグ描画
 	void DrawDebug(void);
 
