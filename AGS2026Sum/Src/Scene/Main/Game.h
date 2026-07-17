@@ -81,11 +81,6 @@ private:
 
 	//各種更新
 	void GameUpdate(void);			//ゲーム通常
-	void DirectionUpdate(void);		//演出アップデート
-	bool DirectionPostEffect(void);	//ポストエフェクト
-	bool DirectionShakeScreen(void);//画面揺れ演出
-	void DoShake(void);				//揺らす
-	bool DirectionCameraMove(void);	//カメラ移動
 
 	//各種描画処理(ポストエフェクト)
 	void DrawEdge(void);	//エッジ描画
@@ -94,23 +89,11 @@ private:
 	void UpdateTutorial(void);
 	void UpdateStage1(void);
 
-	/// <summary>
-	/// 攻撃の基礎情報登録(ゆくゆくは外部データにしたい)
-	/// </summary>
-	void AttackDataInit(void);
-
-	/// <summary>
-	/// ロックオンの対象決め
-	/// </summary>
-	/// <param name=""></param>
-	//const int DecideRockEnemy(void);
-
 	//切り換え終了時の処理
 	void FinishSwitchBgm(void);
 	
 	//デバッグ描画
 	void DrawDebug(void);
-
 
 	//変数
 #pragma region インスタンス
@@ -124,11 +107,6 @@ private:
 	using Update_f = void(Game::*)(void);
 	using DirecUpdate_f = bool(Game::*)(void);
 	Update_f update_;			//通常・演出の二つを管理
-	DirecUpdate_f direcUpdate_;	//演出のポストエフェクト・画面揺れ・カメラ移動の三つを管理
-
-	//描画関数
-	using DrawPostEffect_f = void(Game::*)(void);
-	DrawPostEffect_f drawPostEffect_;	//ポストエフェクト管理
 
 	//進行度の更新
 	using UpdateProgress_f = void(Game::*)(void);
