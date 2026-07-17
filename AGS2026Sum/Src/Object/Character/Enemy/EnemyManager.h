@@ -6,13 +6,13 @@
 #include"Info/EnemyDefine.h"
 #include"Info/StageEnemyData.h"
 #include"Info/EnemyParameter.h"
+#include"UI/BossUI.h"
 #include "../../../Manager/GameSystem/Event/EventType.h"
 
 class EnemyBase;
 class EnemyPool;
 class EnemyGroup;
 class EnemyGroupPool;
-class StageEnemyData;
 class AnimationController;
 
 class EnemyManager
@@ -79,6 +79,9 @@ private:
 	//敵情報
 	std::unique_ptr<EnemyPool> enemyPool_;
 
+	//ボスのUI
+	BossUI bossUi_;
+
 	//プレイヤー座標
 	const VECTOR& playerPos_;
 
@@ -102,4 +105,7 @@ private:
 
 	//チャンク内グループの加入・離脱処理
 	void ChankGroupsEnterAndLeave(void);
+
+	//ボスのUI判定
+	void SetBossUI(void);
 };

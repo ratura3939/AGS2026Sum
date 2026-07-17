@@ -1,5 +1,7 @@
 #include "../../../../pch.h"
 #include "../../../../Application.h"
+#include "../../../../Renderer/PixelMaterial.h"
+#include "../../../../Renderer/PixelRenderer.h"
 #include "../Types/Boss/BossBase.h"
 #include "BossUI.h"
 
@@ -10,6 +12,19 @@ BossUI::BossUI(void)
 
 BossUI::~BossUI(void)
 {
+}
+
+void BossUI::Load(void)
+{
+	//シェーダーの設定
+	material_ = std::make_unique<PixelMaterial>(L"CircleGauge.cso", CONST_BUFF_NUM);
+	material_->AddConstBuf({ 0.0f,0.0f,0.0f,0.0f });
+	material_->AddConstBuf({ 0.0f,0.0f,0.0f,0.0f });
+
+	//レンダラー
+	renderer_ = std::make_unique<PixelRenderer>();
+	renderer_->SetPos(Vector2(GAUGE_POS_X, GAUGE_POS_Y));
+	renderer_->SetSize(Vector2(300, 300));
 }
 
 void BossUI::Draw(void)
@@ -36,10 +51,15 @@ void BossUI::Draw(void)
 
 	//ガード耐久値
 	float guard = boss_->GetGuardDurability();
+	float GuardMax = BossBattleComponent::GUARD_DURABILITY_MAX;
+	float progress = guard / GuardMax;
 
-	if (guard < 0.0f)
+	if (guard > 0.0f)
 	{
-
+		//定数バッファの更新
+		material_->SetConstBuf(0, {GAUGE_POS_X,GAUGE_POS_Y,progress,0.0f});
+		material_->SetConstBuf(1, { GAUGE_RADIUS,0.0f,0.0f,0.0f });
+		renderer_->Draw(*material_);
 	}
 	else
 	{

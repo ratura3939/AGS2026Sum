@@ -4,6 +4,9 @@ class BossBattleComponent
 {
 public:
 
+	//ガード耐久値最大値
+	static constexpr float GUARD_DURABILITY_MAX = 100.0f;
+
 	//コンストラクタ
 	BossBattleComponent(void);
 
@@ -32,9 +35,6 @@ public:
 	const float GetGuardDurability(void)const { return guardDurability_; }
 
 private:
-
-	//ガード耐久値最大値
-	static constexpr float GUARD_DURABILITY_MAX = 100.0f;
 
 	//ブレイク秒数
 	static constexpr float BREAK_TIME = 10.0f;

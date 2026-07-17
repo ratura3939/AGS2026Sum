@@ -85,11 +85,11 @@ void EnemyManager::Update(void)
 	//チャンク内のみ更新
 	for (auto& group : chunkGroups_)
 	{
-		//更新
-		group->Update();
-
 		//チャンクの移動確認
 		chunkMng.MoveEnemyGroup(group);
+
+		//更新
+		group->Update();
 	}
 
 	//グループの削除処理
@@ -374,6 +374,22 @@ void EnemyManager::ChankGroupsEnterAndLeave(void)
 			//そもそもグループが存在していないなら無視
 			if (!group->IsActive())continue;
 			group->OnLeaveActiveChank();
+		}
+	}
+}
+
+void EnemyManager::SetBossUI(void)
+{
+	//一番近い距離
+	float dist = 0.0f;
+
+	for (auto& group : enemyGroupPool_->GetActiveEnemyGroups())
+	{
+		for (auto& enemy : group->GetEnemys())
+		{
+			if (enemy->GetType() == ENEMY_TYPE::NORMAL)continue;
+
+
 		}
 	}
 }
