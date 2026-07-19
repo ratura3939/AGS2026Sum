@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include<DxLib.h>
 #include"../../Attack/AttackDataBase.h"
 #include"../../../../Lib/nlohmann/json.hpp"
