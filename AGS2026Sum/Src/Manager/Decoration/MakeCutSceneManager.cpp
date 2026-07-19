@@ -1,4 +1,4 @@
-#include "../../pch.h"
+﻿#include "../../pch.h"
 #include"../../Application.h"
 #include"MakeCutSceneElement/MakeCutSceneElementBase.h"
 #include"MakeCutSceneElement/StartUp.h"

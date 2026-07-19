@@ -1,4 +1,4 @@
-#include"../../Manager/Generic/SceneManager.h"
+﻿#include"../../Manager/Generic/SceneManager.h"
 #include"../../Manager/Generic/Camera.h"
 #include"../../Renderer/ModelMaterial.h"
 #include"../../Renderer/ModelRenderer.h"

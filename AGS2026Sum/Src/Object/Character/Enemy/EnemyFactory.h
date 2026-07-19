@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include<memory>
 #include"../../../Manager/Generic/ResourceManager.h"
 #include"Info/EnemyAnimationData.h"
