@@ -7,6 +7,11 @@ class ComboManager : public Singleton<ComboManager>
 	friend class Singleton<ComboManager>;
 
 public:
+	enum class NUMBER_EX_STATE {
+		NONE
+		,UP
+		,DOWN
+	};
 
 	//初期化
 	void Init(void)override;
@@ -37,8 +42,18 @@ private:
 	//コンボUIの描画
 	void DrawComboUI(void);
 
+	//状態の変換
+	void ChangeState(const NUMBER_EX_STATE& _nextState);
+
+	//増加・減少更新
+	void UpdateExRateIncrease(void);
+	void UpdateExRateDecrease(void);
+
+	//デバッグ用
+	void DrawDebug(void);
+
 	//コンボの最大受付時間
-	static constexpr float COMBO_MAX_TIME = 2.0f;
+	static constexpr float COMBO_MAX_TIME = 5.0f;
 
 	//コンボ数
 	int comboCount_;
@@ -54,6 +69,16 @@ private:
 
 	//「COMBO」画像
 	int comboStringImage_;
+
+	//画像拡大率
+	float imageEx_;
+
+	//状態
+	NUMBER_EX_STATE numberState_;
+
+	//更新
+	using ExRate_f = void(ComboManager::*)(void);
+	ExRate_f updateExRate_;
 
 	//コンストラクタ
 	ComboManager(void);

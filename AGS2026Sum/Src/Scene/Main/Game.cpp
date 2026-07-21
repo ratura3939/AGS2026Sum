@@ -127,7 +127,7 @@ void Game::Init(void)
 	ChunkManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::GAME_END);
 
 	//コンボ管理
-	ComboManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::ALL_END);
+	ComboManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::GAME_END);
 
 	//プレイヤー
 	player_ = std::make_unique<PlayerManager>(*this);
