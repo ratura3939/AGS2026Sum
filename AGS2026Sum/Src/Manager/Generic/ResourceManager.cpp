@@ -256,6 +256,10 @@ void ResourceManager::ResourceEnemy(void)
 {
 	Resource res;
 
+	//‚Ð‚Ñ‰æ‘œ
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"Crack.png");
+	resourcesMap_.emplace(SRC::CRACK, res);
+
 	//“Gƒ‚ƒfƒ‹
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + L"Enemy.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_MDL, res);

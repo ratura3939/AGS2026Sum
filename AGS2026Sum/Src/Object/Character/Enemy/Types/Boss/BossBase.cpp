@@ -68,10 +68,10 @@ void BossBase::DoUpdate(void)
 void BossBase::Draw(void)
 {
 	//デバッグ描画
-	DrawDebug();
+	//DrawDebug();
 
 	//戦闘情報描画
-	battle_.Draw();
+	//battle_.Draw();
 
 	//モデル描画
 	//MV1DrawModel(modelId_);

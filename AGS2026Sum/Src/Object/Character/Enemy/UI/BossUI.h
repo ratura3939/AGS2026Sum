@@ -1,6 +1,7 @@
 #pragma once
 #include<memory>
 
+class EnemyBase;
 class BossBase;
 class PixelMaterial;
 class PixelRenderer;
@@ -22,7 +23,7 @@ public:
 	void Draw(void);
 
 	//UI表示するボスの設定
-	void SetDrawBoss(const BossBase* _boss);
+	void SetDrawBoss(const EnemyBase* _boss);
 
 private:
 
@@ -30,9 +31,9 @@ private:
 	static constexpr int CONST_BUFF_NUM = 2;
 
 	//ゲージの位置
-	static constexpr float GAUGE_POS_X = 100.0f;
-	static constexpr float GAUGE_POS_Y = 200.0f;
-	static constexpr float GAUGE_RADIUS = 30.0f;
+	static constexpr float GAUGE_POS_X = 0.5f;
+	static constexpr float GAUGE_POS_Y = 0.2f;
+	static constexpr float GAUGE_RADIUS = 0.1f;
 
 	//HPバーの位置
 	static constexpr int HP_LOCAL_POS_X = -100;

@@ -43,6 +43,9 @@ void EnemyManager::Load(void)
 	//敵のプールを生成
 	enemyPool_ = std::make_unique<EnemyPool>();
 	enemyPool_->Load();
+
+	//ボスUIの読み込み
+	bossUi_.Load();
 }
 
 void EnemyManager::Init(void)
@@ -97,6 +100,9 @@ void EnemyManager::Update(void)
 
 	//敵の削除処理
 	DeleteEnemy();
+
+	//ボスUIの設定
+	SetBossUI();
 }
 
 void EnemyManager::Draw(void)
@@ -106,6 +112,9 @@ void EnemyManager::Draw(void)
 	{
 		group->Draw();
 	}
+
+	//ボスUIの描画
+	bossUi_.Draw();
 }
 
 void EnemyManager::Release(void)
@@ -381,15 +390,33 @@ void EnemyManager::ChankGroupsEnterAndLeave(void)
 void EnemyManager::SetBossUI(void)
 {
 	//一番近い距離
+	float closestDist = FLT_MAX;
 	float dist = 0.0f;
+	const EnemyBase* boss = nullptr;
 
-	for (auto& group : enemyGroupPool_->GetActiveEnemyGroups())
+	//チャンク内の比較
+	for (const auto& group : chunkGroups_)
 	{
-		for (auto& enemy : group->GetEnemys())
+		for (const auto& enemy : group->GetEnemys())
 		{
-			if (enemy->GetType() == ENEMY_TYPE::NORMAL)continue;
+			//ボス敵のみ
+			if (!enemy->IsBoss())continue;
 
+			//距離
+			dist = Utility::Distance(enemy->GetPos(), playerPos_);
 
+			//距離比較
+			if (dist < closestDist)
+			{
+				closestDist = dist;
+				boss = enemy;
+			}
 		}
+	}
+
+	//比較終了
+	if (boss)
+	{
+		bossUi_.SetDrawBoss(boss);
 	}
 }

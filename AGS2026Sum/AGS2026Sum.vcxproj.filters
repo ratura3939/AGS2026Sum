@@ -570,6 +570,7 @@
     <FxCompile Include="Src\Shader\Model\SkinOutLineVS.hlsl" />
     <FxCompile Include="Src\Shader\Model\SkinOutLinePS.hlsl" />
     <FxCompile Include="Src\Shader\PostEffect\CircleGauge.hlsl" />
+    <FxCompile Include="Src\Shader\PostEffect\BossGuardGauge.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shader\Common\Pixel\PixelShader2DHeader.hlsli" />
