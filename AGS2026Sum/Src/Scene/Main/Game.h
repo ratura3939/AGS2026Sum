@@ -42,11 +42,17 @@ public:
 	};
 
 	//ゲームの進行度
-	enum class GAME_PROGRESS
-	{
+	enum class GAME_PROGRESS {
 		TUTORIAL,	//チュートリアル
 		STAGE_1,	//ステージ１
 		MAX
+	};
+
+	//カメラ自動移動状況
+	enum class CAMERA_MOVE_SITUATION {
+		NONE
+		,ULTIMATE	//必殺技
+		,NEXT_STAGE	//次のステージへ
 	};
 
 	Game(void);
@@ -72,6 +78,12 @@ public:
 
 	//カメラのゴール付近滞在時間
 	void SetCameraStayTimeAtAutoMove(const float _time) { cameraGoalStayTime_ = _time; }
+
+	/// <summary>
+	/// カメラ自動移動後の独自処理設定
+	/// </summary>
+	/// <param name="_situation">状況</param>
+	void SetProcessingAfterCameraAutoMove(const CAMERA_MOVE_SITUATION& _situation);
 
 private:
 	//各初期化
@@ -115,6 +127,9 @@ private:
 	using UpdateProgress_f = void(Game::*)(void);
 	UpdateProgress_f updateProgress_;
 
+	//カメラ演出後処理
+	using CameraMoveAfter_f = void(Game::*)(void);
+	CameraMoveAfter_f processingAfterCameraAutoMove_;
 #pragma endregion
 
 #pragma region shader関連
@@ -158,13 +173,6 @@ private:
 
 	bool prevInputP_;			//デバッグ用トリガ
 	bool isEnemyUpdate_;
-
-	//ジャスト回避
-	//std::unique_ptr<PixelMaterial>skipMaterial_;
-	//std::unique_ptr<PixelRenderer>skipRender_;
-	int skipScreen_;
-	int skipCounter_;
-	bool isSkipEnd_;
 
 	bool isDebug_;
 };

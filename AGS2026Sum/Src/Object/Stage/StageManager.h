@@ -10,8 +10,6 @@ class AutoDoor;
 class StageManager 
 {
 public:
-	static constexpr int STAGE_NUM = 2;		//ステージ総数
-
     StageManager(void);
     ~StageManager(void);
 
@@ -33,11 +31,6 @@ private:
 
 	void DrawTutorialStage(void);
 	void DrawFirstStage(void);
-
-	using Func = void(StageManager::*)(void);
-
-	Func updateFunc_[STAGE_NUM];
-	Func drawFunc_[STAGE_NUM];
 
 	int progress_;
 	std::unique_ptr<StageObjectBase>firstStage_;	//ステージオブジェクト

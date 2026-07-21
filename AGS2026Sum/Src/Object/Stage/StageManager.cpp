@@ -8,7 +8,7 @@
 
 namespace {
 	const VECTOR INIT_POS_FIRST_STAGE = { 5000,0.0f,1000.0f };	//初期ステージ初期位置
-	const VECTOR INIT_POS_BOSS_STAGE = { 5000.0f,0.0f,11000.0f };
+	const VECTOR INIT_POS_BOSS_STAGE = { 5400.0f,0.0f,10915.0f };
 	const int PS_BUFF_NUM = 0;
 
 	const float SCALING_X = 1.0f;
@@ -22,8 +22,6 @@ namespace {
 }
 
 StageManager::StageManager(void)
-	:updateFunc_{&StageManager::UpdateTutorialStage,&StageManager::UpdateFirstStage }
-	,drawFunc_{&StageManager::DrawTutorialStage,&StageManager::DrawFirstStage }
 {
 }
 
@@ -57,8 +55,6 @@ void StageManager::Init(void)
 
 void StageManager::Update(void)
 {
-	(this->*updateFunc_)();
-
 	firstStage_->Update();
 	bossStage_->Update();
 	door_->Update();
@@ -66,7 +62,6 @@ void StageManager::Update(void)
 
 void StageManager::Draw(void)
 {
-	(this->*drawFunc_)();
 	firstStage_->Draw();
 	bossStage_->Draw();
 	door_->Draw();

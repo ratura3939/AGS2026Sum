@@ -4,7 +4,7 @@
 
 namespace {
 	const float DOOR_MOVE_LIMIT = 500.0f;	//ドアの移動制限
-	const VECTOR CAMERA_GOAL_POS_RELATIVE = { 5000.0f,500.0f,-1000.0f };	//カメラ目標位置
+	const VECTOR CAMERA_GOAL_POS_RELATIVE = { 500.0f,800.0f,-1000.0f };	//カメラ目標位置
 }
 
 AutoDoor::AutoDoor(const VECTOR& _position)

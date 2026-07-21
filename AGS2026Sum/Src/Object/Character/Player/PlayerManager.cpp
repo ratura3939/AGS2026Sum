@@ -251,6 +251,7 @@ void PlayerManager::UserInput(void)
 		isEnableUltimate_ = true;			//必殺技中
 		scene_.StartSlow();					//スロー演出
 		isNoBlendPlayAnim_ = true;
+		scene_.SetProcessingAfterCameraAutoMove(Game::CAMERA_MOVE_SITUATION::ULTIMATE);
 
 		SettingUltimateCamera();
 		isAttackInput = true;

@@ -93,6 +93,8 @@ Game::Game(void)
 	cameraGoalStayTime_ = 0;
 
 	isDebug_ = false;
+
+	processingAfterCameraAutoMove_ = nullptr;
 }
 
 Game::~Game(void)
@@ -158,9 +160,19 @@ void Game::Init(void)
 	InitEffect();
 	//シェーダー初期化
 	InitShader();
+}
 
-	auto& uiM = UIManager2d::GetInstance();
-
+void Game::SetProcessingAfterCameraAutoMove(const CAMERA_MOVE_SITUATION& _situation)
+{
+	//状況に応じた処理と紐づけ
+	switch (_situation) {
+	case CAMERA_MOVE_SITUATION::ULTIMATE:
+		processingAfterCameraAutoMove_ = nullptr;
+		break;
+	case CAMERA_MOVE_SITUATION::NEXT_STAGE:
+		processingAfterCameraAutoMove_ = &Game::StartNextStage;
+		break;
+	}
 }
 
 void Game::InitSound(void)
@@ -245,7 +257,9 @@ void Game::Update(void)
 			camera.ChangeMode(Camera::MODE::RESET);	//カメラリセット
 
 			//個別演出
-
+			if (processingAfterCameraAutoMove_ != nullptr) {
+				(this->*processingAfterCameraAutoMove_)();
+			}
 		}
 	}
 }
@@ -350,6 +364,9 @@ void Game::UpdateTutorial(void)
 		SetCameraStayTimeAtAutoMove(120.0f);
 		camera.SetGoalPos(stage_->GetGoalPosAtDoorOpen());
 		camera.SetFocusPos(stage_->GetDoorPos());
+
+		//個別処理の設定
+		SetProcessingAfterCameraAutoMove(CAMERA_MOVE_SITUATION::NEXT_STAGE);
 	}
 }
 
@@ -436,12 +453,6 @@ void Game::FinishSwitchBgm(void)
 
 void Game::StartNextStage(void)
 {
-	//暗転
-
-	//ステージの変更
-
-	//プレイヤーの移動
-
 	//終了判定をステージ１に移行
 	updateProgress_ = &Game::UpdateStage1;
 	progress_ = GAME_PROGRESS::STAGE_1;
