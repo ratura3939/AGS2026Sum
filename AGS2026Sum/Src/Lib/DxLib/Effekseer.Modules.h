@@ -1553,7 +1553,7 @@ public:
 
 	virtual SoundHandle Play( SoundTag tag, const InstanceParameter& parameter ) = 0;
 	
-	virtual void Stop( SoundHandle handle, SoundTag tag ) = 0;
+	virtual void StopAll( SoundHandle handle, SoundTag tag ) = 0;
 
 	virtual void Pause( SoundHandle handle, SoundTag tag, bool pause ) = 0;
 

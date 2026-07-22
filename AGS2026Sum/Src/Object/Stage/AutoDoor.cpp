@@ -1,4 +1,4 @@
-#include "../../pch.h"
+﻿#include "../../pch.h"
 #include"Door.h"
 #include "AutoDoor.h"
 

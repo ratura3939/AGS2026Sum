@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <array>
 #include "../../Common/Singleton.h"
 #include "EventType.h"

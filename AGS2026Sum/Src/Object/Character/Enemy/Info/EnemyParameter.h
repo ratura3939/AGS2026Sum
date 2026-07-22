@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include"../../../../Lib/nlohmann/json.hpp"
 #include<DxLib.h>
 #include<vector>

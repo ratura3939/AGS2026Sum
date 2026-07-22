@@ -399,7 +399,7 @@ void Game::Release(void)
 	player_->Release();
 	enemy_->Release();
 	SoundManager& sndM = SoundManager::GetInstance();
-	sndM.Stop(SoundManager::SOUND_NAME::GAME_BGM);	//¡‚Ü‚Å—¬‚µ‚Ä‚¢‚½‚à‚Ì‚ğ’â~
+	sndM.StopAll(SoundManager::SOUND_NAME::GAME_BGM);	//¡‚Ü‚Å—¬‚µ‚Ä‚¢‚½‚à‚Ì‚ğ’â~
 
 	SingletonRegistry::GetInstance().Delete(SingletonRegistry::DESTROY_TIMING::GAME_END);	//ƒVƒ“ƒOƒ‹ƒgƒ“‚Ìíœ
 	CollisionManager::GetInstance().DeleteAllCollider();

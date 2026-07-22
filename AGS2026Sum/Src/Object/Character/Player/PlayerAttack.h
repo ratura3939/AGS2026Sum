@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../../Common/ActorBase.h"
 #include"../../../Manager/Decoration/SoundManager.h"
 #include"../../../Manager/Decoration/EffectManager.h"

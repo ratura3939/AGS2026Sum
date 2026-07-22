@@ -29,90 +29,106 @@ void EffectManager::Add(const EFFECT_NAME& _name, int _data)
 	effectRes_.emplace(_name, _data);
 }
 
-void EffectManager::Play(const std::wstring& _master,const EFFECT_NAME& _name, const VECTOR& _pos, const Quaternion& _qua, const float& _size, const float& _speed, const SoundManager::SOUND_NAME& _sndName)
+int EffectManager::Play(const std::wstring& _master,const EFFECT_NAME& _name, const VECTOR& _pos, const Quaternion& _qua, const float& _size, const float& _speed, const SoundManager::SOUND_NAME& _sndName)
 {
 	//元データがないときは警告
 	if (effectRes_.find(_name) == effectRes_.end())assert("設定していないエフェクトを再生しようとしています。");
 
-	if (_name == EFFECT_NAME::MAX)return;
-
-	////再生配列内に要素が入ってるとき
-	//if (effectPlay_[_master].contains(_name)) {
-	//	//すでに再生されているものは再生しない
-	//	return;
-	//}
+	if (_name == EFFECT_NAME::MAX)return-1;
 
 	//要素の追加
 	int addEfc = PlayEffekseer3DEffect(effectRes_[_name]);
-	effectPlay_[_master][_name].push_back(addEfc);
-	
+	effectPlay_.push_back({ _name,addEfc });
 
 	//各種設定同期
-	SyncEffect(_master, _name, _pos, _qua, _size, _speed, effectPlay_[_master][_name].size() - 1);
+	SyncEffect(addEfc, _pos, _qua, _size, _speed);
 
 	//効果音の再生
 		if (_sndName != SoundManager::SOUND_NAME::MAX) {
 			SoundManager::GetInstance().Play(_sndName);
 		}
+
+		return addEfc;
 }
 
-void EffectManager::Stop(const std::wstring& _master,const EFFECT_NAME& _name)
+void EffectManager::StopOrderPlayHandle(const int _playHandle)
 {
-	//配列内に入っていないものを停止しようとしたら警告
-	if (effectPlay_.find(_master) == effectPlay_.end())assert("設定していないエフェクトを停止しようとしています。");
+	//要素がない場合
+	if (!IsEffectPlay(_playHandle)) {
+		return;	//終了
+	}
+
 	//再生停止
-	for (auto& data : effectPlay_[_master][_name]) {
-		StopEffekseer3DEffect(data);
+	StopEffekseer3DEffect(_playHandle);
+}
+
+void EffectManager::StopOrderEffectName(const EFFECT_NAME& _name)
+{
+	//再生停止
+	for (auto& data : effectPlay_) {
+		if (data.name == _name) {
+			StopEffekseer3DEffect(data.playHndle);
+		}
 	}
 }
 
-void EffectManager::SyncEffect(const std::wstring& _master,const EFFECT_NAME& _name, const VECTOR& _pos, const Quaternion& _qua, const float& _size, const float& _speed,const int _idx)
+void EffectManager::StopAll(void)
 {
+	//再生停止
+	for (auto& data : effectPlay_) {
+		StopEffekseer3DEffect(data.playHndle);
+	}
+}
+
+bool EffectManager::SyncEffect(const int _playHandle, const VECTOR& _pos, const Quaternion& _qua, const float& _size, const float& _speed)
+{
+	//存在しないものを同期させようとしたら
+	if (!IsEffectPlay(_playHandle)) {
+		return false;
+	}
+
 	//その他各種設定
 	//大きさ
-	SetScalePlayingEffekseer3DEffect(effectPlay_[_master][_name][_idx], _size, _size, _size);
+	SetScalePlayingEffekseer3DEffect(_playHandle, _size, _size, _size);
 	//角度
-	SetRotationPlayingEffekseer3DEffect(effectPlay_[_master][_name][_idx], _qua.ToEuler().x, _qua.ToEuler().y, _qua.ToEuler().z);
+	SetRotationPlayingEffekseer3DEffect(_playHandle, _qua.ToEuler().x, _qua.ToEuler().y, _qua.ToEuler().z);
 	//位置
-	SetPosPlayingEffekseer3DEffect(effectPlay_[_master][_name][_idx], _pos.x, _pos.y, _pos.z);
+	SetPosPlayingEffekseer3DEffect(_playHandle, _pos.x, _pos.y, _pos.z);
 	//速度
-	SetSpeedPlayingEffekseer3DEffect(effectPlay_[_master][_name][_idx], _speed);
+	SetSpeedPlayingEffekseer3DEffect(_playHandle, _speed);
+
+	//正常終了
+	return true;
 }
 
 void EffectManager::Update(void)
 {
+	std::vector<int>deleteEffectIdx;
+	int idx = 0;
 
-	//master=first:所有者/second:止めるエフェクト詳細
-	for (auto& master : effectPlay_) {
-		//data=first:エフェクト名/second:再生データ
-		for (auto& data : master.second) {
-			std::erase_if(data.second,
-				[](int handle) {
-					//再生が終了しているものを削除
-					return IsEffekseer3DEffectPlaying(handle) == -1;
-				});
+	//削除検索
+	for (auto& data : effectPlay_) {
+		//再生が終了していたら
+		if (IsEffekseer3DEffectPlaying(data.playHndle) == -1) {
+			deleteEffectIdx.push_back(idx);
 		}
-
-		//エフェクトが一つもない名前を削除
-		std::erase_if(master.second, 
-			[](const auto& item) {
-				return item.second.empty();
-			});
+		idx++;
 	}
-	//エフェクトが一つもない所有者を削除
-	std::erase_if(effectPlay_, [](const auto& item) {
-		return item.second.empty();
-		});
+
+	int deleteCount = 0;
+
+	//削除
+	for (auto& idx : deleteEffectIdx) {
+		//実行
+		effectPlay_.erase(effectPlay_.begin() + (idx - deleteCount));
+		deleteCount++;
+	}
 }
 
 void EffectManager::Release(void)
 {
-	for (auto& efcs : effectPlay_) {
-		for (auto& playDatas : efcs.second) {
-			for (auto& data : playDatas.second) {
-				StopEffekseer3DEffect(data);
-			}
-		}
+	for (auto& data : effectPlay_) {
+		StopEffekseer3DEffect(data.playHndle);
 	}
 
 	//配列内の要素を全て消去
@@ -126,15 +142,16 @@ void EffectManager::Destroy(void)
 	delete instance_;
 }
 
-const bool EffectManager::IsEffectPlay(const std::wstring& _master, const EFFECT_NAME& _name)
+const bool EffectManager::IsEffectPlay(const int _playHandle)
 {
-	//配列内に入っていないものを停止しようとしたら警告
-	if (effectPlay_.find(_master) == effectPlay_.end()) {
-		return false;
+	//内容確認
+	for (auto& data : effectPlay_) {
+		if (data.playHndle == _playHandle) {
+			//発見
+			return true;
+		}
 	}
 
-	if (effectPlay_[_master].find(_name) == effectPlay_[_master].end()) {
-		return false;
-	}
-	return true;
+	//要素なし
+	return false;
 }

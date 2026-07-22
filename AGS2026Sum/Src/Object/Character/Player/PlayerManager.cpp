@@ -1,4 +1,4 @@
-#include"../../pch.h"
+﻿#include"../../pch.h"
 #include"../../../Manager/Generic/InputManager.h"
 #include"../../../Manager/Generic/SceneManager.h"
 #include"../../../Manager/Generic/Camera.h"
@@ -180,7 +180,7 @@ void PlayerManager::UpdateAnimationEvent(void)
 			//コンボの終了
 			attack_->FinishAttack();	//攻撃終了処理
 			character_->SetIsAttack(false);	//そうでないときは攻撃状態を解除する
-			EffectManager::GetInstance().Stop(character_->GetSpeciesName(), attack_->GetNextAttackDirectionInfo().efcName);
+			EffectManager::GetInstance().StopOrderEffectName(attack_->GetNextAttackDirectionInfo().efcName);
 		}
 	}
 

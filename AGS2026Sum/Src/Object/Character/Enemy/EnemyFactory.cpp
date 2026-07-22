@@ -1,4 +1,4 @@
-#include "../../../pch.h"
+﻿#include "../../../pch.h"
 #include "../../../Utility/Utility.h"
 #include "../../../Manager/Generic/ResourceManager.h"
 #include "../../../Manager/GameSystem/AnimationController.h"

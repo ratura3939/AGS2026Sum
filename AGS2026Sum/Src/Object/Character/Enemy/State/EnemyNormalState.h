@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "EnemyStateBase.h"
 
 class EnemyNormalState : public EnemyStateBase

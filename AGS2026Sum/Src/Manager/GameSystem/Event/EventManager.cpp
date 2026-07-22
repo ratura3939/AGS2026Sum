@@ -1,4 +1,4 @@
-#include "../../pch.h"
+﻿#include "../../pch.h"
 #include "EventManager.h"
 
 void EventManager::AddFlagCount(const EVENT_TYPE& _event)

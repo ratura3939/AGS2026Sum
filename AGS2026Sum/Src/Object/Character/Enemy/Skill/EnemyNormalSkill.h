@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "EnemySkillBase.h"
 
 class EnemyNormalSkill : public EnemySkillBase
