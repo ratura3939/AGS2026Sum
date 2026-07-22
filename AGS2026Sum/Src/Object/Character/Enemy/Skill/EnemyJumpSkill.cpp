@@ -79,7 +79,7 @@ void EnemyJumpSkill::Exit(EnemyBase& _owner)
 	attackCnt_ = 0.0f;
 
 	//エフェクト
-	EffectManager::GetInstance().Stop(_owner.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_LANDING);
+	//EffectManager::GetInstance().StopAll();
 }
 
 void EnemyJumpSkill::EndEnter(EnemyBase& _owner)
@@ -112,5 +112,5 @@ void EnemyJumpSkill::EndExit(EnemyBase& _owner)
 	attackCnt_ = 0.0f;
 
 	//エフェクト
-	EffectManager::GetInstance().Stop(_owner.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_LANDING);
+	//EffectManager::GetInstance().Stop(_owner.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_LANDING);
 }

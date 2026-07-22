@@ -35,6 +35,12 @@ protected:
 	//アウトラインマテリアル
 	std::unique_ptr<ModelMaterial>outlineMaterial_;
 
+	//リムライトマテリアル
+	std::unique_ptr<ModelMaterial>rimLightMaterial_;
+
+	//オーラマテリアル
+	std::unique_ptr<ModelMaterial>auraMaterial_;
+
 	//読み込み
 	virtual void DoLoad(void)override;
 

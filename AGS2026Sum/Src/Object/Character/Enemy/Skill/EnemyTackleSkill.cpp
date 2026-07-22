@@ -108,7 +108,7 @@ void EnemyTackleSkill::Exit(EnemyBase& _owner)
 	attackCnt_ = 0.0f;
 
 	//エフェクトストップ
-	EffectManager::GetInstance().Stop(_owner.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_TACKLE);
+	EffectManager::GetInstance().StopAll();
 }
 
 void EnemyTackleSkill::EndEnter(EnemyBase& _owner)
@@ -144,5 +144,5 @@ void EnemyTackleSkill::EndExit(EnemyBase& _owner)
 	attackCnt_ = 0.0f;
 
 	//エフェクトストップ
-	EffectManager::GetInstance().Stop(_owner.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_TACKLE);
+	//EffectManager::GetInstance().StopAll();
 }

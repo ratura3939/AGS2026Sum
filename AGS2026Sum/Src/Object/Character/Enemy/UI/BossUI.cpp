@@ -36,23 +36,54 @@ void BossUI::Draw(void)
 	//表示するものがいないなら
 	if (!boss_ || !isDraw_)return;
 
+	//インスタンス
+	auto& app = Application::GetInstance();
+	float screenWidth = static_cast<float>(app.GetWindowWidth());
+	float screenHeight = static_cast<float>(app.GetWindowHeight());
+
 	//ボスUI
-	Vector2 healthPos;
-	Vector2 healthWH;
-	healthPos.x = Application::SCREEN_SIZE_X * HP_INFO.anchorX + HP_INFO.offsetX;
-	healthPos.x -= HP_WIDTH / 2;
-	healthPos.y = Application::SCREEN_SIZE_Y * HP_INFO.anchorY + HP_INFO.offsetY;
-	healthPos.y -= HP_HEIGHT / 2;
-	healthWH.x = healthPos.x + HP_WIDTH;
-	healthWH.y = healthPos.y + HP_HEIGHT;
 	float hp = boss_->GetHp();
 	float hpMax = boss_->GetHpMax();
+	float widthRate = screenWidth / static_cast<float>(BASE_WIDTH);
+	float heightRate = screenHeight / static_cast<float>(BASE_HEIGHT);
 
-	//HPバー
-	DrawBox(healthPos.x - HP_WINDOW, healthPos.y - HP_WINDOW, healthWH.x + HP_WINDOW, healthWH.y + HP_WINDOW, 0x0, true);
+	// 中心座標
+	Vector2 healthCenter;
+	healthCenter.x = screenWidth * HP_INFO.anchorX + HP_INFO.offsetX * widthRate;
+	healthCenter.y = screenHeight * HP_INFO.anchorY + HP_INFO.offsetY * heightRate;
+
+	// サイズ
+	float hpWidth = HP_WIDTH * widthRate;
+	float hpHeight = HP_HEIGHT * heightRate;
+
+	// 左上・右下
+	Vector2 healthPos;
+	healthPos.x = healthCenter.x - hpWidth * 0.5f;
+	healthPos.y = healthCenter.y - hpHeight * 0.5f;
+
+	Vector2 healthWH;
+	healthWH.x = healthPos.x + hpWidth;
+	healthWH.y = healthPos.y + hpHeight;
+
+	// 枠
+	DrawBox(
+		healthPos.x - HP_WINDOW * widthRate,
+		healthPos.y - HP_WINDOW * heightRate,
+		healthWH.x + HP_WINDOW * widthRate,
+		healthWH.y + HP_WINDOW * heightRate,
+		0x000000,
+		TRUE);
+
+	// HP
 	if (hp > 0.0f)
 	{
-		DrawBox(healthPos.x, healthPos.y, healthPos.x + HP_WIDTH * (hp / hpMax), healthPos.y + HP_HEIGHT, 0xff8888, true);
+		DrawBox(
+			healthPos.x,
+			healthPos.y,
+			healthPos.x + hpWidth * (hp / hpMax),
+			healthPos.y + hpHeight,
+			0xff8888,
+			TRUE);
 	}
 
 	//ガード耐久値

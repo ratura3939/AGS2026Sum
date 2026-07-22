@@ -39,12 +39,27 @@ void BossBase::LoadShader(void)
 	//共通
 	EnemyBase::LoadShader();
 
+	//アウトライン
 	outlineMaterial_ = std::make_unique<ModelMaterial>(L"SkinOutLineVS.cso", 2, L"SkinOutLinePS.cso", 1);
 	outlineMaterial_->AddConstBufVS(FLOAT4{ 2.0f,0.0f,0.0f,0.0f });
-
 	const VECTOR& cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
 	outlineMaterial_->AddConstBufVS(FLOAT4{ cameraPos.x, cameraPos.y, cameraPos.z, 0.0f });
 	outlineMaterial_->AddConstBufPS(FLOAT4{ 0.0f,0.0f,0.0f,1.0f });
+
+	//リムライト
+	rimLightMaterial_ = std::make_unique<ModelMaterial>(L"SkinVS.cso", 0, L"RimLightPS.cso", 4);
+	rimLightMaterial_->AddConstBufPS(FLOAT4{ 1.0f, 1.0f, 1.0f, 1.0f });
+	rimLightMaterial_->AddConstBufPS(FLOAT4{ 0.0f, 0.0f, 0.0f, 1.0f });
+	rimLightMaterial_->AddConstBufPS(FLOAT4{ cameraPos.x, cameraPos.y, cameraPos.z, 0.0f});
+	rimLightMaterial_->AddConstBufPS(FLOAT4{ 1.0f, 0.0f, 0.0f, 16.0f });
+
+	//オーラ
+	//auraMaterial_ = std::make_unique<ModelMaterial>(L"RimAuraVS.cso", 1, L"RimAuraPS.cso", 3);
+	//float auraSize = 0.03f;
+	//auraMaterial_->AddConstBufVS(FLOAT4{ auraSize ,1.0f,0.0f,0.0f });
+	//auraMaterial_->AddConstBufPS(FLOAT4{ auraSize,1.0f,0.0f,0.0f });
+	//auraMaterial_->AddConstBufPS(FLOAT4{ 1.0f,0.0f,0.0f,0.0f });
+	//auraMaterial_->AddConstBufPS(FLOAT4{ cameraPos.x, cameraPos.y, cameraPos.z, 0.0f });
 }
 
 void BossBase::DoInit(void)
@@ -80,19 +95,29 @@ void BossBase::Draw(void)
 	const VECTOR& cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
 
 	//描画
-	outlineMaterial_->SetConstBufVS(1, FLOAT4{ cameraPos.x, cameraPos.y, cameraPos.z, 0.0f });
 
 	//アウトライン用描画
 	MV1SetWriteZBuffer(modelId_, false);					//モデル描画のZBufferを無効にする
 	MV1SetMeshBackCulling(modelId_, 0, DX_CULLING_RIGHT);	//裏面描画
+	outlineMaterial_->SetConstBufVS(1, FLOAT4{ cameraPos.x, cameraPos.y, cameraPos.z, 0.0f });
 	modelRenderer_->Draw(modelId_, *outlineMaterial_);
 
 	//本体描画
 	MV1SetWriteZBuffer(modelId_, true);
 	MV1SetMeshBackCulling(modelId_, 0, DX_CULLING_LEFT);	//表面描画
 
+	//リムライト描画
+	rimLightMaterial_->SetConstBufPS(2, FLOAT4{ cameraPos.x,cameraPos.y,cameraPos.z,1.0f });
+	modelRenderer_->Draw(modelId_, *rimLightMaterial_);
+
+	//オーラ
+	//static float cnt = 0.0f;
+	//cnt += SceneManager::GetInstance().GetDeltaTime();
+	//auraMaterial_->SetConstBufPS(0, FLOAT4{ 0.03f,1.0f,cnt,0.0f });
+	//auraMaterial_->SetConstBufPS(2, FLOAT4{ cameraPos.x,cameraPos.y,cameraPos.z,0.0f });
+
 	//モデルの描画
-	modelRenderer_->Draw(modelId_, *modelMaterial_);
+	//modelRenderer_->Draw(modelId_, *modelMaterial_);
 }
 
 void BossBase::CreateCollider(void)

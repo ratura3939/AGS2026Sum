@@ -39,13 +39,17 @@ private:
 	//シェーダーの定数バッファの数
 	static constexpr int CONST_BUFF_NUM = 2;
 
+	//UIの解像度
+	static constexpr int BASE_WIDTH = 1920;
+	static constexpr int BASE_HEIGHT = 1080;
+
 	//ゲージの位置
 	static constexpr float GAUGE_UV_U = 0.5f;
 	static constexpr float GAUGE_UV_V = 0.2f;
 	static constexpr float GAUGE_RADIUS = 0.1f;
 
 	//HPバーの位置
-	static constexpr UIInfo HP_INFO = { 0.5f,0.0f, 0.0f,50.0f };
+	static constexpr UIInfo HP_INFO = { 0.5f,0.5f, 0.0f,0.0f };
 	static constexpr int HP_WIDTH = 500;
 	static constexpr int HP_HEIGHT = 10;
 	static constexpr int HP_WINDOW = 2;

@@ -52,8 +52,8 @@ void PlayerOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 
 	//ヒットエフェクト
 	auto& eff = EffectManager::GetInstance();
-	if (!eff.IsEffectPlay(parent_.GetSpeciesName(), EffectManager::EFFECT_NAME::PLAYER_HIT))
-		eff.Play(parent_.GetSpeciesName(), EffectManager::EFFECT_NAME::PLAYER_HIT, parent_.GetPos(), parent_.GetQua(), 10.0f);
+	//if (!eff.IsEffectPlay(parent_.GetSpeciesName(), EffectManager::EFFECT_NAME::PLAYER_HIT))
+	eff.Play(parent_.GetSpeciesName(), EffectManager::EFFECT_NAME::PLAYER_HIT, parent_.GetPos(), parent_.GetQua(), 10.0f);
 
 	//リセット
 	cnt_ = 0.0f;

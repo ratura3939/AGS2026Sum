@@ -49,7 +49,7 @@ void EnemyEndState::Exit(EnemyBase& _enemy)
 	_enemy.SubEventCount();
 
 	//死亡エフェクト
-	EffectManager::GetInstance().Stop(_enemy.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_HIT);
+	//EffectManager::GetInstance().Stop(_enemy.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_HIT);
 }
 
 const ENEMY_STATE EnemyEndState::GetStateId(void) const

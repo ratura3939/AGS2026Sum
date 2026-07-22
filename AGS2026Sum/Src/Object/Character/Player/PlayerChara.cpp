@@ -232,7 +232,7 @@ void PlayerChara::InputMoveVec(const VECTOR& _inputVec)
 	//攻撃中は移動入力を受け付けない
 	if (isAttack_)return;
 
-#pragma region 入力→移動方向
+#pragma region 入力->移動方向
 	// 入力がほぼゼロの場合
 	if (abs(_inputVec.x) < 0.01f && abs(_inputVec.y) < 0.01f) {
 		return;		//処理の必要なし
