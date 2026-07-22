@@ -74,7 +74,7 @@ public:
 	/// ’â~ˆ—
 	/// </summary>
 	/// <param name="_name">“o˜^–¼</param>
-	void Stop(const SOUND_NAME& _name);
+	void StopAll(const SOUND_NAME& _name);
 
 	//XV
 	void Update(void);

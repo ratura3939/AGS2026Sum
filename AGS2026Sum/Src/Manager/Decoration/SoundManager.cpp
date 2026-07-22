@@ -74,7 +74,7 @@ void SoundManager::Play(const SOUND_NAME& _name)
 	
 }
 
-void SoundManager::Stop(const SOUND_NAME& _name)
+void SoundManager::StopAll(const SOUND_NAME& _name)
 {
 	//元データがないときは警告
 	if (sounds_.find(_name) == sounds_.end())assert("設定していない音声を停止しようとしています。");

@@ -1,10 +1,10 @@
-#include "../../pch.h"
+﻿#include "../../pch.h"
 #include"Door.h"
 #include "AutoDoor.h"
 
 namespace {
 	const float DOOR_MOVE_LIMIT = 500.0f;	//ドアの移動制限
-	const VECTOR CAMERA_GOAL_POS_RELATIVE = { 0.0f,0.0f,200.0f };	//カメラ目標位置
+	const VECTOR CAMERA_GOAL_POS_RELATIVE = { 500.0f,800.0f,-1000.0f };	//カメラ目標位置
 }
 
 AutoDoor::AutoDoor(const VECTOR& _position)
@@ -98,5 +98,5 @@ void AutoDoor::CloseDoor(void)
 
 const VECTOR& AutoDoor::GetCameraGoalPosOfDoorEvent(void)
 {
-	return VAdd(pos_, Utility::VMul(leftDoor_->GetForward(), CAMERA_GOAL_POS_RELATIVE));
+	return VAdd(pos_, CAMERA_GOAL_POS_RELATIVE);
 }

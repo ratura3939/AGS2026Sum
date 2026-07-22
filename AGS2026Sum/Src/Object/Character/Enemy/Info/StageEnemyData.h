@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include<DxLib.h>
 #include<nlohmann/json.hpp>
 #include<unordered_map>

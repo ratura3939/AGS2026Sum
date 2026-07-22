@@ -1,4 +1,4 @@
-#include "../../../../pch.h"
+﻿#include "../../../../pch.h"
 #include "../../../../Manager/Generic/SceneManager.h"
 #include "../../../../Manager/GameSystem/AttackManager.h"
 #include "../../../../Manager/Decoration/EffectManager.h"

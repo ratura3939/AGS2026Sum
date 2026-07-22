@@ -42,11 +42,17 @@ public:
 	};
 
 	//ゲームの進行度
-	enum class GAME_PROGRESS
-	{
+	enum class GAME_PROGRESS {
 		TUTORIAL,	//チュートリアル
 		STAGE_1,	//ステージ１
 		MAX
+	};
+
+	//カメラ自動移動状況
+	enum class CAMERA_MOVE_SITUATION {
+		NONE
+		,ULTIMATE	//必殺技
+		,NEXT_STAGE	//次のステージへ
 	};
 
 	Game(void);
@@ -73,6 +79,12 @@ public:
 	//カメラのゴール付近滞在時間
 	void SetCameraStayTimeAtAutoMove(const float _time) { cameraGoalStayTime_ = _time; }
 
+	/// <summary>
+	/// カメラ自動移動後の独自処理設定
+	/// </summary>
+	/// <param name="_situation">状況</param>
+	void SetProcessingAfterCameraAutoMove(const CAMERA_MOVE_SITUATION& _situation);
+
 private:
 	//各初期化
 	void InitSound(void)override;
@@ -81,11 +93,6 @@ private:
 
 	//各種更新
 	void GameUpdate(void);			//ゲーム通常
-	void DirectionUpdate(void);		//演出アップデート
-	bool DirectionPostEffect(void);	//ポストエフェクト
-	bool DirectionShakeScreen(void);//画面揺れ演出
-	void DoShake(void);				//揺らす
-	bool DirectionCameraMove(void);	//カメラ移動
 
 	//各種描画処理(ポストエフェクト)
 	void DrawEdge(void);	//エッジ描画
@@ -94,23 +101,14 @@ private:
 	void UpdateTutorial(void);
 	void UpdateStage1(void);
 
-	/// <summary>
-	/// 攻撃の基礎情報登録(ゆくゆくは外部データにしたい)
-	/// </summary>
-	void AttackDataInit(void);
-
-	/// <summary>
-	/// ロックオンの対象決め
-	/// </summary>
-	/// <param name=""></param>
-	//const int DecideRockEnemy(void);
-
 	//切り換え終了時の処理
 	void FinishSwitchBgm(void);
 	
+	//２ステージ目の開始
+	void StartNextStage(void);
+
 	//デバッグ描画
 	void DrawDebug(void);
-
 
 	//変数
 #pragma region インスタンス
@@ -124,16 +122,14 @@ private:
 	using Update_f = void(Game::*)(void);
 	using DirecUpdate_f = bool(Game::*)(void);
 	Update_f update_;			//通常・演出の二つを管理
-	DirecUpdate_f direcUpdate_;	//演出のポストエフェクト・画面揺れ・カメラ移動の三つを管理
-
-	//描画関数
-	using DrawPostEffect_f = void(Game::*)(void);
-	DrawPostEffect_f drawPostEffect_;	//ポストエフェクト管理
 
 	//進行度の更新
 	using UpdateProgress_f = void(Game::*)(void);
 	UpdateProgress_f updateProgress_;
 
+	//カメラ演出後処理
+	using CameraMoveAfter_f = void(Game::*)(void);
+	CameraMoveAfter_f processingAfterCameraAutoMove_;
 #pragma endregion
 
 #pragma region shader関連
@@ -177,13 +173,6 @@ private:
 
 	bool prevInputP_;			//デバッグ用トリガ
 	bool isEnemyUpdate_;
-
-	//ジャスト回避
-	//std::unique_ptr<PixelMaterial>skipMaterial_;
-	//std::unique_ptr<PixelRenderer>skipRender_;
-	int skipScreen_;
-	int skipCounter_;
-	bool isSkipEnd_;
 
 	bool isDebug_;
 };

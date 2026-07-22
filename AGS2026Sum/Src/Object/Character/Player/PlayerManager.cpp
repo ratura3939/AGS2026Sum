@@ -1,4 +1,4 @@
-#include"../../pch.h"
+﻿#include"../../pch.h"
 #include"../../../Manager/Generic/InputManager.h"
 #include"../../../Manager/Generic/SceneManager.h"
 #include"../../../Manager/Generic/Camera.h"
@@ -180,7 +180,7 @@ void PlayerManager::UpdateAnimationEvent(void)
 			//コンボの終了
 			attack_->FinishAttack();	//攻撃終了処理
 			character_->SetIsAttack(false);	//そうでないときは攻撃状態を解除する
-			EffectManager::GetInstance().Stop(character_->GetSpeciesName(), attack_->GetNextAttackDirectionInfo().efcName);
+			EffectManager::GetInstance().StopOrderEffectName(attack_->GetNextAttackDirectionInfo().efcName);
 		}
 	}
 
@@ -251,6 +251,7 @@ void PlayerManager::UserInput(void)
 		isEnableUltimate_ = true;			//必殺技中
 		scene_.StartSlow();					//スロー演出
 		isNoBlendPlayAnim_ = true;
+		scene_.SetProcessingAfterCameraAutoMove(Game::CAMERA_MOVE_SITUATION::ULTIMATE);
 
 		SettingUltimateCamera();
 		isAttackInput = true;

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include<memory>
 #include<vector>
 #include<DxLib.h>
@@ -20,92 +20,92 @@ class EnemyManager
 public:
 
 	/// <summary>
-	/// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	/// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	/// </summary>
-	/// <param name="_pPos">ƒvƒŒƒCƒ„[À•W</param>
+	/// <param name="_pPos">ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åº§æ¨™</param>
 	EnemyManager(const VECTOR& _pPos);
 	
-	//ƒfƒXƒgƒ‰ƒNƒ^
+	//ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	~EnemyManager(void);
 
-	//“Ç‚İ‚İ
+	//èª­ã¿è¾¼ã¿
 	void Load(void);
 
-	//‰Šú‰»
+	//åˆæœŸåŒ–
 	void Init(void);
 	
-	//XV
+	//æ›´æ–°
 	void Update(void);
 		
-	//•`‰æ
+	//æç”»
 	void Draw(void);
 	
-	//‰ğ•ú
+	//è§£æ”¾
 	void Release(void);
 
-	//¶‘¶’†‚Ì“G‚Ì”‚ğæ“¾
+	//ç”Ÿå­˜ä¸­ã®æ•µã®æ•°ã‚’å–å¾—
 	const int GetActiveEnemyNum(void)const;
 
-	//ƒAƒjƒ[ƒVƒ‡ƒ“‘¬“x‚Ì‘S‘Ì‚ÌŠ„‡İ’è
+	//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³é€Ÿåº¦ã®å…¨ä½“ã®å‰²åˆè¨­å®š
 	void SetAnimSpeedPercent(const float _percent);
 
-	//ƒXƒe[ƒW‚²‚Æ‚Ì“G¶¬
+	//ã‚¹ãƒ†ãƒ¼ã‚¸ã”ã¨ã®æ•µç”Ÿæˆ
 	void CreateStageEnemy(const StageEnemyData::AllEnemysInfo& _enemyInfo);
 
 private:
 
-	//ƒvƒŒƒCƒ„[‚ğ‘_‚¤‚Æ‚«‚Ì‹——£”¼Œa
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’ç‹™ã†ã¨ãã®è·é›¢åŠå¾„
 	static constexpr float PLAYER_AIM_RADIUS = 1000.0f;
 
-	//ƒvƒŒƒCƒ„[‚ğUŒ‚‘Ô¨‚É“ü‚é‹——£”¼Œa
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’æ”»æ’ƒæ…‹å‹¢ã«å…¥ã‚‹è·é›¢åŠå¾„
 	static constexpr float PLAYER_ATTACK_RADIUS = 500.0f;
 
-	//ƒ`ƒƒƒ“ƒNŠÇ——p‚Ì‰ŠúŠm•Û”
+	//ãƒãƒ£ãƒ³ã‚¯ç®¡ç†ç”¨ã®åˆæœŸç¢ºä¿æ•°
 	static constexpr int INIT_CHUNK_GROUP_NUM = 100;
 
-	//“G‚Ì¶¬”
+	//æ•µã®ç”Ÿæˆæ•°
 	static constexpr int CREATE_NUM = 8;
 
-	//ƒ`ƒƒƒ“ƒN”ÍˆÍ
+	//ãƒãƒ£ãƒ³ã‚¯ç¯„å›²
 	static constexpr int CHUNK_RANGE = 2;
 
-	//“GƒOƒ‹[ƒv
+	//æ•µã‚°ãƒ«ãƒ¼ãƒ—
 	std::unique_ptr<EnemyGroupPool> enemyGroupPool_;
 
-	//ƒ`ƒƒƒ“ƒN“à‚Ì“GƒOƒ‹[ƒv(QÆ—p)
+	//ãƒãƒ£ãƒ³ã‚¯å†…ã®æ•µã‚°ãƒ«ãƒ¼ãƒ—(å‚ç…§ç”¨)
 	std::vector<EnemyGroup*> oldChunkGroups_;
 	std::vector<EnemyGroup*> chunkGroups_;
 
-	//“Gî•ñ
+	//æ•µæƒ…å ±
 	std::unique_ptr<EnemyPool> enemyPool_;
 
-	//ƒ{ƒX‚ÌUI
+	//ãƒœã‚¹ã®UI
 	BossUI bossUi_;
 
-	//ƒvƒŒƒCƒ„[À•W
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åº§æ¨™
 	const VECTOR& playerPos_;
 
-	//“GƒOƒ‹[ƒv‚Ì¶¬(_createNum‚Íæ‚èŠª‚«‚Ì”)
+	//æ•µã‚°ãƒ«ãƒ¼ãƒ—ã®ç”Ÿæˆ(_createNumã¯å–ã‚Šå·»ãã®æ•°)
 	void CreateEnemyGroup(const int _createNum, const VECTOR& _pos, const ENEMY_TYPE& _leaderType, const EVENT_TYPE& _event);
 
-	//ƒOƒ‹[ƒv‚Æ“G‚ÌŠÖ˜A•t‚¯
+	//ã‚°ãƒ«ãƒ¼ãƒ—ã¨æ•µã®é–¢é€£ä»˜ã‘
 	void Grouping(EnemyGroup* _group, EnemyBase* _enemy);
 
-	//“G‚Ìíœˆ—
+	//æ•µã®å‰Šé™¤å‡¦ç†
 	void DeleteEnemy(void);
 
-	//ƒOƒ‹[ƒv‚Ìíœˆ—
+	//ã‚°ãƒ«ãƒ¼ãƒ—ã®å‰Šé™¤å‡¦ç†
 	void DeleteEnemyGroup(void);
 
-	//ƒOƒ‹[ƒv‚ÉŠ‘®‚µ‚Ä‚¢‚È‚¢“G‚ğ•ÊƒOƒ‹[ƒv‚ÉÄŠ‘®‚³‚¹‚é
+	//ã‚°ãƒ«ãƒ¼ãƒ—ã«æ‰€å±ã—ã¦ã„ãªã„æ•µã‚’åˆ¥ã‚°ãƒ«ãƒ¼ãƒ—ã«å†æ‰€å±ã•ã›ã‚‹
 	void ReJoinGroups(EnemyBase*_enemy);
 
-	//‹——£‚²‚Æ‚Ìs“®Œˆ‚ß
+	//è·é›¢ã”ã¨ã®è¡Œå‹•æ±ºã‚
 	void DecideOrderByDistance(void);
 
-	//ƒ`ƒƒƒ“ƒN“àƒOƒ‹[ƒv‚Ì‰Á“üE—£’Eˆ—
+	//ãƒãƒ£ãƒ³ã‚¯å†…ã‚°ãƒ«ãƒ¼ãƒ—ã®åŠ å…¥ãƒ»é›¢è„±å‡¦ç†
 	void ChankGroupsEnterAndLeave(void);
 
-	//ƒ{ƒX‚ÌUI”»’è
+	//ãƒœã‚¹ã®UIåˆ¤å®š
 	void SetBossUI(void);
 };

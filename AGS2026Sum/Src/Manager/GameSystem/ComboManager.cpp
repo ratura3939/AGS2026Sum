@@ -1,8 +1,16 @@
-#include "../../pch.h"
+﻿#include "../../pch.h"
+#include"../../Application.h"
 #include "../Generic/SceneManager.h"
 #include "../Decoration/UIManager2d.h"
 #include"../Generic/ResourceManager.h"
 #include "ComboManager.h"
+
+namespace {
+	//拡大率
+	const float EX_RATE_MIN = 0.7f;		//最低値
+	const float EX_RATE_MAX = 1.2f;		//最大値
+	const float EX_RATE_ACC = 0.05f;	//加速度
+}
 
 void ComboManager::Init(void)
 {
@@ -27,6 +35,9 @@ void ComboManager::AddCombo(void)
 
 	//コンボタイマーをリセット
 	comboTimer_ = 0.0f;
+
+	//数字の拡大開始
+	ChangeState(NUMBER_EX_STATE::UP);
 }
 
 void ComboManager::Update(void)
@@ -36,6 +47,12 @@ void ComboManager::Update(void)
 
 	//コンボタイマーを更新
 	comboTimer_ += scnMng.GetScaleUpdateSpeedRate(scnMng.GetDeltaTime());
+
+	//数字に動きがある場合
+	if (numberState_ != ComboManager::NUMBER_EX_STATE::NONE) {
+		//拡大率更新
+		(this->*updateExRate_)();
+	}
 
 	//コンボタイマーが最大受付時間を超えた場合
 	if (comboTimer_ > COMBO_MAX_TIME)
@@ -47,19 +64,11 @@ void ComboManager::Update(void)
 
 void ComboManager::Draw(void)
 {
-	//コンボ数が0以上なら
-	if (comboCount_ > 0)
-	{
-		//コンボ数を描画
-		DrawString(10, 120, (L"Combo: " + std::to_wstring(comboCount_)).c_str(), 0xffffff);
-		
-	}
+	//デバッグ
+	DrawDebug();
 
 	//コンボカウンター描画
 	DrawComboUI();
-
-	//ヒット数の描画
-	DrawString(10, 150, (L"Hit: " + std::to_wstring(hitCount_)).c_str(), 0xffffff);
 }
 
 void ComboManager::ResetCombo(void)
@@ -69,6 +78,9 @@ void ComboManager::ResetCombo(void)
 
 	//コンボタイマーをリセット
 	comboTimer_ = 0.0f;
+
+	//拡大率リセット
+	imageEx_ = EX_RATE_MIN;
 }
 
 void ComboManager::DrawComboUI(void)
@@ -78,15 +90,10 @@ void ComboManager::DrawComboUI(void)
 		return;
 	}
 
-	const int drawPos_Y = 120;			//描画位置Y(共通)
-	const int comboStartPos_X = 200;	//「COMBO」描画位置X
-	const int numberPosOffset_X = 100;	//数字ごとの位置調整差分
+	const int drawPos_Y = Application::GetInstance().GetWindowHeight() - 100;			//描画位置Y(共通)
+	const int drawStartPosCombo = 50;	//コンボ数最上位桁描画位置
 
-	const double exRate = 0.7;			//拡大率
 	const double angle = 0.0;			//回転
-
-	//「COMBO」の表示
-	DrawRotaGraph(comboStartPos_X, drawPos_Y, exRate, angle, comboStringImage_, true);
 
 	std::vector<int>digitNumbers;	//桁それぞれを保持
 	int remainingCombo = comboCount_;
@@ -102,23 +109,86 @@ void ComboManager::DrawComboUI(void)
 		remainingCombo /= 10;
 	}
 
-	//描画初期位置
-	int numberDrawPos_X = comboStartPos_X - numberPosOffset_X;
-	const int numberDrwaOffset_X = 40;
+	//描画位置
+	int numberDrawPos_X = drawStartPosCombo;
+	//数字ごとの描画位置差分
+	const int numberDrwaOffset_X = 40 * Utility::CalculateRatio(EX_RATE_MIN, imageEx_);
 
-	for (int& useNumber : digitNumbers) {
+	//最上位桁(末尾要素)から一の位(先頭要素)へ向かって描画
+	for (auto it = digitNumbers.rbegin(); it != digitNumbers.rend(); ++it) {
+		int useNumber = *it;
+
 		//数字の描画
-		DrawRotaGraph(numberDrawPos_X, drawPos_Y, exRate, angle, numberImages_[useNumber], true);
+		DrawRotaGraph(numberDrawPos_X, drawPos_Y, imageEx_, angle, numberImages_[useNumber], true);
 
-		//位置差分
-		numberDrawPos_X -= numberDrwaOffset_X;
+		//位置差分(右方向へ)
+		numberDrawPos_X += numberDrwaOffset_X;
+	}
+
+	//「Combo」画像描画位置
+	const int comboStartPos_X = numberDrawPos_X + 100;
+
+	//拡大率が最低値(デフォルト)の時
+	if (numberState_ == NUMBER_EX_STATE::NONE) {
+		//「COMBO」の表示
+		DrawRotaGraph(comboStartPos_X, drawPos_Y, imageEx_, angle, comboStringImage_, true);
 	}
 }
 
+void ComboManager::ChangeState(const NUMBER_EX_STATE& _nextState)
+{
+	numberState_ = _nextState;
+
+	if (numberState_ == NUMBER_EX_STATE::UP) {
+		updateExRate_ = &ComboManager::UpdateExRateIncrease;
+	}
+	else if (numberState_ == NUMBER_EX_STATE::DOWN) {
+		updateExRate_ = &ComboManager::UpdateExRateDecrease;
+	}
+}
+
+void ComboManager::UpdateExRateIncrease(void)
+{
+	//増加
+	imageEx_ += EX_RATE_ACC;
+
+	//上限値にいった場合
+	if (imageEx_ >= EX_RATE_MAX) {
+		imageEx_ = EX_RATE_MAX;
+		ChangeState(NUMBER_EX_STATE::DOWN);
+	}
+}
+
+void ComboManager::UpdateExRateDecrease(void)
+{
+	//減少
+	imageEx_ -= EX_RATE_ACC;
+
+	//上限値にいった場合
+	if (imageEx_ <= EX_RATE_MIN) {
+		imageEx_ = EX_RATE_MIN;
+		ChangeState(NUMBER_EX_STATE::NONE);
+	}
+}
+
+void ComboManager::DrawDebug(void)
+{
+	//コンボ数が0以上なら
+	if (comboCount_ > 0)
+	{
+		//コンボ数を描画
+		DrawString(10, 120, (L"Combo: " + std::to_wstring(comboCount_)).c_str(), 0xffffff);
+
+	}
+	//ヒット数の描画
+	DrawString(10, 150, (L"Hit: " + std::to_wstring(hitCount_)).c_str(), 0xffffff);
+}
+
 ComboManager::ComboManager(void)
-	: comboCount_(0)
-	, comboTimer_(0.0f)
-	, hitCount_(0)
+	:comboCount_(0)
+	,comboTimer_(0.0f)
+	,hitCount_(0)
+	,imageEx_(EX_RATE_MIN)
 {
 }
 

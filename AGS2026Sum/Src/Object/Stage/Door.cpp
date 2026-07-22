@@ -1,7 +1,8 @@
-#include "../../pch.h"
+﻿#include "../../pch.h"
 #include"../../Manager/Generic/ResourceManager.h"
 #include"../../Renderer/ModelMaterial.h"
 #include"../../Renderer/ModelRenderer.h"
+#include"../Common/Geometry/Model.h"
 #include "Door.h"
 
 namespace {
@@ -80,6 +81,10 @@ void Door::DoLoad(void)
 	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(loadSrc);	
 
 	quaRotLocal_ = Quaternion::Euler(0.0f, 0.0f, 0.0f);
+
+	//コライダ
+	std::unique_ptr<Geometry> geo = std::make_unique<Model>(pos_, pos_, quaRot_, 1000.0f, modelId_);
+	MakeCollider(std::move(geo), Collider::COL_TAG::STAGE, { Collider::COL_TAG::PLAYER,Collider::COL_TAG::ENEMY });
 }
 
 void Door::DoInit(void)

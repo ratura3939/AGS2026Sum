@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include"../EnemyFactory.h"
 
 class EnemyBase;

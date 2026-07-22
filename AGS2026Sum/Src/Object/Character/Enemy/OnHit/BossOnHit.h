@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include"EnemyOnHit.h"
 
 class BossOnHit : public EnemyOnHit

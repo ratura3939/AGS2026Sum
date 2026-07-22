@@ -4996,7 +4996,7 @@ public:
 		\~English	stop a server
 		\~Japanese	サーバーを終了する。
 	*/
-	virtual void Stop() = 0;
+	virtual void StopAll() = 0;
 
 	/**
 		@brief
@@ -5068,7 +5068,7 @@ public:
 	static ClientRef Create();
 
 	virtual bool Start(char* host, uint16_t port) = 0;
-	virtual void Stop() = 0;
+	virtual void StopAll() = 0;
 
 	virtual void Reload(const char16_t* key, void* data, int32_t size) = 0;
 	virtual void Reload(ManagerRef manager, const char16_t* path, const char16_t* key) = 0;

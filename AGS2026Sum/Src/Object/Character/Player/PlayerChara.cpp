@@ -1,4 +1,4 @@
-#include "../../../pch.h"
+﻿#include "../../../pch.h"
 #include"../../../Manager/Generic/SceneManager.h"
 #include"../../../Manager/Generic/Camera.h"
 #include"../../../Manager/Generic/ResourceManager.h"	
@@ -176,8 +176,8 @@ void PlayerChara::Attack(void)
 void PlayerChara::DrawHP(void)
 {
 	const int boxStart_X = 20;
-	const int boxStart_Y = 500;
-	const int boxEnd_Y = 520;
+	const int boxStart_Y = 20;
+	const int boxEnd_Y = boxStart_Y + 10;
 	const int boxXDiff = 300;
 
 	const int GLAY = 0x999999;
@@ -207,6 +207,7 @@ void PlayerChara::Draw(void)
 	MV1SetMeshBackCulling(modelId_, 0, DX_CULLING_LEFT);	//表面描画
 	modelRenderer_->Draw(modelId_, *modelMaterial_);
 
+	//HP描画
 	DrawHP();
 }
 

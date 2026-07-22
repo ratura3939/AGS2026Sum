@@ -155,5 +155,13 @@ public:
 	//•¶š—ñ•ÏŠ·
 	static std::string WstringToString(const std::wstring& _wstr);
 	static std::wstring StringToWstring(const std::string& _str);
+
+	/// <summary>
+	/// ”{—¦ŒvZ
+	/// </summary>
+	/// <param name="_base">Šî€</param>
+	/// <param name="_target">”äŠr‘ÎÛ</param>
+	/// <returns></returns>
+	static float CalculateRatio(const float _base, const float _target);
 };
 
