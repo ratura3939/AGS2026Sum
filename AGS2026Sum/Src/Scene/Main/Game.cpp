@@ -88,18 +88,17 @@ Game::Game(void)
 	direcCnt_ = 0;
 
 	update_ = &Game::GameUpdate;
-	//drawPostEffect_ = &Game::GameUpdate;
 
 	cameraGoalStayCounter_ = 0;
 	cameraGoalStayTime_ = 0;
 
 	isDebug_ = false;
+
+	processingAfterCameraAutoMove_ = nullptr;
 }
 
 Game::~Game(void)
 {
-	//DeleteGraph(scanLineScreen_);
-	//DeleteGraph(blurScreen_);
 }
 
 void Game::Init(void)
@@ -128,7 +127,7 @@ void Game::Init(void)
 	ChunkManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::GAME_END);
 
 	//コンボ管理
-	ComboManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::ALL_END);
+	ComboManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::GAME_END);
 
 	//プレイヤー
 	player_ = std::make_unique<PlayerManager>(*this);
@@ -161,12 +160,19 @@ void Game::Init(void)
 	InitEffect();
 	//シェーダー初期化
 	InitShader();
+}
 
-	auto& uiM = UIManager2d::GetInstance();
-
-	//メニューボタン
-	//uiM.Add(MENU_BTN, rsM.Load(ResourceManager::SRC::MENU_BTN).handleId_, UIManager2d::UI_DIRECTION_2D::NORMAL, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
-	//uiM.SetUIInfo(MENU_BTN, VECTOR{ static_cast<float>(Application::SCREEN_SIZE_X - BTN_DIFF_X),static_cast<float>(Application::SCREEN_SIZE_Y - BTN_DIFF_Y),0.0f }, BTN_EX);
+void Game::SetProcessingAfterCameraAutoMove(const CAMERA_MOVE_SITUATION& _situation)
+{
+	//状況に応じた処理と紐づけ
+	switch (_situation) {
+	case CAMERA_MOVE_SITUATION::ULTIMATE:
+		processingAfterCameraAutoMove_ = nullptr;
+		break;
+	case CAMERA_MOVE_SITUATION::NEXT_STAGE:
+		processingAfterCameraAutoMove_ = &Game::StartNextStage;
+		break;
+	}
 }
 
 void Game::InitSound(void)
@@ -190,9 +196,6 @@ void Game::InitEffect(void)
 {
 	ResourceManager& rsM = ResourceManager::GetInstance();
 	EffectManager& efcM = EffectManager::GetInstance();
-
-	//剣
-	//efcM.Add(EffectManager::EFFECT_NAME, rsM.Load(ResourceManager::SRC::SWORD_EFC).handleId_);
 }
 
 void Game::InitShader(void)
@@ -221,15 +224,6 @@ void Game::Update(void)
 	InputManager& inpM = InputManager::GetInstance();
 
 #pragma region シーン遷移(ルール)
-	//プレイヤーが死んでいたら
-	//if (!player_->IsAlive()) {
-	//	//BGM念のため両方停止
-	//	sndM.Stop(nowBgmStr_);
-	//	sndM.Stop(switchBgmStr_);
-	//	//シーン遷移
-	//	//scM.ChangeScene(std::make_shared<GameOver>());
-	//}
-
 
 	//if(enemy_->GetActiveEnemyNum() <= 0)
 	//{
@@ -261,6 +255,11 @@ void Game::Update(void)
 			cameraGoalStayCounter_ = 0;
 
 			camera.ChangeMode(Camera::MODE::RESET);	//カメラリセット
+
+			//個別演出
+			if (processingAfterCameraAutoMove_ != nullptr) {
+				(this->*processingAfterCameraAutoMove_)();
+			}
 		}
 	}
 }
@@ -271,20 +270,6 @@ void Game::GameUpdate(void)
 	SoundManager& sndM = SoundManager::GetInstance();
 	InputManager& inpM = InputManager::GetInstance();
 	Camera& camera = scM.GetCamera();
-	
-	//敵がいなくなったら
-	//if (enemy_->GetEnemys().size() <= 0) {
-	//	sndM.Stop(nowBgmStr_);
-	//	sndM.Stop(switchBgmStr_);
-	//	//シーン遷移
-	//	//scM.ChangeScene(std::make_shared<GameClear>());
-	//}
-
-	//ポーズシーン遷移
-	//if (inpM.IsTrigerrDown(InputManager::INPUT_COMMAND::PAUSE)) {
-	//	//シーン追加(一つ次へ)
-	//	scM.PushScene(std::make_shared<PauseScene>());
-	//}
 
 #pragma region 基礎アプデ
 	stage_->Update();
@@ -317,19 +302,6 @@ void Game::GameUpdate(void)
 #pragma endregion
 
 #pragma region BGM
-	//敵の状態(戦闘・それ以外)のトリガ
-	//if (enemy_->IsBattleStateChanged()) {
-	//	//もともと切り換え中だったら
-	//	if (switchBgm_) {
-	//		//強制終了処理
-	//		FinishSwitchBgm();
-	//	}
-
-	//	//切り換え開始
-	//	switchBgm_ = true;
-	//	//切り替え後の再生
-	//	sndM.Play(switchBgmStr_);
-	//}
 
 	//BGM切り換え実行中
 	if (switchBgm_) {
@@ -349,170 +321,12 @@ void Game::GameUpdate(void)
 #pragma endregion
 
 #pragma region カメラ
-	//カメラの設定
-	//if (!player_->IsUseAbility()) {
-	//	camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象の更新
-	//}
-	//else {
-	//	VECTOR abilityFollow = player_->GetPos();
-	//	abilityFollow.y += CAMERA_FOLLOW_DIFF_Y_ABILITY;
-	//	camera.SetFollow(abilityFollow, player_->GetQua());		//追従対象の更新
-	//}
 
 	camera.SetFollow(player_->GetFocusPos(), player_->GetQua());		//追従対象の更新
 	
 #pragma endregion
 }
 
-void Game::DirectionUpdate(void)
-{
-	//危険のポストエフェクト→画面揺れ→カメラ
-	if ((this->*direcUpdate_)()) {
-		//次の演出に
-		direcState_ = static_cast<BOSS_DIRECTION>(static_cast<int>(direcState_) + 1);
-		direcCnt_ = 0;
-
-		//もし終了したら
-		//if (direcState_ == BOSS_DIRECTION::END) {
-		//	//カメラの追従対象を戻す
-		//	Camera& camera = SceneManager::GetInstance().GetCamera();
-		//	camera.ChangeMode(Camera::MODE::FOLLOW);					//モード選択
-		//	camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象
-		//	camera.SetGoalFocusPos(player_->GetFocusPoint());				//注視点
-
-		//	//ブラーをなくす
-		//	ChangeActionDirec(ACTION_DIRECTION::NOMAL);
-
-		//	//BGM流す
-		//	SoundManager::GetInstance().Play("BossBgm");
-		//	nowBgmStr_ = "BossBgm";
-		//	switchBgm_ = false;
-
-		//	//更新を通常に
-		//	update_ = &Game::GameUpdate;
-		//}
-		////画面揺れ
-		//else if (direcState_ == BOSS_DIRECTION::SHAKE_SCREEN) {
-		//	//実行
-		//	DoShake();
-		//	//演出の更新を「画面揺れ」に
-		//	direcUpdate_ = &Game::DirectionShakeScreen;
-		//}
-		////カメラ移動
-		//else if (direcState_ == BOSS_DIRECTION::CAMERA_MOVE) {
-
-		//	auto& camera = SceneManager::GetInstance().GetCamera();
-		//	//ボスの生成
-		//	enemy_->CreateBoss(player_->GetPos());
-		//	camera.SetLockOnDistanceMin(LOCK_DISTANCE_MIN_BOSS);			//ロックオン最低距離
-
-		//	//カメラを自動移動に設定
-		//	camera.ChangeMode(Camera::MODE::AUTO_MOVE);
-
-		//	//場所の設定(ボスの横ぐらい)
-		//	auto bossPos = enemy_->GetPos(BOSS_IDX);
-		//	camera.SetPos(VAdd(bossPos,cameraMoveStartPos_), bossPos);
-		//	camera.SetGoalPos(VAdd(bossPos, cameraMoveGoalPos_[direcCnt_]));
-
-		//	//演出を「カメラ移動に変更
-		//	direcUpdate_ = &Game::DirectionCameraMove;
-		//}
-	}
-}
-
-bool Game::DirectionPostEffect(void)
-{
-	////WARNING更新
-	//UIManager2d::GetInstance().Update(WARNING_STR_IMG);
-
-	////ポストエフェクト更新
-	//scanLineMaterial_->SetConstBuf(1, { SceneManager::GetInstance().GetTotalTime(),0.0f,0.0f,0.0f });	//横ライン移動用
-
-	////演出カウンタ更新
-	//direcCnt_++;
-	////一定時間過ぎたら
-	//if (direcCnt_ > WARNING_DIRECTION_TIME) {
-	//	//演出終了
-	//	SoundManager::GetInstance().Stop("WarningBgm");	//警告音止める
-	//	ChangeActionDirec(ACTION_DIRECTION::NOMAL);		//ポストエフェクト終了
-	//	return true;
-	//}
-	////演出が続く
-	return false;
-}
-
-bool Game::DirectionShakeScreen(void)
-{
-	//カメラノーシェイク時
-	if (stayCameraShake_) {
-		//クールタイム増加
-		cameraShakeCollTimeCnt_++;
-
-		//一定時間経過後
-		if (cameraShakeCollTimeCnt_ >= CAMERA_SHAKE_COOL_TIME) {
-			//再度揺らす
-			DoShake();
-			stayCameraShake_ = false;
-		}
-		return false;
-	}
-
-	//カメラシェイク終了時
-	if (SceneManager::GetInstance().GetCamera().IsFinishShake()) {
-		//演出カウンタ増加
-		direcCnt_++;
-
-		//一定数行ったら
-		if (direcCnt_ >= CAMERA_SHAKE_NUM) {
-			//演出終了
-			return true;
-		}
-		//クールタイム関係リセット
-		cameraShakeCollTimeCnt_ = 0;
-		stayCameraShake_ = true;
-	}
-	//演出が続く
-	return false;
-}
-
-void Game::DoShake(void)
-{
-	//oundManager::GetInstance().Play("Impact");	//効果音再生
-	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::SHAKE);	//揺らす
-}
-
-bool Game::DirectionCameraMove(void)
-{
-	//アニメーションのみ更新
-	//enemy_->UpdateAnim();
-
-	//カメラ演出用
-	auto& camera = SceneManager::GetInstance().GetCamera();
-
-	//ゴール位置についたら次のスタート位置へ
-	auto cameraPos = camera.GetPos();
-	if (Utility::MagnitudeF(VSub(camera.GetGoalPos(), cameraPos)) <= ALLOWABLE_DISTANCE) {
-		//演出カウンタ増加
-		direcCnt_++;
-
-		//移動演出回数の上限に到達していたら
-		if (direcCnt_ >= CAMERA_DIRECTION_NUM) {
-			//演出終了
-			return true;
-		}
-		else {
-			//次の目標地点への設定
-			//camera.SetGoalPos(VAdd(enemy_->GetPos(BOSS_IDX), cameraMoveGoalPos_[direcCnt_]));
-
-			//二回目の移動はボスの「叫び」も入れる
-			//enemy_->BossShout();
-			//「叫び」演出用のブラーへ
-			ChangeActionDirec(ACTION_DIRECTION::BLUR);
-		}
-	}
-	//演出が続く
-	return false;
-}
 
 void Game::DrawEdge(void)
 {
@@ -545,18 +359,14 @@ void Game::UpdateTutorial(void)
 		stage_->OpenDoor();
 
 		//カメラの調整
-	/*	Camera& camera = SceneManager::GetInstance().GetCamera();
+		Camera& camera = SceneManager::GetInstance().GetCamera();
 		camera.ChangeMode(Camera::MODE::AUTO_MOVE);
-		SetCameraStayTimeAtAutoMove(20.0f);
+		SetCameraStayTimeAtAutoMove(120.0f);
 		camera.SetGoalPos(stage_->GetGoalPosAtDoorOpen());
-		camera.SetFocusPos(stage_->GetDoorPos());*/
+		camera.SetFocusPos(stage_->GetDoorPos());
 
-		//ステージ１に移行
-		updateProgress_ = &Game::UpdateStage1;
-		progress_ = GAME_PROGRESS::STAGE_1;
-
-		//敵生成
-		enemy_->CreateStageEnemy(stageEnemyData_.allStageInfo[PROGRESS[static_cast<int>(progress_)]]);
+		//個別処理の設定
+		SetProcessingAfterCameraAutoMove(CAMERA_MOVE_SITUATION::NEXT_STAGE);
 	}
 }
 
@@ -582,13 +392,6 @@ void Game::Draw(void)
 	ComboManager::GetInstance().Draw();
 
 	//DrawEdge();
-
-	//ポストエフェクトをかけるとき
-	if (isDrawPostEffect_) {
-		//描画
-		(this->*drawPostEffect_)();
-	}
-	//DrawFormatString(400, 0, 0xffffff, L"%d", GetDrawCallCount());
 }
 
 void Game::Release(void)
@@ -622,8 +425,6 @@ void Game::StartBossFaze(void)
 
 	//演出初期設定
 	direcState_ = BOSS_DIRECTION::POST_EFFECT;
-	update_ = &Game::DirectionUpdate;
-	direcUpdate_ = &Game::DirectionPostEffect;
 	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FIXED_POINT);	//演出中はカメラ操作を受け付けない
 }
 
@@ -632,27 +433,6 @@ void Game::ChangeActionDirec(const ACTION_DIRECTION _direc)
 	//とりあえずポストエフェクトを描画するように
 	isDrawPostEffect_ = true;
 
-	////各ポストエフェクトの描画設定
-	//if (_direc == ACTION_DIRECTION::SCAN_LINE) {
-	//	drawPostEffect_ = &Game::DrawScanLine;
-	//}
-	//else if (_direc == ACTION_DIRECTION::BLUR) {
-	//	drawPostEffect_ = &Game::DrawBlur;
-	//}
-	//else if (_direc == ACTION_DIRECTION::JUST_DODGE) {
-	//	drawPostEffect_ = &Game::DrawDodgeEffect;
-	//}
-	//else {
-	//	//上記三つ以外の場合はポストエフェクトをかけない
-	//	isDrawPostEffect_ = false;
-	//}
-}
-
-void Game::AttackDataInit(void)
-{
-	////攻撃の情報入れ
-	//atkMng_->AddAttack(PlayerManager::ATTACK_NOMAL, AttackManager::ATTACK_TYPE::SWORD,false, false, PlayerManager::ATTACK_TIME);
-	//atkMng_->AddAttack(EnemyManager::ATTACK_NOMAL, AttackManager::ATTACK_TYPE::SWORD, true,false, EnemyManager::ATTACK_TIME, EnemyManager::ATTACK_TIME_START, EnemyManager::ATTACK_TIME_END);
 }
 
 void Game::FinishSwitchBgm(void)
@@ -669,6 +449,16 @@ void Game::FinishSwitchBgm(void)
 	switchBgmStr_ = ret;
 	//初期化
 	nextBgmVol_ = 0;
+}
+
+void Game::StartNextStage(void)
+{
+	//終了判定をステージ１に移行
+	updateProgress_ = &Game::UpdateStage1;
+	progress_ = GAME_PROGRESS::STAGE_1;
+
+	//敵生成
+	enemy_->CreateStageEnemy(stageEnemyData_.allStageInfo[PROGRESS[static_cast<int>(progress_)]]);
 }
 
 void Game::StartSlow(void)

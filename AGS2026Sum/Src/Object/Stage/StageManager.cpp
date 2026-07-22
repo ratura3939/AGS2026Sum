@@ -8,7 +8,7 @@
 
 namespace {
 	const VECTOR INIT_POS_FIRST_STAGE = { 5000,0.0f,1000.0f };	//初期ステージ初期位置
-	const VECTOR INIT_POS_BOSS_STAGE = { 5000,0.0f,11000.0f };
+	const VECTOR INIT_POS_BOSS_STAGE = { 5400.0f,0.0f,10915.0f };
 	const int PS_BUFF_NUM = 0;
 
 	const float SCALING_X = 1.0f;
@@ -18,7 +18,7 @@ namespace {
 
 	const VECTOR INIT_SCALE_FOR_TEST = { 3.0f,3.0f,3.0f };
 
-	const VECTOR INIT_POS_DOOR = { 4300.0f,0.0f,11000.0f };	//ドアの初期位置}
+	const VECTOR INIT_POS_DOOR = { 4700.0f,0.0f,6900.0f };	//ドアの初期位置}
 }
 
 StageManager::StageManager(void)
@@ -87,6 +87,22 @@ void StageManager::CloseDoor(void)
 const VECTOR& StageManager::GetDoorPos(void) const
 {
 	return door_->GetPos();
+}
+
+void StageManager::UpdateTutorialStage(void)
+{
+}
+
+void StageManager::UpdateFirstStage(void)
+{
+}
+
+void StageManager::DrawTutorialStage(void)
+{
+}
+
+void StageManager::DrawFirstStage(void)
+{
 }
 
 const VECTOR& StageManager::GetGoalPosAtDoorOpen(void)const

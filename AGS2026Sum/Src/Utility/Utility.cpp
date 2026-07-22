@@ -707,3 +707,13 @@ std::wstring Utility::StringToWstring(const std::string& _str)
 
     return result;
 }
+
+float Utility::CalculateRatio(const float _base, const float _target)
+{
+    //—áŠO—p
+    if (_base <= 0.0f) {
+        return 0.0f;
+    }
+   
+    return _target / _base;
+}
