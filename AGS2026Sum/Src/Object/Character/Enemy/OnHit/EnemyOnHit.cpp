@@ -65,11 +65,6 @@ void EnemyOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 
 	//ここからヒット処理
 
-	//ヒットエフェクト
-	auto& eff = EffectManager::GetInstance();
-	if(!eff.IsEffectPlay(parent_.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_HIT))
-		eff.Play(parent_.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_HIT, parent_.GetPos(), parent_.GetQua(), 10.0f);
-
 	//リセット
 	cnt_ = 0.0f;
 
@@ -82,15 +77,15 @@ void EnemyOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 	//吹っ飛び(相手の向いている方向)
 	VECTOR blowPow = quaRot.GetForward();
 
+	//ダメージ処理
+	parent_.Damage(data->power);
+
 	//ダメージ状態
 	std::string knockback = data->knockBackType;
 	parent_.ChangeState((this->*createState_[knockback])(blowPow));
 
 	//コンボカウント
 	ComboManager::GetInstance().AddCombo();
-
-	//ダメージ処理
-	parent_.Damage(data->power);
 }
 
 void EnemyOnHit::HitPlayer(const std::weak_ptr<Collider> _col)

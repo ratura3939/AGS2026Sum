@@ -142,4 +142,7 @@ void EnemyTackleSkill::EndExit(EnemyBase& _owner)
 {
 	//初期化
 	attackCnt_ = 0.0f;
+
+	//エフェクトストップ
+	EffectManager::GetInstance().Stop(_owner.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_TACKLE);
 }

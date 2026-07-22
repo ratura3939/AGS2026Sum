@@ -26,16 +26,6 @@ EnemyManager::~EnemyManager(void)
 
 void EnemyManager::Load(void)
 {
-	//リソース
-	auto& res = ResourceManager::GetInstance();
-	auto& eff = EffectManager::GetInstance();
-
-	//エフェクト
-	eff.Add(EffectManager::EFFECT_NAME::ENEMY_HIT, res.Load(ResourceManager::SRC::ENEMY_HIT_EFC).handleId_);
-	eff.Add(EffectManager::EFFECT_NAME::ENEMY_DEAD, res.Load(ResourceManager::SRC::ENEMY_DEAD_EFC).handleId_);
-	eff.Add(EffectManager::EFFECT_NAME::ENEMY_TACKLE, res.Load(ResourceManager::SRC::ENEMY_TACKLE_EFC).handleId_);
-	eff.Add(EffectManager::EFFECT_NAME::ENEMY_LANDING, res.Load(ResourceManager::SRC::ENEMY_LANDING_EFC).handleId_);
-
 	//敵グループのプールを生成
 	enemyGroupPool_ = std::make_unique<EnemyGroupPool>();
 	enemyGroupPool_->Load();
@@ -417,6 +407,12 @@ void EnemyManager::SetBossUI(void)
 	//比較終了
 	if (boss)
 	{
+		//近いボスを描画
 		bossUi_.SetDrawBoss(boss);
+	}
+	else
+	{
+		//誰もいない
+		bossUi_.SetDrawBoss(nullptr);
 	}
 }

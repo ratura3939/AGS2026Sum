@@ -118,21 +118,19 @@ void BossOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 		parent_.ChangeAction(ENEMY_ACTION::ATTACK_END);
 	}
 
+	//スタンしていないならダメージを減らす
+	if(!isGuardBreak)power *= 0.1f;
+
+	//ダメージ処理
+	parent_.Damage(power);
+
 	//スタン中は状態遷移をしない
 	if (isGuardBreak || !parent_.IsAlive())
 	{
 		//各吹っ飛び
 		parent_.ChangeState((this->*createState_[knockback])(blowPow));
 	}
-	else
-	{
-		//スタンしていないならダメージを減らす
-		power *= 0.1f;
-	}
 
 	//コンボカウント
 	ComboManager::GetInstance().AddCombo();
-
-	//ダメージ処理
-	parent_.Damage(power);
 }

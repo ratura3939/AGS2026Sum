@@ -8,6 +8,7 @@
 
 BossUI::BossUI(void)
 	:boss_(nullptr)
+	,isDraw_(false)
 {
 }
 
@@ -33,13 +34,15 @@ void BossUI::Load(void)
 void BossUI::Draw(void)
 {
 	//表示するものがいないなら
-	if (!boss_)return;
+	if (!boss_ || !isDraw_)return;
 
 	//ボスUI
 	Vector2 healthPos;
 	Vector2 healthWH;
-	healthPos.x = Application::SCREEN_SIZE_X / 2 + HP_LOCAL_POS_X;
-	healthPos.y = Application::SCREEN_SIZE_Y / 2 + HP_LOCAL_POS_Y;
+	healthPos.x = Application::SCREEN_SIZE_X * HP_INFO.anchorX + HP_INFO.offsetX;
+	healthPos.x -= HP_WIDTH / 2;
+	healthPos.y = Application::SCREEN_SIZE_Y * HP_INFO.anchorY + HP_INFO.offsetY;
+	healthPos.y -= HP_HEIGHT / 2;
 	healthWH.x = healthPos.x + HP_WIDTH;
 	healthWH.y = healthPos.y + HP_HEIGHT;
 	float hp = boss_->GetHp();
@@ -49,7 +52,7 @@ void BossUI::Draw(void)
 	DrawBox(healthPos.x - HP_WINDOW, healthPos.y - HP_WINDOW, healthWH.x + HP_WINDOW, healthWH.y + HP_WINDOW, 0x0, true);
 	if (hp > 0.0f)
 	{
-		DrawBox(healthPos.x, healthPos.y, healthPos.x + HP_WIDTH * (hp / hpMax), healthPos.y + HP_HEIGHT, 0xff0000, true);
+		DrawBox(healthPos.x, healthPos.y, healthPos.x + HP_WIDTH * (hp / hpMax), healthPos.y + HP_HEIGHT, 0xff8888, true);
 	}
 
 	//ガード耐久値
@@ -61,7 +64,7 @@ void BossUI::Draw(void)
 	if (guard > 0.0f)
 	{
 		//定数バッファの更新と描画
-		material_->SetConstBuf(0, {GAUGE_POS_X,GAUGE_POS_Y,progress,0.0f});
+		material_->SetConstBuf(0, {GAUGE_UV_U,GAUGE_UV_V,progress,0.0f});
 		material_->SetConstBuf(1, { GAUGE_RADIUS,0.0f,0.0f,0.0f });
 		renderer_->Draw(*material_);
 	}
@@ -73,9 +76,22 @@ void BossUI::Draw(void)
 
 void BossUI::SetDrawBoss(const EnemyBase* _boss)
 {
-	//既に同じ　または　ボスではないなら何もしない
-	if (boss_ == _boss || !_boss->IsBoss())return;
+	//いないならボス表示を無効化
+	if (!_boss || !_boss->IsBoss())
+	{
+		isDraw_ = false;
+		boss_ = nullptr;
+		return;
+	}
+
+	//既に同じなら表示判定のみ変更
+	if (boss_ == _boss)
+	{
+		isDraw_ = true;
+		return;
+	}
 
 	//表示ボスを変える
 	boss_ = dynamic_cast<const BossBase*>(_boss);
+	isDraw_ = true;
 }
