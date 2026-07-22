@@ -71,26 +71,52 @@ void ResourceManager::InitGame(void)
 {
 	Resource res;
 
+	//BGM
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + L"GameScene.mp3");
 	resourcesMap_.emplace(SRC::GAME_BGM, res);
 
+	//ステージ１
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + L"TutorialStage.mv1");
 	resourcesMap_.emplace(SRC::FIRST_STAGE_MDL, res);
 
+	//ステージ２
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + L"BossStage.mv1");
 	resourcesMap_.emplace(SRC::BOSS_STAGE_MDL, res);
 
+	//ドア右
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + L"DoorRight.mv1");
 	resourcesMap_.emplace(SRC::DOOR_RIGHT_MDL, res);
 
+	//ドア左
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + L"DoorLeft.mv1");
 	resourcesMap_.emplace(SRC::DOOR_LEFT_MDL, res);
 
+	//コンボ用数字
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_UI + L"comboNumber.png", 5, 2, 64, 64);
 	resourcesMap_.emplace(SRC::COMBO_NUMBER_IMG, res);
 
+	//「COMBO」
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"ComboUI.png");
 	resourcesMap_.emplace(SRC::COMBO_STRING_IMG, res);
+
+	//操作方法
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"OperationInfo.png");
+	resourcesMap_.emplace(SRC::OPERATION_INFO_IMG, res);
+
+	//特殊攻撃発生用
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"AttackOperationIcon.png");
+	resourcesMap_.emplace(SRC::OPERATION_ATK_IMG, res);
+
+	//必殺技発生用
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"UltimateOperationIcon.png");
+	resourcesMap_.emplace(SRC::OPERATION_ULT_IMG, res);
+
+	//ジャンプ攻撃アイコン
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"JumpAttackIcon.png");
+	resourcesMap_.emplace(SRC::JUMP_ATK_ICON_IMG, res);
+	//タックル攻撃アイコン
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"TakcleAttackIcon.png");
+	resourcesMap_.emplace(SRC::TAKCLE_ATK_ICON_IMG, res);
 
 	ResourcePlayer();	//プレイヤー関連
 

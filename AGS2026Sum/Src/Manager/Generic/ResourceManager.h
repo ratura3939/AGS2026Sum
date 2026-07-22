@@ -27,6 +27,11 @@ public:
 		,BACK_GAME_IMG			//ゲームに戻る
 		,COMBO_NUMBER_IMG		//コンボ用の数字
 		,COMBO_STRING_IMG		//「COMBO」画像
+		,OPERATION_INFO_IMG		//操作方法画像
+		,OPERATION_ATK_IMG		//特殊攻撃発生用画像
+		,OPERATION_ULT_IMG		//必殺技発生用画像
+		,JUMP_ATK_ICON_IMG		//ジャンプ攻撃アイコン
+		,TAKCLE_ATK_ICON_IMG	//タックル攻撃アイコン
 
 		//アニメーション
 		//プレイヤー
