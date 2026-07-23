@@ -45,7 +45,7 @@ private:
 
 	//攻撃時間
 	static constexpr float ATTACK_READY_TIME = 3.0f;
-	static constexpr float ATTACK_TIME = 1.0f;
+	static constexpr float ATTACK_TIME = 0.5f;
 	static constexpr float ATTACK_END_TIME = 1.0f;
 
 	//攻撃の相対座標
@@ -53,5 +53,9 @@ private:
 
 	//攻撃の半径
 	static constexpr float RADIUS = 1000.0f;
+
+	//エフェクトの大きさ
+	static constexpr float AURA_SCALE = 10.0f;
+	static constexpr float EFF_SCALE = 100.0f;
 };
 

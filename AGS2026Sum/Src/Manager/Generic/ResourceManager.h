@@ -35,6 +35,7 @@ public:
 		,PUNCH_ATK_ON_OFF_IMG	//パンチ攻撃操作ONOFF
 		,KICK_ATK_ON_OFF_IMG	//パンチ攻撃操作ONOFF
 		,COMBO_ARROW_IMG		//コンボ用矢印
+		,CRACK					//ひび用マスク画像
 
 		//アニメーション
 		//プレイヤー
@@ -78,6 +79,12 @@ public:
 		,PLAYER_KICK_THIRD_EFC		//キック三段目
 		,PLAYER_PUNCH_SPECIAL_EFC	//パンチ特殊
 		,PLAYER_ULTIMATE_EFC		//必殺技エフェクト
+		,PLAYER_HIT_EFC				//プレイヤーヒットエフェクト
+		,ENEMY_HIT_EFC				//敵ヒットエフェクト
+		,ENEMY_DEAD_EFC				//敵死亡エフェクト
+		,ENEMY_TACKLE_EFC			//敵突進エフェクト
+		,ENEMY_LANDING_EFC			//敵ジャンプ着地エフェクト
+		,ENEMY_AURA_EFC				//敵のオーラエフェクト
 
 		//サウンド
 		// BGM

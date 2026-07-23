@@ -282,6 +282,9 @@ void ResourceManager::ResourcePlayer(void)
 	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"Ultimate.efk");
 	resourcesMap_.emplace(SRC::PLAYER_ULTIMATE_EFC, res);
 
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"PlayerHit.efk");
+	resourcesMap_.emplace(SRC::PLAYER_HIT_EFC, res);
+
 	//JSON
 	res = Resource(Resource::TYPE::JSON, Application::PATH_JSON + L"PlayerAttackData.json");
 	resourcesMap_.emplace(SRC::PLAYER_ATTACK_DATA_JSON, res);
@@ -293,6 +296,10 @@ void ResourceManager::ResourcePlayer(void)
 void ResourceManager::ResourceEnemy(void)
 {
 	Resource res;
+
+	//ひび画像
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"Crack.png");
+	resourcesMap_.emplace(SRC::CRACK, res);
 
 	//敵モデル
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + L"Enemy.mv1");
@@ -368,6 +375,26 @@ void ResourceManager::ResourceEnemy(void)
 	//ステージごとのデータ
 	res = Resource(Resource::TYPE::JSON, Application::PATH_JSON + L"StageEnemys.json");
 	resourcesMap_.emplace(SRC::STAGE_ENEMY_DATA, res);
+
+	//ヒットエフェクト
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"EnemyHit.efk");
+	resourcesMap_.emplace(SRC::ENEMY_HIT_EFC, res);
+
+	//死亡エフェクト
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"EnemyDead.efk");
+	resourcesMap_.emplace(SRC::ENEMY_DEAD_EFC, res);
+
+	//突進エフェクト
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"Tackle.efk");
+	resourcesMap_.emplace(SRC::ENEMY_TACKLE_EFC, res);
+
+	//突進エフェクト
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"Landing.efk");
+	resourcesMap_.emplace(SRC::ENEMY_LANDING_EFC, res);
+
+	//オーラエフェクト
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"EnemyAura.efk");
+	resourcesMap_.emplace(SRC::ENEMY_AURA_EFC, res);
 }
 
 void ResourceManager::ResourceBoss(void)

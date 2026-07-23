@@ -44,8 +44,8 @@ public:
 private:
 
 	//攻撃時間
-	static constexpr float ATTACK_READY_TIME = 1.0f;
-	static constexpr float ATTACK_TIME = 2.0f;
+	static constexpr float ATTACK_READY_TIME = 1.5f;
+	static constexpr float ATTACK_TIME = 1.0f;
 	static constexpr float ATTACK_END_TIME = 1.0f;
 
 	//攻撃の相対座標

@@ -12,7 +12,7 @@ enum class EVENT_TYPE
 };
 
 //文字列をキャスト
-static const EVENT_TYPE& CastStringToEventType(const std::string& _string)
+inline const EVENT_TYPE CastStringToEventType(const std::string& _string)
 {
 	if (_string == "None") return EVENT_TYPE::NONE;
 	else if (_string == "OpenTutorialDoor") return EVENT_TYPE::OPEN_TUTORIAL_DOOR;

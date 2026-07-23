@@ -2,6 +2,7 @@
 #include"../../../../Manager/Generic/SceneManager.h"
 #include"../../../../Manager/GameSystem/AttackManager.h"
 #include"../../../../Manager/GameSystem/ComboManager.h"
+#include"../../../../Manager/Decoration/EffectManager.h"
 #include "../../Player/ToJson/PlayerAttackData.h"
 #include "../State/EnemyStaggerState.h"
 #include "../State/EnemyLaunchState.h"
@@ -26,7 +27,7 @@ BossOnHit::~BossOnHit(void)
 void BossOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 {
 	//親をボスに
-	auto parent = dynamic_cast<MiddleBoss*>(&parent_);
+	auto parent = dynamic_cast<BossBase*>(&parent_);
 	if (!parent)return;
 
 	//終了なら無視
@@ -61,6 +62,11 @@ void BossOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 	}
 
 	//ここからヒット処理
+
+	//ヒットエフェクト
+	auto& eff = EffectManager::GetInstance();
+	//if (!eff.IsEffectPlay(parent_.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_HIT))
+	eff.Play(parent_.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_HIT, parent_.GetPos(), parent_.GetQua(), 10.0f);
 
 	//リセット
 	cnt_ = 0.0f;
@@ -110,7 +116,16 @@ void BossOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 	{
 		//通常状態
 		parent_.ChangeAction(ENEMY_ACTION::ATTACK_END);
+
+		//ひるむ
+		parent_.PlayAnim(L"Stagger");
 	}
+
+	//スタンしていないならダメージを減らす
+	if(!isGuardBreak)power *= 0.1f;
+
+	//ダメージ処理
+	parent_.Damage(power);
 
 	//スタン中は状態遷移をしない
 	if (isGuardBreak || !parent_.IsAlive())
@@ -118,15 +133,7 @@ void BossOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 		//各吹っ飛び
 		parent_.ChangeState((this->*createState_[knockback])(blowPow));
 	}
-	else
-	{
-		//スタンしていないならダメージを減らす
-		power *= 0.1f;
-	}
 
 	//コンボカウント
 	ComboManager::GetInstance().AddCombo();
-
-	//ダメージ処理
-	parent_.Damage(power);
 }

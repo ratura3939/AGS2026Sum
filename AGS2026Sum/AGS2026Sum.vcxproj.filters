@@ -261,6 +261,12 @@
     <ClCompile Include="Src\Manager\GameSystem\Event\EventManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Object\Character\Enemy\UI\BossUI.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Object\Character\Enemy\Types\Boss\BossBase.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Object\Character\Player\AttackCommandInfo.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -545,6 +551,12 @@
     <ClInclude Include="Src\Manager\GameSystem\Event\EventType.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Object\Character\Enemy\UI\BossUI.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Object\Character\Enemy\Types\Boss\BossBase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Object\Character\Player\AttackCommandInfo.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -563,6 +575,8 @@
     <FxCompile Include="Src\Shader\PostEffect\EdgeDetectPS.hlsl" />
     <FxCompile Include="Src\Shader\Model\SkinOutLineVS.hlsl" />
     <FxCompile Include="Src\Shader\Model\SkinOutLinePS.hlsl" />
+    <FxCompile Include="Src\Shader\PostEffect\CircleGauge.hlsl" />
+    <FxCompile Include="Src\Shader\PostEffect\BossGuardGauge.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shader\Common\Pixel\PixelShader2DHeader.hlsli" />

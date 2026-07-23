@@ -1,6 +1,7 @@
 ﻿#include "../../../../pch.h"
 #include "../../../../Manager/Generic/SceneManager.h"
 #include "../../../../Manager/GameSystem/AttackManager.h"
+#include "../../../../Manager/Decoration/EffectManager.h"
 #include "../EnemyBase.h"
 #include "EnemyJumpSkill.h"
 
@@ -19,6 +20,12 @@ void EnemyJumpSkill::ReadyEnter(EnemyBase& _owner)
 
 	//アニメーション
 	_owner.PlayAnim(L"Jump");
+
+	//エフェクト
+	EffectManager::GetInstance().Play(_owner.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_AURA, _owner.GetPos(), _owner.GetQua(), AURA_SCALE);
+
+	//特殊スキル
+	_owner.SetIsElementSkill(true);
 }
 
 const bool EnemyJumpSkill::ReadyUpdate(EnemyBase& _owner)
@@ -37,6 +44,12 @@ void EnemyJumpSkill::ReadyExit(EnemyBase& _owner)
 {
 	//初期化
 	attackCnt_ = 0.0f;
+
+	//エフェクトストップ
+	EffectManager::GetInstance().StopAll();
+
+	//終了
+	_owner.SetIsElementSkill(false);
 }
 
 void EnemyJumpSkill::Enter(EnemyBase& _owner)
@@ -53,8 +66,14 @@ void EnemyJumpSkill::Enter(EnemyBase& _owner)
 	//攻撃範囲設定
 	_owner.SetAttackRadius(RADIUS);
 
+	//エフェクト
+	EffectManager::GetInstance().Play(_owner.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_LANDING, _owner.GetPos(), _owner.GetQua(), EFF_SCALE);
+
 	//初期化
 	attackCnt_ = 0.0f;
+
+	//特殊スキル
+	_owner.SetIsElementSkill(true);
 }
 
 const bool EnemyJumpSkill::Update(EnemyBase& _owner)
@@ -73,6 +92,12 @@ void EnemyJumpSkill::Exit(EnemyBase& _owner)
 {
 	//初期化
 	attackCnt_ = 0.0f;
+
+	//エフェクト
+	//EffectManager::GetInstance().StopAll();
+
+	//終了
+	_owner.SetIsElementSkill(false);
 }
 
 void EnemyJumpSkill::EndEnter(EnemyBase& _owner)
@@ -103,4 +128,7 @@ void EnemyJumpSkill::EndExit(EnemyBase& _owner)
 {
 	//初期化
 	attackCnt_ = 0.0f;
+
+	//エフェクト
+	//EffectManager::GetInstance().Stop(_owner.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_LANDING);
 }

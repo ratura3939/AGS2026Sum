@@ -38,7 +38,7 @@ public:
 	void Damage(const float _damage);						//ダメージ処理
 	const bool IsAlive(void)const { return hp_ > 0.0f; }	//生存判定
 
-	const Quaternion& GetQua(void) const { return characterRotY_; }	//回転量の取得
+	const Quaternion& GetQua(void) const { return quaRot_; }	//回転量の取得
 	
 	void SetAnimationSpeedPercent(const float _percent);	//アニメーション速度倍率設定
 

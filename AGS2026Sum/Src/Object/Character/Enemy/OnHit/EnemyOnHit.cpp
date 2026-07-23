@@ -2,6 +2,7 @@
 #include"../../../../Manager/Generic/SceneManager.h"
 #include"../../../../Manager/GameSystem/AttackManager.h"
 #include"../../../../Manager/GameSystem/ComboManager.h"
+#include"../../../../Manager/Decoration/EffectManager.h"
 #include "../../Player/ToJson/PlayerAttackData.h"
 #include "../../../Common/Geometry/Model.h"
 #include "../../../Common/Geometry/Sphere.h"
@@ -76,15 +77,15 @@ void EnemyOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 	//吹っ飛び(相手の向いている方向)
 	VECTOR blowPow = quaRot.GetForward();
 
+	//ダメージ処理
+	parent_.Damage(data->power);
+
 	//ダメージ状態
 	std::string knockback = data->knockBackType;
 	parent_.ChangeState((this->*createState_[knockback])(blowPow));
 
 	//コンボカウント
 	ComboManager::GetInstance().AddCombo();
-
-	//ダメージ処理
-	parent_.Damage(data->power);
 }
 
 void EnemyOnHit::HitPlayer(const std::weak_ptr<Collider> _col)

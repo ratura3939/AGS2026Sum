@@ -64,7 +64,8 @@ void EnemyGroup::Draw(void)
 	//敵の描画
 	for (auto& enemy : enemys_)
 	{
-		enemy->Draw();
+		//終了している敵は描画しない
+		if(!enemy->IsEndState())enemy->Draw();
 	}
 }
 

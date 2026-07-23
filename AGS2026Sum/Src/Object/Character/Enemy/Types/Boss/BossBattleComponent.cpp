@@ -32,7 +32,7 @@ void BossBattleComponent::Update(void)
 void BossBattleComponent::Draw(void)
 {
 	//ガード耐久
-	DrawFormatString(0, 0, 0xff0000, L"Guard Durability: %.2f", guardDurability_);
+	//DrawFormatString(0, 0, 0xff0000, L"Guard Durability: %.2f", guardDurability_);
 }
 
 void BossBattleComponent::Reset(void)

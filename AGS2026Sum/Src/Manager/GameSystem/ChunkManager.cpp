@@ -40,6 +40,8 @@ int ChunkManager::GetChunkIndex(const VECTOR& _pos) const
 
 void ChunkManager::DebugDraw(void) const
 {
+#ifdef _DEBUG
+
 	//チャンクの線を描画
 	for (int z = 0; z <= CHUNK_Z; z++)
 	{
@@ -57,6 +59,7 @@ void ChunkManager::DebugDraw(void) const
 			GetColor(255, 255, 255));
 	}
 
+#endif // _DEBUG
 }
 
 void ChunkManager::AddEnemyGroup(EnemyGroup* _enemyGroup)

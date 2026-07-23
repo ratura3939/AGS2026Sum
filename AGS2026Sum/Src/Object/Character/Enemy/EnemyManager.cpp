@@ -3,6 +3,7 @@
 #include"../../../Manager/GameSystem/ChunkManager.h"
 #include"../../../Manager/Generic/InputManager.h"
 #include"../../../Manager/Generic/ResourceManager.h"
+#include"../../../Manager/Decoration/EffectManager.h"
 #include"Info/EnemyDefine.h"
 #include"Info/StageEnemyData.h"
 #include"Pool/EnemyGroupPool.h"
@@ -25,9 +26,6 @@ EnemyManager::~EnemyManager(void)
 
 void EnemyManager::Load(void)
 {
-	//リソース
-	auto& res = ResourceManager::GetInstance();
-
 	//敵グループのプールを生成
 	enemyGroupPool_ = std::make_unique<EnemyGroupPool>();
 	enemyGroupPool_->Load();
@@ -35,6 +33,9 @@ void EnemyManager::Load(void)
 	//敵のプールを生成
 	enemyPool_ = std::make_unique<EnemyPool>();
 	enemyPool_->Load();
+
+	//ボスUIの読み込み
+	bossUi_.Load();
 }
 
 void EnemyManager::Init(void)
@@ -77,11 +78,11 @@ void EnemyManager::Update(void)
 	//チャンク内のみ更新
 	for (auto& group : chunkGroups_)
 	{
-		//更新
-		group->Update();
-
 		//チャンクの移動確認
 		chunkMng.MoveEnemyGroup(group);
+
+		//更新
+		group->Update();
 	}
 
 	//グループの削除処理
@@ -89,6 +90,9 @@ void EnemyManager::Update(void)
 
 	//敵の削除処理
 	DeleteEnemy();
+
+	//ボスUIの設定
+	SetBossUI();
 }
 
 void EnemyManager::Draw(void)
@@ -98,6 +102,9 @@ void EnemyManager::Draw(void)
 	{
 		group->Draw();
 	}
+
+	//ボスUIの描画
+	bossUi_.Draw();
 }
 
 void EnemyManager::Release(void)
@@ -170,23 +177,38 @@ void EnemyManager::SetAnimSpeedPercent(const float _percent)
 
 void EnemyManager::CreateStageEnemy(const StageEnemyData::AllEnemysInfo& _enemyInfo)
 {
-	//座標
-	VECTOR pos = _enemyInfo.pos;
-	VECTOR randPos;
+	//スポーンエリア
+	const auto& spawnArea = _enemyInfo.spawnAreas;
+
+	//エリアの個数
+	int areaNum = static_cast<int>(spawnArea.size());
 
 	//ボスグループの生成
-	const auto& bossInfo = _enemyInfo.bossInfo;
-	for (int i = 0; i < _enemyInfo.bossGroupNum;i++)
+	const auto& bossInfos = _enemyInfo.bossInfos;
+	for (const auto& bossInfo : bossInfos)
 	{
-		randPos = Utility::GetRandomValue(VScale(_enemyInfo.localPos, -1.0f), _enemyInfo.localPos);
-		CreateEnemyGroup(_enemyInfo.enemyNum, VAdd(pos, randPos), bossInfo.bossType, bossInfo.eventType);
+		CreateEnemyGroup(_enemyInfo.enemyNum, bossInfo.pos, bossInfo.bossType, bossInfo.eventType);
 	}
 
 	//雑魚グループの生成
+	VECTOR randPos;
 	for (int i = 0; i < _enemyInfo.groupNum;i++)
 	{
-		randPos = Utility::GetRandomValue(VScale(_enemyInfo.localPos, -1.0f), _enemyInfo.localPos);
-		CreateEnemyGroup(_enemyInfo.enemyNum, VAdd(pos, randPos), ENEMY_TYPE::NORMAL, EVENT_TYPE::NONE);
+		//ランダム
+		int randAreaNum = Utility::GetRandomValue(0, areaNum - 1);
+
+		//ランダムのエリア
+		const auto& randArea = spawnArea[randAreaNum];
+
+		//ランダムのエリアに設定
+		randPos = randArea.center;
+
+		//そこから少しずらす
+		randPos.x += Utility::GetRandomValue(-randArea.size, randArea.size);
+		randPos.z += Utility::GetRandomValue(-randArea.size, randArea.size);
+
+		//生成
+		CreateEnemyGroup(_enemyInfo.enemyNum, randPos, ENEMY_TYPE::NORMAL, EVENT_TYPE::NONE);
 	}
 }
 
@@ -352,5 +374,45 @@ void EnemyManager::ChankGroupsEnterAndLeave(void)
 			if (!group->IsActive())continue;
 			group->OnLeaveActiveChank();
 		}
+	}
+}
+
+void EnemyManager::SetBossUI(void)
+{
+	//一番近い距離
+	float closestDist = FLT_MAX;
+	float dist = 0.0f;
+	const EnemyBase* boss = nullptr;
+
+	//チャンク内の比較
+	for (const auto& group : chunkGroups_)
+	{
+		for (const auto& enemy : group->GetEnemys())
+		{
+			//ボス敵のみ
+			if (!enemy->IsBoss())continue;
+
+			//距離
+			dist = Utility::Distance(enemy->GetPos(), playerPos_);
+
+			//距離比較
+			if (dist < closestDist)
+			{
+				closestDist = dist;
+				boss = enemy;
+			}
+		}
+	}
+
+	//比較終了
+	if (boss)
+	{
+		//近いボスを描画
+		bossUi_.SetDrawBoss(boss);
+	}
+	else
+	{
+		//誰もいない
+		bossUi_.SetDrawBoss(nullptr);
 	}
 }

@@ -31,6 +31,9 @@ public:
 	//攻撃持続時間
 	static constexpr float ATTACK_DURATION = 1.0f;
 
+	//シェーダーの設定
+	static constexpr int PS_C_BUFF_SIZE = 1;
+
 	//コンストラクタ
 	EnemyBase(const ENEMY_TYPE& _type);
 
@@ -71,10 +74,10 @@ public:
 	void SetSkills(std::vector<std::unique_ptr<EnemySkillBase>> _skills);
 
 	//攻撃マネージャーにコライダを設定
-	void SetAttackCollider(const AttackManager::ATTACK_TYPE& _name)const;
+	void SetAttackCollider(const AttackManager::ATTACK_TYPE& _name);
 
 	//攻撃マネージャーからコライダを破棄
-	void RemoveAttackCollider(void)const;
+	void RemoveAttackCollider(void);
 
 	//現在の攻撃取得
 	const EnemySkillBase* GetCurrentSkill(void) { return currentSkill_; };
@@ -133,6 +136,9 @@ public:
 	//移動処理
 	void Move(void)override;
 
+	//回転更新
+	void Rotation(void);
+
 	//速度設定
 	void SetSpeed(const float _speed) { speed_ = _speed; }
 
@@ -141,6 +147,9 @@ public:
 
 	//バック移動
 	void BackMove(void);
+
+	//バック用回転更新
+	void BackRotation(void);
 
 	//本体当たり判定の有効化
 	void EnableHitCollider(void);
@@ -169,6 +178,9 @@ public:
 	//攻撃の無効化
 	void DisableAttack(void);
 
+	//特殊スキルの有無
+	void SetIsElementSkill(const bool _value) { isElementSkill_ = _value; }
+
 	//アニメーションプレイ
 	void PlayAnim(const std::wstring& _animName, const float _speed = 1.0f);
 	void PlayAnimIsFinish(const std::wstring& _animName, const float _speed = 1.0f);
@@ -195,6 +207,9 @@ public:
 
 	//チャンクから出た時の処理
 	void OnLeaveActiveChank(void);
+
+	//色変更
+	void SetColor(FLOAT4 _color) { color_ = _color; }
 
 protected:
 
@@ -272,6 +287,9 @@ protected:
 	//所持スキル
 	std::vector<std::unique_ptr<EnemySkillBase>> skills_;
 
+	//特殊スキル開始の有無
+	bool isElementSkill_;
+
 	//グループの命令ごとの判断
 	std::unique_ptr<BrainBase> brain_;
 
@@ -280,6 +298,9 @@ protected:
 
 	//発動イベント情報
 	EVENT_TYPE eventKey_;
+
+	//色
+	FLOAT4 color_;
 
 	//読み込み
 	virtual void DoLoad(void)override;

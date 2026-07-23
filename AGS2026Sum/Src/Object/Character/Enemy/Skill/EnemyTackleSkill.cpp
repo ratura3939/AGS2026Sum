@@ -1,10 +1,12 @@
 ﻿#include "../../../../pch.h"
 #include "../../../../Manager/Generic/SceneManager.h"
 #include "../../../../Manager/GameSystem/AttackManager.h"
+#include "../../../../Manager/Decoration/EffectManager.h"
 #include "../EnemyBase.h"
 #include "EnemyTackleSkill.h"
 
 EnemyTackleSkill::EnemyTackleSkill(void)
+	:effHandle_(-1)
 {
 }
 
@@ -16,6 +18,15 @@ void EnemyTackleSkill::ReadyEnter(EnemyBase& _owner)
 {
 	//初期化
 	attackCnt_ = 0.0f;
+
+	//アニメーション
+	_owner.PlayNoBlendAnim(L"Tackle", TACKLE_PRE_ANIM_SPEED);
+
+	//エフェクト
+	EffectManager::GetInstance().Play(_owner.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_AURA, _owner.GetPos(), _owner.GetQua(), AURA_SCALE);
+
+	//特殊スキル
+	_owner.SetIsElementSkill(true);
 }
 
 const bool EnemyTackleSkill::ReadyUpdate(EnemyBase& _owner)
@@ -26,6 +37,10 @@ const bool EnemyTackleSkill::ReadyUpdate(EnemyBase& _owner)
 	//準備が終わったらtrue
 	if (attackCnt_ > ATTACK_READY_TIME)return true;
 	else attackCnt_ += scnMng.GetScaleUpdateSpeedRate(scnMng.GetDeltaTime());
+	
+	//対象にベクトルを合わせる
+	_owner.UpdateMovePow();
+	_owner.Rotation();
 
 	return false;
 }
@@ -34,6 +49,15 @@ void EnemyTackleSkill::ReadyExit(EnemyBase& _owner)
 {
 	//初期化
 	attackCnt_ = 0.0f;
+
+	//アニメーション
+	_owner.PlayNoBlendAnim(L"Idle");
+
+	//エフェクトストップ
+	EffectManager::GetInstance().StopAll();
+
+	//特殊スキル
+	_owner.SetIsElementSkill(false);
 }
 
 void EnemyTackleSkill::Enter(EnemyBase& _owner)
@@ -59,8 +83,14 @@ void EnemyTackleSkill::Enter(EnemyBase& _owner)
 	//初回のみの移動量更新
 	_owner.UpdateMovePow();
 
+	//エフェクト
+	effHandle_ = EffectManager::GetInstance().Play(_owner.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_TACKLE, _owner.GetPos(), _owner.GetQua().Mult(Quaternion::Euler({ 0.0f,Utility::Deg2RadF(180.0f),0.0f })), EFF_SCALE);
+
 	//初期化
 	attackCnt_ = 0.0f;
+
+	//特殊スキル
+	_owner.SetIsElementSkill(true);
 }
 
 const bool EnemyTackleSkill::Update(EnemyBase& _owner)
@@ -83,6 +113,9 @@ const bool EnemyTackleSkill::Update(EnemyBase& _owner)
 
 		//攻撃座標も動かす
 		_owner.SetAttackPos(ATTACK_LOCAL_POS);
+
+		//エフェクト
+		EffectManager::GetInstance().SyncEffect(effHandle_, _owner.GetPos(), _owner.GetQua().Mult(Quaternion::Euler({0.0f,Utility::Deg2RadF(180.0f),0.0f})), EFF_SCALE, 1.0f);
 	}
 
 	return false;
@@ -92,6 +125,12 @@ void EnemyTackleSkill::Exit(EnemyBase& _owner)
 {
 	//初期化
 	attackCnt_ = 0.0f;
+
+	//エフェクトストップ
+	EffectManager::GetInstance().StopAll();
+
+	//特殊スキル終了
+	_owner.SetIsElementSkill(false);
 }
 
 void EnemyTackleSkill::EndEnter(EnemyBase& _owner)
@@ -125,4 +164,7 @@ void EnemyTackleSkill::EndExit(EnemyBase& _owner)
 {
 	//初期化
 	attackCnt_ = 0.0f;
+
+	//エフェクトストップ
+	//EffectManager::GetInstance().StopAll();
 }
