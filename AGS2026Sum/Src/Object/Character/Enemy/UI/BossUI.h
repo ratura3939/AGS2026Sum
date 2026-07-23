@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include<memory>
 #include"../../Attack/AttackDataBase.h"
 
