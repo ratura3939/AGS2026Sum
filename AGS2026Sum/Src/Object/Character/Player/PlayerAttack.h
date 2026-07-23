@@ -36,6 +36,7 @@ public:
 
 	static const int ATTACK_LEVEL_MAX = 3;				//攻撃レベルの最大値
 	static constexpr float ATTACK_CANCEL_RATE = 0.5f;	//攻撃キャンセル可能割合(アニメーションの進行度)
+	static constexpr int COMBO_ELEMENT_TYPE_NUM = 2;	//コンボ表示必要な種類数(パンチとキック)
 
 	static constexpr AttackDirectionInfo INIT_ANIM_DIRECTION_INFO = { SoundManager::SOUND_NAME::MAX, EffectManager::EFFECT_NAME::MAX,{} };	//アニメーション演出初期化用
 
@@ -129,6 +130,8 @@ private:
 
 	bool comboReset_;		//コンボリセットフラグ
 	int comboResetCounter_;	//コンボリセットカウンタ
+	int* comboElementImages_[COMBO_ELEMENT_TYPE_NUM];	//コンボルート用画像
+	int arrowImage_;		//矢印
 
 	std::string startAttackAnimName_;	//攻撃開始アニメーション登録名
 

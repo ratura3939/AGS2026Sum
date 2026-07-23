@@ -28,6 +28,11 @@ namespace {
 	const float COMBO_ELEMENT_DRAW_DIF_Y = 50;	//コンボルートの要素の表記差分Y座標
 
 	const float DRAW_SPECIAL_INFO_X = 2 / 3;
+
+	//矢印関係
+	const int DIFF_FOR_ARROW_X = 25;	//矢印描画位置のX差分
+	const double DEG_FOR_BOTTOM_RIGHT = 45.0;	//右下用の角度差分
+	const int DIFF_FOR_BOTTOM_RIGHT_ARROW = 25;	//右下用のY差分
 }
 
 PlayerAttack::PlayerAttack(const VECTOR& _playerPos, const Quaternion& _playerQuaRot)
@@ -95,6 +100,13 @@ void PlayerAttack::DoInit(void)
 
 	colliders_[0]->SetUseThis(false);	//コライダの無効化
 	AttackManager::GetInstance().AddAttackCollider(AttackManager::ATTACK_TYPE::P_ATTACK, colliders_[0]);	//攻撃マネージャーに登録
+
+	ResourceManager& resM = ResourceManager::GetInstance();
+	comboElementImages_[static_cast<int>(ATTACK_TYPE::PUNCH)] = resM.Load(ResourceManager::SRC::PUNCH_ATK_ON_OFF_IMG).handleIds_;
+	comboElementImages_[static_cast<int>(ATTACK_TYPE::KICK)] = resM.Load(ResourceManager::SRC::KICK_ATK_ON_OFF_IMG).handleIds_;
+
+	//矢印
+	arrowImage_ = resM.Load(ResourceManager::SRC::COMBO_ARROW_IMG).handleId_;
 }
 
 void PlayerAttack::DoUpdate(void)
@@ -139,21 +151,15 @@ void PlayerAttack::DrawComboRouteElement(const std::string& _attackKey, const VE
 	if (comboRouteInfos_[_attackKey].isDrawed) {
 		return;		//終了
 	}
-	
-	//表示する色の決定
-	int useColor = DEFAULT_COLOR;	//デフォルト白
-	//発生済みのものは
-	if (comboRouteInfos_[_attackKey].isUsed) {
-		if (comboRouteInfos_[_attackKey].type == ATTACK_TYPE::KICK) {
-			useColor = KICK_COLOR;	//キックなら青
-		}
-		else if (comboRouteInfos_[_attackKey].type == ATTACK_TYPE::PUNCH) {
-			useColor = PUNCH_COLOR;	//パンチなら緑
-		}
-	}
 
 	//描画
-	DrawCircle(static_cast<int>(_pos.x), static_cast<int>(_pos.y), CIRCLE_SCALE, useColor);
+	const double elementExRate = 0.3;
+	const double elementAngle = 0.0;
+
+	//ボタンの描画
+	DrawRotaGraph(static_cast<int>(_pos.x), static_cast<int>(_pos.y),
+		elementExRate, elementAngle,
+		comboElementImages_[static_cast<int>(comboRouteInfos_[_attackKey].type)][comboRouteInfos_[_attackKey].isUsed], true);
 	comboRouteInfos_[_attackKey].isDrawed = true;
 
 	std::string nextPunchAttackName = data_[_attackKey].nextAttacks[static_cast<int>(ATTACK_TYPE::PUNCH)];	//次のパンチ攻撃
@@ -163,12 +169,20 @@ void PlayerAttack::DrawComboRouteElement(const std::string& _attackKey, const VE
 	VECTOR nextPos = _pos;
 	nextPos.x += COMBO_ELEMENT_DRAW_DIF_X;	//次の要素の表記位置をずらす
 
+	int arrowPosX = static_cast<int>(_pos.x) + DIFF_FOR_ARROW_X;
+	int arrowPosY = static_cast<int>(_pos.y);
+	double arrowAngle = 0.0;
+	const double arrowExRate = 0.3;
+
 	//要素がある場合
 	if (nextPunchAttackName != "") {
-		//パンチ派生時、現在の攻撃がキックの場合
+		//パンチ派生時、現在の攻撃がキックの場合(現在はそんな派生はない)
 		if (comboRouteInfos_[_attackKey].type == ATTACK_TYPE::KICK) {
 			nextPos.y -= COMBO_ELEMENT_DRAW_DIF_Y;	//パンチの要素の表記位置をさらにずらす
 		}
+
+		//矢印の描画
+		DrawRotaGraph(arrowPosX, arrowPosY, arrowExRate, arrowAngle, arrowImage_, true);
 
 		DrawComboRouteElement(nextPunchAttackName, nextPos);	//パンチ派生の描画
 	}
@@ -177,7 +191,12 @@ void PlayerAttack::DrawComboRouteElement(const std::string& _attackKey, const VE
 		//キック派生時、現在の攻撃がパンチの場合
 		if (comboRouteInfos_[_attackKey].type == ATTACK_TYPE::PUNCH) {
 			nextPos.y += COMBO_ELEMENT_DRAW_DIF_Y;	//キックの要素の表記位置をさらにずらす
+			arrowAngle = Utility::Deg2RadD(DEG_FOR_BOTTOM_RIGHT);	//矢印を右斜め下に
+			arrowPosY += DIFF_FOR_BOTTOM_RIGHT_ARROW;
 		}
+
+		//矢印の描画
+		DrawRotaGraph(arrowPosX, arrowPosY, arrowExRate, arrowAngle, arrowImage_, true);
 
 		DrawComboRouteElement(nextKickAttackName, nextPos);	//キック派生の描画
 	}

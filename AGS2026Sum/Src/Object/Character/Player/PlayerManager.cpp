@@ -1,8 +1,11 @@
 ﻿#include"../../pch.h"
+#include"../../../Application.h"
 #include"../../../Manager/Generic/InputManager.h"
 #include"../../../Manager/Generic/SceneManager.h"
 #include"../../../Manager/Generic/Camera.h"
+#include"../../../Manager/Generic/ResourceManager.h"
 #include"../../../Manager/GameSystem/AttackManager.h"
+#include"../../../Manager/Decoration/UIManager2d.h"
 #include"../../../Scene/Main/Game.h"
 #include"../../../Scene/Sub/PauseScene.h"
 #include"PlayerChara.h"
@@ -29,6 +32,8 @@ namespace {
 	const VECTOR HIGHT_HALF = { 0.0f,100.0f,0.0f };				//キャラクターの腰辺りの相対座標
 
 	const float CAMERA_STY_TIME_ULTIMATE = 60.0f;
+
+	const VECTOR POS_OPERATION_INFO = { 100.0f,800.0f / 2.0f,0.0f };
 }
 
 PlayerManager::PlayerManager(Game& _gameScene)
@@ -61,6 +66,14 @@ void PlayerManager::Init(void)
 	//注視点の更新
 	Camera& camera = SceneManager::GetInstance().GetCamera();
 	focusPos_ = VAdd(character_->GetPos(), camera.GetRot().PosAxis(FOCUS_RELATIVE));
+
+	//操作方法のUI登録
+	UIManager2d& uiM = UIManager2d::GetInstance();
+	uiM.Add(UIManager2d::UI_NAME::OPERATION_INFO,
+		ResourceManager::GetInstance().Load(ResourceManager::SRC::OPERATION_INFO_IMG).handleId_,
+		UIManager2d::UI_DIRECTION_2D::NORMAL, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
+
+	uiM.SetUIInfo(UIManager2d::UI_NAME::OPERATION_INFO, POS_OPERATION_INFO);
 }
 
 void PlayerManager::Update(void)
@@ -88,13 +101,17 @@ void PlayerManager::Draw(void)
 {
 	character_->Draw();		//キャラクターの描画
 	attack_->Draw();		//攻撃クラスの描画
+
+	UIManager2d::GetInstance().Draw(UIManager2d::UI_NAME::OPERATION_INFO);	//操作方法の描画
 	
+#ifdef _DEBUG
 	if (isSpecialAttackRedy_) {
 		DrawString(30, 300, L"SpecialRedy!!!", 0xffffff);
 	}
 
 	attack_->DrawDebug();	//攻撃クラスのデバッグ描画
 	DrawFormatString(30, 280, 0xffffff, L"AttackCansel = %d", static_cast<int>(isEnableAttackInput_));	//現在の攻撃アニメーション登録名の先頭文字を表示(デバッグ用)
+#endif
 }
 
 void PlayerManager::DrawNormalDepth(void)

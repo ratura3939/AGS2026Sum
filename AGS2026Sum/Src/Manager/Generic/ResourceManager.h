@@ -32,6 +32,9 @@ public:
 		,OPERATION_ULT_IMG		//必殺技発生用画像
 		,JUMP_ATK_ICON_IMG		//ジャンプ攻撃アイコン
 		,TAKCLE_ATK_ICON_IMG	//タックル攻撃アイコン
+		,PUNCH_ATK_ON_OFF_IMG	//パンチ攻撃操作ONOFF
+		,KICK_ATK_ON_OFF_IMG	//パンチ攻撃操作ONOFF
+		,COMBO_ARROW_IMG		//コンボ用矢印
 
 		//アニメーション
 		//プレイヤー

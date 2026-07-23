@@ -114,9 +114,14 @@ void ResourceManager::InitGame(void)
 	//ジャンプ攻撃アイコン
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"JumpAttackIcon.png");
 	resourcesMap_.emplace(SRC::JUMP_ATK_ICON_IMG, res);
+
 	//タックル攻撃アイコン
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"TakcleAttackIcon.png");
 	resourcesMap_.emplace(SRC::TAKCLE_ATK_ICON_IMG, res);
+
+	//コンボ用矢印
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"ArrowForCombo.png");
+	resourcesMap_.emplace(SRC::COMBO_ARROW_IMG, res);
 
 	ResourcePlayer();	//プレイヤー関連
 
@@ -185,6 +190,16 @@ void ResourceManager::ResourcePlayer(void)
 	//モデル
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + L"Player.mv1");
 	resourcesMap_.emplace(SRC::PLAYER_MDL, res);
+
+	//画像
+	const int OnOffImageXSplit = 2;
+	const int OnOffImageYSplit = 1;
+	const int OnOffImageSize = 128;
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_UI + L"XButtonOnOff.png", OnOffImageXSplit, OnOffImageYSplit, OnOffImageSize, OnOffImageSize);
+	resourcesMap_.emplace(SRC::PUNCH_ATK_ON_OFF_IMG, res);
+
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_UI + L"YButtonOnOff.png", OnOffImageXSplit, OnOffImageYSplit, OnOffImageSize, OnOffImageSize);
+	resourcesMap_.emplace(SRC::KICK_ATK_ON_OFF_IMG, res);
 
 	//固有アニメーション
 	//***************************************************************************************

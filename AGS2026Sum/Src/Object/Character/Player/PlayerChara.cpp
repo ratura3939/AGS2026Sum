@@ -1,4 +1,5 @@
 ﻿#include "../../../pch.h"
+#include"../../../Application.h"
 #include"../../../Manager/Generic/SceneManager.h"
 #include"../../../Manager/Generic/Camera.h"
 #include"../../../Manager/Generic/ResourceManager.h"	
@@ -175,9 +176,9 @@ void PlayerChara::Attack(void)
 
 void PlayerChara::DrawHP(void)
 {
-	const int boxStart_X = 20;
-	const int boxStart_Y = 20;
-	const int boxEnd_Y = boxStart_Y + 10;
+	const int boxStart_X = 30;
+	const int boxStart_Y = Application::GetInstance().GetWindowHeight() - 50;
+	const int boxEnd_Y = boxStart_Y + 15;
 	const int boxXDiff = 300;
 
 	const int GLAY = 0x999999;

@@ -14,6 +14,7 @@ public:
 		,END_BUTTON		//終了ボタン
 		,BACK_TITLE_BUTTON	//タイトルに戻る
 		,BACK_GAME_BUTTON	//ゲームに戻る
+		,OPERATION_INFO		//操作方法
 		,MAX
 	};
 

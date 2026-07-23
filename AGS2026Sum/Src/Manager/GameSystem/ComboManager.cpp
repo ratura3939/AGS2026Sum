@@ -90,7 +90,7 @@ void ComboManager::DrawComboUI(void)
 		return;
 	}
 
-	const int drawPos_Y = Application::GetInstance().GetWindowHeight() - 100;			//描画位置Y(共通)
+	const int drawPos_Y = 100;			//描画位置Y(共通)
 	const int drawStartPosCombo = 50;	//コンボ数最上位桁描画位置
 
 	const double angle = 0.0;			//回転
@@ -126,12 +126,14 @@ void ComboManager::DrawComboUI(void)
 	}
 
 	//「Combo」画像描画位置
-	const int comboStartPos_X = numberDrawPos_X + 100;
+	const int comboStartPos_X = numberDrawPos_X + 30;
+	const int comboStartPos_Y = drawPos_Y + 10;
+	const double comboExRate = 0.4;		//画像拡大率
 
 	//拡大率が最低値(デフォルト)の時
 	if (numberState_ == NUMBER_EX_STATE::NONE) {
 		//「COMBO」の表示
-		DrawRotaGraph(comboStartPos_X, drawPos_Y, imageEx_, angle, comboStringImage_, true);
+		DrawRotaGraph(comboStartPos_X, comboStartPos_Y, comboExRate, angle, comboStringImage_, true);
 	}
 }
 
