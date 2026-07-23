@@ -75,9 +75,13 @@ public:
 		,DOOR_LEFT_MDL		//ドア左
 
 		//エフェクト
+		,PLAYER_PUNCH_ONE_TWO_EFC	//パンチ一・二段目
 		,PLAYER_PUNCH_THIRD_EFC		//パンチ三段目
+		,PLAYER_KICK_FIRST_EFC		//キック一段目
+		,PLAYER_KICK_SECOND_EFC		//キック二段目
 		,PLAYER_KICK_THIRD_EFC		//キック三段目
 		,PLAYER_PUNCH_SPECIAL_EFC	//パンチ特殊
+		,PLAYER_KICK_SPECIAL_EFC	//キック特殊
 		,PLAYER_ULTIMATE_EFC		//必殺技エフェクト
 		,PLAYER_HIT_EFC				//プレイヤーヒットエフェクト
 		,ENEMY_HIT_EFC				//敵ヒットエフェクト
@@ -100,6 +104,10 @@ public:
 		,KICK_FIRST_PLAYER_SE		//キック初段
 		,KICK_SECOND_PLAYER_SE		//キック二段目
 		,KICK_THIRD_PLAYER_SE		//キック最終段
+		,PUNCH_SPECIAL_PLAYER_SE	//パンチ特殊
+		,KICK_SPECIAL_PLAYER_SE		//キック特殊
+		,ULTIMATE_REDY_SE			//必殺準備
+		,ULTIMATE_SE				//必殺
 
 		//JSON
 		,TITLE_UI_INFO_JSON			//タイトルUI

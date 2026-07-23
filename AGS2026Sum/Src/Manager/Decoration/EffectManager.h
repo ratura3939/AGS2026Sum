@@ -14,9 +14,13 @@ public:
 	//エフェクト登録名
 	enum class EFFECT_NAME {
 		EXPLOSION
+		,PLAYER_PUNCH_ONE_TWO	//パンチ一・二段目
 		,PLAYER_PUNCH_THIRD		//パンチ三段目
+		,PLAYER_KICK_FIRST		//キック一段目
+		,PLAYER_KICK_SECOND		//キック二段目
 		,PLAYER_KICK_THIRD		//キック三段目
 		,PLAYER_PUNCH_SPECIAL	//パンチ特殊
+		,PLAYER_KICK_SPECIAL	//キック特殊
 		,PLAYER_ULTIMATE		//必殺技
 		,PLAYER_HIT				//プレイヤーヒット
 		,ENEMY_HIT				//敵ヒット

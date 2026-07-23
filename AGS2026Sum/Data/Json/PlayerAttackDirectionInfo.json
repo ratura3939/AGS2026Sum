@@ -3,8 +3,8 @@
     "seTimingRate": 0.0,
     "efcLocalPos": {
       "x": 0.0,
-      "y": 0.0,
-      "z": 0.0
+      "y": 100.0,
+      "z": 120.0
     },
     "efcLocalRot": {
       "x": 0.0,
@@ -12,7 +12,7 @@
       "z": 0.0
     },
     "efcTimingRate": 0.0,
-    "efcScale": 1.0,
+    "efcScale": 15.0,
     "efcSpeed": 1.0
   },
 
@@ -20,8 +20,8 @@
     "seTimingRate": 0.0,
     "efcLocalPos": {
       "x": 0.0,
-      "y": 0.0,
-      "z": 0.0
+      "y": 100.0,
+      "z": 120.0
     },
     "efcLocalRot": {
       "x": 0.0,
@@ -29,7 +29,7 @@
       "z": 0.0
     },
     "efcTimingRate": 0.0,
-    "efcScale": 1.0,
+    "efcScale": 15.0,
     "efcSpeed": 1.0
   },
 
@@ -54,7 +54,7 @@
     "seTimingRate": 0.3,
     "efcLocalPos": {
       "x": 0.0,
-      "y": 0.0,
+      "y": 100.0,
       "z": 0.0
     },
     "efcLocalRot": {
@@ -62,8 +62,8 @@
       "y": 180.0,
       "z": 0.0
     },
-    "efcTimingRate": 0.0,
-    "efcScale": 1.0,
+    "efcTimingRate": 0.4,
+    "efcScale": 50.0,
     "efcSpeed": 1.0
   },
 
@@ -71,7 +71,7 @@
     "seTimingRate": 0.2,
     "efcLocalPos": {
       "x": 0.0,
-      "y": 0.0,
+      "y": 100.0,
       "z": 0.0
     },
     "efcLocalRot": {
@@ -80,8 +80,8 @@
       "z": 0.0
     },
     "efcTimingRate": 0.0,
-    "efcScale": 1.0,
-    "efcSpeed": 1.0
+    "efcScale": 30.0,
+    "efcSpeed": 1.2
   },
 
   "Kick_Third": {
@@ -119,24 +119,24 @@
   },
 
   "Kick_Special": {
-    "seTimingRate": 0.0,
+    "seTimingRate": 0.4,
     "efcLocalPos": {
       "x": 0.0,
-      "y": 0.0,
-      "z": 0.0
+      "y": 70.0,
+      "z": 150.0
     },
     "efcLocalRot": {
       "x": 0.0,
       "y": 180.0,
       "z": 0.0
     },
-    "efcTimingRate": 0.0,
-    "efcScale": 1.0,
+    "efcTimingRate": 0.4,
+    "efcScale": 50.0,
     "efcSpeed": 1.0
   },
 
   "Ultimate": {
-    "seTimingRate": 0.0,
+    "seTimingRate": 0.06,
     "efcLocalPos": {
       "x": 0.0,
       "y": 80.0,

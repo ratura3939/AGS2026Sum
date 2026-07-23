@@ -269,15 +269,44 @@ void ResourceManager::ResourcePlayer(void)
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + L"Kick_Third_Test.mp3");
 	resourcesMap_.emplace(SRC::KICK_THIRD_PLAYER_SE, res);
 
+	//パンチ特殊
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + L"Punch_Special.mp3");
+	resourcesMap_.emplace(SRC::PUNCH_SPECIAL_PLAYER_SE, res);
+
+	//キック特殊
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + L"Kick_Special.mp3");
+	resourcesMap_.emplace(SRC::KICK_SPECIAL_PLAYER_SE, res);
+
+	//必殺準備
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + L"UltimateRedy.mp3");
+	resourcesMap_.emplace(SRC::ULTIMATE_REDY_SE, res);
+
+	//必殺
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + L"Ultimate.mp3");
+	resourcesMap_.emplace(SRC::ULTIMATE_SE, res);
+
 	//エフェクト
+	//**********************************************************************************************
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"PunchSonicBoom.efk");
+	resourcesMap_.emplace(SRC::PLAYER_PUNCH_ONE_TWO_EFC, res);
+
 	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"PunchThird.efk");
 	resourcesMap_.emplace(SRC::PLAYER_PUNCH_THIRD_EFC, res);
+
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"KickFirst.efk");
+	resourcesMap_.emplace(SRC::PLAYER_KICK_FIRST_EFC, res);
+
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"KickSecond.efk");
+	resourcesMap_.emplace(SRC::PLAYER_KICK_SECOND_EFC, res);
 
 	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"KickThird.efk");
 	resourcesMap_.emplace(SRC::PLAYER_KICK_THIRD_EFC, res);
 
 	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"PunchSpecial.efk");
 	resourcesMap_.emplace(SRC::PLAYER_PUNCH_SPECIAL_EFC, res);
+
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"KickSpecial.efk");
+	resourcesMap_.emplace(SRC::PLAYER_KICK_SPECIAL_EFC, res);
 
 	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"Ultimate.efk");
 	resourcesMap_.emplace(SRC::PLAYER_ULTIMATE_EFC, res);

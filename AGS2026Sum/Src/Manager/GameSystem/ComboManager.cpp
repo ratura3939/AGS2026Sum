@@ -64,8 +64,10 @@ void ComboManager::Update(void)
 
 void ComboManager::Draw(void)
 {
+#ifdef _DEBUG
 	//デバッグ
 	DrawDebug();
+#endif
 
 	//コンボカウンター描画
 	DrawComboUI();

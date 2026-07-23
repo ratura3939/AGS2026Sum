@@ -6,6 +6,7 @@
 #include"../../../Manager/Generic/ResourceManager.h"
 #include"../../../Manager/GameSystem/AttackManager.h"
 #include"../../../Manager/Decoration/UIManager2d.h"
+#include"../../../Manager/Decoration/SoundManager.h"
 #include"../../../Scene/Main/Game.h"
 #include"../../../Scene/Sub/PauseScene.h"
 #include"PlayerChara.h"
@@ -78,6 +79,9 @@ void PlayerManager::Init(void)
 		UIManager2d::UI_DIRECTION_2D::NORMAL, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
 
 	uiM.SetUIInfo(UIManager2d::UI_NAME::OPERATION_INFO, POS_OPERATION_INFO);
+
+	//必殺準備効果音
+	SoundManager::GetInstance().Add(SoundManager::TYPE::SE, SoundManager::SOUND_NAME::ULTIMATE_REDY, ResourceManager::GetInstance().Load(ResourceManager::SRC::ULTIMATE_REDY_SE).handleId_);
 }
 
 void PlayerManager::Update(void)
@@ -279,7 +283,12 @@ void PlayerManager::UserInput(void)
 		isEnableUltimate_ = true;			//必殺技中
 		scene_.StartSlow();					//スロー演出
 		isNoBlendPlayAnim_ = true;
+
+		//カメラが必殺技用の移動を開始
 		scene_.SetProcessingAfterCameraAutoMove(Game::CAMERA_MOVE_SITUATION::ULTIMATE);
+
+		//準備音再生
+		SoundManager::GetInstance().Play(SoundManager::SOUND_NAME::ULTIMATE_REDY);
 
 		SettingUltimateCamera();
 		isAttackInput = true;
@@ -416,7 +425,7 @@ void PlayerManager::TryPlayEffectAtCurrentAttack(const PlayerAttack::AttackDirec
 	if (_animProgressRate >= _info.detail.efcTiming) {
 		//再生開始に必要な情報生成
 		Quaternion efcLocalQua = Quaternion::Euler(Utility::Deg2RadVec(_info.detail.efcLocalRot));	//回転情報
-		VECTOR efcPos = VAdd(character_->GetPos(), _info.detail.efcLocalPos);						//発生位置
+		VECTOR efcPos = VAdd(character_->GetPos(), character_->GetQua().PosAxis(_info.detail.efcLocalPos));	//発生位置
 
 		//発生
 		EffectManager::GetInstance().Play(character_->GetSpeciesName(), _info.efcName,

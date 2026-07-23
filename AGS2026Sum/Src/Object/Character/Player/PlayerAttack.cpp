@@ -237,6 +237,9 @@ void PlayerAttack::LoadAttackSound(void)
 	sndM.Add(SOUND_TYPE::SE, SOUND_NAME::KICK_FIRST_PLAYER_SE, resM.Load(SOURCE::KICK_FIRST_PLAYER_SE).handleId_);		//キック初段
 	sndM.Add(SOUND_TYPE::SE, SOUND_NAME::KICK_SECOND_PLAYER_SE, resM.Load(SOURCE::KICK_SECOND_PLAYER_SE).handleId_);	//キック二段
 	sndM.Add(SOUND_TYPE::SE, SOUND_NAME::KICK_THIRD_PLAYER_SE, resM.Load(SOURCE::KICK_THIRD_PLAYER_SE).handleId_);		//キック最終段
+	sndM.Add(SOUND_TYPE::SE, SOUND_NAME::PUNCH_SPECIAL_PLAYER_SE, resM.Load(SOURCE::PUNCH_SPECIAL_PLAYER_SE).handleId_);		//パンチ特殊
+	sndM.Add(SOUND_TYPE::SE, SOUND_NAME::KICK_SPECIAL_PLAYER_SE, resM.Load(SOURCE::KICK_SPECIAL_PLAYER_SE).handleId_);		//キック特殊
+	sndM.Add(SOUND_TYPE::SE, SOUND_NAME::ULTIMATE, resM.Load(SOURCE::ULTIMATE_SE).handleId_);		//必殺
 
 	//SE連携
 	directionNames_.at(PUNCH_FIRST_KEY).seName = SOUND_NAME::PUNCH_FIRST_PLAYER_SE;	//パンチ初段
@@ -245,9 +248,9 @@ void PlayerAttack::LoadAttackSound(void)
 	directionNames_.at(KICK_FIRST_KEY).seName = SOUND_NAME::KICK_FIRST_PLAYER_SE;	//キック初段
 	directionNames_.at(KICK_SECOND_KEY).seName = SOUND_NAME::KICK_SECOND_PLAYER_SE;	//キック二段
 	directionNames_.at(KICK_THIRD_KEY).seName = SOUND_NAME::KICK_THIRD_PLAYER_SE;	//キック最終段
-	directionNames_.at(SPECIAL_PUNCH_KEY).seName = SOUND_NAME::MAX;	//パンチ特殊
-	directionNames_.at(SPECIAL_KICK_KEY).seName = SOUND_NAME::MAX;	//キック特殊
-	directionNames_.at(ULTIMATE_KEY).seName = SOUND_NAME::MAX;		//必殺技
+	directionNames_.at(SPECIAL_PUNCH_KEY).seName = SOUND_NAME::PUNCH_SPECIAL_PLAYER_SE;	//パンチ特殊
+	directionNames_.at(SPECIAL_KICK_KEY).seName = SOUND_NAME::KICK_SPECIAL_PLAYER_SE;	//キック特殊
+	directionNames_.at(ULTIMATE_KEY).seName = SOUND_NAME::ULTIMATE;		//必殺技
 }
 
 void PlayerAttack::LoadAttackEffect(void)
@@ -257,19 +260,23 @@ void PlayerAttack::LoadAttackEffect(void)
 	using EFC_NAME = EffectManager::EFFECT_NAME;
 	using SOURCE = ResourceManager::SRC;
 
-	efcM.Add(EFC_NAME::PLAYER_KICK_THIRD, resM.Load(SOURCE::PLAYER_KICK_THIRD_EFC).handleId_);
+	efcM.Add(EFC_NAME::PLAYER_PUNCH_ONE_TWO, resM.Load(SOURCE::PLAYER_PUNCH_ONE_TWO_EFC).handleId_);
 	efcM.Add(EFC_NAME::PLAYER_PUNCH_THIRD, resM.Load(SOURCE::PLAYER_PUNCH_THIRD_EFC).handleId_);
+	efcM.Add(EFC_NAME::PLAYER_KICK_FIRST, resM.Load(SOURCE::PLAYER_KICK_FIRST_EFC).handleId_);
+	efcM.Add(EFC_NAME::PLAYER_KICK_SECOND, resM.Load(SOURCE::PLAYER_KICK_SECOND_EFC).handleId_);
+	efcM.Add(EFC_NAME::PLAYER_KICK_THIRD, resM.Load(SOURCE::PLAYER_KICK_THIRD_EFC).handleId_);
 	efcM.Add(EFC_NAME::PLAYER_PUNCH_SPECIAL, resM.Load(SOURCE::PLAYER_PUNCH_SPECIAL_EFC).handleId_);
+	efcM.Add(EFC_NAME::PLAYER_KICK_SPECIAL, resM.Load(SOURCE::PLAYER_KICK_SPECIAL_EFC).handleId_);
 	efcM.Add(EFC_NAME::PLAYER_ULTIMATE, resM.Load(SOURCE::PLAYER_ULTIMATE_EFC).handleId_);
 
-	directionNames_.at(PUNCH_FIRST_KEY).efcName = EFC_NAME::MAX;	//パンチ初段
-	directionNames_.at(PUNCH_SECOND_KEY).efcName = EFC_NAME::MAX;	//パンチ二段
-	directionNames_.at(PUNCH_THIRD_KEY).efcName = EFC_NAME::PLAYER_PUNCH_THIRD;	//パンチ最終段
-	directionNames_.at(KICK_FIRST_KEY).efcName = EFC_NAME::MAX;		//キック初段
-	directionNames_.at(KICK_SECOND_KEY).efcName = EFC_NAME::MAX;	//キック二段
+	directionNames_.at(PUNCH_FIRST_KEY).efcName = EFC_NAME::PLAYER_PUNCH_ONE_TWO;	//パンチ初段
+	directionNames_.at(PUNCH_SECOND_KEY).efcName = EFC_NAME::PLAYER_PUNCH_ONE_TWO;	//パンチ二段
+	directionNames_.at(PUNCH_THIRD_KEY).efcName = EFC_NAME::PLAYER_PUNCH_THIRD;		//パンチ最終段
+	directionNames_.at(KICK_FIRST_KEY).efcName = EFC_NAME::PLAYER_KICK_FIRST;		//キック初段
+	directionNames_.at(KICK_SECOND_KEY).efcName = EFC_NAME::PLAYER_KICK_SECOND;		//キック二段
 	directionNames_.at(KICK_THIRD_KEY).efcName = EFC_NAME::PLAYER_KICK_THIRD;		//キック最終段
 	directionNames_.at(SPECIAL_PUNCH_KEY).efcName = EFC_NAME::PLAYER_PUNCH_SPECIAL;	//パンチ特殊
-	directionNames_.at(SPECIAL_KICK_KEY).efcName = EFC_NAME::MAX;	//キック特殊
+	directionNames_.at(SPECIAL_KICK_KEY).efcName = EFC_NAME::PLAYER_KICK_SPECIAL;	//キック特殊
 	directionNames_.at(ULTIMATE_KEY).efcName = EFC_NAME::PLAYER_ULTIMATE;		//必殺技
 }
 
@@ -366,8 +373,11 @@ void PlayerAttack::ResetComboRoute(void)
 
 void PlayerAttack::Draw(void)
 {
+#ifdef _DEBUG
 	//デバッグ表記
 	DrawDebug();
+#endif
+	
 	
 
 	//コンボ分岐の表記
