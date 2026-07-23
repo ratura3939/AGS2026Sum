@@ -119,7 +119,7 @@ void BossUI::Draw(void)
 		//UI見やすさ用の背景（■）
 		const int circleSize = 35;
 		const int white = 0xffffff;
-		const int bocWidthHalf = 50;
+		const int bocWidthHalf = 60;
 		const int bocHeightHalf = 25;
 
 		VECTOR iconDrawPos = ui.GetDrawPos(UIManager2d::UI_NAME::ATTACK_ICON);
