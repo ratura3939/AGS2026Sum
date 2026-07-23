@@ -1,15 +1,19 @@
-#include "../../../pch.h"
+﻿#include "../../../pch.h"
 #include"../../../Manager/Generic/ResourceManager.h"
 #include "AttackCommandInfo.h"
 
 namespace {
-	const VECTOR START_POSITION = { 700.0f,500.0f,0.0f };	//初期位置
-	const VECTOR GOAL_POSITION = { 600.0f,500.0f,0.0f };	//目標位置
+	const VECTOR START_POSITION = { 800.0f,250.0f,0.0f };	//初期位置
+	const VECTOR GOAL_POSITION = { 700.0f,250.0f,0.0f };	//目標位置
 
-	const float MOVE_SPEED = 5.0f;	//スピード
+	const float MOVE_SPEED = 20.0f;	//スピード
 
+	const double EX_RATE_ACC = 0.1;	//大きくなる速さ
+	const double EX_RATE_MAX = 0.3;	//最大値
 
-	const float DIFF_GUIDE_FOR_CENTER = 100.0f;	//ガイド項目の中心からの相対距離
+	const float COMMAND_EX_RATE = 0.8f;
+
+	const float DIFF_GUIDE_FOR_CENTER = 130.0f* COMMAND_EX_RATE;	//ガイド項目の中心からの相対距離
 	const VECTOR DIFF_GUIDE_BUTON[static_cast<int>(AttackCommandInfo::BUTTON_TYPE::MAX)] = {
 		{DIFF_GUIDE_FOR_CENTER,0.0f,0.0f},	//B
 		{0.0f,DIFF_GUIDE_FOR_CENTER,0.0f},	//A
@@ -19,10 +23,13 @@ namespace {
 }
 
 AttackCommandInfo::AttackCommandInfo(void)
-	:useType_(TYPE::MAX)
+	:useUpdate_(&AttackCommandInfo::UpdateNone)
+	,useType_(TYPE::MAX)
 	,commandImages_{-1,-1}
 	,commandGuides_{{-1,-1,-1,-1},{-1,-1,-1,-1}}
+	,isAppeared_(false)
 	,isDrawGuide_(false)
+	,guideIconExRate_(0.0)
 	,centerPos_(Utility::VECTOR_INIT)
 	,goalPos_(Utility::VECTOR_INIT)
 {
@@ -53,7 +60,7 @@ void AttackCommandInfo::Update(void)
 
 void AttackCommandInfo::Draw(void)
 {
-	if (useType_ == TYPE::MAX) {
+	if (useType_ == TYPE::MAX || !isAppeared_) {
 		return;
 	}
 
@@ -74,10 +81,18 @@ void AttackCommandInfo::Appear(const TYPE& _type)
 	goalPos_ = GOAL_POSITION;
 
 	useUpdate_ = &AttackCommandInfo::UpdateAppear;
+
+	isAppeared_ = true;
 }
 
 void AttackCommandInfo::Disappear(void)
 {
+	//そもそも出現していない時
+	if (!isAppeared_) {
+		//処理の必要なし
+		return;
+	}
+
 	isDrawGuide_ = false;
 	centerPos_ = GOAL_POSITION;
 	goalPos_ = START_POSITION;
@@ -97,12 +112,20 @@ void AttackCommandInfo::UpdateAppear(void)
 	//ゴールについたら
 	if (centerPos_.x <= goalPos_.x) {
 		centerPos_ = goalPos_;
+
+		//ガイド見せるフェーズへ
 		useUpdate_ = &AttackCommandInfo::UpdateShowGuide;
+		guideIconExRate_ = 0.0;
+		isDrawGuide_ = true;
 	}
 }
 
 void AttackCommandInfo::UpdateShowGuide(void)
 {
+	//拡大率の加算
+	if (guideIconExRate_ < EX_RATE_MAX) {
+		guideIconExRate_ += EX_RATE_ACC;
+	}
 }
 
 void AttackCommandInfo::UpdateDisappear(void)
@@ -113,25 +136,31 @@ void AttackCommandInfo::UpdateDisappear(void)
 	//ゴールについたら
 	if (centerPos_.x >= goalPos_.x) {
 		centerPos_ = goalPos_;
+		//初期化
 		useUpdate_ = &AttackCommandInfo::UpdateNone;
 		useType_ = TYPE::MAX;
+		isAppeared_ = false;
 	}
 }
 
 void AttackCommandInfo::DrawCommand(void)
 {
-	const double exRate = 0.5;
 	const double angle = 0.0;
-	DrawRotaGraph(static_cast<int>(centerPos_.x), static_cast<int>(centerPos_.y), exRate, angle, commandImages_[static_cast<int>(useType_)], true);
+	DrawRotaGraph(static_cast<int>(centerPos_.x), static_cast<int>(centerPos_.y), COMMAND_EX_RATE, angle, commandImages_[static_cast<int>(useType_)], true);
 }
 
 void AttackCommandInfo::DrawGuide(void)
 {
-	const double exRate = 0.3;
 	const double angle = 0.0;
 
 	for (int i = 0;i < static_cast<int>(BUTTON_TYPE::MAX);i++) {
-		VECTOR drawPos = VAdd(centerPos_, DIFF_GUIDE_BUTON[i]);
-		DrawRotaGraph(static_cast<int>(drawPos.x), static_cast<int>(drawPos.y), exRate, angle, commandGuides_[static_cast<int>(useType_)][i], true);
+		int useImage = commandGuides_[static_cast<int>(useType_)][i];
+		if (useImage != -1) {
+			VECTOR drawPos = VAdd(centerPos_, DIFF_GUIDE_BUTON[i]);
+			const int circleSize = 40;
+			const int white = 0xffffff;
+			DrawCircle(static_cast<int>(drawPos.x), static_cast<int>(drawPos.y), circleSize, white);
+			DrawRotaGraph(static_cast<int>(drawPos.x), static_cast<int>(drawPos.y), guideIconExRate_, angle, useImage, true);
+		}
 	}
 }

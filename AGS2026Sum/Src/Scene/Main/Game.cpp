@@ -293,6 +293,9 @@ void Game::GameUpdate(void)
 		slowCnt_++;
 		if (slowCnt_ >= LIMIT_SLOW) {
 			EndSlow();
+
+			//“ÁŽêUŒ‚‘I‘ð’†‚Ì‰Â”\«‚ðl‚¦‚Ä
+			player_->DidappearCommandInfo();
 		}
 	}
 

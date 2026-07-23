@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 class AttackCommandInfo
 {
 public:
@@ -52,7 +52,10 @@ private:
 	int commandImages_[static_cast<int>(TYPE::MAX)];	//４ボタン画像
 	int commandGuides_[static_cast<int>(TYPE::MAX)][static_cast<int>(BUTTON_TYPE::MAX)];	//それぞれの効果
 
+	bool isAppeared_;	//出現しているか
 	bool isDrawGuide_;	//ガイドを表示するか
+	double guideIconExRate_;	//ガイド項目の描画倍率
+
 	VECTOR centerPos_;	//位置
 	VECTOR goalPos_;	//目標位置
 };

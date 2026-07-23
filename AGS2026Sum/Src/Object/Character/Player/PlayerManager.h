@@ -11,6 +11,7 @@
 class Game;
 class EnemyManager;
 class PlayerChara;
+class AttackCommandInfo;
 
 class PlayerManager
 {
@@ -63,6 +64,9 @@ public:
 	//特殊攻撃準備フラグ設定
 	void SetIsSpecialRedy(const bool _flag) { isSpecialAttackRedy_ = _flag; }
 
+	//攻撃ボタン説明の消去
+	void DidappearCommandInfo(void);
+
 private:
 	void UpdateAnimationEvent(void);		//アニメーション経過によるイベント
 	void UserInput(void);					//入力受付
@@ -81,6 +85,8 @@ private:
 
 	std::shared_ptr<PlayerChara> character_;	//キャラクター
 	std::unique_ptr<PlayerAttack> attack_;		//攻撃
+	std::unique_ptr<AttackCommandInfo> commandInfo_;	//攻撃方法説明(特殊・必殺)
+
 	bool isEnableAttackInput_;	//攻撃入力を受け付ける状態か
 	bool isForcePlayAnim_;		//強制再生させるか(攻撃の初段のみ強制再生)
 	bool isNoBlendPlayAnim_;	//ブレンドなしでアニメーションを再生させるか

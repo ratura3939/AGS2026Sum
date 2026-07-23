@@ -10,6 +10,7 @@
 #include"../../../Scene/Sub/PauseScene.h"
 #include"PlayerChara.h"
 #include "PlayerAttack.h"
+#include"AttackCommandInfo.h"
 #include "PlayerManager.h"
 
 const std::wstring PlayerManager::ANIM_IDLE = L"Idle";
@@ -63,6 +64,9 @@ void PlayerManager::Init(void)
 	attack_ = std::make_unique<PlayerAttack>(character_->GetPos(), character_->GetQua());	//攻撃クラスの生成
 	attack_->Init();		//攻撃クラスの初期化
 
+	commandInfo_ = std::make_unique<AttackCommandInfo>();
+	commandInfo_->Init();
+
 	//注視点の更新
 	Camera& camera = SceneManager::GetInstance().GetCamera();
 	focusPos_ = VAdd(character_->GetPos(), camera.GetRot().PosAxis(FOCUS_RELATIVE));
@@ -81,6 +85,7 @@ void PlayerManager::Update(void)
 	UserInput();			//入力受付
 	character_->Update();	//キャラクターの更新
 	attack_->Update();		//攻撃クラスの更新
+	commandInfo_->Update();	//攻撃説明の更新
 
 	//注視点の更新
 	Camera& camera = SceneManager::GetInstance().GetCamera();
@@ -101,6 +106,7 @@ void PlayerManager::Draw(void)
 {
 	character_->Draw();		//キャラクターの描画
 	attack_->Draw();		//攻撃クラスの描画
+	commandInfo_->Draw();	//攻撃説明の描画
 
 	UIManager2d::GetInstance().Draw(UIManager2d::UI_NAME::OPERATION_INFO);	//操作方法の描画
 	
@@ -177,6 +183,11 @@ const CharacterBase::KNOCKBACK_TYPE PlayerManager::GetCurrentKnockBackType(void)
 void PlayerManager::SetAnimSpeedPercent(const float _percent)
 {
 	character_->SetAnimationSpeedPercent(_percent);
+}
+
+void PlayerManager::DidappearCommandInfo(void)
+{
+	commandInfo_->Disappear();
 }
 
 void PlayerManager::UpdateAnimationEvent(void)
@@ -283,10 +294,12 @@ void PlayerManager::UserInput(void)
 	//開始
 	if (ins.IsTriggerDown(InputManager::INPUT_COMMAND::ATTACK_SPECIAL) && isEnableSpecial_) {
 		scene_.StartSlow();
+		commandInfo_->Appear(AttackCommandInfo::TYPE::SEPECIAL);
 	}
 	//終了
 	else if (ins.IsTrigerrUp(InputManager::INPUT_COMMAND::ATTACK_SPECIAL)) {
 		scene_.EndSlow();
+		commandInfo_->Disappear();
 	}
 #pragma endregion
 
