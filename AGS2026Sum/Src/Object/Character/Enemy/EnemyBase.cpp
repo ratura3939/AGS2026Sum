@@ -96,10 +96,7 @@ void EnemyBase::ChangeAction(const ENEMY_ACTION _nextAction)
 	if (action_ == _nextAction || _nextAction == ENEMY_ACTION::MAX)return;
 
 	//状態抜けの処理
-	if (action_ != ENEMY_ACTION::MAX)
-	{
-		(this->*actionFunc_[static_cast<int>(action_)].exit)();
-	}
+	if (action_ != ENEMY_ACTION::MAX)(this->*actionFunc_[static_cast<int>(action_)].exit)();
 
 	//状態の変更
 	action_ = _nextAction;

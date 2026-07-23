@@ -15,6 +15,7 @@ public:
 		,BACK_TITLE_BUTTON	//タイトルに戻る
 		,BACK_GAME_BUTTON	//ゲームに戻る
 		,OPERATION_INFO		//操作方法
+		,ATTACK_ICON		//攻撃アイコン
 		,MAX
 	};
 

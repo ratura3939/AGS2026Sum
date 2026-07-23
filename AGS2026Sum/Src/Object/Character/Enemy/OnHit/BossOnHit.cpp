@@ -88,11 +88,11 @@ void BossOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 	bool isAttackCancel = false;
 
 	//敵の現在攻撃
-	auto enemySkill = parent_.GetCurrentSkill();
+	const auto enemySkill = parent_.GetCurrentSkill();
 	if (enemySkill != nullptr)
 	{
 		//属性が一致したなら削り値上昇と攻撃キャンセル
-		auto skillElement = enemySkill->GetAttackElement();
+		const auto skillElement = enemySkill->GetAttackElement();
 		if (skillElement == data->element && skillElement != AttackDataBase::ATTACK_ELEMENT::NORMAL)
 		{
 			breakValue *= 10.0f;
