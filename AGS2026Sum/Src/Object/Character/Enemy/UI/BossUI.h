@@ -44,14 +44,16 @@ private:
 	static constexpr int BASE_HEIGHT = 1080;
 
 	//ゲージの位置
+	static constexpr UIInfo GAUGE_INFO = { 0.75f,0.1f, 0.0f,0.0f };
 	static constexpr float GAUGE_UV_U = 0.5f;
-	static constexpr float GAUGE_UV_V = 0.2f;
-	static constexpr float GAUGE_RADIUS = 0.1f;
+	static constexpr float GAUGE_UV_V = 0.5f;
+	static constexpr float GAUGE_RADIUS = 0.2f;
+	static constexpr int GAUGE_SIZE = 300;
 
 	//HPバーの位置
-	static constexpr UIInfo HP_INFO = { 0.5f,0.5f, 0.0f,0.0f };
-	static constexpr int HP_WIDTH = 500;
-	static constexpr int HP_HEIGHT = 10;
+	static constexpr UIInfo HP_INFO = { 0.5f,0.1f, 0.0f,0.0f };
+	static constexpr int HP_WIDTH = 700;
+	static constexpr int HP_HEIGHT = 15;
 	static constexpr int HP_WINDOW = 2;
 
 	//表示するボス

@@ -60,6 +60,10 @@ private:
 	static constexpr float RADIUS = 200.0f;
 
 	//エフェクトの大きさ
-	static constexpr float EFF_SCALE = 100.0f;
+	static constexpr float AURA_SCALE = 10.0f;
+	static constexpr float EFF_SCALE = 40.0f;
+
+	//エフェクト用ハンドル
+	int effHandle_;
 };
 

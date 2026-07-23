@@ -23,33 +23,16 @@ float4 main(PS_INPUT input) : SV_TARGET
 {
     float3 N = normalize(input.normal);
 
-    float3 V = normalize(g_camera_pos - input.worldPos);
+    float3 V =
+    normalize(g_camera_pos - input.worldPos);
 
-    //----------------------------
-    // リムライト
-    //----------------------------
-    float rim = 1.0 - saturate(dot(V, N));
+    float rim =
+    1.0 - saturate(dot(V, N));
 
-    // 太さ
-    rim = smoothstep(0.25, 1.0, rim);
-
-    //----------------------------
-    // ゆらゆら
-    //----------------------------
-    float pulse =
-        0.8 + 0.2 * sin(time * 8.0);
-
-    //----------------------------
-    // 溜めるほど明るく
-    //----------------------------
-    float intensity =
-        lerp(0.5, 2.0, chargeRate);
+    rim = smoothstep(0.2, 1.0, rim);
 
     float3 color =
-        auraColor *
-        rim *
-        pulse *
-        intensity;
+    float3(1, 0, 0) * rim;
 
-    return float4(color, rim * 0.8);
+    return float4(color, 1);
 }

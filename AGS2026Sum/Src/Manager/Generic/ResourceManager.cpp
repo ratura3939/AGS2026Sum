@@ -350,6 +350,10 @@ void ResourceManager::ResourceEnemy(void)
 	//突進エフェクト
 	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"Landing.efk");
 	resourcesMap_.emplace(SRC::ENEMY_LANDING_EFC, res);
+
+	//オーラエフェクト
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + L"EnemyAura.efk");
+	resourcesMap_.emplace(SRC::ENEMY_AURA_EFC, res);
 }
 
 void ResourceManager::ResourceBoss(void)

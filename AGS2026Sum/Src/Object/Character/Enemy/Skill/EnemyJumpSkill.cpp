@@ -20,6 +20,12 @@ void EnemyJumpSkill::ReadyEnter(EnemyBase& _owner)
 
 	//アニメーション
 	_owner.PlayAnim(L"Jump");
+
+	//エフェクト
+	EffectManager::GetInstance().Play(_owner.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_AURA, _owner.GetPos(), _owner.GetQua(), AURA_SCALE);
+
+	//特殊スキル
+	_owner.SetIsElementSkill(true);
 }
 
 const bool EnemyJumpSkill::ReadyUpdate(EnemyBase& _owner)
@@ -38,6 +44,12 @@ void EnemyJumpSkill::ReadyExit(EnemyBase& _owner)
 {
 	//初期化
 	attackCnt_ = 0.0f;
+
+	//エフェクトストップ
+	EffectManager::GetInstance().StopAll();
+
+	//終了
+	_owner.SetIsElementSkill(false);
 }
 
 void EnemyJumpSkill::Enter(EnemyBase& _owner)
@@ -59,6 +71,9 @@ void EnemyJumpSkill::Enter(EnemyBase& _owner)
 
 	//初期化
 	attackCnt_ = 0.0f;
+
+	//特殊スキル
+	_owner.SetIsElementSkill(true);
 }
 
 const bool EnemyJumpSkill::Update(EnemyBase& _owner)
@@ -80,6 +95,9 @@ void EnemyJumpSkill::Exit(EnemyBase& _owner)
 
 	//エフェクト
 	//EffectManager::GetInstance().StopAll();
+
+	//終了
+	_owner.SetIsElementSkill(false);
 }
 
 void EnemyJumpSkill::EndEnter(EnemyBase& _owner)

@@ -16,12 +16,13 @@ cbuffer cbAura : register(b4)
 {
     float auraSize; // 0.01～0.05くらい
     float chargeRate; // 0～1
-    float2 dummy;
+    float auraScale;
+    float1 dummy;
 };
 
 VS_OUTPUT main(VS_INPUT VSInput)
 {
-VS_OUTPUT output;
+    VS_OUTPUT output;
 
 
     //------------------------------------
@@ -54,7 +55,25 @@ VS_OUTPUT output;
     boneMat[1] += L_W_MAT[boneIdx.w + 1] * weight.wwww;
     boneMat[2] += L_W_MAT[boneIdx.w + 2] * weight.wwww;
 
+    // BONE8
+    boneIdx = VSInput.blendIndices1;
+    weight = VSInput.blendWeight1;
 
+    boneMat[0] += L_W_MAT[boneIdx.x + 0] * weight.xxxx;
+    boneMat[1] += L_W_MAT[boneIdx.x + 1] * weight.xxxx;
+    boneMat[2] += L_W_MAT[boneIdx.x + 2] * weight.xxxx;
+
+    boneMat[0] += L_W_MAT[boneIdx.y + 0] * weight.yyyy;
+    boneMat[1] += L_W_MAT[boneIdx.y + 1] * weight.yyyy;
+    boneMat[2] += L_W_MAT[boneIdx.y + 2] * weight.yyyy;
+
+    boneMat[0] += L_W_MAT[boneIdx.z + 0] * weight.zzzz;
+    boneMat[1] += L_W_MAT[boneIdx.z + 1] * weight.zzzz;
+    boneMat[2] += L_W_MAT[boneIdx.z + 2] * weight.zzzz;
+
+    boneMat[0] += L_W_MAT[boneIdx.w + 0] * weight.wwww;
+    boneMat[1] += L_W_MAT[boneIdx.w + 1] * weight.wwww;
+    boneMat[2] += L_W_MAT[boneIdx.w + 2] * weight.wwww;
 
     //------------------------------------
     // 座標変換
@@ -81,25 +100,31 @@ VS_OUTPUT output;
     // オーラ膨張
     //------------------------------------
     float size =
-        lerp(auraSize, auraSize * 2.0f, chargeRate);
+    auraSize *
+    auraScale *
+    lerp(1.0f, 2.0f, chargeRate);
 
+    float auraScale = lerp(1.0f, 1.3f, chargeRate);
+
+    worldPos.xyz *= auraScale;
     worldPos.xyz += worldNormal * size;
-
+    
     //------------------------------------
     // 出力
     //------------------------------------
-    output.worldPos = worldPos;
-    output.normal = worldNormal;
+    output.worldPos = worldPos.xyz;
+    output.normal = -worldNormal;
 
 
-    float4 viewPos =
-        mul(worldPos, g_base.viewMatrix);
+    float3 viewPos =
+    mul(worldPos, g_base.viewMatrix);
 
 
     output.vwPos = viewPos;
 
+
     output.svPos =
-        mul(viewPos, g_base.projectionMatrix);
+    mul(float4(viewPos, 1.0f), g_base.projectionMatrix);
 
 
     output.uv = VSInput.uv0;
@@ -107,7 +132,6 @@ VS_OUTPUT output;
 
     output.lightDir = 0;
     output.lightAtPos = 0;
-
 
     return output;
 }

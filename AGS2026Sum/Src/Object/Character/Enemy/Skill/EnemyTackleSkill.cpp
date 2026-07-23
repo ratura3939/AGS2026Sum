@@ -6,6 +6,7 @@
 #include "EnemyTackleSkill.h"
 
 EnemyTackleSkill::EnemyTackleSkill(void)
+	:effHandle_(-1)
 {
 }
 
@@ -20,6 +21,12 @@ void EnemyTackleSkill::ReadyEnter(EnemyBase& _owner)
 
 	//アニメーション
 	_owner.PlayNoBlendAnim(L"Tackle", TACKLE_PRE_ANIM_SPEED);
+
+	//エフェクト
+	EffectManager::GetInstance().Play(_owner.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_AURA, _owner.GetPos(), _owner.GetQua(), AURA_SCALE);
+
+	//特殊スキル
+	_owner.SetIsElementSkill(true);
 }
 
 const bool EnemyTackleSkill::ReadyUpdate(EnemyBase& _owner)
@@ -45,6 +52,12 @@ void EnemyTackleSkill::ReadyExit(EnemyBase& _owner)
 
 	//アニメーション
 	_owner.PlayNoBlendAnim(L"Idle");
+
+	//エフェクトストップ
+	EffectManager::GetInstance().StopAll();
+
+	//特殊スキル
+	_owner.SetIsElementSkill(false);
 }
 
 void EnemyTackleSkill::Enter(EnemyBase& _owner)
@@ -71,10 +84,13 @@ void EnemyTackleSkill::Enter(EnemyBase& _owner)
 	_owner.UpdateMovePow();
 
 	//エフェクト
-	EffectManager::GetInstance().Play(_owner.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_TACKLE, _owner.GetPos(), _owner.GetQua(), EFF_SCALE);
+	effHandle_ = EffectManager::GetInstance().Play(_owner.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_TACKLE, _owner.GetPos(), _owner.GetQua().Mult(Quaternion::Euler({ 0.0f,Utility::Deg2RadF(180.0f),0.0f })), EFF_SCALE);
 
 	//初期化
 	attackCnt_ = 0.0f;
+
+	//特殊スキル
+	_owner.SetIsElementSkill(true);
 }
 
 const bool EnemyTackleSkill::Update(EnemyBase& _owner)
@@ -97,6 +113,9 @@ const bool EnemyTackleSkill::Update(EnemyBase& _owner)
 
 		//攻撃座標も動かす
 		_owner.SetAttackPos(ATTACK_LOCAL_POS);
+
+		//エフェクト
+		EffectManager::GetInstance().SyncEffect(effHandle_, _owner.GetPos(), _owner.GetQua().Mult(Quaternion::Euler({0.0f,Utility::Deg2RadF(180.0f),0.0f})), EFF_SCALE, 1.0f);
 	}
 
 	return false;
@@ -109,6 +128,9 @@ void EnemyTackleSkill::Exit(EnemyBase& _owner)
 
 	//エフェクトストップ
 	EffectManager::GetInstance().StopAll();
+
+	//特殊スキル終了
+	_owner.SetIsElementSkill(false);
 }
 
 void EnemyTackleSkill::EndEnter(EnemyBase& _owner)

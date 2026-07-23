@@ -25,6 +25,7 @@ EnemyBase::EnemyBase(const ENEMY_TYPE& _type)
 	, attackPos_(Utility::VECTOR_ZERO)
 	, action_(ENEMY_ACTION::STAY)
 	, state_(nullptr)
+	, isElementSkill_(false)
 	, movePow_(Utility::VECTOR_ZERO)
 	, gravityPow_(Utility::VECTOR_ZERO)
 	, eventKey_(EVENT_TYPE::NONE)
@@ -95,8 +96,11 @@ void EnemyBase::ChangeAction(const ENEMY_ACTION _nextAction)
 	if (action_ == _nextAction || _nextAction == ENEMY_ACTION::MAX)return;
 
 	//状態抜けの処理
-	if(action_ != ENEMY_ACTION::MAX)(this->*actionFunc_[static_cast<int>(action_)].exit)();
-	
+	if (action_ != ENEMY_ACTION::MAX)
+	{
+		(this->*actionFunc_[static_cast<int>(action_)].exit)();
+	}
+
 	//状態の変更
 	action_ = _nextAction;
 	
@@ -109,8 +113,11 @@ void EnemyBase::SetSkills(std::vector<std::unique_ptr<EnemySkillBase>> _skills)
 	skills_ = std::move(_skills);
 }
 
-void EnemyBase::SetAttackCollider(const AttackManager::ATTACK_TYPE& _name)const
+void EnemyBase::SetAttackCollider(const AttackManager::ATTACK_TYPE& _name)
 {
+	//本来空で来ることはないが例外があった時のため
+	if (colliders_.empty())CreateCollider();
+
 	//攻撃マネージャー
 	auto& atkMng = AttackManager::GetInstance();
 
@@ -121,8 +128,11 @@ void EnemyBase::SetAttackCollider(const AttackManager::ATTACK_TYPE& _name)const
 	atkMng.ResetTargetColList(colliders_[1]);
 }
 
-void EnemyBase::RemoveAttackCollider(void) const
+void EnemyBase::RemoveAttackCollider(void)
 {
+	//本来空で来ることはないが例外があった時のため
+	if (colliders_.empty())CreateCollider();
+
 	//攻撃マネージャーから攻撃コライダを破棄
 	AttackManager::GetInstance().DeleteAttackCollider(colliders_[1]);
 }
@@ -622,6 +632,9 @@ void EnemyBase::SetAttackPos(const VECTOR& _localPos)
 
 void EnemyBase::SetAttackRadius(const float _radius)
 {
+	//本来空で来ることはないが例外があった時のため
+	if (colliders_.empty())CreateCollider();
+
 	//半径変更
 	auto sphere = colliders_[1]->GetGeometry<Sphere>();
 	sphere->SetRadius(_radius);

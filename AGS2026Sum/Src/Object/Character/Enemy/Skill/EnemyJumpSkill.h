@@ -55,6 +55,7 @@ private:
 	static constexpr float RADIUS = 1000.0f;
 
 	//エフェクトの大きさ
+	static constexpr float AURA_SCALE = 10.0f;
 	static constexpr float EFF_SCALE = 100.0f;
 };
 

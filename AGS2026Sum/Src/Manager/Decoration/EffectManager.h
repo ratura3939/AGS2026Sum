@@ -23,6 +23,7 @@ public:
 		,ENEMY_DEAD				//死亡
 		,ENEMY_TACKLE			//突進
 		,ENEMY_LANDING			//ジャンプ着地
+		,ENEMY_AURA				//敵オーラ
 		,MAX
 	};
 

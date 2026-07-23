@@ -205,8 +205,8 @@ void Game::InitEffect(void)
 	efcM.Add(EffectManager::EFFECT_NAME::ENEMY_DEAD, rsM.Load(ResourceManager::SRC::ENEMY_DEAD_EFC).handleId_);
 	efcM.Add(EffectManager::EFFECT_NAME::ENEMY_TACKLE, rsM.Load(ResourceManager::SRC::ENEMY_TACKLE_EFC).handleId_);
 	efcM.Add(EffectManager::EFFECT_NAME::ENEMY_LANDING, rsM.Load(ResourceManager::SRC::ENEMY_LANDING_EFC).handleId_);
+	efcM.Add(EffectManager::EFFECT_NAME::ENEMY_AURA, rsM.Load(ResourceManager::SRC::ENEMY_AURA_EFC).handleId_);
 	efcM.Add(EffectManager::EFFECT_NAME::PLAYER_HIT, rsM.Load(ResourceManager::SRC::PLAYER_HIT_EFC).handleId_);
-
 }
 
 void Game::InitShader(void)

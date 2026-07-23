@@ -52,14 +52,6 @@ void BossBase::LoadShader(void)
 	rimLightMaterial_->AddConstBufPS(FLOAT4{ 0.0f, 0.0f, 0.0f, 1.0f });
 	rimLightMaterial_->AddConstBufPS(FLOAT4{ cameraPos.x, cameraPos.y, cameraPos.z, 0.0f});
 	rimLightMaterial_->AddConstBufPS(FLOAT4{ 1.0f, 0.0f, 0.0f, 16.0f });
-
-	//オーラ
-	//auraMaterial_ = std::make_unique<ModelMaterial>(L"RimAuraVS.cso", 1, L"RimAuraPS.cso", 3);
-	//float auraSize = 0.03f;
-	//auraMaterial_->AddConstBufVS(FLOAT4{ auraSize ,1.0f,0.0f,0.0f });
-	//auraMaterial_->AddConstBufPS(FLOAT4{ auraSize,1.0f,0.0f,0.0f });
-	//auraMaterial_->AddConstBufPS(FLOAT4{ 1.0f,0.0f,0.0f,0.0f });
-	//auraMaterial_->AddConstBufPS(FLOAT4{ cameraPos.x, cameraPos.y, cameraPos.z, 0.0f });
 }
 
 void BossBase::DoInit(void)
@@ -76,6 +68,17 @@ void BossBase::DoUpdate(void)
 	//戦闘情報更新
 	if (!IsEndState() && !IsFade())battle_.Update();
 
+	if (isElementSkill_)
+	{
+		rimCnt_ += SceneManager::GetInstance().GetDeltaTime();
+		rimCnt_ = std::min(rimCnt_, 1.0f);
+	}
+	else
+	{
+		rimCnt_ -= SceneManager::GetInstance().GetDeltaTime();
+		rimCnt_ = std::max(rimCnt_, 0.0f);
+	}
+
 	//共通更新
 	EnemyBase::DoUpdate();
 }
@@ -84,12 +87,6 @@ void BossBase::Draw(void)
 {
 	//デバッグ描画
 	//DrawDebug();
-
-	//戦闘情報描画
-	//battle_.Draw();
-
-	//モデル描画
-	//MV1DrawModel(modelId_);
 
 	//カメラ座標
 	const VECTOR& cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
@@ -107,14 +104,8 @@ void BossBase::Draw(void)
 	MV1SetMeshBackCulling(modelId_, 0, DX_CULLING_LEFT);	//表面描画
 
 	//リムライト描画
-	rimLightMaterial_->SetConstBufPS(2, FLOAT4{ cameraPos.x,cameraPos.y,cameraPos.z,1.0f });
+	rimLightMaterial_->SetConstBufPS(2, FLOAT4{ cameraPos.x,cameraPos.y,cameraPos.z,rimCnt_ });
 	modelRenderer_->Draw(modelId_, *rimLightMaterial_);
-
-	//オーラ
-	//static float cnt = 0.0f;
-	//cnt += SceneManager::GetInstance().GetDeltaTime();
-	//auraMaterial_->SetConstBufPS(0, FLOAT4{ 0.03f,1.0f,cnt,0.0f });
-	//auraMaterial_->SetConstBufPS(2, FLOAT4{ cameraPos.x,cameraPos.y,cameraPos.z,0.0f });
 
 	//モデルの描画
 	//modelRenderer_->Draw(modelId_, *modelMaterial_);

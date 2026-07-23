@@ -116,6 +116,9 @@ void BossOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 	{
 		//通常状態
 		parent_.ChangeAction(ENEMY_ACTION::ATTACK_END);
+
+		//ひるむ
+		parent_.PlayAnim(L"Stagger");
 	}
 
 	//スタンしていないならダメージを減らす

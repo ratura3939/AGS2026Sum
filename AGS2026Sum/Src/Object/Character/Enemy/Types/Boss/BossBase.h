@@ -38,8 +38,8 @@ protected:
 	//リムライトマテリアル
 	std::unique_ptr<ModelMaterial>rimLightMaterial_;
 
-	//オーラマテリアル
-	std::unique_ptr<ModelMaterial>auraMaterial_;
+	//リムライト用
+	float rimCnt_;
 
 	//読み込み
 	virtual void DoLoad(void)override;

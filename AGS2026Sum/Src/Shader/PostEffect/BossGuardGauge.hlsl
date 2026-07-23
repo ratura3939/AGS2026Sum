@@ -71,7 +71,7 @@ float4 main(PS_INPUT PSInput) : SV_TARGET
 
     //progress判定
     if (ang01 >= segmentProgress)
-        discard;
+        return float4(0.0f,0.0f,0.0f,1.0f);
     
     // このピクセルが属するセグメント番号
     float segment = floor(ang01 * splitNum);

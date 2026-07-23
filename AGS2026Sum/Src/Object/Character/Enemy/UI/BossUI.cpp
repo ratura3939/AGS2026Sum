@@ -25,9 +25,18 @@ void BossUI::Load(void)
 	material_->AddConstBuf({ 0.0f,0.0f,0.0f,0.0f });
 
 	//レンダラー
+	auto& app = Application::GetInstance();
+	float screenWidth = static_cast<float>(app.GetWindowWidth());
+	float screenHeight = static_cast<float>(app.GetWindowHeight());
+	float widthRate = screenWidth / static_cast<float>(BASE_WIDTH);
+	float heightRate = screenHeight / static_cast<float>(BASE_HEIGHT);
+	Vector2 gaugePos;
+	gaugePos.x = screenWidth * GAUGE_INFO.anchorX + GAUGE_INFO.offsetX * widthRate - GAUGE_SIZE * GAUGE_UV_U * widthRate;
+	gaugePos.y = screenHeight * GAUGE_INFO.anchorY + GAUGE_INFO.offsetY * heightRate - GAUGE_SIZE * GAUGE_UV_V * widthRate;
+
 	renderer_ = std::make_unique<PixelRenderer>();
-	renderer_->SetPos(Vector2(0.0f,0.0f));
-	renderer_->SetSize(Vector2(300, 300));
+	renderer_->SetPos(gaugePos);
+	renderer_->SetSize(Vector2(GAUGE_SIZE * widthRate, GAUGE_SIZE * widthRate));
 	renderer_->MakeSquereVertex();
 }
 
@@ -98,10 +107,6 @@ void BossUI::Draw(void)
 		material_->SetConstBuf(0, {GAUGE_UV_U,GAUGE_UV_V,progress,0.0f});
 		material_->SetConstBuf(1, { GAUGE_RADIUS,0.0f,0.0f,0.0f });
 		renderer_->Draw(*material_);
-	}
-	else
-	{
-
 	}
 }
 

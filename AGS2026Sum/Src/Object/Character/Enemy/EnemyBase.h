@@ -74,10 +74,10 @@ public:
 	void SetSkills(std::vector<std::unique_ptr<EnemySkillBase>> _skills);
 
 	//攻撃マネージャーにコライダを設定
-	void SetAttackCollider(const AttackManager::ATTACK_TYPE& _name)const;
+	void SetAttackCollider(const AttackManager::ATTACK_TYPE& _name);
 
 	//攻撃マネージャーからコライダを破棄
-	void RemoveAttackCollider(void)const;
+	void RemoveAttackCollider(void);
 
 	//現在の攻撃取得
 	const EnemySkillBase* GetCurrentSkill(void) { return currentSkill_; };
@@ -177,6 +177,9 @@ public:
 
 	//攻撃の無効化
 	void DisableAttack(void);
+
+	//特殊スキルの有無
+	void SetIsElementSkill(const bool _value) { isElementSkill_ = _value; }
 
 	//アニメーションプレイ
 	void PlayAnim(const std::wstring& _animName, const float _speed = 1.0f);
@@ -283,6 +286,9 @@ protected:
 	
 	//所持スキル
 	std::vector<std::unique_ptr<EnemySkillBase>> skills_;
+
+	//特殊スキル開始の有無
+	bool isElementSkill_;
 
 	//グループの命令ごとの判断
 	std::unique_ptr<BrainBase> brain_;
