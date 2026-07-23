@@ -4,6 +4,7 @@
 #include "../../../Manager/GameSystem/AttackManager.h"
 #include "../../../Manager/GameSystem/GravityManager.h"
 #include "../../../Manager/GameSystem/Event/EventManager.h"
+#include "../../../Manager/GameSystem/Mission/MissionManager.h"
 #include "../../Common/Collider.h"
 #include "../../Common/Geometry/Sphere.h"
 #include"../../../Renderer/ModelMaterial.h"
@@ -695,6 +696,7 @@ void EnemyBase::SubEventCount(void)const
 {
 	//マネージャーに伝える
 	EventManager::GetInstance().SubFlagCount(eventKey_);
+	MissionManager::GetInstance().AddProgress(type_);
 }
 
 void EnemyBase::OnEnterActiveChank(void)

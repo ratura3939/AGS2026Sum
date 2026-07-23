@@ -145,6 +145,11 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Manager\GameSystem\Mission\MissionKillTarget.cpp" />
+    <ClCompile Include="Src\Manager\GameSystem\Mission\MissionWipeout.cpp" />
+    <ClCompile Include="Src\Manager\GameSystem\Mission\MissionGoToGoal.cpp" />
+    <ClCompile Include="Src\Manager\GameSystem\Mission\MissionBase.cpp" />
+    <ClCompile Include="Src\Manager\GameSystem\Mission\MissionManager.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\Types\Boss\BossBase.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\UI\BossUI.cpp" />
     <ClCompile Include="Src\Object\Character\Player\AttackCommandInfo.cpp" />
@@ -235,6 +240,11 @@
     <ClCompile Include="Src\Object\Stage\StageObjectBase.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Manager\GameSystem\Mission\MissionKillTarget.h" />
+    <ClInclude Include="Src\Manager\GameSystem\Mission\MissionWipeout.h" />
+    <ClInclude Include="Src\Manager\GameSystem\Mission\MissionGoToGoal.h" />
+    <ClInclude Include="Src\Manager\GameSystem\Mission\MissionBase.h" />
+    <ClInclude Include="Src\Manager\GameSystem\Mission\MissionManager.h" />
     <ClInclude Include="Src\Object\Character\Enemy\Types\Boss\BossBase.h" />
     <ClInclude Include="Src\Object\Character\Enemy\UI\BossUI.h" />
     <ClInclude Include="Src\Object\Character\Player\AttackCommandInfo.h" />
