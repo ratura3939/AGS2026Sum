@@ -116,6 +116,18 @@ void BossUI::Draw(void)
 	}
 	else if(skill->GetAttackElement() != AttackDataBase::ATTACK_ELEMENT::NORMAL)
 	{
+		//UI見やすさ用の背景（■）
+		const int circleSize = 35;
+		const int white = 0xffffff;
+		const int bocWidthHalf = 50;
+		const int bocHeightHalf = 25;
+
+		VECTOR iconDrawPos = ui.GetDrawPos(UIManager2d::UI_NAME::ATTACK_ICON);
+
+		DrawBox(static_cast<int>(iconDrawPos.x)- bocWidthHalf, static_cast<int>(iconDrawPos.y) - bocHeightHalf,
+			static_cast<int>(iconDrawPos.x) + bocWidthHalf, static_cast<int>(iconDrawPos.y) + bocHeightHalf, 
+			white,true);
+
 		ui.SetImage(UIManager2d::UI_NAME::ATTACK_ICON, atkIcon_[static_cast<int>(skill->GetAttackElement())]);
 		ui.Update(UIManager2d::UI_NAME::ATTACK_ICON);
 		ui.Draw(UIManager2d::UI_NAME::ATTACK_ICON);
