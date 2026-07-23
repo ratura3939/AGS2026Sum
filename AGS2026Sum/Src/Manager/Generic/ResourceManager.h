@@ -101,6 +101,13 @@ public:
 		,KICK_SECOND_PLAYER_SE		//キック二段目
 		,KICK_THIRD_PLAYER_SE		//キック最終段
 
+		,ENEMY_CHARGE_SE			//敵のため動作のSE
+		,ENEMY_NORMAL_SKILL_SE		//敵の通常攻撃のSE
+		,ENEMY_TACKLE_SKILL_SE		//敵の突進のSE
+		,ENEMY_JUMP_SKILL_SE		//敵のジャンプ攻撃のSE
+		,ENEMY_SKILL_CANCEL_SE		//敵の攻撃キャンセルのSE
+		,ENEMY_GUARD_BREAK_SE		//敵のガードブレイクのSE
+
 		//JSON
 		,TITLE_UI_INFO_JSON			//タイトルUI
 		,PLAYER_ATTACK_DATA_JSON	//プレイヤー攻撃データ

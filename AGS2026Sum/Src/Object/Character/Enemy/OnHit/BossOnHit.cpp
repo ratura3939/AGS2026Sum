@@ -3,12 +3,9 @@
 #include"../../../../Manager/GameSystem/AttackManager.h"
 #include"../../../../Manager/GameSystem/ComboManager.h"
 #include"../../../../Manager/Decoration/EffectManager.h"
+#include"../../../../Manager/Decoration/SoundManager.h"
 #include "../../Player/ToJson/PlayerAttackData.h"
 #include "../State/EnemyStaggerState.h"
-#include "../State/EnemyLaunchState.h"
-#include "../State/EnemySlamState.h"
-#include "../State/EnemyPushBackState.h"
-#include "../State/EnemyBlowAwayState.h"
 #include "../Skill/EnemySkillBase.h"
 #include "../EnemyBase.h"
 #include "../Types/Boss/MiddleBoss.h"
@@ -65,7 +62,7 @@ void BossOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 
 	//ヒットエフェクト
 	auto& eff = EffectManager::GetInstance();
-	//if (!eff.IsEffectPlay(parent_.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_HIT))
+	auto& snd = SoundManager::GetInstance();
 	eff.Play(parent_.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_HIT, parent_.GetPos(), parent_.GetQua(), 10.0f);
 
 	//リセット
@@ -83,8 +80,6 @@ void BossOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 	//戦闘情報
 	BossBattleComponent& battle = parent->GetBattleComponent();
 
-	//スタン判定
-	bool isGuardBreak = battle.IsGuardBreak();
 	bool isAttackCancel = false;
 
 	//敵の現在攻撃
@@ -97,12 +92,18 @@ void BossOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 		{
 			breakValue *= 10.0f;
 			isAttackCancel = true;
+
+			//SE
+			snd.Play(SoundManager::SOUND_NAME::ENEMY_SKILL_CANCEL_SE);
 		}
 	}
 
 	//ガードブレイク
 	battle.GuardBreak(breakValue);
 
+	//スタン判定
+	bool isGuardBreak = battle.IsGuardBreak();
+	
 	//ダメージ状態
 	std::string knockback = data->knockBackType;
 
@@ -110,7 +111,7 @@ void BossOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 	float power = data->power;
 
 	//スタンしたなら攻撃キャンセル
-	if (battle.IsGuardBreak() && !battle.IsBreakEnd())isAttackCancel = true;
+	if (isGuardBreak && !battle.IsBreakEnd())isAttackCancel = true;
 
 	if (isAttackCancel)
 	{

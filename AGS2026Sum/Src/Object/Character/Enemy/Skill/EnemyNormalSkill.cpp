@@ -1,6 +1,7 @@
 ﻿#include "../../../../pch.h"
 #include "../../../../Manager/Generic/SceneManager.h"
 #include "../../../../Manager/GameSystem/AttackManager.h"
+#include "../../../../Manager/Decoration/SoundManager.h"
 #include "../EnemyBase.h"
 #include "EnemyNormalSkill.h"
 
@@ -55,6 +56,9 @@ void EnemyNormalSkill::Enter(EnemyBase& _owner)
 
 	//初期化
 	attackCnt_ = 0.0f;
+
+	//SE
+	SoundManager::GetInstance().Play(SoundManager::SOUND_NAME::ENEMY_NORMAL_SKILL_SE);
 }
 
 const bool EnemyNormalSkill::Update(EnemyBase& _owner)
