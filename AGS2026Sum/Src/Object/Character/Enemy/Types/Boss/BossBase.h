@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "BossBattleComponent.h"
 #include "../../EnemyBase.h"
 
