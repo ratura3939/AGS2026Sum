@@ -243,9 +243,6 @@
     <ClCompile Include="Src\Object\Character\Enemy\OnHit\BossOnHit.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Character\Enemy\Types\Boss\BossBattleComponentcpp.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Manager\GameSystem\ComboManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -268,6 +265,24 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Object\Character\Player\AttackCommandInfo.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Object\Character\Enemy\Types\Boss\BossBattleComponent.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Manager\GameSystem\Mission\MissionManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Manager\GameSystem\Mission\MissionBase.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Manager\GameSystem\Mission\MissionGoToGoal.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Manager\GameSystem\Mission\MissionWipeout.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Manager\GameSystem\Mission\MissionKillTarget.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -560,6 +575,21 @@
     <ClInclude Include="Src\Object\Character\Player\AttackCommandInfo.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Manager\GameSystem\Mission\MissionManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Manager\GameSystem\Mission\MissionBase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Manager\GameSystem\Mission\MissionGoToGoal.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Manager\GameSystem\Mission\MissionWipeout.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Manager\GameSystem\Mission\MissionKillTarget.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shader\PostEffect\JustDodgePS.hlsl" />
@@ -577,6 +607,9 @@
     <FxCompile Include="Src\Shader\Model\SkinOutLinePS.hlsl" />
     <FxCompile Include="Src\Shader\PostEffect\CircleGauge.hlsl" />
     <FxCompile Include="Src\Shader\PostEffect\BossGuardGauge.hlsl" />
+    <FxCompile Include="Src\Shader\Model\RimAuraPS.hlsl" />
+    <FxCompile Include="Src\Shader\Model\RimAuraVS.hlsl" />
+    <FxCompile Include="Src\Shader\Model\rimLightPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shader\Common\Pixel\PixelShader2DHeader.hlsli" />

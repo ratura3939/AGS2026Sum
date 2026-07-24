@@ -4,6 +4,7 @@
 #include "../../../Manager/GameSystem/AttackManager.h"
 #include "../../../Manager/GameSystem/GravityManager.h"
 #include "../../../Manager/GameSystem/Event/EventManager.h"
+#include "../../../Manager/GameSystem/Mission/MissionManager.h"
 #include "../../Common/Collider.h"
 #include "../../Common/Geometry/Sphere.h"
 #include"../../../Renderer/ModelMaterial.h"
@@ -96,10 +97,7 @@ void EnemyBase::ChangeAction(const ENEMY_ACTION _nextAction)
 	if (action_ == _nextAction || _nextAction == ENEMY_ACTION::MAX)return;
 
 	//状態抜けの処理
-	if (action_ != ENEMY_ACTION::MAX)
-	{
-		(this->*actionFunc_[static_cast<int>(action_)].exit)();
-	}
+	if (action_ != ENEMY_ACTION::MAX)(this->*actionFunc_[static_cast<int>(action_)].exit)();
 
 	//状態の変更
 	action_ = _nextAction;
@@ -698,6 +696,7 @@ void EnemyBase::SubEventCount(void)const
 {
 	//マネージャーに伝える
 	EventManager::GetInstance().SubFlagCount(eventKey_);
+	MissionManager::GetInstance().AddProgress(type_);
 }
 
 void EnemyBase::OnEnterActiveChank(void)

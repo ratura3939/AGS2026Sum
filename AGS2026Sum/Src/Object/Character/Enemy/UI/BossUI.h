@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include<memory>
+#include"../../Attack/AttackDataBase.h"
 
 class EnemyBase;
 class BossBase;
@@ -56,11 +57,28 @@ private:
 	static constexpr int HP_HEIGHT = 15;
 	static constexpr int HP_WINDOW = 2;
 
+	//アイコンの相対座標
+	static constexpr int ICON_LOCAL_POS_X = 0;
+	static constexpr int ICON_LOCAL_POS_Y = 80;
+	static constexpr float ICON_SIZE = 0.4f;
+	static constexpr float ICON_ZOOM_MIN = 0.4f;
+	static constexpr float ICON_ZOOM_MAX = 0.5f;
+	static constexpr float ICON_ZOOM_SPEED = 0.01f;
+
 	//表示するボス
 	const BossBase* boss_;
 
 	//描画の有無
 	bool isDraw_;
+
+	//HP情報
+	Vector2 healthPos_;
+	Vector2 healthWH_;
+	float widthRate_;
+	float heightRate_;
+
+	//攻撃アイコン
+	std::array<int, static_cast<int>(AttackDataBase::ATTACK_ELEMENT::MAX)> atkIcon_;
 
 	//シェーダー
 	std::unique_ptr<PixelMaterial> material_;

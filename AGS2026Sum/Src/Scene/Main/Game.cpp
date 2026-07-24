@@ -5,6 +5,8 @@
 #include"../../Manager/GameSystem/CollisionManager.h"
 #include"../../Manager/GameSystem/ChunkManager.h"
 #include"../../Manager/GameSystem/ComboManager.h"
+#include"../../Manager/GameSystem/Mission/MissionManager.h"
+#include"../../Manager/GameSystem/Mission/MissionKillTarget.h"
 #include"../../Manager/GameSystem/Event/EventManager.h"
 #include"../../Manager/Generic/Camera.h"
 #include"../../Manager/Generic/SceneManager.h"
@@ -129,6 +131,10 @@ void Game::Init(void)
 	//コンボ管理
 	ComboManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::GAME_END);
 
+	//目的管理
+	MissionManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::GAME_END);
+	auto& misMng = MissionManager::GetInstance();
+
 	//プレイヤー
 	player_ = std::make_unique<PlayerManager>(*this);
 	player_->Init();
@@ -146,6 +152,13 @@ void Game::Init(void)
 	stage_ = std::make_unique<StageManager>();
 	stage_->Load();
 	stage_->Init();
+
+	//目的設定
+	std::unique_ptr<MissionKillTarget> mission = std::make_unique<MissionKillTarget>();
+	mission->SetExplanText(L"Alexを倒せ！！");
+	mission->SetTargetNum(stageEnemyData_.allStageInfo[PROGRESS[static_cast<int>(progress_)]].bossInfos.size());
+	mission->SetTargetType(ENEMY_TYPE::MIDDLE_BOSS);
+	misMng.SetMission(std::move(mission));
 
 	//カメラの初期設定
 	Camera& camera = SceneManager::GetInstance().GetCamera();
@@ -310,6 +323,9 @@ void Game::GameUpdate(void)
 	//コンボの更新
 	ComboManager::GetInstance().Update();
 
+	//目的更新
+	MissionManager::GetInstance().Update();
+
 	//進行度の更新
 	(this->*updateProgress_)();
 
@@ -404,6 +420,7 @@ void Game::Draw(void)
 	enemy_->Draw();
 	player_->Draw();
 	ComboManager::GetInstance().Draw();
+	MissionManager::GetInstance().Draw();
 
 	//DrawEdge();
 }
@@ -473,6 +490,14 @@ void Game::StartNextStage(void)
 
 	//敵生成
 	enemy_->CreateStageEnemy(stageEnemyData_.allStageInfo[PROGRESS[static_cast<int>(progress_)]]);
+
+	//目的設定
+	auto& misMng = MissionManager::GetInstance();
+	std::unique_ptr<MissionKillTarget> mission = std::make_unique<MissionKillTarget>();
+	mission->SetExplanText(L"Alex兄弟を倒せ！！");
+	mission->SetTargetNum(stageEnemyData_.allStageInfo[PROGRESS[static_cast<int>(progress_)]].bossInfos.size());
+	mission->SetTargetType(ENEMY_TYPE::MIDDLE_BOSS);
+	misMng.SetMission(std::move(mission));
 }
 
 void Game::StartSlow(void)

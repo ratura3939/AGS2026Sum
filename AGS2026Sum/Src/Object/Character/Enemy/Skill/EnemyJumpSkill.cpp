@@ -1,6 +1,7 @@
 ﻿#include "../../../../pch.h"
 #include "../../../../Manager/Generic/SceneManager.h"
 #include "../../../../Manager/GameSystem/AttackManager.h"
+#include "../../../../Manager/Decoration/SoundManager.h"
 #include "../../../../Manager/Decoration/EffectManager.h"
 #include "../EnemyBase.h"
 #include "EnemyJumpSkill.h"
@@ -26,6 +27,9 @@ void EnemyJumpSkill::ReadyEnter(EnemyBase& _owner)
 
 	//特殊スキル
 	_owner.SetIsElementSkill(true);
+
+	//SE
+	SoundManager::GetInstance().Play(SoundManager::SOUND_NAME::ENEMY_CHARGE_SE);
 }
 
 const bool EnemyJumpSkill::ReadyUpdate(EnemyBase& _owner)
@@ -74,6 +78,9 @@ void EnemyJumpSkill::Enter(EnemyBase& _owner)
 
 	//特殊スキル
 	_owner.SetIsElementSkill(true);
+
+	//SE
+	SoundManager::GetInstance().Play(SoundManager::SOUND_NAME::ENEMY_JUMP_SKILL_SE);
 }
 
 const bool EnemyJumpSkill::Update(EnemyBase& _owner)

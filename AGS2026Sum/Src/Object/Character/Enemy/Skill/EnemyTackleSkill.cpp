@@ -1,6 +1,7 @@
 ﻿#include "../../../../pch.h"
 #include "../../../../Manager/Generic/SceneManager.h"
 #include "../../../../Manager/GameSystem/AttackManager.h"
+#include "../../../../Manager/Decoration/SoundManager.h"
 #include "../../../../Manager/Decoration/EffectManager.h"
 #include "../EnemyBase.h"
 #include "EnemyTackleSkill.h"
@@ -27,6 +28,9 @@ void EnemyTackleSkill::ReadyEnter(EnemyBase& _owner)
 
 	//特殊スキル
 	_owner.SetIsElementSkill(true);
+
+	//SE
+	SoundManager::GetInstance().Play(SoundManager::SOUND_NAME::ENEMY_CHARGE_SE);
 }
 
 const bool EnemyTackleSkill::ReadyUpdate(EnemyBase& _owner)
@@ -91,6 +95,9 @@ void EnemyTackleSkill::Enter(EnemyBase& _owner)
 
 	//特殊スキル
 	_owner.SetIsElementSkill(true);
+
+	//SE
+	SoundManager::GetInstance().Play(SoundManager::SOUND_NAME::ENEMY_TACKLE_SKILL_SE);
 }
 
 const bool EnemyTackleSkill::Update(EnemyBase& _owner)

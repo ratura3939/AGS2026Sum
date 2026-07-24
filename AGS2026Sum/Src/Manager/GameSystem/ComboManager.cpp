@@ -177,6 +177,8 @@ void ComboManager::UpdateExRateDecrease(void)
 
 void ComboManager::DrawDebug(void)
 {
+#ifdef _DEBUG
+
 	//コンボ数が0以上なら
 	if (comboCount_ > 0)
 	{
@@ -186,6 +188,8 @@ void ComboManager::DrawDebug(void)
 	}
 	//ヒット数の描画
 	DrawString(10, 150, (L"Hit: " + std::to_wstring(hitCount_)).c_str(), 0xffffff);
+
+#endif // _DEBUG
 }
 
 ComboManager::ComboManager(void)

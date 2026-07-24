@@ -1,9 +1,8 @@
 ﻿#include"../../pch.h"
 #include"../../Utility/Utility.h"
-#include"../../../Manager/GameSystem/ChunkManager.h"
-#include"../../../Manager/Generic/InputManager.h"
 #include"../../../Manager/Generic/ResourceManager.h"
-#include"../../../Manager/Decoration/EffectManager.h"
+#include"../../../Manager/GameSystem/ChunkManager.h"
+#include "../../../Manager/Decoration/SoundManager.h"
 #include"Info/EnemyDefine.h"
 #include"Info/StageEnemyData.h"
 #include"Pool/EnemyGroupPool.h"
@@ -26,6 +25,16 @@ EnemyManager::~EnemyManager(void)
 
 void EnemyManager::Load(void)
 {
+	//SE
+	auto& res = ResourceManager::GetInstance();
+	auto& snd = SoundManager::GetInstance();
+	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND_NAME::ENEMY_CHARGE_SE, res.Load(ResourceManager::SRC::ENEMY_CHARGE_SE).handleId_);
+	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND_NAME::ENEMY_NORMAL_SKILL_SE, res.Load(ResourceManager::SRC::ENEMY_NORMAL_SKILL_SE).handleId_);
+	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND_NAME::ENEMY_TACKLE_SKILL_SE, res.Load(ResourceManager::SRC::ENEMY_TACKLE_SKILL_SE).handleId_);
+	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND_NAME::ENEMY_JUMP_SKILL_SE, res.Load(ResourceManager::SRC::ENEMY_JUMP_SKILL_SE).handleId_);
+	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND_NAME::ENEMY_SKILL_CANCEL_SE, res.Load(ResourceManager::SRC::ENEMY_SKILL_CANCEL_SE).handleId_);
+	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND_NAME::ENEMY_GUARD_BREAK_SE, res.Load(ResourceManager::SRC::ENEMY_GUARD_BREAK_SE).handleId_);
+
 	//敵グループのプールを生成
 	enemyGroupPool_ = std::make_unique<EnemyGroupPool>();
 	enemyGroupPool_->Load();

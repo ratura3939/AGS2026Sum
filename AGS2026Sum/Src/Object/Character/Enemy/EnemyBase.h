@@ -80,7 +80,7 @@ public:
 	void RemoveAttackCollider(void);
 
 	//現在の攻撃取得
-	const EnemySkillBase* GetCurrentSkill(void) { return currentSkill_; };
+	const EnemySkillBase* GetCurrentSkill(void)const { return currentSkill_; };
 
 	//現在の攻撃設定
 	void SetCurrentSkill(EnemySkillBase* _skill);

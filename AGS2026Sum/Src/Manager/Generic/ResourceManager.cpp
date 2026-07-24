@@ -389,6 +389,30 @@ void ResourceManager::ResourceEnemy(void)
 	res = Resource(Resource::TYPE::MODEL, animPath + L"Death.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_DEATH_ANIM, res);
 
+	//ためSE
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + L"EnemyCharge.mp3");
+	resourcesMap_.emplace(SRC::ENEMY_CHARGE_SE, res);
+
+	//通常攻撃SE
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + L"EnemyNormalSkill.mp3");
+	resourcesMap_.emplace(SRC::ENEMY_NORMAL_SKILL_SE, res);
+
+	//突進SE
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + L"EnemyTackleSkill.mp3");
+	resourcesMap_.emplace(SRC::ENEMY_TACKLE_SKILL_SE, res);
+
+	//ジャンプ攻撃SE
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + L"EnemyJumpSkill.mp3");
+	resourcesMap_.emplace(SRC::ENEMY_JUMP_SKILL_SE, res);
+
+	//攻撃キャンセルSE
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + L"EnemySkillCancel.mp3");
+	resourcesMap_.emplace(SRC::ENEMY_SKILL_CANCEL_SE, res);
+
+	//ガードブレイクSE
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + L"EnemyGuardBreak.mp3");
+	resourcesMap_.emplace(SRC::ENEMY_GUARD_BREAK_SE, res);
+
 	//パラメーター
 	res = Resource(Resource::TYPE::JSON, Application::PATH_JSON + L"NormalEnemyParam.json");
 	resourcesMap_.emplace(SRC::NORMAL_ENEMY_PARAMETER, res);

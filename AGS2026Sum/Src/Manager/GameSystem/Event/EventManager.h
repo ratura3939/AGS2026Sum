@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <array>
 #include "../../Common/Singleton.h"
+#include "../Scene/Main/Game.h"
 #include "EventType.h"
 
 class EventManager : public Singleton<EventManager>
