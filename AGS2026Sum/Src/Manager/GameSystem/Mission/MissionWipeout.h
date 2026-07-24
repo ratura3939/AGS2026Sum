@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "MissionBase.h"
 
 class MissionWipeout : public MissionBase

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include"../Object/Character/Enemy/Info/EnemyDefine.h"
 
 //ミッションの種類
