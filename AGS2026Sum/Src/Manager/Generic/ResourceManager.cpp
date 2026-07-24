@@ -62,6 +62,10 @@ void ResourceManager::InitTitle(void)
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"EndButton.png");
 	resourcesMap_.emplace(SRC::END_BUTTON_IMG, res);
 
+	// BGM
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + L"GameTitle.mp3");
+	resourcesMap_.emplace(SRC::TITLE_BGM, res);
+
 	//UIインフォ(α②終了後、UIの情報管理について考える)
 	//res = Resource(Resource::TYPE::JSON, Application::PATH_JSON + L"SceneParam/TitleUIDirectionInfo.json");
 	//resourcesMap_.emplace(SRC::TITLE_UI_INFO_JSON, res);
@@ -147,6 +151,10 @@ void ResourceManager::InitClear(void)
 	// タイトルに戻る
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"BackTitleButton.png");
 	resourcesMap_.emplace(SRC::BACK_TITLE_IMG, res);
+
+	// SE
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + L"GameClear.mp3");
+	resourcesMap_.emplace(SRC::GAME_CLEAR_SE, res);
 }
 
 void ResourceManager::InitGameOver(void)
@@ -166,6 +174,10 @@ void ResourceManager::InitGameOver(void)
 	// タイトルに戻る
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"BackTitleButton.png");
 	resourcesMap_.emplace(SRC::BACK_TITLE_IMG, res);
+
+	// BGM
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + L"GameOver.mp3");
+	resourcesMap_.emplace(SRC::GAME_OVER_BGM, res);
 }
 
 void ResourceManager::InitPause(void)

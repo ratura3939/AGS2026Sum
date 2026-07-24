@@ -15,6 +15,9 @@ EnemyNormalSkill::~EnemyNormalSkill(void)
 
 void EnemyNormalSkill::ReadyEnter(EnemyBase& _owner)
 {
+	//現在状態
+	state_ = SKILL_STATE::READY;
+
 	//初期化
 	attackCnt_ = 0.0f;
 
@@ -42,6 +45,9 @@ void EnemyNormalSkill::ReadyExit(EnemyBase& _owner)
 
 void EnemyNormalSkill::Enter(EnemyBase& _owner)
 {
+	//現在状態
+	state_ = SKILL_STATE::ACTIVE;
+
 	//攻撃コライダの有効化
 	_owner.EnableAttack();
 
@@ -81,6 +87,9 @@ void EnemyNormalSkill::Exit(EnemyBase& _owner)
 
 void EnemyNormalSkill::EndEnter(EnemyBase& _owner)
 {
+	//現在状態
+	state_ = SKILL_STATE::END;
+
 	//攻撃コライダの無効化
 	_owner.DisableAttack();
 

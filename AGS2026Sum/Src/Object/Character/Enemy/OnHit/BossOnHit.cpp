@@ -80,6 +80,8 @@ void BossOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 	//戦闘情報
 	BossBattleComponent& battle = parent->GetBattleComponent();
 
+	//スタン判定
+	bool isGuardBreak = battle.IsGuardBreak();
 	bool isAttackCancel = false;
 
 	//敵の現在攻撃
@@ -88,7 +90,7 @@ void BossOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 	{
 		//属性が一致したなら削り値上昇と攻撃キャンセル
 		const auto skillElement = enemySkill->GetAttackElement();
-		if (skillElement == data->element && skillElement != AttackDataBase::ATTACK_ELEMENT::NORMAL)
+		if (skillElement == data->element && skillElement != AttackDataBase::ATTACK_ELEMENT::NORMAL && !enemySkill->IsEnd())
 		{
 			breakValue *= 10.0f;
 			isAttackCancel = true;
@@ -100,9 +102,6 @@ void BossOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 
 	//ガードブレイク
 	battle.GuardBreak(breakValue);
-
-	//スタン判定
-	bool isGuardBreak = battle.IsGuardBreak();
 	
 	//ダメージ状態
 	std::string knockback = data->knockBackType;
@@ -131,6 +130,9 @@ void BossOnHit::CalcDamage(const std::weak_ptr<Collider> _col)
 	//スタン中は状態遷移をしない
 	if (isGuardBreak || !parent_.IsAlive())
 	{
+		//通常状態
+		parent_.ChangeAction(ENEMY_ACTION::ATTACK_END);
+
 		//各吹っ飛び
 		parent_.ChangeState((this->*createState_[knockback])(blowPow));
 	}

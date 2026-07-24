@@ -20,6 +20,9 @@ void EnemyTackleSkill::ReadyEnter(EnemyBase& _owner)
 	//初期化
 	attackCnt_ = 0.0f;
 
+	//現在状態
+	state_ = SKILL_STATE::READY;
+
 	//アニメーション
 	_owner.PlayNoBlendAnim(L"Tackle", TACKLE_PRE_ANIM_SPEED);
 
@@ -66,6 +69,9 @@ void EnemyTackleSkill::ReadyExit(EnemyBase& _owner)
 
 void EnemyTackleSkill::Enter(EnemyBase& _owner)
 {
+	//現在状態
+	state_ = SKILL_STATE::ACTIVE;
+
 	//攻撃コライダの有効化
 	_owner.EnableAttack();
 
@@ -145,6 +151,9 @@ void EnemyTackleSkill::EndEnter(EnemyBase& _owner)
 	//初期化
 	attackCnt_ = 0.0f;
 
+	//現在状態
+	state_ = SKILL_STATE::END;
+
 	//攻撃コライダの無効化
 	_owner.DisableAttack();
 
@@ -153,6 +162,9 @@ void EnemyTackleSkill::EndEnter(EnemyBase& _owner)
 
 	//移動速度設定
 	_owner.SetSpeed(0.0f);
+
+	//終了
+	_owner.SetIsElementSkill(false);
 }
 
 const bool EnemyTackleSkill::EndUpdate(EnemyBase& _owner)
