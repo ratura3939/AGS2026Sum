@@ -19,6 +19,9 @@ void EnemyJumpSkill::ReadyEnter(EnemyBase& _owner)
 	//初期化
 	attackCnt_ = 0.0f;
 
+	//現在状態
+	state_ = SKILL_STATE::READY;
+
 	//アニメーション
 	_owner.PlayAnim(L"Jump");
 
@@ -58,6 +61,9 @@ void EnemyJumpSkill::ReadyExit(EnemyBase& _owner)
 
 void EnemyJumpSkill::Enter(EnemyBase& _owner)
 {
+	//現在状態
+	state_ = SKILL_STATE::ACTIVE;
+
 	//攻撃コライダの有効化
 	_owner.EnableAttack();
 
@@ -109,6 +115,9 @@ void EnemyJumpSkill::Exit(EnemyBase& _owner)
 
 void EnemyJumpSkill::EndEnter(EnemyBase& _owner)
 {
+	//現在状態
+	state_ = SKILL_STATE::END;
+
 	//攻撃コライダの無効化
 	_owner.DisableAttack();
 
@@ -117,6 +126,9 @@ void EnemyJumpSkill::EndEnter(EnemyBase& _owner)
 
 	//初期化
 	attackCnt_ = 0.0f;
+
+	//終了
+	_owner.SetIsElementSkill(false);
 }
 
 const bool EnemyJumpSkill::EndUpdate(EnemyBase& _owner)

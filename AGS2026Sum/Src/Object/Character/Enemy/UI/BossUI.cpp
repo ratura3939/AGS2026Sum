@@ -114,7 +114,7 @@ void BossUI::Draw(void)
 	{
 
 	}
-	else if(skill->GetAttackElement() != AttackDataBase::ATTACK_ELEMENT::NORMAL)
+	else if(skill->GetAttackElement() != AttackDataBase::ATTACK_ELEMENT::NORMAL && !skill->IsEnd())
 	{
 		//UI見やすさ用の背景（■）
 		const int circleSize = 35;
