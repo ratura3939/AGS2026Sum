@@ -15,9 +15,11 @@ public:
 		//BGM
 		TITLE_BGM
 		,GAME_BGM
+		,GAME_OVER_BGM
 
 		//SE
 		//ƒVƒXƒeƒ€
+		,GAME_CLEAR_SE
 		,ENTER_SE
 		,MOVE_CUSUR_SE
 

@@ -88,9 +88,12 @@ public:
 
 		//サウンド
 		// BGM
+		,TITLE_BGM		//タイトル
 		,GAME_BGM		//ゲームシーン
+		,GAME_OVER_BGM	//ゲームオーバー
 
 		//SE
+		,GAME_CLEAR_SE		//ゲームクリア
 		,MOVE_CURSUR_SE
 		,ENTER_SE
 

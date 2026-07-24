@@ -105,10 +105,10 @@ void Title::InitSound(void)
 		resM.Load(ResourceManager::SRC::MOVE_CURSUR_SE).handleId_);
 
 	////BGM
-	//sndM.Add(SoundManager::TYPE::BGM, SoundManager::SOUND_NAME::TITLE_BGM,
-	//	rsM.Load(ResourceManager::SRC::TITLE_BGM).handleId_);
-	////BGMçƒê∂
-	//sndM.Play(SoundManager::SOUND_NAME::TITLE_BGM);
+	sndM.Add(SoundManager::TYPE::BGM, SoundManager::SOUND_NAME::TITLE_BGM,
+		resM.Load(ResourceManager::SRC::TITLE_BGM).handleId_);
+	//BGMçƒê∂
+	sndM.Play(SoundManager::SOUND_NAME::TITLE_BGM);
 }
 
 void Title::InitEffect(void)
@@ -179,6 +179,10 @@ void Title::Draw(void)
 
 void Title::Release(void)
 {
+	SoundManager& sndM = SoundManager::GetInstance();
+
+	//BGMÇé~ÇﬂÇÈ
+	sndM.StopAll(SoundManager::SOUND_NAME::TITLE_BGM);	//ç°Ç‹Ç≈ó¨ÇµÇƒÇ¢ÇΩÇ‡ÇÃÇí‚é~
 }
 
 void Title::Reset(void)

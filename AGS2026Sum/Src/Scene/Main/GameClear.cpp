@@ -158,6 +158,12 @@ void GameClear::InitSound(void)
 	//カーソル音
 	sndM.Add(SND_TYPE::SE, SND_NAME::MOVE_CUSUR_SE,
 		resM.Load(ResourceManager::SRC::MOVE_CURSUR_SE).handleId_);
+
+	////BGM
+	sndM.Add(SoundManager::TYPE::SE, SoundManager::SOUND_NAME::GAME_CLEAR_SE,
+		resM.Load(ResourceManager::SRC::GAME_CLEAR_SE).handleId_);
+	//BGM再生
+	sndM.Play(SoundManager::SOUND_NAME::GAME_CLEAR_SE);
 }
 
 void GameClear::InitEffect(void)

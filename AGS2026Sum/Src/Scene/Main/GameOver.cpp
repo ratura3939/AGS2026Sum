@@ -136,6 +136,10 @@ void GameOver::Draw(void)
 
 void GameOver::Release(void)
 {
+	SoundManager& sndM = SoundManager::GetInstance();
+
+	//BGMを止める
+	sndM.StopAll(SoundManager::SOUND_NAME::GAME_OVER_BGM);	//今まで流していたものを停止
 }
 
 void GameOver::Reset(void)
@@ -157,6 +161,12 @@ void GameOver::InitSound(void)
 	//カーソル音
 	sndM.Add(SND_TYPE::SE, SND_NAME::MOVE_CUSUR_SE,
 		resM.Load(ResourceManager::SRC::MOVE_CURSUR_SE).handleId_);
+
+	////BGM
+	sndM.Add(SoundManager::TYPE::BGM, SoundManager::SOUND_NAME::GAME_OVER_BGM,
+		resM.Load(ResourceManager::SRC::GAME_OVER_BGM).handleId_);
+	//BGM再生
+	sndM.Play(SoundManager::SOUND_NAME::GAME_OVER_BGM);
 }
 
 void GameOver::InitEffect(void)
