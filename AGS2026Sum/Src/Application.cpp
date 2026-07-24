@@ -37,7 +37,7 @@ void Application::Init(void)
 {
 
 	// アプリケーションの初期設定
-	SetWindowText(L"musoooooooooooooooooooooooooooooooo");
+	SetWindowText(L"囚人無双");
 
 
 	// 実行中ウィンドウがあるモニターを取得
