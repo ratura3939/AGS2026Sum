@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "EnemySkillBase.h"
-class EnemyTackleSkill :
-    public EnemySkillBase
+
+class EnemyTackleSkill : public EnemySkillBase
 {
 public:
 

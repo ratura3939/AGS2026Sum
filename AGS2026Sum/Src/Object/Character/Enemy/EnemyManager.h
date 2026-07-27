@@ -52,6 +52,9 @@ public:
 	//ステージごとの敵生成
 	void CreateStageEnemy(const StageEnemyData::AllEnemysInfo& _enemyInfo);
 
+	//ガードブレイクしているボスがいるかどうか
+	const bool IsGuardBreak(void)const;
+
 private:
 
 	//プレイヤーを狙うときの距離半径
