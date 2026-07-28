@@ -605,6 +605,36 @@ void EnemyBase::BackRotation(void)
 	quaRot_ = quaRot_.LookRotation(VGet(moveDir.x, 0.0f, moveDir.z));
 }
 
+void EnemyBase::Knockback(void)
+{
+	//重力
+	GravityManager::GetInstance().CalcGravity(Utility::DIR_D, gravityPow_);
+	GravityManager::GetInstance().CalcGravity(Utility::DIR_F, movePow_);
+	movePow_ = VAdd(movePow_, gravityPow_);
+
+	//移動量をレートに合わせる
+	VECTOR movePow = VScale(movePow_, SceneManager::GetInstance().GetUpdateSpeedRate());
+
+	//移動後座標の更新
+	VECTOR movedPos = VAdd(movedPos_, movePow);
+
+	//移動後座標の更新
+	movedPos_ = movedPos;
+
+	//下に落ちすぎないようにする
+	if (movedPos.y < -100.0f)
+	{
+		isGrounding_ = true;
+	}
+
+	//地面にめり込まないようにする
+	if (isGrounding_)
+	{
+		movedPos_.y = 0.0f;
+		gravityPow_ = Utility::VECTOR_ZERO;
+	}
+}
+
 void EnemyBase::EnableHitCollider(void)
 {
 	//当たり判定の有効化

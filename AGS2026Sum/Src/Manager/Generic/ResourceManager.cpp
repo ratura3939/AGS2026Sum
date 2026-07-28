@@ -123,6 +123,10 @@ void ResourceManager::InitGame(void)
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"TakcleAttackIcon.png");
 	resourcesMap_.emplace(SRC::TAKCLE_ATK_ICON_IMG, res);
 
+	//タックル攻撃アイコン
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"UltimateIcon.png");
+	resourcesMap_.emplace(SRC::ULTIMATE_ICON_IMG, res);
+
 	//コンボ用矢印
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + L"ArrowForCombo.png");
 	resourcesMap_.emplace(SRC::COMBO_ARROW_IMG, res);

@@ -151,6 +151,9 @@ public:
 	//バック用回転更新
 	void BackRotation(void);
 
+	//吹っ飛び
+	void Knockback(void);
+
 	//本体当たり判定の有効化
 	void EnableHitCollider(void);
 

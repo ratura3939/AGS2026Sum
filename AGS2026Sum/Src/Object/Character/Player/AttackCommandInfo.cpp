@@ -51,6 +51,7 @@ void AttackCommandInfo::Init(void)
 	//効果のあるボタンにのみ画像を挿入
 	commandGuides_[static_cast<int>(TYPE::SEPECIAL)][static_cast<int>(BUTTON_TYPE::X)] = resM.Load(SOURCE::TAKCLE_ATK_ICON_IMG).handleId_;
 	commandGuides_[static_cast<int>(TYPE::SEPECIAL)][static_cast<int>(BUTTON_TYPE::Y)] = resM.Load(SOURCE::JUMP_ATK_ICON_IMG).handleId_;
+	commandGuides_[static_cast<int>(TYPE::ULTIMATE)][static_cast<int>(BUTTON_TYPE::B)] = resM.Load(SOURCE::ULTIMATE_ICON_IMG).handleId_;
 }
 
 void AttackCommandInfo::Update(void)
