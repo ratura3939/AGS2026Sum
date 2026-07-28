@@ -27,6 +27,9 @@ public:
 	//ガードブレイク値
 	const float GetGuardDurability(void)const { return battle_.GetGuardDurability(); }
 
+	//ガードブレイクしているか
+	const bool IsGuardBreak(void)const override{ return battle_.GetGuardDurability() <= 0.0f; }
+
 protected:
 
 	//ボスの戦闘情報

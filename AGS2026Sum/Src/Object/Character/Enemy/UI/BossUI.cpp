@@ -93,7 +93,7 @@ void BossUI::Draw(void)
 		healthWH_.x + HP_WINDOW * widthRate_,
 		healthWH_.y + HP_WINDOW * heightRate_,
 		0x000000,
-		TRUE);
+		true);
 
 	// HP
 	if (hp > 0.0f)
@@ -104,7 +104,7 @@ void BossUI::Draw(void)
 			healthPos_.x + (HP_WIDTH * widthRate_) * (hp / hpMax),
 			healthPos_.y + (HP_HEIGHT * heightRate_),
 			0xff8888,
-			TRUE);
+			true);
 	}
 
 	//攻撃アイコン

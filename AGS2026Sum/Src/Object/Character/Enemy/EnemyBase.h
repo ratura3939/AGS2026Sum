@@ -211,6 +211,9 @@ public:
 	//色変更
 	void SetColor(FLOAT4 _color) { color_ = _color; }
 
+	//ガードブレイクしているか
+	virtual const bool IsGuardBreak(void)const { return false; }
+
 protected:
 
 	//親ボーン名

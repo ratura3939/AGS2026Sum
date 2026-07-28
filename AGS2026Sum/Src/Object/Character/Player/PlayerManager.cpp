@@ -278,7 +278,7 @@ void PlayerManager::UserInput(void)
 
 	//必殺技
 	//デバッグ用のボタンが押されていたら
-	if (/*ins.IsPressed(InputManager::INPUT_COMMAND::DEBUG_ULT_REDY) && */ins.IsTriggerDown(InputManager::INPUT_COMMAND::CANCEL)) {
+	if (/*ins.IsPressed(InputManager::INPUT_COMMAND::DEBUG_ULT_REDY) && */ins.IsTriggerDown(InputManager::INPUT_COMMAND::CANCEL) && isUltimateReady_) {
 		attack_->ReserveAttackUltimate();	//必殺技予約
 		isEnableUltimate_ = true;			//必殺技中
 		scene_.StartSlow();					//スロー演出

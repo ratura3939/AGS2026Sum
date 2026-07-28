@@ -317,6 +317,9 @@ void Game::GameUpdate(void)
 		enemy_->Update();
 	}
 
+	//•KE‹Z‚Ìİ’è
+	player_->SetIsUltimateReady(enemy_->IsGuardBreak());
+
 	//“–‚½‚è”»’èXV
 	CollisionManager::GetInstance().UpdateColliders();
 

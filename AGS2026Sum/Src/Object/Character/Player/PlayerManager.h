@@ -64,6 +64,9 @@ public:
 	//特殊攻撃準備フラグ設定
 	void SetIsSpecialRedy(const bool _flag) { isSpecialAttackRedy_ = _flag; }
 
+	//必殺技の準備フラグ設定
+	void SetIsUltimateReady(const bool _flag) { isUltimateReady_ = _flag; }
+
 	//攻撃ボタン説明の消去
 	void DidappearCommandInfo(void);
 
@@ -93,6 +96,7 @@ private:
 
 	bool isSpecialAttackRedy_;	//特殊攻撃の準備ができているか
 	bool isEnableSpecial_;		//特殊攻撃の準備への状態遷移を許可するか
+	bool isUltimateReady_;		//必殺技の受付を許可するか
 	bool isEnableUltimate_;		//必殺技の発動を許可するか
 
 	bool isPlaySoundAtCurrentAttack_;	//現在の攻撃の演出が完了したか

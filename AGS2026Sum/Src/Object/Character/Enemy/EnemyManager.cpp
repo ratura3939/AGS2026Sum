@@ -223,21 +223,20 @@ void EnemyManager::CreateStageEnemy(const StageEnemyData::AllEnemysInfo& _enemyI
 
 const bool EnemyManager::IsGuardBreak(void)const
 {
-	//結果
-	bool ret = false;
-
+	//チャンク内のグループ
 	for (const auto& group : chunkGroups_)
 	{
+		//敵
 		for (const auto& enemy : group->GetEnemys())
 		{
-			if (enemy->IsBoss())
-			{
-				//ガードブレイクしているか
-			}
+			//ガードブレイクしているか
+			if (enemy->IsGuardBreak())
+				return true;
 		}
 	}
 
-	return ret;
+	//ガードブレイクしている敵がいなかった
+	return false;
 }
 
 void EnemyManager::Grouping(EnemyGroup* _group, EnemyBase* _enemy)
