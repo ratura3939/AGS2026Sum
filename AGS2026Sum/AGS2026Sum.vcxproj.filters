@@ -610,6 +610,8 @@
     <FxCompile Include="Src\Shader\Model\RimAuraPS.hlsl" />
     <FxCompile Include="Src\Shader\Model\RimAuraVS.hlsl" />
     <FxCompile Include="Src\Shader\Model\rimLightPS.hlsl" />
+    <FxCompile Include="Src\Shader\Model\ShadowMapPS.hlsl" />
+    <FxCompile Include="Src\Shader\Model\ShadowMapVS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shader\Common\Pixel\PixelShader2DHeader.hlsli" />
