@@ -93,6 +93,9 @@ void ShadowManager::Draw(void)
 
 	//画面の初期化
 	ClearDrawScreen();
+
+	//カメラ設定
+	camera.SetBeforeDraw();
 }
 
 void ShadowManager::AddShadowModel(const MESH_TYPE& _meshType, const int _modelId)
@@ -100,12 +103,17 @@ void ShadowManager::AddShadowModel(const MESH_TYPE& _meshType, const int _modelI
 	//モデル
 	auto& models = shadowModelId_[static_cast<int>(_meshType)];
 
-	//models.
-	//if()
+	//重複は無視
+	models.insert(_modelId);
 }
 
 void ShadowManager::SubShadowModel(const MESH_TYPE& _meshType, const int _modelId)
 {
+	//モデル
+	auto& models = shadowModelId_[static_cast<int>(_meshType)];
+
+	//モデルを除く
+	models.erase(_modelId);
 }
 
 ShadowManager::ShadowManager(void)

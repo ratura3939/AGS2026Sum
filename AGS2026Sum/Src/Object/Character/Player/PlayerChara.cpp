@@ -3,6 +3,7 @@
 #include"../../../Manager/Generic/SceneManager.h"
 #include"../../../Manager/Generic/Camera.h"
 #include"../../../Manager/Generic/ResourceManager.h"	
+#include"../../../Manager/GameSystem/ShadowManager.h"	
 #include"../../Common/Geometry/Sphere.h"
 #include"../../../Renderer/ModelMaterial.h"
 #include"../../../Renderer/ModelRenderer.h"
@@ -25,6 +26,8 @@ namespace {
 
 	const int PS_CAMERA_RAY_BUFF_NUM = 1;	//バッファ番号
 
+	const int BUFFER_MATRIX_SIZE = 2;	//マトリックスの大きさ
+
 	const float OUTLINE_DEPTH_RANGE = 500.0f;	//アウトライン描画の深度範囲
 }
 
@@ -41,6 +44,8 @@ PlayerChara::PlayerChara(void)
 
 PlayerChara::~PlayerChara(void)
 {
+	//影の削除
+	ShadowManager::GetInstance().SubShadowModel(ShadowManager::MESH_TYPE::SKINNED, modelId_);
 }
 
 void PlayerChara::PlayAnim(const std::wstring& _animName, const float _speed)
@@ -88,12 +93,26 @@ void PlayerChara::DoLoad(void)
 	outlineMaterial_ = std::make_unique<ModelMaterial>(L"SkinOutLineVS.cso", 2, L"SkinOutLinePS.cso", 1);
 	outlineMaterial_->AddConstBufVS(FLOAT4{ 2.0f,0.0f,0.0f,0.0f });
 
-	const VECTOR& cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
+	auto& camera = SceneManager::GetInstance().GetCamera();
+	const VECTOR& cameraPos = camera.GetPos();
+	const VECTOR& forward = camera.GetForward();
 	outlineMaterial_->AddConstBufVS(FLOAT4{ cameraPos.x, cameraPos.y, cameraPos.z, 0.0f });
 	outlineMaterial_->AddConstBufPS(FLOAT4{ 0.0f,0.0f,0.0f,1.0f });
-	modelMaterial_ = std::make_unique<ModelMaterial>(L"SkinVS.cso", VS_SKIN_BUFF_SIZE,L"StdModelPS.cso", PS_SKIN_BUFF_SIZE);	//モデルマテリアル生成
+	modelMaterial_ = std::make_unique<ModelMaterial>(L"SkinVS.cso", VS_SKIN_BUFF_SIZE,L"StdModelPS.cso", PS_SKIN_BUFF_SIZE, BUFFER_MATRIX_SIZE);	//モデルマテリアル生成
+	modelMaterial_->AddConstBufPS(FLOAT4{ 1.0f,1.0f,1.0f,1.0f });
+	modelMaterial_->AddConstBufPS(FLOAT4{ forward.x,forward.y,forward.z,1.0f });
 
 	modelRenderer_ = std::make_unique<ModelRenderer>();	//モデルレンダラー生成
+
+	//影マネージャー
+	auto& shadow = ShadowManager::GetInstance();
+
+	// マトリックスバッファーの追加
+	modelMaterial_->AddConstBufVSMatrix(shadow.GetLightViewMatrix());
+	modelMaterial_->AddConstBufVSMatrix(shadow.GetLightProjectionMatrix());
+
+	//影を追加
+	shadow.AddShadowModel(ShadowManager::MESH_TYPE::SKINNED, modelId_);
 
 	//当たり判定の生成
 	std::unique_ptr<Geometry> geo = std::make_unique<Sphere>(pos_, movedPos_, quaRot_, BROUD_RADIUS, RADIUS);
@@ -197,6 +216,19 @@ void PlayerChara::Draw(void)
 	//描画
 	outlineMaterial_->SetConstBufVS(1,FLOAT4{ cameraPos.x, cameraPos.y, cameraPos.z, 0.0f });
 
+	//影マネージャー
+	auto& shadow = ShadowManager::GetInstance();
+
+	auto& camera = SceneManager::GetInstance().GetCamera();
+	const VECTOR& forward = camera.GetForward();
+	modelMaterial_->SetConstBufPS(1, FLOAT4{ forward.x,forward.y,forward.z,0.0f });
+
+	// マトリックスバッファーの設定
+	modelMaterial_->SetConstBufVSMatrix(0, shadow.GetLightViewMatrix());
+	modelMaterial_->SetConstBufVSMatrix(1, shadow.GetLightProjectionMatrix());
+
+	// シャドウマップの設定
+	modelMaterial_->SetTextureBuf(ModelRenderer::CONSTANT_BUF_SLOT_BEGIN_VS_MATRIX, shadow.GetShadowTexture());
 	
 	//アウトライン用描画
 	MV1SetWriteZBuffer(modelId_, false);//モデル描画のZBufferを無効にする

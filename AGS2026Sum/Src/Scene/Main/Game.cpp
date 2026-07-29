@@ -1,5 +1,6 @@
 #include"../../pch.h"
 #include"../../Object/Character/Enemy/EnemyManager.h"
+#include"../../Manager/GameSystem/ShadowManager.h"
 #include"../../Manager/GameSystem/GravityManager.h"
 #include"../../Manager/GameSystem/AttackManager.h"
 #include"../../Manager/GameSystem/CollisionManager.h"
@@ -118,6 +119,9 @@ void Game::Init(void)
 	updateProgress_ = &Game::UpdateTutorial;
 
 	//生成
+
+	//影マネージャー
+	ShadowManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::GAME_END);
 
 	//重力マネージャー
 	GravityManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::GAME_END);
@@ -418,12 +422,16 @@ void Game::Draw(void)
 {
 	DrawString(10, 10, L"GameScene", 0xffffff);
 
+	ShadowManager::GetInstance().Draw();
 	stage_->Draw();
 	ChunkManager::GetInstance().DebugDraw();
 	enemy_->Draw();
 	player_->Draw();
 	ComboManager::GetInstance().Draw();
 	MissionManager::GetInstance().Draw();
+
+	//デバッグ
+	DrawDebug();
 
 	//DrawEdge();
 }
@@ -540,6 +548,8 @@ void Game::EndSlow(void)
 
 void Game::DrawDebug(void)
 {
+#ifdef _DEBUG
+
 	//SceneManager::GetInstance().GetCamera().DrawDebug();F
 	//if (isSlowEffect_) {
 	//	DrawString(0, 140, "NOW_SLOW", 0xffffff);
@@ -548,4 +558,16 @@ void Game::DrawDebug(void)
 	//atkMng_->DrawDebug();
 	//stage_->DrawDebug();
 	//player_->DrawDebug();
+
+	// シャドウマップを描画
+	constexpr int MAPSIZE = 256;
+	DrawExtendGraph(
+		Application::SCREEN_SIZE_X - MAPSIZE,
+		Application::SCREEN_SIZE_Y - MAPSIZE,
+		Application::SCREEN_SIZE_X,
+		Application::SCREEN_SIZE_Y,
+		ShadowManager::GetInstance().GetShadowTexture(),
+		false);
+
+#endif // _DEBUG
 }

@@ -457,6 +457,7 @@
   <ItemGroup>
     <None Include="Src\Shader\Common\Pixel\PixelShader2DHeader.hlsli" />
     <None Include="Src\Shader\Common\Pixel\PixelShader3DHeader.hlsli" />
+    <None Include="Src\Shader\Common\Pixel\PixelShaderUtility.hlsli" />
     <None Include="Src\Shader\Common\VertexToPixelHeader.hlsli" />
     <None Include="Src\Shader\Common\Vertex\CommonShader3DHeader.hlsli" />
     <None Include="Src\Shader\Common\Vertex\VertexInput.hlsli" />

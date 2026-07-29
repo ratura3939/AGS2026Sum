@@ -6,8 +6,13 @@
 class ModelRenderer
 {
 public:
+
 	// 頂点シェーダ用オリジナル定数バッファの使用開始スロット
 	static constexpr int CONSTANT_BUF_SLOT_BEGIN_VS = 7;
+
+	// 頂点シェーダ用オリジナル定数バッファの使用開始スロット
+	static constexpr int CONSTANT_BUF_SLOT_BEGIN_VS_MATRIX = 8;
+
 	// ピクセルシェーダ用オリジナル定数バッファの使用開始スロット
 	static constexpr int CONSTANT_BUF_SLOT_BEGIN_PS = 4;
 

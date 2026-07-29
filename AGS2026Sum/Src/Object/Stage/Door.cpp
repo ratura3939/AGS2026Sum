@@ -1,5 +1,6 @@
 ﻿#include "../../pch.h"
 #include"../../Manager/Generic/ResourceManager.h"
+#include"../../Manager/GameSystem/ShadowManager.h"
 #include"../../Renderer/ModelMaterial.h"
 #include"../../Renderer/ModelRenderer.h"
 #include"../Common/Geometry/Model.h"
@@ -14,6 +15,7 @@ namespace {
 
 	const int VS_BUFF_NUM = 0;
 	const int PS_BUFF_NUM = 0;
+	const int BUFFER_MATRIX_SIZE = 2;
 }
 
 Door::Door(const VECTOR& _pos, DOOR_SIDE _side)
@@ -22,7 +24,7 @@ Door::Door(const VECTOR& _pos, DOOR_SIDE _side)
 	,movePowerOfFrame_(0.0f)
 	,isMoving_(false)
 	,moveFunc_(&Door::MoveOpenDoor)
-	,material_(std::make_unique<ModelMaterial>(L"StdModelVS.cso", VS_BUFF_NUM, L"StdModelPS.cso", PS_BUFF_NUM))
+	,material_(std::make_unique<ModelMaterial>(L"StdModelVS.cso", VS_BUFF_NUM, L"StdModelPS.cso", PS_BUFF_NUM, BUFFER_MATRIX_SIZE))
 	,renderer_(std::make_unique<ModelRenderer>())
 {
 	pos_ = _pos;
@@ -35,6 +37,16 @@ Door::~Door(void)
 
 void Door::Draw(void)
 {
+	//影マネージャー
+	auto& shadow = ShadowManager::GetInstance();
+
+	// マトリックスバッファーの設定
+	material_->SetConstBufVSMatrix(0, shadow.GetLightViewMatrix());
+	material_->SetConstBufVSMatrix(1, shadow.GetLightProjectionMatrix());
+
+	// シャドウマップの設定
+	material_->SetTextureBuf(ModelRenderer::CONSTANT_BUF_SLOT_BEGIN_VS_MATRIX, shadow.GetShadowTexture());
+
 	renderer_->Draw(modelId_, *material_);
 }
 
@@ -81,6 +93,16 @@ void Door::DoLoad(void)
 	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(loadSrc);	
 
 	quaRotLocal_ = Quaternion::Euler(0.0f, 0.0f, 0.0f);
+
+	//影マネージャー
+	auto& shadow = ShadowManager::GetInstance();
+
+	// マトリックスバッファーの追加
+	material_->AddConstBufVSMatrix(shadow.GetLightViewMatrix());
+	material_->AddConstBufVSMatrix(shadow.GetLightProjectionMatrix());
+
+	// シャドウマップの設定
+	material_->SetTextureBuf(ModelRenderer::CONSTANT_BUF_SLOT_BEGIN_VS_MATRIX, shadow.GetShadowTexture());
 
 	//コライダ
 	std::unique_ptr<Geometry> geo = std::make_unique<Model>(pos_, pos_, quaRot_, 1000.0f, modelId_);

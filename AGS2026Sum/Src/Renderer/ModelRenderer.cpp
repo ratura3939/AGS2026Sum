@@ -96,9 +96,43 @@ void ModelRenderer::SetReserveVS(ModelMaterial& _modelMaterial)
 	SetShaderConstantBuffer(
 		constBuf, DX_SHADERTYPE_VERTEX, CONSTANT_BUF_SLOT_BEGIN_VS);
 
+	//定数バッファハンドル
+	int constBufM = _modelMaterial.GetConstBufVSMatrix();
+
+	//書き込み元のマトリックスの取得
+	const auto& constBufsM = _modelMaterial.GetConstBufsVSMatrix();
+
+	//必要なバイトサイズ
+	size_t requiredSize = constBufsM.size() * sizeof(MATRIX);
+
+	//ポインタの取得
+	MATRIX* constBufsMPtr = (MATRIX*)GetBufferShaderConstantBuffer(constBufM);
+
+	//マトリックスが設定されているなら
+	if (constBufsMPtr)
+	{
+		//書き込み元のマトリックスが存在する場合
+		if (!constBufsM.empty())
+		{
+			//中身の一括コピー
+			memcpy(constBufsMPtr, constBufsM.data(), requiredSize);
+		}
+
+		for (size_t i = 0; i < constBufsM.size(); i++)
+		{
+			//格納する
+			constBufsMPtr[i] = constBufsM[i];
+		}
+
+		//頂点シェーダー用の定数バッファを更新して書き込んだ内容を反映
+		UpdateShaderConstantBuffer(constBufM);
+
+		//頂点シェーダー用の定数バッファを定数バッファレジスタにセット
+		SetShaderConstantBuffer(constBufM, DX_SHADERTYPE_VERTEX, CONSTANT_BUF_SLOT_BEGIN_VS_MATRIX);
+	}
+
 	// 頂点シェーダー設定
 	SetUseVertexShader(_modelMaterial.GetShaderVS());
-
 }
 
 void ModelRenderer::SetReservePS(ModelMaterial& _modelMaterial)

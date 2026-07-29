@@ -497,11 +497,16 @@ void Camera::DrawDebug(void)
 	DrawSphere3D(focusPos_, 8, 10, 0x00ff00, 0x00ff00, false);
 }
 
+const VECTOR Camera::GetForward(void)
+{
+	return VNorm(VSub(focusPos_, pos_));
+}
+
 void Camera::CameraSettingShadow(void)
 {
-	constexpr float SIZE = 13250.0f;
+	constexpr float SIZE = 13050.0f;
 	constexpr float S_NEAR = 10.0f;
-	constexpr float S_FAR = 13050.0f;
+	constexpr float S_FAR = 10050.0f;
 	constexpr float TARGET_LIMIT_Y = 0.0f;
 
 	//カメラタイプを正射影に
@@ -513,6 +518,35 @@ void Camera::CameraSettingShadow(void)
 	//注視点の制限
 	VECTOR targetPos = focusPos_;
 	if (targetPos.y > TARGET_LIMIT_Y) targetPos.y = TARGET_LIMIT_Y;
+
+	//static VECTOR targetPos = Utility::VECTOR_ZERO;
+
+	//InputManager& ins = InputManager::GetInstance();
+	//using COMMAND = InputManager::INPUT_COMMAND;
+	//if (ins.IsPressed(COMMAND::DEBUG_RIGHT))
+	//{
+	//	targetPos.x -= 1000.0f;
+	//}
+	//if (ins.IsPressed(COMMAND::DEBUG_LEFT))
+	//{
+	//	targetPos.x += 1000.0f;
+	//}
+	//if (ins.IsPressed(COMMAND::DEBUG_UP))
+	//{
+	//	targetPos.y -= 1000.0f;
+	//}
+	//if (ins.IsPressed(COMMAND::DEBUG_DOWN))
+	//{
+	//	targetPos.y += 1000.0f;
+	//}
+	//if (ins.IsPressed(COMMAND::DEBUG_FLONT))
+	//{
+	//	targetPos.z += 1000.0f;
+	//}
+	//if (ins.IsPressed(COMMAND::DEBUG_BACK))
+	//{
+	//	targetPos.z -= 1000.0f;
+	//}
 
 	//カメラの視点、注視点の設定
 	SetCameraPositionAndTarget_UpVecY(pos_, targetPos);

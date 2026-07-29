@@ -161,6 +161,9 @@ public:
 
 	void DrawDebug(void);
 
+	//‘O•û‚Ìæ“¾
+	const VECTOR GetForward(void);
+
 	//‰e—p‚Ìİ’è
 	void CameraSettingShadow(void);
 

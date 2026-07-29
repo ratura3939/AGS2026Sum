@@ -45,7 +45,7 @@ public:
 protected:
 
 	static constexpr int VS_SKIN_BUFF_SIZE = 0;	//頂点シェーダの定数バッファの数
-	static constexpr int PS_SKIN_BUFF_SIZE = 0;	//ピクセルシェーダの定数バッファの数
+	static constexpr int PS_SKIN_BUFF_SIZE = 2;	//ピクセルシェーダの定数バッファの数
 
 	virtual void DoInit(void)override = 0;		//初期化
 	virtual void DoLoad(void)override = 0;		//読み込み

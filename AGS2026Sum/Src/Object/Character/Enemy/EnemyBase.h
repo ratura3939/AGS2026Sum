@@ -33,6 +33,7 @@ public:
 
 	//シェーダーの設定
 	static constexpr int PS_C_BUFF_SIZE = 1;
+	static constexpr int BUFFER_MATRIX_SIZE = 2;
 
 	//コンストラクタ
 	EnemyBase(const ENEMY_TYPE& _type);

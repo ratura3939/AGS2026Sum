@@ -33,6 +33,12 @@ public:
 		,ATTACK_ULTIMET	//必殺技
 
 		,DEBUG_ULT_REDY	//必殺技準備（デバッグ用）
+		,DEBUG_UP
+		,DEBUG_RIGHT
+		,DEBUG_LEFT
+		,DEBUG_DOWN
+		,DEBUG_FLONT
+		,DEBUG_BACK
 
 		,ENTER			//決定
 		,CANCEL			//キャンセル

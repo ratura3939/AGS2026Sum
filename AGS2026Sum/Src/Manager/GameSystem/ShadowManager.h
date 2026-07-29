@@ -27,16 +27,16 @@ public:
 	void Draw(void);
 
 	//光のビュー行列の取得
-	const MATRIX& GetLightViewMat(void)const { return lightViewMat_; }
+	const MATRIX& GetLightViewMatrix(void)const { return lightViewMat_; }
 
 	//光のビュー行列設定
-	void SetLightViewMat(const MATRIX& _mat) { lightViewMat_ = _mat; }
+	void SetLightViewMatrix(const MATRIX& _mat) { lightViewMat_ = _mat; }
 
 	//光のプロジェクション行列の取得
-	const MATRIX& GetLightProjectionMat(void)const { return lightProjectionMat_; }
+	const MATRIX& GetLightProjectionMatrix(void)const { return lightProjectionMat_; }
 
 	//光のプロジェクション行列設定
-	void SetLightProjectionMat(const MATRIX& _mat) { lightProjectionMat_ = _mat; }
+	void SetLightProjectionMatrix(const MATRIX& _mat) { lightProjectionMat_ = _mat; }
 
 	//シャドウマップ用のテクスチャの取得
 	const int GetShadowTexture(void)const { return shadowTex_; }

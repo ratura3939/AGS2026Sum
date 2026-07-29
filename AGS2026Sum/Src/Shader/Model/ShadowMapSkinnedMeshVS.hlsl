@@ -69,7 +69,7 @@ VS_OUTPUT ret;
     float4 lWorldPos;
     float4 lViewPos;
     float3 lWorldNormal;
-    float3 lLocalNormal = VSInput.normal;
+    float3 lLocalNormal = VSInput.norm;
     
     //相対座標
     lLocalPos = float4(VSInput.pos, 1.0f);

@@ -11,6 +11,13 @@ cbuffer cbPram:register(b7) {
 	float2 scl_dummy;
 }
 
+// シャドウマップ用定数バッファ：スロット8番目
+cbuffer cbParamShadow : register(b8)
+{
+    float4x4 g_light_viewmatrix;
+    float4x4 g_light_projectionMatrix;
+};
+
 VS_OUTPUT main(VS_INPUT VSInput)
 {
 	VS_OUTPUT ret;
@@ -40,6 +47,10 @@ VS_OUTPUT main(VS_INPUT VSInput)
 	//UVスケーリング
 	ret.uv.x = VSInput.uv0.x * g_scale.x;
 	ret.uv.y = VSInput.uv0.y * g_scale.y;
+
+	// ライトのビュー座標を射影座標に変換
+    float4 lLViewPosition = mul(g_light_viewmatrix, lWorldPosition);
+    ret.lightAtPos = mul(g_light_projectionMatrix, lLViewPosition).xyz;
 
 	// 頂点座標変換 +++++++++++++++++++++++++++++++++++++( 終了 )
 	// 出力パラメータを返す

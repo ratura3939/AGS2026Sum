@@ -1,5 +1,6 @@
 ﻿#include "../../../pch.h"
 #include "../../../Manager/Generic/SceneManager.h"
+#include "../../../Manager/GameSystem/ShadowManager.h"
 #include "../../../Manager/GameSystem/CollisionManager.h"
 #include "../../../Manager/GameSystem/AttackManager.h"
 #include "../../../Manager/GameSystem/GravityManager.h"
@@ -63,6 +64,16 @@ void EnemyBase::Draw(void)
 
 	//モデル描画
 	//MV1DrawModel(modelId_);
+
+	//影マネージャー
+	auto& shadow = ShadowManager::GetInstance();
+
+	// マトリックスバッファーの設定
+	modelMaterial_->SetConstBufVSMatrix(0, shadow.GetLightViewMatrix());
+	modelMaterial_->SetConstBufVSMatrix(1, shadow.GetLightProjectionMatrix());
+
+	// シャドウマップの設定
+	modelMaterial_->SetTextureBuf(ModelRenderer::CONSTANT_BUF_SLOT_BEGIN_VS_MATRIX, shadow.GetShadowTexture());
 
 	//モデルの描画
 	modelMaterial_->SetConstBufPS(0, color_);
@@ -227,8 +238,18 @@ void EnemyBase::DoLoad(void)
 void EnemyBase::LoadShader(void)
 {
 	//モデルマテリアル生成
-	modelMaterial_ = std::make_unique<ModelMaterial>(L"SkinVS.cso", VS_SKIN_BUFF_SIZE, L"StdModelPS.cso", PS_C_BUFF_SIZE);
+	modelMaterial_ = std::make_unique<ModelMaterial>(L"SkinVS.cso", VS_SKIN_BUFF_SIZE, L"StdModelPS.cso", PS_C_BUFF_SIZE, BUFFER_MATRIX_SIZE);
 	modelMaterial_->AddConstBufPS(color_);
+
+	//影マネージャー
+	auto& shadow = ShadowManager::GetInstance();
+
+	// マトリックスバッファーの追加
+	modelMaterial_->AddConstBufVSMatrix(shadow.GetLightViewMatrix());
+	modelMaterial_->AddConstBufVSMatrix(shadow.GetLightProjectionMatrix());
+
+	// シャドウマップの設定
+	modelMaterial_->SetTextureBuf(ModelRenderer::CONSTANT_BUF_SLOT_BEGIN_VS_MATRIX, shadow.GetShadowTexture());
 
 	//モデルレンダラー生成
 	modelRenderer_ = std::make_unique<ModelRenderer>();
@@ -733,12 +754,20 @@ void EnemyBase::OnEnterActiveChank(void)
 {
 	//コライダ生成
 	CreateCollider();
+
+	//影を追加
+	auto& shadow = ShadowManager::GetInstance();
+	shadow.AddShadowModel(ShadowManager::MESH_TYPE::SKINNED, modelId_);
 }
 
 void EnemyBase::OnLeaveActiveChank(void)
 {
 	//コライダの削除
 	DeleteCollider();
+
+	//影を削除
+	auto& shadow = ShadowManager::GetInstance();
+	shadow.SubShadowModel(ShadowManager::MESH_TYPE::SKINNED, modelId_);
 }
 
 void EnemyBase::Death(void)
