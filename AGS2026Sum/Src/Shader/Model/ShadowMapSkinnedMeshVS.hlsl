@@ -65,33 +65,33 @@ VS_OUTPUT ret;
     lL_W_Mat[2] += L_W_MAT[lBoneIdx.w + 2] * lWeight.wwww;
 
     //頂点座標変換
-    float4 localPos;
-    float4 worldPos;
-    float4 viewPos;
-    float3 worldNormal;
-    float3 localNormal = VSInput.normal;
+    float4 lLocalPos;
+    float4 lWorldPos;
+    float4 lViewPos;
+    float3 lWorldNormal;
+    float3 lLocalNormal = VSInput.normal;
     
     //相対座標
-    localPos = float4(VSInput.pos, 1.0f);
+    lLocalPos = float4(VSInput.pos, 1.0f);
 
     //頂点スキニング
-    worldPos.x = dot(localPos, lL_W_Mat[0]);
-    worldPos.y = dot(localPos, lL_W_Mat[1]);
-    worldPos.z = dot(localPos, lL_W_Mat[2]);
-    worldPos.w = 1.0f;
+    lWorldPos.x = dot(lLocalPos, lL_W_Mat[0]);
+    lWorldPos.y = dot(lLocalPos, lL_W_Mat[1]);
+    lWorldPos.z = dot(lLocalPos, lL_W_Mat[2]);
+    lWorldPos.w = 1.0f;
 
     //法線スキニング
-    worldNormal.x = dot(float4(localNormal, 0.0f), lL_W_Mat[0]);
-    worldNormal.y = dot(float4(localNormal, 0.0f), lL_W_Mat[1]);
-    worldNormal.z = dot(float4(localNormal, 0.0f), lL_W_Mat[2]);
-    worldNormal = normalize(worldNormal);
+    lWorldNormal.x = dot(float4(lLocalNormal, 0.0f), lL_W_Mat[0]);
+    lWorldNormal.y = dot(float4(lLocalNormal, 0.0f), lL_W_Mat[1]);
+    lWorldNormal.z = dot(float4(lLocalNormal, 0.0f), lL_W_Mat[2]);
+    lWorldNormal = normalize(lWorldNormal);
     
     //ワールド座標をビュー座標に変換
-    viewPos.xyz = mul(worldPos, g_base.viewMatrix);
-    viewPos.w = 1.0f;
+    lViewPos.xyz = mul(lWorldPos, g_base.viewMatrix);
+    lViewPos.w = 1.0f;
 
     //ビュー座標を射影座標に変換
-    ret.svPos = mul(viewPos, g_base.projectionMatrix);
+    ret.svPos = mul(lViewPos, g_base.projectionMatrix);
     ret.svPosRead = ret.svPos;
     
     //法線をローカルからワールドに変換
@@ -101,7 +101,7 @@ VS_OUTPUT ret;
     ret.uv.xy = VSInput.uv0.xy;
     
     //ビュー座標
-    ret.vwPos.xyz = viewPos.xyz;
+    ret.vwPos.xyz = lViewPos.xyz;
 
     //出力
     return ret;

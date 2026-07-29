@@ -285,6 +285,9 @@
     <ClCompile Include="Src\Manager\GameSystem\Mission\MissionKillTarget.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Manager\GameSystem\ShadowManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Common\Fader.h">
@@ -590,6 +593,9 @@
     <ClInclude Include="Src\Manager\GameSystem\Mission\MissionKillTarget.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Manager\GameSystem\ShadowManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shader\PostEffect\JustDodgePS.hlsl" />
@@ -611,7 +617,8 @@
     <FxCompile Include="Src\Shader\Model\RimAuraVS.hlsl" />
     <FxCompile Include="Src\Shader\Model\rimLightPS.hlsl" />
     <FxCompile Include="Src\Shader\Model\ShadowMapPS.hlsl" />
-    <FxCompile Include="Src\Shader\Model\ShadowMapVS.hlsl" />
+    <FxCompile Include="Src\Shader\Model\ShadowMapSkinnedMeshVS.hlsl" />
+    <FxCompile Include="Src\Shader\Model\ShadowMapMeshVS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shader\Common\Pixel\PixelShader2DHeader.hlsli" />

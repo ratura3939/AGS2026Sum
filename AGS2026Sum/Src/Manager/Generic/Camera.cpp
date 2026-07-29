@@ -497,6 +497,27 @@ void Camera::DrawDebug(void)
 	DrawSphere3D(focusPos_, 8, 10, 0x00ff00, 0x00ff00, false);
 }
 
+void Camera::CameraSettingShadow(void)
+{
+	constexpr float SIZE = 13250.0f;
+	constexpr float S_NEAR = 10.0f;
+	constexpr float S_FAR = 13050.0f;
+	constexpr float TARGET_LIMIT_Y = 0.0f;
+
+	//カメラタイプを正射影に
+	SetupCamera_Ortho(SIZE);
+
+	//描画する奥行き範囲を設定
+	SetCameraNearFar(S_NEAR, S_FAR);
+
+	//注視点の制限
+	VECTOR targetPos = focusPos_;
+	if (targetPos.y > TARGET_LIMIT_Y) targetPos.y = TARGET_LIMIT_Y;
+
+	//カメラの視点、注視点の設定
+	SetCameraPositionAndTarget_UpVecY(pos_, targetPos);
+}
+
 void Camera::SetDefault(void)
 {
 	//カメラの初期設定

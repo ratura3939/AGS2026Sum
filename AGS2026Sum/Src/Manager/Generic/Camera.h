@@ -160,6 +160,10 @@ public:
 	const bool IsFinishShake(void) { return finishShake_; }	//画面揺れ終了判別
 
 	void DrawDebug(void);
+
+	//影用の設定
+	void CameraSettingShadow(void);
+
 private:
 	//コライダー
 	std::unique_ptr<CameraCollider> collider_;
