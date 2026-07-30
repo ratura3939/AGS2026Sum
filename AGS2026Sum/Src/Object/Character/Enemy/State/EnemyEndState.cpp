@@ -1,6 +1,7 @@
 ﻿#include "../../../../pch.h"
 #include "../../../../Utility/Utility.h"
 #include "../../../../Manager/Generic/SceneManager.h"
+#include "../../../../Manager/GameSystem/ShadowManager.h"
 #include "../../../../Manager/Decoration/EffectManager.h"
 #include "../EnemyBase.h"
 #include "EnemyEndState.h"
@@ -47,6 +48,10 @@ void EnemyEndState::Exit(EnemyBase& _enemy)
 {
 	//イベントカウント減少
 	_enemy.SubEventCount();
+
+	//影を削除
+	auto& shadow = ShadowManager::GetInstance();
+	shadow.SubShadowModel(ShadowManager::MESH_TYPE::SKINNED, _enemy.GetModelID());
 
 	//死亡エフェクト
 	//EffectManager::GetInstance().Stop(_enemy.GetSpeciesName(), EffectManager::EFFECT_NAME::ENEMY_HIT);
