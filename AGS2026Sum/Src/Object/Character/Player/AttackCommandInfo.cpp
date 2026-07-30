@@ -76,6 +76,12 @@ void AttackCommandInfo::Draw(void)
 
 void AttackCommandInfo::Appear(const TYPE& _type)
 {
+	//すでに出現している時
+	if (isAppeared_) {
+		//処理の必要なし
+		return;
+	}
+
 	useType_ = _type;
 
 	centerPos_ = START_POSITION;

@@ -45,7 +45,7 @@ PlayerManager::PlayerManager(Game& _gameScene)
 	,isEnableAttackInput_(true)
 	,isForcePlayAnim_(false)
 	,isNoBlendPlayAnim_(false)
-	,isSpecialAttackRedy_(false)
+	,isSpecialAttackReady_(false)
 	,isEnableSpecial_(true)
 	,isEnableUltimate_(false)
 	,isPlaySoundAtCurrentAttack_(false)
@@ -81,11 +81,15 @@ void PlayerManager::Init(void)
 	uiM.SetUIInfo(UIManager2d::UI_NAME::OPERATION_INFO, POS_OPERATION_INFO);
 
 	//必殺準備効果音
-	SoundManager::GetInstance().Add(SoundManager::TYPE::SE, SoundManager::SOUND_NAME::ULTIMATE_REDY, ResourceManager::GetInstance().Load(ResourceManager::SRC::ULTIMATE_REDY_SE).handleId_);
+	SoundManager::GetInstance().Add(SoundManager::TYPE::SE, SoundManager::SOUND_NAME::ULTIMATE_READY, ResourceManager::GetInstance().Load(ResourceManager::SRC::ULTIMATE_REDY_SE).handleId_);
 }
 
 void PlayerManager::Update(void)
 {
+	if (isUltimateReady_) {
+		commandInfo_->Appear(AttackCommandInfo::TYPE::ULTIMATE);
+	}
+
 	UserInput();			//入力受付
 	character_->Update();	//キャラクターの更新
 	attack_->Update();		//攻撃クラスの更新
@@ -115,7 +119,7 @@ void PlayerManager::Draw(void)
 	UIManager2d::GetInstance().Draw(UIManager2d::UI_NAME::OPERATION_INFO);	//操作方法の描画
 	
 #ifdef _DEBUG
-	if (isSpecialAttackRedy_) {
+	if (isSpecialAttackReady_) {
 		DrawString(30, 300, L"SpecialRedy!!!", 0xffffff);
 	}
 
@@ -257,7 +261,7 @@ void PlayerManager::UserInput(void)
 
 	if (ins.IsTriggerDown(InputManager::INPUT_COMMAND::ATTACK_NORMAL)) {
 		//特殊攻撃準備中の場合
-		if (isSpecialAttackRedy_) {
+		if (isSpecialAttackReady_) {
 			isAttackInput = ReserveAttackSpecial(PlayerAttack::ATTACK_TYPE::PUNCH);	//攻撃クラスに特殊攻撃開始を伝え,結果を得る
 		}
 		//通常時、攻撃を受け付ける状態の場合
@@ -267,7 +271,7 @@ void PlayerManager::UserInput(void)
 	}
 	else if (ins.IsTriggerDown(InputManager::INPUT_COMMAND::ATTACK_STRONG)) {
 		//特殊攻撃準備中の場合
-		if (isSpecialAttackRedy_&& isEnableSpecial_) {
+		if (isSpecialAttackReady_&& isEnableSpecial_) {
 			isAttackInput = ReserveAttackSpecial(PlayerAttack::ATTACK_TYPE::KICK);	//攻撃クラスに特殊攻撃開始を伝え,結果を得る
 		}
 		//通常時、攻撃を受け付ける状態の場合
@@ -284,11 +288,13 @@ void PlayerManager::UserInput(void)
 		scene_.StartSlow();					//スロー演出
 		isNoBlendPlayAnim_ = true;
 
+		commandInfo_->Disappear();
+
 		//カメラが必殺技用の移動を開始
 		scene_.SetProcessingAfterCameraAutoMove(Game::CAMERA_MOVE_SITUATION::ULTIMATE);
 
 		//準備音再生
-		SoundManager::GetInstance().Play(SoundManager::SOUND_NAME::ULTIMATE_REDY);
+		SoundManager::GetInstance().Play(SoundManager::SOUND_NAME::ULTIMATE_READY);
 
 		SettingUltimateCamera();
 		isAttackInput = true;

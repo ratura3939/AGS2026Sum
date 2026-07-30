@@ -62,7 +62,7 @@ public:
 	void SetAnimSpeedPercent(const float _percent);
 
 	//特殊攻撃準備フラグ設定
-	void SetIsSpecialRedy(const bool _flag) { isSpecialAttackRedy_ = _flag; }
+	void SetIsSpecialReady(const bool _flag) { isSpecialAttackReady_ = _flag; }
 
 	//必殺技の準備フラグ設定
 	void SetIsUltimateReady(const bool _flag) { isUltimateReady_ = _flag; }
@@ -94,7 +94,7 @@ private:
 	bool isForcePlayAnim_;		//強制再生させるか(攻撃の初段のみ強制再生)
 	bool isNoBlendPlayAnim_;	//ブレンドなしでアニメーションを再生させるか
 
-	bool isSpecialAttackRedy_;	//特殊攻撃の準備ができているか
+	bool isSpecialAttackReady_;	//特殊攻撃の準備ができているか
 	bool isEnableSpecial_;		//特殊攻撃の準備への状態遷移を許可するか
 	bool isUltimateReady_;		//必殺技の受付を許可するか
 	bool isEnableUltimate_;		//必殺技の発動を許可するか
