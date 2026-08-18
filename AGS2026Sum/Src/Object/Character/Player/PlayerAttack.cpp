@@ -153,8 +153,8 @@ void PlayerAttack::DrawComboRouteElement(const std::string& _attackKey, const VE
 	}
 
 	//描画
-	const double elementExRate = 0.3;
-	const double elementAngle = 0.0;
+	const double elementExRate = 0.3;	//描画倍率
+	const double elementAngle = 0.0;	//描画角度
 
 	//ボタンの描画
 	DrawRotaGraph(static_cast<int>(_pos.x), static_cast<int>(_pos.y),
@@ -377,9 +377,6 @@ void PlayerAttack::Draw(void)
 	//デバッグ表記
 	DrawDebug();
 #endif
-	
-	
-
 	//コンボ分岐の表記
 	DrawComboRoute();
 }
