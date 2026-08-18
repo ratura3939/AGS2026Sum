@@ -19,6 +19,7 @@ namespace {
 	const float BUTTON_ALPHA_MAX = 255.0f;	//Éøç≈ëÂíl
 	const float BUTTON_ALPHA_MIN = 100.0f;	//Éøç≈è¨íl
 	const float BUTTON_SCALE = 0.7f;		//ëÂÇ´Ç≥
+	const int BGM_VOLUME = 80;		//BGMâπó 
 
 	const VECTOR BUTTON_START_RELATIVE_CENTER = { 0.0f,100.0f,0.0f };
 	const VECTOR BUTTON_END_RELATIVE_CENTER = { 0.0f,200.0f,0.0f };
@@ -107,6 +108,9 @@ void Title::InitSound(void)
 	////BGM
 	sndM.Add(SoundManager::TYPE::BGM, SoundManager::SOUND_NAME::TITLE_BGM,
 		resM.Load(ResourceManager::SRC::TITLE_BGM).handleId_);
+
+	sndM.AdjustVolume(SND_TYPE::BGM, BGM_VOLUME);	//BGMâπó í≤êÆ
+
 	//BGMçƒê∂
 	sndM.Play(SoundManager::SOUND_NAME::TITLE_BGM);
 }

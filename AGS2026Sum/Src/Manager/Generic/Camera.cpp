@@ -566,6 +566,10 @@ void Camera::SetDefault(void)
 	//ƒJƒƒ‰‚ÍX²‚ÉŒX‚¢‚Ä‚¢‚é‚ªA
 	//‚±‚ÌŒX‚¢‚½ó‘Ô‚ğŠp“xƒ[ƒAŒX‚«–³‚µ‚Æ‚·‚é
 	rot_ = Quaternion::Identity();
+
+	angles_.x = Utility::Deg2RadF(0.0f);
+	angles_.y = 0.0f;
+	angles_.z = 0.0f;
 }
 
 void Camera::Rotation(void)
@@ -574,7 +578,7 @@ void Camera::Rotation(void)
 
 	using COMMAND = InputManager::INPUT_COMMAND;
 
-	if (ins.IsPressed(COMMAND::UP_SUB))
+	/*if (ins.IsPressed(COMMAND::UP_SUB))
 	{
 		angles_.x -= rotSpeed_.x;
 		if (angles_.x <= LIMIT_X_DW_RAD)
@@ -585,7 +589,7 @@ void Camera::Rotation(void)
 		angles_.x += rotSpeed_.x;
 		if (angles_.x >= LIMIT_X_UP_RAD)
 			angles_.x = LIMIT_X_UP_RAD;
-	}
+	}*/
 	if (ins.IsPressed(COMMAND::LEFT_SUB))
 	{
 		angles_.y -= rotSpeed_.y;

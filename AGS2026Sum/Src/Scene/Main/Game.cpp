@@ -166,6 +166,7 @@ void Game::Init(void)
 
 	//カメラの初期設定
 	Camera& camera = SceneManager::GetInstance().GetCamera();
+	camera.SetDefault();	//初期化
 	camera.ChangeMode(Camera::MODE::FOLLOW);					//モード選択
 	camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象
 	camera.SetGoalFocusPos(player_->GetFocusPos());				//注視点
