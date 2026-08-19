@@ -32,8 +32,8 @@ public:
 	//出現
 	void Appear(const TYPE& _type);
 
-	//消失
-	void Disappear(void);
+	//消去
+	void Disappear(const TYPE& _type);
 
 private:
 	void UpdateNone(void);		//空の更新
@@ -43,6 +43,9 @@ private:
 
 	void DrawCommand(void);		//４ボタンの表示
 	void DrawGuide(void);		//効果の表示
+
+	//消失
+	void DoDisappear(void);
 
 	using Update_f = void(AttackCommandInfo::*)(void);
 	//更新処理

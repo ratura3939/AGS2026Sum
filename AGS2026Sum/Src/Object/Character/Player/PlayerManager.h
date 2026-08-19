@@ -68,7 +68,10 @@ public:
 	void SetIsUltimateReady(const bool _flag) { isUltimateReady_ = _flag; }
 
 	//攻撃ボタン説明の消去
-	void DidappearCommandInfo(void);
+	void DisappearAttackCommandInfo(void);
+
+	//必殺技ボタン説明の消去
+	void DisappearUltimateCommandInfo(void);
 
 private:
 	void UpdateAnimationEvent(void);		//アニメーション経過によるイベント

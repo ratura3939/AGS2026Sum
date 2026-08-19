@@ -193,9 +193,14 @@ void PlayerManager::SetAnimSpeedPercent(const float _percent)
 	character_->SetAnimationSpeedPercent(_percent);
 }
 
-void PlayerManager::DidappearCommandInfo(void)
+void PlayerManager::DisappearAttackCommandInfo(void)
 {
-	commandInfo_->Disappear();
+	commandInfo_->Disappear(AttackCommandInfo::TYPE::SEPECIAL);
+}
+
+void PlayerManager::DisappearUltimateCommandInfo(void)
+{
+	commandInfo_->Disappear(AttackCommandInfo::TYPE::ULTIMATE);
 }
 
 void PlayerManager::UpdateAnimationEvent(void)
@@ -288,7 +293,7 @@ void PlayerManager::UserInput(void)
 		scene_.StartSlow();					//スロー演出
 		isNoBlendPlayAnim_ = true;
 
-		commandInfo_->Disappear();
+		commandInfo_->Disappear(AttackCommandInfo::TYPE::ULTIMATE);
 
 		//カメラが必殺技用の移動を開始
 		scene_.SetProcessingAfterCameraAutoMove(Game::CAMERA_MOVE_SITUATION::ULTIMATE);
@@ -314,7 +319,7 @@ void PlayerManager::UserInput(void)
 	//終了
 	else if (ins.IsTrigerrUp(InputManager::INPUT_COMMAND::ATTACK_SPECIAL)) {
 		scene_.EndSlow();
-		commandInfo_->Disappear();
+		commandInfo_->Disappear(AttackCommandInfo::TYPE::SEPECIAL);
 	}
 #pragma endregion
 

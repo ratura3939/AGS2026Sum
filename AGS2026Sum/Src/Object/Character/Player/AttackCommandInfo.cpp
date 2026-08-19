@@ -92,7 +92,18 @@ void AttackCommandInfo::Appear(const TYPE& _type)
 	isAppeared_ = true;
 }
 
-void AttackCommandInfo::Disappear(void)
+void AttackCommandInfo::Disappear(const TYPE& _type)
+{
+	if (_type != useType_) {
+		//処理の必要なし
+		return;
+	}
+
+	//消去処理実行
+	DoDisappear();
+}
+
+void AttackCommandInfo::DoDisappear(void)
 {
 	//そもそも出現していない時
 	if (!isAppeared_) {
@@ -101,6 +112,7 @@ void AttackCommandInfo::Disappear(void)
 	}
 
 	isDrawGuide_ = false;
+	isAppeared_ = false;
 	centerPos_ = GOAL_POSITION;
 	goalPos_ = START_POSITION;
 

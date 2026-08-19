@@ -316,7 +316,7 @@ void Game::GameUpdate(void)
 			EndSlow();
 
 			//特殊攻撃選択中の可能性を考えて
-			player_->DidappearCommandInfo();
+			player_->DisappearAttackCommandInfo();
 		}
 	}
 
@@ -327,6 +327,12 @@ void Game::GameUpdate(void)
 
 	//必殺技の設定
 	player_->SetIsUltimateReady(enemy_->IsGuardBreak());
+
+	//ガードブレイクしていなければ
+	if (enemy_->IsGuardBreak() == false) {
+		//必殺技ボタン説明を消去
+		player_->DisappearUltimateCommandInfo();
+	}
 
 	//当たり判定更新
 	CollisionManager::GetInstance().UpdateColliders();
