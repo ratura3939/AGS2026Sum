@@ -135,6 +135,9 @@ void Game::Init(void)
 	//コンボ管理
 	ComboManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::GAME_END);
 
+	//イベントマネージャ
+	EventManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::GAME_END);
+
 	//目的管理
 	MissionManager::CreateInstance(SingletonRegistry::DESTROY_TIMING::GAME_END);
 	auto& misMng = MissionManager::GetInstance();
