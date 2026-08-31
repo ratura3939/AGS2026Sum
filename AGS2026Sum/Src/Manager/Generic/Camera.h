@@ -162,10 +162,10 @@ public:
 	void DrawDebug(void);
 
 	//前方の取得
-	const VECTOR GetForward(void);
+	const VECTOR GetForward(void)const;
 
 	//影用の設定
-	void CameraSettingShadow(void);
+	void CameraSettingShadow(void)const;
 
 private:
 	//コライダー
